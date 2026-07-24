@@ -1,0 +1,739 @@
+package com.example.lendasnubeiras.tema
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.scaleIn
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
+import com.example.lendasnubeiras.DebuxarInferface
+import com.example.lendasnubeiras.Iconas
+import com.example.lendasnubeiras.Iconas.PantallaPruebaIconas
+import com.example.lendasnubeiras.Iconas.lanzarDados
+import com.example.lendasnubeiras.Iconas.listarIconasActividades
+import com.example.lendasnubeiras.ItemNavegacion
+
+import com.example.lendasnubeiras.R
+import com.example.lendasnubeiras.localizacion.Localizacion
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.updateTransition
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.Switch
+import androidx.compose.ui.graphics.graphicsLayer
+import kotlin.system.exitProcess
+
+// =====================================================================
+// SCAFFOLD BASE — estructura de referencia para asentar el estilo
+//
+// Incluye: TopAppBar, Drawer lateral, BottomNavigation, FAB, y en el
+// cuerpo: los 3 estilos de botón + un input con sus 3 estados
+// (normal / error / éxito), todo usando MaterialTheme.colorScheme
+// (que ya trae PaletaClara/PaletaEscura) más CorExito/CorGhost sueltos.
+// =====================================================================
+
+// Colores que quedaron fuera del ColorScheme (comentados en tu archivo
+// de colores). Se importan/declaran aquí para usarlos directamente.
+// Sustituye este import por el real de tu proyecto cuando los
+// descomentes en tu archivo de colores:
+private val CorExito = Color(0xFF2E7D32)
+
+private val CorGhost = Color(0xFFB6F29A)
+
+/**
+ * Botón principal — fondo = primary, texto = onPrimary.
+ * Úsalo para LA acción más importante de la pantalla (una por pantalla,
+ * idealmente).
+ */
+@Composable
+fun BotonPrincipal(
+    texto: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    habilitado: Boolean = true
+) {
+    Button(
+        onClick = onClick,
+        enabled = habilitado,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary
+        ),
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Text(texto)
+    }
+}
+
+/**
+ * Botón secundario — borde y texto = outline (no "secondary": ese color
+ * se reserva para logo/menús y no siempre tiene contraste suficiente
+ * aquí, según lo comprobado).
+ * Úsalo para acciones alternativas (cancelar, volver, otra opción válida).
+ */
+@Composable
+fun BotonSecundario(
+    texto: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    habilitado: Boolean = true
+) {
+    OutlinedButton(
+        onClick = onClick,
+        enabled = habilitado,
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = MaterialTheme.colorScheme.outline
+        ),
+        border = ButtonDefaults.outlinedButtonBorder(enabled = habilitado).copy(
+            brush = SolidColor(MaterialTheme.colorScheme.outline)
+        ),
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Text(texto)
+    }
+}
+
+/**
+ * Botón ghost — fondo CorGhost (verde), texto negro. Color fijo, igual
+ * en ambos temas (no forma parte del ColorScheme, se aplica directo).
+ * Úsalo para acciones de menor peso visual (omitir, opcional).
+ */
+@Composable
+fun BotonGhost(
+    texto: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    habilitado: Boolean = true
+) {
+    Button(
+        onClick = onClick,
+        enabled = habilitado,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = CorGhost,
+            contentColor = Color.Black
+        ),
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Text(texto)
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ScaffoldBase() {
+
+    var pantallaSeleccionada by rememberSaveable { mutableIntStateOf(0) }
+
+    val itemsNavegacion = listOf(
+        ItemNavegacion(0, "Inicio", { Iconas.Inicio() } ),
+        ItemNavegacion(1, "Perfil", { Iconas.Perfil() }  ),
+        ItemNavegacion(2, "Ajustes", { Iconas.Axustes() } ),
+        ItemNavegacion(3, "Mapa", { Iconas.Mapa() } ),
+        ItemNavegacion(4, "Dados", { Iconas.Idioma() } ),//EEHHHHHHHHHH
+        ItemNavegacion( 5, "Animacions", { Iconas.OlloAberto() } )
+    )
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                windowInsets = WindowInsets( 0, 0, 0, 0 ),
+                title  = {
+                    Image(
+                        painter = painterResource( R.drawable.logo ),
+                        modifier = Modifier.size( 24.dp ),
+                        contentDescription = stringResource( R.string.nome_app )
+                    )
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            // abrir configuración
+                            exitProcess( 0 )
+                        }
+                    ) {
+                        Iconas.Axustes()
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
+                )
+            )
+        },
+        bottomBar = {
+            NavigationBar( windowInsets = WindowInsets( 0, 0, 0, 0 ) ) {
+                itemsNavegacion.forEach { item ->
+                    NavigationBarItem(
+                        selected = pantallaSeleccionada == item.index,
+                        onClick = { pantallaSeleccionada = item.index },
+                        icon = { item.icono() }, // ya no hace falta Icon(...)
+                        label = { Text(item.etiqueta) }
+                    )
+                }
+            }
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { /* acción principal */ },
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary
+            ) {
+                Iconas.Engadir()//Icon(Icons.Filled.Add, contentDescription = "Añadir")
+            }
+        }
+    ) { paddingInterno ->
+
+        // Contenido dinámico según el menú/barra seleccionada
+        Box( modifier = Modifier.padding(paddingInterno ).padding( start = 5.dp ) ) {
+
+            when (pantallaSeleccionada) {
+                0 -> ProbaTraducions()
+                1 -> ProbaActividade()
+                2 -> ContenidoPrueba()
+                3 -> DebuxarInferface()
+                4 -> RevisarIdioma()
+                5 -> MirarAnimacions()
+            }
+        }
+
+    }
+
+}
+
+@Composable
+fun MirarAnimacions() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(24.dp)
+    ) {
+
+        SeccionAnimacion("AnimatedVisibility — fadeIn/fadeOut") { activo ->
+            AnimatedVisibility(
+                visible = activo,
+                enter = fadeIn(tween(600)),
+                exit = fadeOut(tween(600))
+            ) { CasillaDemo("Fade") }
+        }
+
+        SeccionAnimacion("AnimatedVisibility — scaleIn") { activo ->
+            AnimatedVisibility(
+                visible = activo,
+                enter = scaleIn(initialScale = 0.3f, animationSpec = tween(600)),
+                exit = scaleOut(targetScale = 0.3f, animationSpec = tween(600))
+            ) { CasillaDemo("Scale") }
+        }
+
+        SeccionAnimacion("AnimatedVisibility — slideInHorizontally") { activo ->
+            AnimatedVisibility(
+                visible = activo,
+                enter = slideInHorizontally(animationSpec = tween(600)) { it },
+                exit = slideOutHorizontally(animationSpec = tween(600)) { it }
+            ) { CasillaDemo("Slide") }
+        }
+
+        SeccionAnimacion("AnimatedVisibility — expandVertically") { activo ->
+            AnimatedVisibility(
+                visible = activo,
+                enter = expandVertically(animationSpec = tween(600)),
+                exit = shrinkVertically(animationSpec = tween(600))
+            ) { CasillaDemo("Expand") }
+        }
+
+        SeccionAnimacion("AnimatedVisibility — combinada") { activo ->
+            AnimatedVisibility(
+                visible = activo,
+                enter = fadeIn(tween(600)) + scaleIn(initialScale = 0.5f, animationSpec = tween(600)),
+                exit = fadeOut(tween(600)) + scaleOut(targetScale = 0.5f, animationSpec = tween(600))
+            ) { CasillaDemo("Combo") }
+        }
+
+        SeccionAnimacion("animateFloatAsState — opacidad") { activo ->
+            val alpha by animateFloatAsState(
+                targetValue = if (activo) 1f else 0f,
+                animationSpec = tween(800), label = "alpha"
+            )
+            CasillaDemo("Alpha", modifier = Modifier.graphicsLayer { this.alpha = alpha })
+        }
+
+        SeccionAnimacion("animateColorAsState") { activo ->
+            val color by animateColorAsState(
+                targetValue = if (activo) MaterialTheme.colorScheme.primary
+                else MaterialTheme.colorScheme.secondary,
+                animationSpec = tween(800), label = "color"
+            )
+            CasillaDemo("Color", colorFondo = color)
+        }
+
+        SeccionAnimacion("animateDpAsState — spring (rebote)") { activo ->
+            val tamano by animateDpAsState(
+                targetValue = if (activo) 80.dp else 40.dp,
+                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+                label = "tamano"
+            )
+            Box(
+                modifier = Modifier
+                    .size(tamano)
+                    .background(MaterialTheme.colorScheme.secondary, RoundedCornerShape(8.dp))
+            )
+        }
+
+        SeccionAnimacion("updateTransition — color + tamaño coordinados") { activo ->
+            val transicion = updateTransition(activo, label = "coordinada")
+            val tamano by transicion.animateDp(label = "tamano_t") { if (it) 80.dp else 40.dp }
+            val color by transicion.animateColor(label = "color_t") {
+                if (it) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+            }
+            Box(
+                modifier = Modifier
+                    .size(tamano)
+                    .background(color, RoundedCornerShape(12.dp))
+            )
+        }
+
+        SeccionAnimacion("Cascada con delay (5 iconos)") { activo ->
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                repeat(5) { index ->
+                    AnimatedVisibility(
+                        visible = activo,
+                        enter = fadeIn(tween(400, delayMillis = index * 150)),
+                        exit = fadeOut(tween(200))
+                    ) { CasillaDemo("${index + 1}") }
+                }
+            }
+        }
+
+        ProbarSwitch()
+
+    }
+
+}
+
+@Composable
+fun ProbarSwitch() {
+    var activado by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(24.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = if (activado) "Activado" else "Desactivado",
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            Switch(
+                checked = activado,
+                onCheckedChange = {
+                    activado = it
+                }
+            )
+        }
+
+        // Algo que fuerce recomposición al cambiar
+        AnimatedVisibility(visible = activado) {
+            Card {
+                Text(
+                    text = "Contenido visible",
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+        }
+
+        Spacer( Modifier.padding( 20.dp ) )
+
+    }
+}
+
+@Composable
+private fun SeccionAnimacion(titulo: String, contenido: @Composable (activo: Boolean) -> Unit) {
+    var activo by remember { mutableStateOf(false) }
+
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(titulo, style = MaterialTheme.typography.labelLarge, color = Color.Gray)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Button(onClick = { activo = !activo }) {
+                Text(if (activo) "◀ Volver" else "▶ Reproducir")
+            }
+            contenido(activo)
+        }
+    }
+}
+
+@Composable
+private fun CasillaDemo(
+    texto: String,
+    modifier: Modifier = Modifier,
+    colorFondo: Color = MaterialTheme.colorScheme.secondary
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .size(60.dp)
+            .background(colorFondo, RoundedCornerShape(8.dp))
+    ) {
+        Text(texto, color = MaterialTheme.colorScheme.onSecondary)
+    }
+}
+
+@Composable
+fun ProbaTraducions() {
+
+    var idiomaActual by remember { mutableStateOf(Localizacion.collerIdioma() ) }
+    val esGalego = idiomaActual.startsWith( "gl" )
+
+    Column( modifier = Modifier.padding( 6.dp ) ) {
+
+        Text(
+            text = Localizacion.l10n("carla", "test")
+        )
+
+        Text(
+            text = Localizacion.l10n( "natasha", "test" ),
+            style = Fontes.cabeceira1
+        )
+
+        Text(
+            text = Localizacion.l10nPlural("mensajes_nuevos", 1, "test" )
+        )
+
+        Text(
+            text = Localizacion.l10nPlural("mensajes_nuevos", 5, "test" )
+        )
+
+        Text(
+            text = Localizacion.l10nPlural("mensajes_nuevos", 0, "test" )
+        )
+
+        Text(
+            text = Localizacion.l10nPlural("mensajes_nuevos", 100, "test" )
+        )
+
+        HorizontalDivider( modifier = Modifier.padding( vertical = 10.dp ), color = MaterialTheme.colorScheme.primary )
+
+        Text(
+            text = buildAnnotatedString {
+
+                append("Idioma actual: ")
+
+                withStyle(
+                    style = SpanStyle(
+                        fontWeight = FontWeight.Bold
+                    )
+                ) {
+                    append( if (esGalego) "Galego" else "Castellano" )
+                }
+
+            },
+            style = MaterialTheme.typography.titleMedium
+        )
+
+        Button(
+            onClick = {
+                val nuevoIdioma = if (esGalego) "es-ES" else "gl-ES"
+                Localizacion.gardar(nuevoIdioma)
+                idiomaActual = nuevoIdioma
+            },
+            modifier = Modifier.fillMaxWidth().padding( top = 10.dp )
+        ) {
+            Text(
+                text = if (esGalego) "Cambiar a Castellano" else "Mudar a Galego"
+            )
+        }
+
+    }
+
+}
+
+@Composable
+fun ProbaActividade() {
+
+    Column( modifier = Modifier.padding( 6.dp ).verticalScroll( rememberScrollState() ) ) {
+
+        for ( i in 0..10 ) {
+
+            val acertos = 10 - i
+
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(
+                        SpanStyle(fontWeight = FontWeight.Bold)
+                    ) {
+                        append( "$acertos - " )
+                    }
+
+                    append( Localizacion.l10nPlural("mensaxe_fallos", i , "test" ) )
+
+                },
+                style = Fontes.paragrafoNormal, modifier = Modifier.padding( bottom = 10.dp )
+            )
+
+        }
+
+    }
+
+}
+
+// =====================================================================
+// CUERPO DE PRUEBA — botones (principal/secundario/ghost) + input con
+// sus 3 estados, para validar visualmente el tema completo
+// =====================================================================
+@Composable
+private fun ContenidoPrueba(modifier: Modifier = Modifier) {
+    var textoInput by remember { mutableStateOf("") }
+    var estadoInput by remember { mutableStateOf(EstadoInput.NORMAL) }
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(24.dp)
+            .verticalScroll( rememberScrollState() ),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        Text("Botones", style = MaterialTheme.typography.titleMedium)
+
+        BotonPrincipal(texto = "Botón principal", onClick = { })
+        BotonSecundario(texto = "Botón secundario", onClick = { })
+        BotonGhost(texto = "Botón ghost", onClick = { })
+
+        HorizontalDivider( modifier = Modifier.padding( vertical = 8.dp ), color = MaterialTheme.colorScheme.primary )
+
+        Text("Input con estados", style = MaterialTheme.typography.titleMedium)
+
+        // Selector rápido de estado, solo para esta pantalla de prueba
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            EstadoInput.entries.forEach { estado ->
+                FilterChip(
+                    selected = estadoInput == estado,
+                    onClick = { estadoInput = estado },
+                    label = { Text(estado.etiqueta) }
+                )
+            }
+        }
+
+        val colorBorde = when (estadoInput) {
+            EstadoInput.NORMAL -> MaterialTheme.colorScheme.outline
+            EstadoInput.ERROR -> MaterialTheme.colorScheme.error
+            EstadoInput.EXITO -> CorExito
+        }
+
+        OutlinedTextField(
+            value = textoInput,
+            onValueChange = { textoInput = it },
+            label = { Text( "Campo de ejemplo" ) },
+            isError = estadoInput == EstadoInput.ERROR,
+            supportingText = {
+                when (estadoInput) {
+                    EstadoInput.ERROR -> Text(
+                        "Este campo tiene un error",
+                        color = MaterialTheme.colorScheme.error
+                    )
+                    EstadoInput.EXITO -> Text("Campo válido", color = CorExito)
+                    EstadoInput.NORMAL -> Text( "EHHHHHHHH", color = CorExito )
+                }
+            },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = colorBorde,
+                unfocusedBorderColor = colorBorde,
+                errorBorderColor = MaterialTheme.colorScheme.error,
+
+                focusedLabelColor = MaterialTheme.colorScheme.onBackground,
+                unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
+                errorLabelColor = MaterialTheme.colorScheme.onBackground
+            ),
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
+}
+
+private enum class EstadoInput(val etiqueta: String) {
+    NORMAL("Normal"),
+    ERROR("Error"),
+    EXITO("Éxito")
+}
+
+@Composable
+fun RevisarIdioma() {
+
+    var resultadoDados by rememberSaveable { mutableStateOf<List<String>>(emptyList()) }
+    var cantidadeDados by rememberSaveable { mutableIntStateOf( 3 ) }
+
+    val iconos = remember { listarIconasActividades().toList() }
+
+    var amosarLista by rememberSaveable { mutableStateOf(false) }
+
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive( minSize = 64.dp ),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        contentPadding = PaddingValues(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+
+        item(
+            span = { GridItemSpan(maxLineSpan) }
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Button(
+                    onClick = { cantidadeDados-- },
+                    enabled = cantidadeDados > 3
+                ) {
+                    Text("-")
+                }
+
+                Text( cantidadeDados.toString() )
+
+                Button(
+                    onClick = { cantidadeDados++ },
+                    enabled = cantidadeDados < 10
+                ) {
+                    Text("+")
+                }
+            }
+        }
+
+        item(
+            span = { GridItemSpan(maxLineSpan) }
+        ) {
+
+            val paddingInferior = if ( resultadoDados.isEmpty() ) 0.dp else 10.dp
+
+            Button(
+                onClick = {
+                    resultadoDados = lanzarDados( cantidadeDados )
+                },
+                modifier = Modifier.fillMaxWidth().padding( bottom = paddingInferior )
+            ) {
+
+                Text( text = "Lanzar dados" )
+
+            }
+
+        }
+
+        items( resultadoDados ) { icono ->
+            Iconas.CasillaIcono( icono )
+        }
+
+        // Separador / botón desplegable
+        item(
+            span = { GridItemSpan( maxLineSpan ) }
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 10.dp),
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+                Button(
+                    onClick = { amosarLista = !amosarLista }
+                ) {
+
+                    Text(
+                        text = if ( amosarLista )
+                            "Tirar lista completa"
+                        else
+                            "Ver lista completa"
+                    )
+
+                }
+
+            }
+        }
+
+        if ( amosarLista ) {
+            items( iconos ) { icono ->
+                PantallaPruebaIconas( icono )
+            }
+        }
+
+    }
+
+}

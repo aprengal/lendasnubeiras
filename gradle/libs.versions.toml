@@ -1,0 +1,57 @@
+[versions]
+agp = "9.3.1"
+coreKtx = "1.19.0"
+coreSplashscreen = "1.2.0"
+junit = "4.13.2"
+lifecycleRuntimeKtx = "2.11.0"
+activityCompose = "1.13.0"
+kotlin = "2.4.10"
+composeBom = "2026.06.01"
+foundationLayout = "1.11.4"
+material = "1.14.0"
+robolectric = "4.16.1"
+runtime = "1.0.0-beta01"
+coreKtxVersion = "1.7.0"
+appcompatResources = "1.7.1"
+uiGraphics = "1.11.4"
+runtimeVersion = "1.11.4"
+ui = "1.11.4"
+material3 = "1.4.0"
+appcompat = "1.7.1"
+foundation = "1.11.4"
+uiText = "1.11.4"
+animationCore = "1.11.4"
+animation = "1.11.4"
+
+[libraries]
+androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
+androidx-runtime = { group = "androidx.xr.runtime", name = "runtime", version.ref = "runtime" }
+core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "coreKtxVersion" }
+material = { module = "com.google.android.material:material", version.ref = "material" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+androidx-appcompat-resources = { group = "androidx.appcompat", name = "appcompat-resources", version.ref = "appcompatResources" }
+androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "uiGraphics" }
+androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "runtimeVersion" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
+androidx-compose-ui-text = { group = "androidx.compose.ui", name = "ui-text", version.ref = "uiText" }
+androidx-compose-animation-core = { group = "androidx.compose.animation", name = "animation-core", version.ref = "animationCore" }
+androidx-compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "animation" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+

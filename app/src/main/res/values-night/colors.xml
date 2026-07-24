@@ -1,0 +1,4 @@
+<resources>
+    <!-- Color de fondo para el modo oscuro -->
+    <item name="splash_background" type="color">#CCCCCC</item>
+</resources>

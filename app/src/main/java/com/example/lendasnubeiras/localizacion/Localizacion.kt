@@ -26,9 +26,9 @@ object Localizacion {
 
         appContext = contexto
         val prefs = appContext.getSharedPreferences( "prefs_idioma", Context.MODE_PRIVATE )
-        val idiomaGardado = prefs.getString( "IDIOMA", "es-ES" ) ?: "es-ES"
+        val idiomaGardado = prefs.getString( "IDIOMA", "es_ES" ) ?: "es_ES"
 
-        idiomaActual = if ( idiomaGardado in IDIOMAS_SOPORTADOS ) idiomaGardado else "es-ES"
+        idiomaActual = if ( idiomaGardado in IDIOMAS_SOPORTADOS ) idiomaGardado else "es_ES"
 
     }
 

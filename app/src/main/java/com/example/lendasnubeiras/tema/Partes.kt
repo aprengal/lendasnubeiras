@@ -45,8 +45,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
@@ -86,6 +84,24 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Switch
 import androidx.compose.ui.graphics.graphicsLayer
 import kotlin.system.exitProcess
+
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.LocaleSpan
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Icon
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.fromHtml
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.intl.LocaleList
 
 // =====================================================================
 // SCAFFOLD BASE — estructura de referencia para asentar el estilo
@@ -508,8 +524,8 @@ fun ProbaTraducions() {
 
         Button(
             onClick = {
-                val nuevoIdioma = if (esGalego) "es-ES" else "gl-ES"
-                Localizacion.gardar(nuevoIdioma)
+                val nuevoIdioma = if (esGalego) "es_ES" else "gl_ES"
+                Localizacion.gardarIdioma( nuevoIdioma )
                 idiomaActual = nuevoIdioma
             },
             modifier = Modifier.fillMaxWidth().padding( top = 10.dp )

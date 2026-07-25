@@ -21,10 +21,10 @@ import com.example.lendasnubeiras.tema.ScaffoldBase
 
 class Entrada : ComponentActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate( savedInstanceState: Bundle?) {
         installSplashScreen()
         enableEdgeToEdge()
-        super.onCreate(savedInstanceState)
+        super.onCreate( savedInstanceState )
         hideSystemUI()
 
         Localizacion.arrancar( applicationContext )

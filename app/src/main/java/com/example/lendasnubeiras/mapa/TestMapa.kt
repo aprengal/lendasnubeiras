@@ -23,7 +23,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 import androidx.compose.runtime.getValue
@@ -37,7 +36,6 @@ import com.example.lendasnubeiras.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-@Preview(showBackground = true)
 @Composable
 fun MapaMundial() {
 

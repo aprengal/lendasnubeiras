@@ -1,20 +1,20 @@
 package com.example.lendasnubeiras.localizacion
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
-import org.json.JSONObject
 import androidx.core.content.edit
+import org.json.JSONObject
+import java.io.FileNotFoundException
 
 object Localizacion {
 
     private lateinit var appContext: Context
 
-    private val IDIOMAS_SOPORTADOS = setOf( "es-ES", "gl-ES", "en-EN" )
+    private val IDIOMAS_SOPORTADOS = setOf( "es_ES", "gl_ES", "en_GB" )
 
-    private val traducions = mutableMapOf<String, MutableMap<String, MutableMap<String, String>>>()
+    private val traducions = mutableMapOf<String, MutableMap<String, String>>()
 
-    private val traducionsPlurais = mutableMapOf<String, MutableMap<String, MutableMap<String, Map<String, String>>>>()
+    private val traducionsPlurais = mutableMapOf<String, MutableMap<String, Map<String, String>>>()
 
     private const val PENDENTE = "PENDENTE!!"
 
@@ -25,40 +25,58 @@ object Localizacion {
         if ( ::appContext.isInitialized || ::idiomaActual.isInitialized ) { return }
 
         appContext = contexto
-
         val prefs = appContext.getSharedPreferences( "prefs_idioma", Context.MODE_PRIVATE )
-        val idiomaGuardado = prefs.getString( "IDIOMA", "es-ES" ) ?: "es-ES"
+        val idiomaGardado = prefs.getString( "IDIOMA", "es-ES" ) ?: "es-ES"
 
-        idiomaActual = if ( idiomaGuardado in IDIOMAS_SOPORTADOS ) {
-            idiomaGuardado
-        } else {
-            "es-ES"
-        }
+        idiomaActual = if ( idiomaGardado in IDIOMAS_SOPORTADOS ) idiomaGardado else "es-ES"
 
     }
 
-    private fun cargarDominio( codigoIdioma: String, dominio: String ): Boolean {
+    fun collerIdioma(): String {
+        return idiomaActual
+    }
 
-        var resultado = false
+    fun gardarIdioma( novoIdioma: String ) {
 
-        if ( idiomaActual == codigoIdioma && traducions[ codigoIdioma ]?.containsKey( dominio ) == true ) {
-            return true
+        if ( idiomaActual == novoIdioma || novoIdioma !in IDIOMAS_SOPORTADOS ) return
+
+        idiomaActual = novoIdioma
+
+        val prefs = appContext.getSharedPreferences( "prefs_idioma", Context.MODE_PRIVATE )
+        prefs.edit { putString( "IDIOMA", novoIdioma ) }
+
+        traducions.clear()
+        traducionsPlurais.clear()
+
+    }
+
+    private fun collerArquivoIdioma( dominio: String ): String {
+
+        val carpeta = "cadeas/$dominio"
+        val arquivoBase = "$dominio-${ idiomaActual.substringBefore( '_' ) }.json"
+        val arquivoRexion = "$dominio-$idiomaActual.json"
+
+        val arquivos = appContext.assets.list( carpeta )!!
+
+        val direccionArquivo = if (arquivoBase in arquivos) arquivoBase else arquivoRexion
+        val ruta = "$carpeta/$direccionArquivo"
+
+        return appContext.assets.open( ruta ).bufferedReader().use { it.readText() }
+
+    }
+
+    private fun cargarDominio( dominio: String ) {
+
+        if ( traducions.containsKey( dominio ) ) {
+            return
         }
 
         try {
 
-            val path = "cadeas/$dominio/${dominio}_$codigoIdioma.json"
-            val jsonString = appContext.assets.open(path ).bufferedReader().use { it.readText() }
+            val jsonString = collerArquivoIdioma( dominio )
             val jsonObject = JSONObject( jsonString )
 
-            var dominioMap = traducions[ codigoIdioma ]
-
-            if ( dominioMap == null ) {
-                dominioMap = mutableMapOf()
-                traducions[ codigoIdioma ] = dominioMap
-            }
-
-            val claveValorMap = mutableMapOf<String, String>()
+            val dominioMap = traducions.getOrPut( dominio ) { mutableMapOf() }
             val claves = jsonObject.keys()
 
             while ( claves.hasNext() ) {
@@ -69,120 +87,56 @@ object Localizacion {
                 if ( valor is JSONObject ) {
 
                     val mapaPlural = mutableMapOf<String, String>()
-
                     val clavesPlural = valor.keys()
 
-                    while (clavesPlural.hasNext()) {
+                    while ( clavesPlural.hasNext() ) {
                         val clavePlural = clavesPlural.next()
-                        mapaPlural[clavePlural] = valor.getString(clavePlural)
+                        mapaPlural[clavePlural] = valor.getString( clavePlural )
                     }
 
-                    var pluralIdiomaMap = traducionsPlurais[codigoIdioma]
-
-                    if (pluralIdiomaMap == null) {
-                        pluralIdiomaMap = mutableMapOf()
-                        traducionsPlurais[codigoIdioma] = pluralIdiomaMap
-                    }
-
-                    var pluralDominioMap = pluralIdiomaMap[dominio]
-
-                    if (pluralDominioMap == null) {
-                        pluralDominioMap = mutableMapOf()
-                        pluralIdiomaMap[dominio] = pluralDominioMap
-                    }
-
-                    pluralDominioMap[clave] = mapaPlural
+                    val pluralDominioMap = traducionsPlurais.getOrPut(dominio ) { mutableMapOf() }
+                    pluralDominioMap[ clave ] = mapaPlural
 
                 } else {
-
-                    claveValorMap[clave] = valor.toString()
-
+                    dominioMap[ clave ] = valor.toString()
                 }
 
             }
 
-            dominioMap[ dominio ] = claveValorMap
-
-            idiomaActual = codigoIdioma
-
-            dominioMap[ dominio ] = claveValorMap
-
-            resultado = true
-
-        } catch ( e: Exception ) {
-            e.printStackTrace()
+        } catch ( _: FileNotFoundException ) {
+            Log.d( "IDIOMA", "O dominio $dominio non existe para o idioma $idiomaActual" )
         }
-
-        return resultado
-
-    }
-
-    fun l10n( indice: String, dominio: String = "base" ): String {
-
-        cargarDominio( idiomaActual, dominio )
-
-        return traducions[ idiomaActual ]?.get( dominio )?.get( indice ) ?: PENDENTE
-
-    }
-
-    fun collerIdioma(): String {
-        return idiomaActual
-    }
-
-    fun gardar( langCode: String ) {
-
-        Log.d( "MERDAZA", langCode )
-        if ( idiomaActual == langCode || langCode !in IDIOMAS_SOPORTADOS ) { Log.d( "MEH", "non" )
-            return }
-
-        idiomaActual = langCode
-
-        val prefs = appContext.getSharedPreferences( "prefs_idioma", Context.MODE_PRIVATE )
-        prefs.edit { putString( "IDIOMA", langCode ) }
-
-        traducions.clear()
-        traducionsPlurais.clear()
-
-    }
-
-    fun l10nPlural( indice: String, num: Int, dominio: String = "base"): String {
-
-        cargarDominio( idiomaActual, dominio )
-
-        val idiomaMap = traducionsPlurais[ idiomaActual ]
-
-        if ( idiomaMap != null ) {
-
-            val dominioMap = idiomaMap[ dominio ]
-
-            if ( dominioMap != null ) {
-
-                val listaPlurais: Map<String, String>? = dominioMap[ indice ]
-
-                if ( listaPlurais != null ) {
-
-                    val clavePlural: String = when {
-                        listaPlurais.containsKey(num.toString()) -> num.toString()
-                        num == 1 -> "s"
-                        else -> "pl"
-                    }
-
-                    return String.format( listaPlurais[ clavePlural ] ?: PENDENTE, num )
-
-                }
-
-            }
-
-        }
-
-        return PENDENTE
 
     }
 
     fun quitarDominio( dominio: String ) {
+        traducions.remove( dominio )
+        traducionsPlurais.remove( dominio )
+    }
 
-        traducions[ idiomaActual ]?.remove( dominio )
-        traducionsPlurais[ idiomaActual ]?.remove( dominio )
+    fun l10n( indice: String, dominio: String ): String {
+        cargarDominio( dominio )
+        return traducions[ dominio ]?.get( indice ) ?: PENDENTE
+    }
+
+    fun l10nPlural( indice: String, num: Int, dominio: String ): String {
+
+        cargarDominio( dominio )
+        val listaPlurais = traducionsPlurais[ dominio ]?.get( indice )
+
+        if ( listaPlurais != null ) {
+
+            val clavePlural = when {
+                listaPlurais.containsKey( num.toString() ) -> num.toString()
+                num == 1 -> "s"
+                else -> "pl"
+            }
+
+            return String.format( listaPlurais[ clavePlural ] ?: PENDENTE, num )
+
+        }
+
+        return PENDENTE
 
     }
 

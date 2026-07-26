@@ -1,4 +1,4 @@
-package com.example.lendasnubeiras
+package com.example.lendasnubeiras.tema
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalDensity
+import com.example.lendasnubeiras.R
 
 
 data class ItemNavegacion(

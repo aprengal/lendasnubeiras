@@ -54,11 +54,9 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import com.example.lendasnubeiras.Iconas
-import com.example.lendasnubeiras.Iconas.PantallaPruebaIconas
-import com.example.lendasnubeiras.Iconas.lanzarDados
-import com.example.lendasnubeiras.Iconas.listarIconasActividades
-import com.example.lendasnubeiras.ItemNavegacion
+import com.example.lendasnubeiras.tema.Iconas.PantallaPruebaIconas
+import com.example.lendasnubeiras.tema.Iconas.lanzarDados
+import com.example.lendasnubeiras.tema.Iconas.listarIconasActividades
 
 import com.example.lendasnubeiras.R
 import com.example.lendasnubeiras.localizacion.Localizacion

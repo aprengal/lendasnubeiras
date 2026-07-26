@@ -12,8 +12,7 @@
         android:roundIcon="@mipmap/logo_round"
         android:theme="@style/TemaNubeiro"
         tools:ignore="DataExtractionRules">
-        <profileable android:shell="true"
-            tools:targetApi="29" />
+        <profileable android:shell="true" />
         <activity
             android:name=".Entrada"
             android:exported="true"

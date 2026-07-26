@@ -1,33 +1,32 @@
 package com.example.lendasnubeiras
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.example.lendasnubeiras.localizacion.Localizacion
-import com.example.lendasnubeiras.mapa.MapaMundial
 import com.example.lendasnubeiras.tema.TemaNubeiro
 import com.example.lendasnubeiras.tema.ScaffoldBase
 
-class Entrada : ComponentActivity() {
+class Entrada : AppCompatActivity() {
+
+    override fun attachBaseContext( contexto: Context ) {
+        super.attachBaseContext( contexto )
+        Localizacion.arrancar( contexto )
+    }
 
     override fun onCreate( savedInstanceState: Bundle?) {
+
         installSplashScreen()
         enableEdgeToEdge()
         super.onCreate( savedInstanceState )
         hideSystemUI()
-
-        Localizacion.arrancar( applicationContext )
 
         setContent {
 
@@ -56,19 +55,12 @@ class Entrada : ComponentActivity() {
 
 }
 
-@Composable
-fun DebuxarInferface() {
+fun reiniciarAplicacion( contexto: Context ) {
 
-    //MapaMundial()
+    val intento = contexto.packageManager.getLaunchIntentForPackage( contexto.packageName )
 
-    Column( Modifier.fillMaxSize().padding( top = 0.dp )/*.verticalScroll( rememberScrollState() )*/ ) {
-
-        MapaMundial()
-
-        //Text( text = "peido", modifier = Modifier.padding( 16.dp ), style = MaterialTheme.typography.bodyLarge )
-
-        //MostrarTodosLosEstilos()
-
-    }
+    intento?.addFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK )
+    contexto.startActivity( intento )
+    Runtime.getRuntime().exit( 0 )
 
 }

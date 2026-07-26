@@ -54,7 +54,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import com.example.lendasnubeiras.DebuxarInferface
 import com.example.lendasnubeiras.Iconas
 import com.example.lendasnubeiras.Iconas.PantallaPruebaIconas
 import com.example.lendasnubeiras.Iconas.lanzarDados
@@ -80,28 +79,19 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.Switch
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.key
 import androidx.compose.ui.graphics.graphicsLayer
 import kotlin.system.exitProcess
 
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.style.LocaleSpan
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Icon
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.liveRegion
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.fromHtml
-import androidx.compose.ui.text.intl.Locale
-import androidx.compose.ui.text.intl.LocaleList
+import com.example.lendasnubeiras.accesibilidade.haiLector
+import com.example.lendasnubeiras.mapa.MapaMundial
 
 // =====================================================================
 // SCAFFOLD BASE — estructura de referencia para asentar el estilo
@@ -272,7 +262,7 @@ fun ScaffoldBase() {
                 0 -> ProbaTraducions()
                 1 -> ProbaActividade()
                 2 -> ContenidoPrueba()
-                3 -> DebuxarInferface()
+                3 -> DebuxarMapa()
                 4 -> RevisarIdioma()
                 5 -> MirarAnimacions()
             }
@@ -475,6 +465,10 @@ fun ProbaTraducions() {
 
     var idiomaActual by remember { mutableStateOf(Localizacion.collerIdioma() ) }
     val esGalego = idiomaActual.startsWith( "gl" )
+    var mostrarDialogo by rememberSaveable { mutableStateOf(false) }
+    val contexto = LocalContext.current
+
+    val nuevoIdioma = if (esGalego) "es_ES" else "gl_ES"
 
     Column( modifier = Modifier.padding( 6.dp ) ) {
 
@@ -507,31 +501,56 @@ fun ProbaTraducions() {
 
         Text(
             text = buildAnnotatedString {
-
                 append("Idioma actual: ")
-
-                withStyle(
-                    style = SpanStyle(
-                        fontWeight = FontWeight.Bold
-                    )
-                ) {
-                    append( if (esGalego) "Galego" else "Castellano" )
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append(if (esGalego) "Galego" else "Castellano")
                 }
-
             },
             style = MaterialTheme.typography.titleMedium
         )
 
         Button(
             onClick = {
-                val nuevoIdioma = if (esGalego) "es_ES" else "gl_ES"
-                Localizacion.gardarIdioma( nuevoIdioma )
-                idiomaActual = nuevoIdioma
+                if ( haiLector( contexto ) ) {
+                    mostrarDialogo = true
+                } else {
+                    Localizacion.gardarIdioma(nuevoIdioma, )
+                    idiomaActual = nuevoIdioma
+                }
             },
             modifier = Modifier.fillMaxWidth().padding( top = 10.dp )
         ) {
-            Text(
-                text = if (esGalego) "Cambiar a Castellano" else "Mudar a Galego"
+
+            //val idioma = idiomaActual
+            key( idiomaActual) { //Solución temporal para obrigar a Compose a debuxar textos en botóns
+                Text(text = Localizacion.l10n( "cambio_idioma", "test" ) )
+            }
+        }
+
+        Text(
+            text = Localizacion.l10n("carla", "test")
+        )
+
+        Text( text = Localizacion.l10n( "cambio_idioma", "test" ) )
+
+        if ( mostrarDialogo ) {
+            AlertDialog(
+                onDismissRequest = { mostrarDialogo = false },
+                title = { Text(Localizacion.l10n("titulo_reiniciar", "test" )) },
+                text = { Text(Localizacion.l10n("mensaxe_reiniciar", "test" ) ) },
+                confirmButton = {
+                    TextButton(onClick = {
+                        mostrarDialogo = false
+                        Localizacion.gardarIdioma( nuevoIdioma, reiniciar = true )
+                    } ) {
+                        Text( Localizacion.l10n( "aceptar", "test" ) )
+                    }
+                },
+                dismissButton = {
+                    TextButton( onClick = { mostrarDialogo = false } ) {
+                        Text( Localizacion.l10n( "cancelar", "test" ) )
+                    }
+                }
             )
         }
 
@@ -749,6 +768,23 @@ fun RevisarIdioma() {
                 PantallaPruebaIconas( icono )
             }
         }
+
+    }
+
+}
+
+@Composable
+fun DebuxarMapa() {
+
+    //MapaMundial()
+
+    Column( Modifier.fillMaxSize().padding( top = 0.dp )/*.verticalScroll( rememberScrollState() )*/ ) {
+
+        MapaMundial()
+
+        //Text( text = "peido", modifier = Modifier.padding( 16.dp ), style = MaterialTheme.typography.bodyLarge )
+
+        //MostrarTodosLosEstilos()
 
     }
 

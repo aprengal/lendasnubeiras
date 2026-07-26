@@ -1,8 +1,13 @@
 package com.example.lendasnubeiras.localizacion
 
 import android.content.Context
+import android.content.res.Resources
 import android.util.Log
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
+import androidx.core.os.LocaleListCompat
+import com.example.lendasnubeiras.accesibilidade.haiLector
+import com.example.lendasnubeiras.reiniciarAplicacion
 import org.json.JSONObject
 import java.io.FileNotFoundException
 
@@ -22,13 +27,25 @@ object Localizacion {
 
     fun arrancar( contexto: Context ) {
 
-        if ( ::appContext.isInitialized || ::idiomaActual.isInitialized ) { return }
+        if (::appContext.isInitialized || ::idiomaActual.isInitialized) return
 
         appContext = contexto
-        val prefs = appContext.getSharedPreferences( "prefs_idioma", Context.MODE_PRIVATE )
-        val idiomaGardado = prefs.getString( "IDIOMA", "es_ES" ) ?: "es_ES"
+        idiomaActual = determinarIdioma()
 
-        idiomaActual = if ( idiomaGardado in IDIOMAS_SOPORTADOS ) idiomaGardado else "es_ES"
+        if ( haiLector( contexto ) ) {
+            val idiomaOpcions = LocaleListCompat.forLanguageTags( idiomaActual.replace( "_", "-" ) )
+            AppCompatDelegate.setApplicationLocales( idiomaOpcions )
+        }
+
+    }
+
+    fun determinarIdioma(): String {
+
+        val opcions = appContext.getSharedPreferences( "opcions", Context.MODE_PRIVATE )
+
+        return opcions.getString( "IDIOMA", null ).takeIf { it in IDIOMAS_SOPORTADOS }
+            ?: Resources.getSystem().configuration.locales[ 0 ].toString().takeIf { it in IDIOMAS_SOPORTADOS }
+            ?: "es_ES"
 
     }
 
@@ -36,14 +53,17 @@ object Localizacion {
         return idiomaActual
     }
 
-    fun gardarIdioma( novoIdioma: String ) {
+    fun gardarIdioma( novoIdioma: String, reiniciar: Boolean = false ) {
 
         if ( idiomaActual == novoIdioma || novoIdioma !in IDIOMAS_SOPORTADOS ) return
 
         idiomaActual = novoIdioma
 
-        val prefs = appContext.getSharedPreferences( "prefs_idioma", Context.MODE_PRIVATE )
-        prefs.edit { putString( "IDIOMA", novoIdioma ) }
+        //Actívase commit para que se escriba no ficheiro directamente porque os lectores consumen memoria
+        appContext.getSharedPreferences( "opcions", Context.MODE_PRIVATE )
+            .edit( commit = true ) { putString( "IDIOMA", novoIdioma ) }
+
+        if ( reiniciar ) reiniciarAplicacion( appContext )
 
         traducions.clear()
         traducionsPlurais.clear()

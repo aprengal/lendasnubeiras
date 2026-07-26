@@ -1,8 +1,11 @@
-
 {
-
   "carla": "A aplicación de Carla non funciona",
   "natasha": "Natasha marchou de festa :c",
+  "aceptar": "Aceptar",
+  "cancelar": "Cancelar",
+  "titulo_reiniciar": "FEEEEEEEEESTA",
+  "mensaxe_reiniciar": "Dálle ao lector de pantalla",
+  "cambio_idioma": "Cambiar a castellano",
   "mensajes_nuevos": {
     "s": "Tes %d mensaxe nova",
     "pl": "Tes %d mensaxes novas",

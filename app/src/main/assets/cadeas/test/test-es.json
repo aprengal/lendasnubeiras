@@ -1,6 +1,9 @@
 {
   "carla": "La aplicación de Carla SÍ funciona",
   "natasha": "Y el karma se lo devolvió",
+  "aceptar": "Aceptar",
+  "cancelar": "Cancelar",
+  "cambio_idioma": "Mudar a galego",
   "mensajes_nuevos": {
     "s": "Tienes %d mensaje nuevo",
     "pl": "Tienes %d mensajes nuevos",

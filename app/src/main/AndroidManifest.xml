@@ -8,8 +8,7 @@
     <application
         android:allowBackup="false"
         android:label="@string/nome_app"
-        android:icon="@mipmap/logo"
-        android:roundIcon="@mipmap/logo_round"
+        android:icon="@mipmap/datos_logo"
         android:theme="@style/TemaNubeiro"
         tools:ignore="DataExtractionRules">
         <profileable android:shell="true" />
@@ -30,32 +29,19 @@
             android:exported="true"
             android:theme="@style/TemaNubeiro"
             android:windowSoftInputMode="adjustResize">
-            <intent-filter>
+
+            <intent-filter> <!-- Aplicación -->
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!-- Y AQUÍ pegas el intent-filter para los deeplinks -->
-            <intent-filter>
+            <intent-filter> <!-- Enlaces profundos -->
+
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <!-- Pantalla de Inicio -->
                 <data android:scheme="nubeiras" />
-                <data android:host="inicio" />
-
-                <!-- Pantalla de Axustes -->
-                <data android:scheme="nubeiras" />
-                <data android:host="axustes" />
-
-                <!-- Pantalla de Perfil -->
-                <data android:scheme="nubeiras" />
-                <data android:host="perfil" />
-
-                <!-- Pantalla de Detalle -->
-                <data android:scheme="nubeiras" />
-                <data android:host="detalle" />
 
             </intent-filter>
 

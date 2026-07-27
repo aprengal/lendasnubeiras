@@ -55,7 +55,7 @@ sealed class Pantalla(
     val nome: String,
     val icono: @Composable () -> Unit,
     val contido: @Composable (NavBackStackEntry?) -> Unit = {},
-    val deepLinks: List<NavDeepLink> = emptyList() ) {
+    val enlaces: List<NavDeepLink> = emptyList() ) {
 
     open val ruta: String = this::class.simpleName?.lowercase() ?: ""
 
@@ -66,10 +66,10 @@ sealed class Pantalla(
     }
 
     //TODO: traducir nome da pantalla
-    object Inicio : Pantalla("Inicio" ,{ Iconas.Inicio() }, contido = { ProbaTraducions() }, deepLinks = listOf( navDeepLink { uriPattern = "nubeiras://inicio" } ) )
-    object Perfil : Pantalla("Perfil", { Iconas.Perfil() }, contido = { ProbaActividade() }, deepLinks = listOf( navDeepLink { uriPattern = "nubeiras://perfil" } ) )
-    object Axustes : Pantalla("Axustes", { Iconas.Axustes() }, contido = { ContenidoPrueba() } )
-    object Mapa : Pantalla("Mapa", { Iconas.Mapa() }, contido = { MapaMundial() } )
+    object Inicio : Pantalla("Inicio" ,{ Iconas.Inicio() }, contido = { ProbaTraducions() } )
+    object Perfil : Pantalla("Perfil", { Iconas.Perfil() }, contido = { ProbaActividade() }, enlaces = listOf( navDeepLink { uriPattern = "nubeiras://perfil" } ) )
+    object Axustes : Pantalla("Axustes", { Iconas.Axustes() }, contido = { ContenidoPrueba() }, enlaces = listOf( navDeepLink { uriPattern = "nubeiras://axustes" } ) )
+    object Mapa : Pantalla("Mapa", { Iconas.Mapa() }, contido = { MapaMundial() }, enlaces = listOf( navDeepLink { uriPattern = "nubeiras://mapa" } ) )
     object Idioma : Pantalla("Dados", { Iconas.Idioma() }, contido = { XogoDados() } )
     object Animacions: Pantalla("Animacións", { Iconas.OlloAberto() }, contido = { MirarAnimacions() } )
 
@@ -79,11 +79,11 @@ sealed class Pantalla(
         nome = "Detalles",
         icono = { Iconas.OlloPechado() },
         contido = { entry ->
-            val id = entry?.arguments?.getString( "id" )!!.toInt()
-            val test = entry.arguments?.getString( "test" )!!
+            val id = entry?.arguments?.getString( "id" )?.toIntOrNull() ?: 0
+            val test = entry?.arguments?.getString( "test" ) ?: ""
             PantallaDetalle( id = id, test = test )
         },
-        deepLinks = listOf( navDeepLink { uriPattern = "nubeiras://detalle/{id}/{test}" } )
+        enlaces = listOf( navDeepLink { uriPattern = "nubeiras://detalle/{id}/{test}" } )
     ) {
         override val ruta: String = "${super.ruta}/{id}/{test}"
     }
@@ -234,8 +234,7 @@ fun PantallaPrincipal() {
 
             NavHost(
                 navController = controlador,
-                startDestination = Pantalla.Inicio.ruta,
-
+                startDestination = Pantalla.Inicio.ruta
             ) {
 
                 Pantalla.todas.forEach { pantalla ->
@@ -247,7 +246,7 @@ fun PantallaPrincipal() {
                         arguments = argumentos.map { nome ->
                             navArgument( nome ) { type = NavType.StringType }
                         },
-                        deepLinks = pantalla.deepLinks
+                        deepLinks = pantalla.enlaces
                     ) { backStackEntry ->
                         pantalla.contido( backStackEntry )
                     }

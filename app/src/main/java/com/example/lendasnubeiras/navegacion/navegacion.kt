@@ -3,27 +3,25 @@ package com.example.lendasnubeiras.navegacion
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -44,12 +42,13 @@ import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import com.example.lendasnubeiras.mapa.MapaMundial
 import com.example.lendasnubeiras.tema.ContenidoPrueba
+import com.example.lendasnubeiras.tema.Espazador
 import com.example.lendasnubeiras.tema.Iconas
 import com.example.lendasnubeiras.tema.Logo
 import com.example.lendasnubeiras.tema.MirarAnimacions
 import com.example.lendasnubeiras.tema.ProbaActividade
 import com.example.lendasnubeiras.tema.ProbaTraducions
-import com.example.lendasnubeiras.tema.RevisarIdioma
+import com.example.lendasnubeiras.tema.XogoDados
 
 sealed class Pantalla(
 
@@ -71,7 +70,7 @@ sealed class Pantalla(
     object Perfil : Pantalla("Perfil", { Iconas.Perfil() }, contido = { ProbaActividade() }, deepLinks = listOf( navDeepLink { uriPattern = "nubeiras://perfil" } ) )
     object Axustes : Pantalla("Axustes", { Iconas.Axustes() }, contido = { ContenidoPrueba() } )
     object Mapa : Pantalla("Mapa", { Iconas.Mapa() }, contido = { MapaMundial() } )
-    object Idioma : Pantalla("Dados", { Iconas.Idioma() }, contido = { RevisarIdioma() } )
+    object Idioma : Pantalla("Dados", { Iconas.Idioma() }, contido = { XogoDados() } )
     object Animacions: Pantalla("Animacións", { Iconas.OlloAberto() }, contido = { MirarAnimacions() } )
 
 
@@ -127,14 +126,12 @@ fun PantallaDetalle( id: Int, test: String ) {
             style = MaterialTheme.typography.headlineMedium
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
-
         Text(
             text = "Veces que has pulsado: $contador",
             style = MaterialTheme.typography.bodyLarge
         )
 
-        Spacer( modifier = Modifier.height( 24.dp ) )
+        Espazador( 2 )
 
         Button( onClick = { contador++ } ) {
             Text(text = "Incrementar contador")
@@ -165,56 +162,52 @@ fun PantallaPrincipal() {
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                windowInsets = WindowInsets( 0, 0, 0, 0 ),
-                title  = { Logo() },
-                actions = {
+            Column {
+                TopAppBar(
+                    windowInsets = WindowInsets(0, 0, 0, 0),
+                    title = { Logo() },
+                    actions = {
 
-                    elementosSuperior.forEach { elemento ->
+                        elementosSuperior.forEach { elemento ->
 
-                        val seleccionado = rutaActual == elemento.ruta
+                            val seleccionado = rutaActual == elemento.ruta
 
-                        val colorFondo by animateColorAsState(
-                            targetValue = if ( seleccionado ) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent,
-                            label = "colorFondo"
-                        )
+                            val colorFondo by animateColorAsState(
+                                targetValue = if (seleccionado) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent,
+                                label = "colorFondo"
+                            )
 
-                        val colorTextoIcono by animateColorAsState(
-                            targetValue = if ( seleccionado ) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onPrimary,
-                            label = "colorTextoIcono"
-                        )
+                            IconButton(
+                                onClick = {
+                                    if (!seleccionado) {
 
-                        IconButton(
-                            onClick = {
-                                if ( !seleccionado ) {
+                                        val rutaDestino = when (elemento) {
+                                            is Pantalla.Detalle -> elemento.crearRuta(
+                                                "666",
+                                                "resacón"
+                                            )
 
-                                    val rutaDestino = when ( elemento ) {
-                                        is Pantalla.Detalle -> elemento.crearRuta("666", "resacón" )
-                                        else -> elemento.ruta
+                                            else -> elemento.ruta
+                                        }
+
+                                        controlador.navigate(rutaDestino) {
+                                            launchSingleTop = true
+                                        }
+
                                     }
-
-                                    controlador.navigate( rutaDestino ) {
-                                        launchSingleTop = true
-                                    }
-
-                                }
-                            },
-                            modifier = Modifier.clip(RoundedCornerShape( 12.dp ) ).background( colorFondo )
-                        ) {
-                            CompositionLocalProvider(LocalContentColor provides colorTextoIcono) {
+                                },
+                                modifier = Modifier.clip(RoundedCornerShape(12.dp))
+                                    .background(colorFondo)
+                            ) {
                                 elemento.icono()
                             }
+
                         }
 
                     }
-
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
                 )
-            )
+                HorizontalDivider( thickness = 1.dp, color = MaterialTheme.colorScheme.onSurface )
+            }
         },
         bottomBar = {
             NavigationBar( windowInsets = WindowInsets( 0, 0, 0, 0 ) ) {
@@ -237,11 +230,12 @@ fun PantallaPrincipal() {
     ) { paddingInterno ->
 
         //TODO: revisar padding de start
-        Box( modifier = Modifier.padding( paddingInterno ).padding( start = 10.dp, end = 10.dp ) ) {
+        Column( modifier = Modifier.padding( paddingInterno ).padding( start = 10.dp, end = 10.dp ) ) {
 
             NavHost(
                 navController = controlador,
                 startDestination = Pantalla.Inicio.ruta,
+
             ) {
 
                 Pantalla.todas.forEach { pantalla ->
@@ -264,6 +258,20 @@ fun PantallaPrincipal() {
 
         }
 
+    }
+
+}
+
+@Composable
+fun PantallaBase( contido: @Composable ColumnScope.() -> Unit ) {
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll( rememberScrollState() )
+    ) {
+        Espazador()
+        contido()
     }
 
 }

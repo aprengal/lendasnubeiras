@@ -8,7 +8,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -67,6 +66,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -74,11 +74,11 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.key
 import androidx.compose.ui.graphics.graphicsLayer
-
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.example.lendasnubeiras.accesibilidade.haiLector
+import com.example.lendasnubeiras.navegacion.PantallaBase
 
 // =====================================================================
 // SCAFFOLD BASE — estructura de referencia para asentar el estilo
@@ -93,9 +93,9 @@ import com.example.lendasnubeiras.accesibilidade.haiLector
 // de colores). Se importan/declaran aquí para usarlos directamente.
 // Sustituye este import por el real de tu proyecto cuando los
 // descomentes en tu archivo de colores:
-private val CorExito = Color(0xFF2E7D32)
+private val CorExito = Color( 0xFF2E7D32 )
 
-private val CorGhost = Color(0xFFB6F29A)
+private val CorGhost = Color( 0xFFB6F29A )
 
 /**
  * Botón principal — fondo = primary, texto = onPrimary.
@@ -178,10 +178,8 @@ fun BotonGhost(
 @Composable
 fun Logo() {
 
-    val logo: Int = if ( isSystemInDarkTheme() ) R.drawable.logo_escuro else R.drawable.logo_claro
-
     Image(
-        painter = painterResource( logo ),
+        painter = painterResource( R.drawable.logo ),
         modifier = Modifier.size( 24.dp ),
         contentDescription = stringResource( R.string.nome_app )
     )
@@ -193,7 +191,6 @@ fun MirarAnimacions() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
@@ -305,8 +302,7 @@ fun ProbarSwitch() {
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(24.dp),
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Row(
@@ -337,7 +333,7 @@ fun ProbarSwitch() {
             }
         }
 
-        Spacer( Modifier.padding( 20.dp ) )
+        Espazador( 2 )
 
     }
 }
@@ -386,7 +382,7 @@ fun ProbaTraducions() {
 
     val nuevoIdioma = if (esGalego) "es_ES" else "gl_ES"
 
-    Column( modifier = Modifier.padding( 6.dp ) ) {
+    PantallaBase {
 
         Text(
             text = Localizacion.l10n("carla", "test")
@@ -443,12 +439,6 @@ fun ProbaTraducions() {
             }
         }
 
-        Text(
-            text = Localizacion.l10n("carla", "test")
-        )
-
-        Text( text = Localizacion.l10n( "cambio_idioma", "test" ) )
-
         if ( mostrarDialogo ) {
             AlertDialog(
                 onDismissRequest = { mostrarDialogo = false },
@@ -477,7 +467,7 @@ fun ProbaTraducions() {
 @Composable
 fun ProbaActividade() {
 
-    Column( modifier = Modifier.padding( 6.dp ).verticalScroll( rememberScrollState() ) ) {
+    PantallaBase {
 
         for ( i in 0..10 ) {
 
@@ -509,13 +499,13 @@ fun ProbaActividade() {
 // =====================================================================
 @Composable
 fun ContenidoPrueba(modifier: Modifier = Modifier) {
+
     var textoInput by remember { mutableStateOf("") }
     var estadoInput by remember { mutableStateOf(EstadoInput.NORMAL) }
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(24.dp)
             .verticalScroll( rememberScrollState() ),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
@@ -582,7 +572,7 @@ private enum class EstadoInput(val etiqueta: String) {
 }
 
 @Composable
-fun RevisarIdioma() {
+fun XogoDados() {
 
     var resultadoDados by rememberSaveable { mutableStateOf<List<String>>(emptyList()) }
     var cantidadeDados by rememberSaveable { mutableIntStateOf( 3 ) }
@@ -593,13 +583,16 @@ fun RevisarIdioma() {
 
     LazyVerticalGrid(
         columns = GridCells.Adaptive( minSize = 64.dp ),
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        contentPadding = PaddingValues(12.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy( 8.dp ),
+        verticalArrangement = Arrangement.spacedBy( 8.dp )
     ) {
+
+        item(
+            span = { GridItemSpan(maxLineSpan) }
+        ) {
+            Espazador()
+        }
 
         item(
             span = { GridItemSpan(maxLineSpan) }
@@ -687,4 +680,9 @@ fun RevisarIdioma() {
 
     }
 
+}
+
+@Composable
+fun Espazador( multiplicador: Int = 1 ) {
+    Spacer( modifier = Modifier.height( 10.dp * multiplicador ) )
 }

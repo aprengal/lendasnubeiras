@@ -52,7 +52,7 @@ fun MapaMundial() {
     Box( modifier = Modifier.fillMaxSize() ) {
 
         BoxWithConstraints(
-            modifier = Modifier.fillMaxSize().padding( 16.dp ),
+            modifier = Modifier.fillMaxSize().padding( top = 10.dp, bottom = 5.dp ),
             contentAlignment = Alignment.Center
         ) {
 
@@ -85,8 +85,12 @@ fun MapaMundial() {
 
                                 rexionPulsada = tester.collerRexion( puntoNormalizado ) ?: "Ningunha"
 
-                                //Aquí faríase o cambio se a rexión fose diferente a Ningunha
-                                Log.d( "EHHH", rexionPulsada )
+                                if ( rexionPulsada != "Ningunha" ) {
+
+                                    //Aquí faríase o cambio se a rexión fose diferente a Ningunha
+                                    Log.d( "EHHH", rexionPulsada )
+
+                                }
 
                             }
 
@@ -101,7 +105,6 @@ fun MapaMundial() {
             modifier = Modifier
                 .fillMaxSize()
                 .height(80.dp)
-                .padding(15.dp)
                 .align(Alignment.CenterStart),
             contentAlignment = Alignment.CenterStart
         ) {

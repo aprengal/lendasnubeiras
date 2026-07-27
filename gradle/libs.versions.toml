@@ -12,17 +12,18 @@ material = "1.14.0"
 robolectric = "4.16.1"
 runtime = "1.0.0-beta01"
 coreKtxVersion = "1.7.0"
-appcompatResources = "1.7.1"
+appcompat = "1.7.1"
 uiGraphics = "1.11.4"
 runtimeVersion = "1.11.4"
 ui = "1.11.4"
 material3 = "1.4.0"
-appcompat = "1.7.1"
+
 foundation = "1.11.4"
 uiText = "1.11.4"
 animationCore = "1.11.4"
 animation = "1.11.4"
 navigationCompose = "2.9.8"
+startup = "1.2.0"
 
 [libraries]
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
@@ -41,7 +42,6 @@ androidx-runtime = { group = "androidx.xr.runtime", name = "runtime", version.re
 core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "coreKtxVersion" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
-androidx-appcompat-resources = { group = "androidx.appcompat", name = "appcompat-resources", version.ref = "appcompatResources" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "uiGraphics" }
 androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "runtimeVersion" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
@@ -52,6 +52,7 @@ androidx-compose-ui-text = { group = "androidx.compose.ui", name = "ui-text", ve
 androidx-compose-animation-core = { group = "androidx.compose.animation", name = "animation-core", version.ref = "animationCore" }
 androidx-compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "animation" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+androidx-startup-runtime = { group = "androidx.startup", name = "startup-runtime", version.ref = "startup" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -60,6 +60,12 @@ sealed class Pantalla(
 
     open val ruta: String = this::class.simpleName?.lowercase() ?: ""
 
+    companion object {
+        val todas: List<Pantalla> by lazy {
+            listOf(Inicio, Perfil, Axustes, Mapa, Idioma, Animacions, Detalle)
+        }
+    }
+
     //TODO: traducir nome da pantalla
     object Inicio : Pantalla("Inicio" ,{ Iconas.Inicio() }, contido = { ProbaTraducions() }, deepLinks = listOf( navDeepLink { uriPattern = "nubeiras://inicio" } ) )
     object Perfil : Pantalla("Perfil", { Iconas.Perfil() }, contido = { ProbaActividade() }, deepLinks = listOf( navDeepLink { uriPattern = "nubeiras://perfil" } ) )
@@ -238,7 +244,7 @@ fun PantallaPrincipal() {
                 startDestination = Pantalla.Inicio.ruta,
             ) {
 
-                Pantalla::class.sealedSubclasses.mapNotNull { it.objectInstance }.forEach { pantalla ->
+                Pantalla.todas.forEach { pantalla ->
 
                     val argumentos = pantalla.ruta.split( "/{" ).drop( 1 ).map { it.removeSuffix( "}" ) }
 

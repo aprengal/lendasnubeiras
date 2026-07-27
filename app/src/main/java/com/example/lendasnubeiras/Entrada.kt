@@ -12,7 +12,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.example.lendasnubeiras.localizacion.Localizacion
 import com.example.lendasnubeiras.tema.TemaNubeiro
-import com.example.lendasnubeiras.tema.ScaffoldBase
+import com.example.lendasnubeiras.navegacion.PantallaPrincipal
 
 class Entrada : AppCompatActivity() {
 
@@ -31,7 +31,7 @@ class Entrada : AppCompatActivity() {
         setContent {
 
             TemaNubeiro {
-                ScaffoldBase()
+                PantallaPrincipal()
             }
 
         }

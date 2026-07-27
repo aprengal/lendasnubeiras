@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -23,21 +22,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -57,7 +48,6 @@ import androidx.compose.ui.unit.dp
 import com.example.lendasnubeiras.tema.Iconas.PantallaPruebaIconas
 import com.example.lendasnubeiras.tema.Iconas.lanzarDados
 import com.example.lendasnubeiras.tema.Iconas.listarIconasActividades
-
 import com.example.lendasnubeiras.R
 import com.example.lendasnubeiras.localizacion.Localizacion
 import androidx.compose.animation.animateColor
@@ -75,6 +65,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -83,13 +74,11 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.key
 import androidx.compose.ui.graphics.graphicsLayer
-import kotlin.system.exitProcess
 
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.example.lendasnubeiras.accesibilidade.haiLector
-import com.example.lendasnubeiras.mapa.MapaMundial
 
 // =====================================================================
 // SCAFFOLD BASE — estructura de referencia para asentar el estilo
@@ -186,87 +175,16 @@ fun BotonGhost(
     }
 }
 
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScaffoldBase() {
+fun Logo() {
 
-    var pantallaSeleccionada by rememberSaveable { mutableIntStateOf(0) }
+    val logo: Int = if ( isSystemInDarkTheme() ) R.drawable.logo_escuro else R.drawable.logo_claro
 
-    val itemsNavegacion = listOf(
-        ItemNavegacion(0, "Inicio", { Iconas.Inicio() } ),
-        ItemNavegacion(1, "Perfil", { Iconas.Perfil() }  ),
-        ItemNavegacion(2, "Ajustes", { Iconas.Axustes() } ),
-        ItemNavegacion(3, "Mapa", { Iconas.Mapa() } ),
-        ItemNavegacion(4, "Dados", { Iconas.Idioma() } ),//EEHHHHHHHHHH
-        ItemNavegacion( 5, "Animacions", { Iconas.OlloAberto() } )
+    Image(
+        painter = painterResource( logo ),
+        modifier = Modifier.size( 24.dp ),
+        contentDescription = stringResource( R.string.nome_app )
     )
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                windowInsets = WindowInsets( 0, 0, 0, 0 ),
-                title  = {
-                    Image(
-                        painter = painterResource( R.drawable.logo ),
-                        modifier = Modifier.size( 24.dp ),
-                        contentDescription = stringResource( R.string.nome_app )
-                    )
-                },
-                actions = {
-                    IconButton(
-                        onClick = {
-                            // abrir configuración
-                            exitProcess( 0 )
-                        }
-                    ) {
-                        Iconas.Axustes()
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
-                )
-            )
-        },
-        bottomBar = {
-            NavigationBar( windowInsets = WindowInsets( 0, 0, 0, 0 ) ) {
-                itemsNavegacion.forEach { item ->
-                    NavigationBarItem(
-                        selected = pantallaSeleccionada == item.index,
-                        onClick = { pantallaSeleccionada = item.index },
-                        icon = { item.icono() }, // ya no hace falta Icon(...)
-                        label = { Text(item.etiqueta) }
-                    )
-                }
-            }
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { /* acción principal */ },
-                containerColor = MaterialTheme.colorScheme.secondary,
-                contentColor = MaterialTheme.colorScheme.onSecondary
-            ) {
-                Iconas.Engadir()//Icon(Icons.Filled.Add, contentDescription = "Añadir")
-            }
-        }
-    ) { paddingInterno ->
-
-        // Contenido dinámico según el menú/barra seleccionada
-        Box( modifier = Modifier.padding(paddingInterno ).padding( start = 5.dp ) ) {
-
-            when (pantallaSeleccionada) {
-                0 -> ProbaTraducions()
-                1 -> ProbaActividade()
-                2 -> ContenidoPrueba()
-                3 -> DebuxarMapa()
-                4 -> RevisarIdioma()
-                5 -> MirarAnimacions()
-            }
-        }
-
-    }
 
 }
 
@@ -512,7 +430,7 @@ fun ProbaTraducions() {
                 if ( haiLector( contexto ) ) {
                     mostrarDialogo = true
                 } else {
-                    Localizacion.gardarIdioma(nuevoIdioma, )
+                    Localizacion.gardarIdioma(nuevoIdioma )
                     idiomaActual = nuevoIdioma
                 }
             },
@@ -590,7 +508,7 @@ fun ProbaActividade() {
 // sus 3 estados, para validar visualmente el tema completo
 // =====================================================================
 @Composable
-private fun ContenidoPrueba(modifier: Modifier = Modifier) {
+fun ContenidoPrueba(modifier: Modifier = Modifier) {
     var textoInput by remember { mutableStateOf("") }
     var estadoInput by remember { mutableStateOf(EstadoInput.NORMAL) }
 
@@ -766,23 +684,6 @@ fun RevisarIdioma() {
                 PantallaPruebaIconas( icono )
             }
         }
-
-    }
-
-}
-
-@Composable
-fun DebuxarMapa() {
-
-    //MapaMundial()
-
-    Column( Modifier.fillMaxSize().padding( top = 0.dp )/*.verticalScroll( rememberScrollState() )*/ ) {
-
-        MapaMundial()
-
-        //Text( text = "peido", modifier = Modifier.padding( 16.dp ), style = MaterialTheme.typography.bodyLarge )
-
-        //MostrarTodosLosEstilos()
 
     }
 

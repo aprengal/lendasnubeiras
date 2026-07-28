@@ -1,4 +1,4 @@
-package com.example.lendasnubeiras.tema
+package com.aprengal.lendasnubeiras.tema
 
 import androidx.compose.ui.unit.dp
 

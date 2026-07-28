@@ -24,6 +24,8 @@ animationCore = "1.11.4"
 animation = "1.11.4"
 navigationCompose = "2.9.8"
 startup = "1.2.0"
+uiUnit = "1.11.4"
+cameraCamera2Pipe = "1.6.1"
 
 [libraries]
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
@@ -53,6 +55,8 @@ androidx-compose-animation-core = { group = "androidx.compose.animation", name =
 androidx-compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "animation" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 androidx-startup-runtime = { group = "androidx.startup", name = "startup-runtime", version.ref = "startup" }
+androidx-compose-ui-unit = { group = "androidx.compose.ui", name = "ui-unit", version.ref = "uiUnit" }
+androidx-camera-camera2-pipe = { group = "androidx.camera", name = "camera-camera2-pipe", version.ref = "cameraCamera2Pipe" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

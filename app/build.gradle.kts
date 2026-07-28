@@ -17,12 +17,12 @@ val localProperties = Properties().apply {
 
 android {
 
-    namespace = "com.example.lendasnubeiras"
+    namespace = "com.aprengal.lendasnubeiras"
     compileSdk = 37
 
     defaultConfig {
 
-        applicationId = "com.example.lendasnubeiras"
+        applicationId = "com.aprengal.lendasnubeiras"
         minSdk = 29
         targetSdk = 37
         versionCode = 2
@@ -81,6 +81,7 @@ dependencies {
     implementation( platform(libs.androidx.compose.bom ) )
     implementation( libs.androidx.activity.compose )
     implementation( libs.androidx.appcompat )
+    implementation(libs.androidx.camera.camera2.pipe)
     implementation(libs.androidx.compose.animation)
     implementation(libs.androidx.compose.animation.core)
     implementation(libs.androidx.compose.foundation)
@@ -91,6 +92,7 @@ dependencies {
     implementation( libs.androidx.compose.ui.graphics )
     implementation(libs.androidx.compose.ui.text)
     implementation( libs.androidx.compose.ui.tooling.preview )
+    implementation(libs.androidx.compose.ui.unit)
     implementation( libs.androidx.core.ktx )
     implementation( libs.androidx.lifecycle.runtime.ktx )
     implementation( libs.androidx.material3 )
@@ -113,6 +115,6 @@ dependencies {
 
     //Para quitar a chafallada de iconas de emojis que mete compact
     implementation( libs.androidx.startup.runtime )
-    testImplementation(kotlin("reflect"))
+    testImplementation( kotlin( "reflect" ) )
 
 }

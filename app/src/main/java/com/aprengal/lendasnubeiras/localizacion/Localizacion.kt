@@ -1,4 +1,4 @@
-package com.example.lendasnubeiras.localizacion
+package com.aprengal.lendasnubeiras.localizacion
 
 import android.content.Context
 import android.content.res.Resources
@@ -6,8 +6,8 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
 import androidx.core.os.LocaleListCompat
-import com.example.lendasnubeiras.accesibilidade.haiLector
-import com.example.lendasnubeiras.reiniciarAplicacion
+import com.aprengal.lendasnubeiras.accesibilidade.haiLector
+import com.aprengal.lendasnubeiras.reiniciarAplicacion
 import org.json.JSONObject
 import java.io.FileNotFoundException
 

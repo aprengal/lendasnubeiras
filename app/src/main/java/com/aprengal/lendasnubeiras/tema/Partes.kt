@@ -1,4 +1,4 @@
-package com.example.lendasnubeiras.tema
+package com.aprengal.lendasnubeiras.tema
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -44,11 +44,11 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import com.example.lendasnubeiras.tema.Iconas.PantallaPruebaIconas
-import com.example.lendasnubeiras.tema.Iconas.lanzarDados
-import com.example.lendasnubeiras.tema.Iconas.listarIconasActividades
-import com.example.lendasnubeiras.R
-import com.example.lendasnubeiras.localizacion.Localizacion
+import com.aprengal.lendasnubeiras.tema.Iconas.PantallaPruebaIconas
+import com.aprengal.lendasnubeiras.tema.Iconas.lanzarDados
+import com.aprengal.lendasnubeiras.tema.Iconas.listarIconasActividades
+import com.aprengal.lendasnubeiras.R
+import com.aprengal.lendasnubeiras.localizacion.Localizacion
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
@@ -76,17 +76,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.example.lendasnubeiras.accesibilidade.haiLector
-import com.example.lendasnubeiras.navegacion.PantallaBase
-
-// =====================================================================
-// SCAFFOLD BASE — estructura de referencia para asentar el estilo
-//
-// Incluye: TopAppBar, Drawer lateral, BottomNavigation, FAB, y en el
-// cuerpo: los 3 estilos de botón + un input con sus 3 estados
-// (normal / error / éxito), todo usando MaterialTheme.colorScheme
-// (que ya trae PaletaClara/PaletaEscura) más CorExito/CorGhost sueltos.
-// =====================================================================
+import com.aprengal.lendasnubeiras.accesibilidade.haiLector
+import com.aprengal.lendasnubeiras.navegacion.PantallaBase
 
 // Colores que quedaron fuera del ColorScheme (comentados en tu archivo
 // de colores). Se importan/declaran aquí para usarlos directamente.
@@ -179,7 +170,7 @@ fun Logo() {
 
     Image(
         painter = painterResource( R.drawable.logo ),
-        modifier = Modifier.size( 24.dp ),
+        modifier = Modifier.size( 30.dp ),
         contentDescription = stringResource( R.string.nome_app )
     )
 
@@ -383,83 +374,118 @@ fun ProbaTraducions() {
 
     PantallaBase {
 
-        Text(
-            text = Localizacion.l10n("carla", "test")
-        )
+        item {
 
-        Text(
-            text = Localizacion.l10n( "natasha", "test" ),
-            style = Fontes.cabeceira1
-        )
+            Text(
+                text = Localizacion.l10n("carla", "test")
+            )
 
-        Text(
-            text = Localizacion.l10nPlural("mensajes_nuevos", 1, "test" )
-        )
-
-        Text(
-            text = Localizacion.l10nPlural("mensajes_nuevos", 5, "test" )
-        )
-
-        Text(
-            text = Localizacion.l10nPlural("mensajes_nuevos", 0, "test" )
-        )
-
-        Text(
-            text = Localizacion.l10nPlural("mensajes_nuevos", 100, "test" )
-        )
-
-        HorizontalDivider( modifier = Modifier.padding( vertical = 10.dp ), color = MaterialTheme.colorScheme.primary )
-
-        Text(
-            text = buildAnnotatedString {
-                append("Idioma actual: ")
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                    append(if (esGalego) "Galego" else "Castellano")
-                }
-            },
-            style = MaterialTheme.typography.titleMedium
-        )
-
-        Button(
-            onClick = {
-                if ( haiLector( contexto ) ) {
-                    mostrarDialogo = true
-                } else {
-                    Localizacion.gardarIdioma(nuevoIdioma )
-                    idiomaActual = nuevoIdioma
-                }
-            },
-            modifier = Modifier.fillMaxWidth().padding( top = 10.dp )
-        ) {
-
-            //val idioma = idiomaActual
-            key( idiomaActual) { //Solución temporal para obrigar a Compose a debuxar textos en botóns
-                Text(text = Localizacion.l10n( "cambio_idioma", "test" ) )
-            }
         }
 
-        if ( mostrarDialogo ) {
-            AlertDialog(
-                onDismissRequest = { mostrarDialogo = false },
-                title = { Text(Localizacion.l10n("titulo_reiniciar", "test" )) },
-                text = { Text(Localizacion.l10n("mensaxe_reiniciar", "test" ) ) },
-                confirmButton = {
-                    TextButton(onClick = {
-                        mostrarDialogo = false
-                        Localizacion.gardarIdioma( nuevoIdioma, reiniciar = true )
-                    } ) {
-                        Text( Localizacion.l10n( "aceptar", "test" ) )
-                    }
-                },
-                dismissButton = {
-                    TextButton( onClick = { mostrarDialogo = false } ) {
-                        Text( Localizacion.l10n( "cancelar", "test" ) )
-                    }
-                }
+
+        item {
+            Text(
+                text = Localizacion.l10n("natasha", "test"),
+                style = Fontes.cabeceira1
             )
         }
 
+        item {
+            Text(
+                text = Localizacion.l10nPlural("mensajes_nuevos", 1, "test")
+            )
+        }
+
+        item {
+            Text(
+                text = Localizacion.l10nPlural("mensajes_nuevos", 5, "test")
+            )
+        }
+
+        item {
+            Text(
+                text = Localizacion.l10nPlural("mensajes_nuevos", 0, "test")
+            )
+        }
+
+        item {
+            Text(
+                text = Localizacion.l10nPlural("mensajes_nuevos", 100, "test")
+            )
+        }
+
+        item {
+            HorizontalDivider( modifier = Modifier.padding( vertical = 10.dp ), color = MaterialTheme.colorScheme.primary )
+        }
+
+        item {
+
+            Text(
+                text = buildAnnotatedString {
+                    append("Idioma actual: ")
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append(if (esGalego) "Galego" else "Castellano")
+                    }
+                },
+                style = MaterialTheme.typography.titleMedium
+            )
+
+        }
+
+        item {
+
+            Button(
+                onClick = {
+                    if ( haiLector( contexto ) ) {
+                        mostrarDialogo = true
+                    } else {
+                        Localizacion.gardarIdioma(nuevoIdioma )
+                        idiomaActual = nuevoIdioma
+                    }
+                },
+                modifier = Modifier.fillMaxWidth().padding( top = 10.dp )
+            ) {
+
+                //val idioma = idiomaActual
+                key( idiomaActual) { //Solución temporal para obrigar a Compose a debuxar textos en botóns
+                    Text(text = Localizacion.l10n( "cambio_idioma", "test" ) )
+                }
+            }
+
+        }
+
+        if ( mostrarDialogo ) {
+
+            item {
+
+                AlertDialog(
+                    onDismissRequest = { mostrarDialogo = false },
+                    title = { Text(Localizacion.l10n("titulo_reiniciar", "test" )) },
+                    text = { Text(Localizacion.l10n("mensaxe_reiniciar", "test" ) ) },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            mostrarDialogo = false
+                            Localizacion.gardarIdioma( nuevoIdioma, reiniciar = true )
+                        } ) {
+                            Text( Localizacion.l10n( "aceptar", "test" ) )
+                        }
+                    },
+                    dismissButton = {
+                        TextButton( onClick = { mostrarDialogo = false } ) {
+                            Text( Localizacion.l10n( "cancelar", "test" ) )
+                        }
+                    }
+                )
+
+            }
+
+        }
+
     }
+
+    Text(
+        text = Localizacion.l10n("carla", "test")
+    )
 
 }
 
@@ -472,19 +498,23 @@ fun ProbaActividade() {
 
             val acertos = 10 - i
 
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(
-                        SpanStyle(fontWeight = FontWeight.Bold)
-                    ) {
-                        append( "$acertos - " )
-                    }
+            item {
 
-                    append( Localizacion.l10nPlural("mensaxe_fallos", i , "test" ) )
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(
+                            SpanStyle(fontWeight = FontWeight.Bold)
+                        ) {
+                            append( "$acertos - " )
+                        }
 
-                },
-                style = Fontes.paragrafoNormal, modifier = Modifier.padding( bottom = 10.dp )
-            )
+                        append( Localizacion.l10nPlural("mensaxe_fallos", i , "test" ) )
+
+                    },
+                    style = Fontes.paragrafoNormal, modifier = Modifier.padding( bottom = 10.dp )
+                )
+
+            }
 
         }
 

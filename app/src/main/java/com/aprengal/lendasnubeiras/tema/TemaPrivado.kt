@@ -1,4 +1,4 @@
-package com.example.lendasnubeiras.tema
+package com.aprengal.lendasnubeiras.tema
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,7 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import com.example.lendasnubeiras.R
+import com.aprengal.lendasnubeiras.R
 
 //Constantes relacionadas co tema que non se poden usar directamente noutros arquivos
 

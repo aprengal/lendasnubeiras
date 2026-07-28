@@ -24,7 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
-import com.example.lendasnubeiras.R
+import com.aprengal.lendasnubeiras.R
 
 // 1. Estructura de datos para definir cada región
 data class RegionPoligono(

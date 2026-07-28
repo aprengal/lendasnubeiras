@@ -1,4 +1,4 @@
-package com.example.lendasnubeiras.tema
+package com.aprengal.lendasnubeiras.tema
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,28 +14,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalDensity
-import com.example.lendasnubeiras.R
-
-
-data class ItemNavegacion(
-    val index: Int,
-    val etiqueta: String,
-    val icono: @Composable () -> Unit
-)
+import com.aprengal.lendasnubeiras.R
 
 object Iconas {
 
-    private val fontFamily = FontFamily(
-        Font(R.font.ubuntu_iconas_nerd, FontWeight.Bold)
-    )
+    private val fontFamily = FontFamily( Font( R.font.ubuntu_iconas_nerd, FontWeight.Bold ) )
 
     // Códigos privados: inaccesibles desde fuera
     private const val INICIO      = "\uDB80\uDEDC" // U+F02DC
@@ -87,7 +76,7 @@ object Iconas {
         "\uDB81\uDF8D", "\uDB81\uDD90", "\uDB82\uDC98", "\uDB81\uDD93", "\uDB83\uDF31",
         "\uDB81\uDD96", "\uDB81\uDD97", "\uDB83\uDF36", "\uDB81\uDD9D", "\uDB81\uDDA8",
         "\u0026", "\u0041", "\u0042", "\u0043", "\u0044", "\u0038", "\u00A1", "\u0021",
-        "\u0024", "\u0045", "\u0035", "\u0034", "\u0046", "\u0047", "\u004B", "\u004C",
+        "$", "\u0045", "\u0035", "\u0034", "\u0046", "\u0047", "\u004B", "\u004C",
         "\u0048", "\u0049", "\u004A", "\u004D", "\u0039", "\u00D1", "\u004E", "\u26A1",
         "\u00BD", "\u00BC", "\u0031", "\u004F", "\u0050", "\u0051", "\u0052", "\u0037",
         "\u00BF", "\u003F", "\u0036", "\u0053", "\u00BE", "\u0033", "\u0032", "\u0054",
@@ -96,17 +85,18 @@ object Iconas {
 
     // Función interna reutilizable: crea el Text con la fuente ya aplicada
     @Composable
-    private fun Icona( codigo: String, modifier: Modifier = Modifier, color: Color = LocalContentColor.current, tamanio: TextUnit = 24.sp ) {
+    private fun Icona( codigo: String, modifier: Modifier = Modifier ) {
         Text(
             text = codigo,
             fontFamily = fontFamily,
-            color = color,
-            fontSize = tamanio,
+            color = LocalContentColor.current,
+            fontSize = 20.sp,
+            lineHeight = 1.sp,
             modifier = modifier
         )
     }
 
-    // Funciones públicas: devuelven un Composable, no un String
+    // Funciones públicas
     @Composable
     fun Inicio(modifier: Modifier = Modifier) = Icona(INICIO, modifier )
 

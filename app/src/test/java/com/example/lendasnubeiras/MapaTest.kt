@@ -1,10 +1,10 @@
-package com.example.lendasnubeiras
+package com.aprengal.lendasnubeiras
 
 import android.content.Context
 import androidx.compose.ui.geometry.Offset
 
 import androidx.test.core.app.ApplicationProvider
-import com.example.lendasnubeiras.mapa.SelectorRexion
+import com.aprengal.lendasnubeiras.mapa.SelectorRexion
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 

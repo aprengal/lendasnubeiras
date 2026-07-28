@@ -1,6 +1,6 @@
-package com.example.lendasnubeiras
+package com.aprengal.lendasnubeiras
 
-import com.example.lendasnubeiras.navegacion.Pantalla
+import com.aprengal.lendasnubeiras.navegacion.Pantalla
 import org.junit.Test
 
 import org.junit.Assert.*

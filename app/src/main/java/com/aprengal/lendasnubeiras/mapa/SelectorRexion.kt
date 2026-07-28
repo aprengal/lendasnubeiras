@@ -1,4 +1,4 @@
-package com.example.lendasnubeiras.mapa
+package com.aprengal.lendasnubeiras.mapa
 
 import android.content.Context
 import android.graphics.Canvas

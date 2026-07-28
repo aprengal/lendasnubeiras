@@ -1,4 +1,4 @@
-package com.example.lendasnubeiras.accesibilidade
+package com.aprengal.lendasnubeiras.accesibilidade
 
 import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Context

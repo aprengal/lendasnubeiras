@@ -2,6 +2,7 @@ package com.aprengal.lendasnubeiras.mapa
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.dp
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -49,7 +51,7 @@ fun MapaMundial() {
         }
     }
 
-    Box( modifier = Modifier.fillMaxSize() ) {
+    Box( modifier = Modifier.fillMaxSize().background( Color.Yellow ) ) {
 
         BoxWithConstraints(
             modifier = Modifier.fillMaxSize().padding( top = 10.dp, bottom = 5.dp ),

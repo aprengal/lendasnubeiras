@@ -111,7 +111,7 @@ private val Bordos = Shapes(
     small = RoundedCornerShape( 6.dp ),
     medium = RoundedCornerShape( 8.dp ),   // botóns principal/secundario
     large = RoundedCornerShape( 12.dp ),
-    extraLarge = RoundedCornerShape( 50 )  // botón ghost (circular)
+    extraLarge = RoundedCornerShape( 50.dp )  // botón ghost (circular)
 )
 
 // ============================================================

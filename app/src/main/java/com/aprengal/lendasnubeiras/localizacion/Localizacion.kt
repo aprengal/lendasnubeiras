@@ -11,57 +11,66 @@ import com.aprengal.lendasnubeiras.reiniciarAplicacion
 import org.json.JSONObject
 import java.io.FileNotFoundException
 
+
+//Valorar converter Idioma nun obxecto ou nunha clase selada
+
+enum class Idioma( val nome: String, val codigo: String, val rexion: String, val pendente:String ) {
+
+    GALEGO( "Galego", "gl", "ES", pendente = "PENDENTE!!" ),
+    CASTELAN( "Español", "es", "ES", pendente = "¡PENDIENTE!" ),
+    INGLES( "English", "en", "GB", pendente = "PENDING!!" );
+
+    val codigoRexion: String get() = "{$codigo}_$rexion"
+
+    companion object {
+        fun buscar( etiqueta: String ): Idioma? = entries.find { it.codigoRexion == etiqueta }
+    }
+
+}
+
 object Localizacion {
 
     private lateinit var appContext: Context
 
-    private val IDIOMAS_SOPORTADOS = setOf( "es_ES", "gl_ES", "en_GB" )
-
     private val traducions = mutableMapOf<String, MutableMap<String, String>>()
-
     private val traducionsPlurais = mutableMapOf<String, MutableMap<String, Map<String, String>>>()
 
-    private const val PENDENTE = "PENDENTE!!"
-
-    private lateinit var idiomaActual: String
+    lateinit var idiomaActual: Idioma
+    private set
 
     fun arrancar( contexto: Context ) {
 
-        if (::appContext.isInitialized || ::idiomaActual.isInitialized) return
+        if ( ::appContext.isInitialized || ::idiomaActual.isInitialized ) return
 
         appContext = contexto
         idiomaActual = determinarIdioma()
 
         if ( haiLector( contexto ) ) {
-            val idiomaOpcions = LocaleListCompat.forLanguageTags( idiomaActual.replace( "_", "-" ) )
+            val idiomaOpcions = LocaleListCompat.forLanguageTags( idiomaActual.codigoRexion.replace( "_", "-" ) )
             AppCompatDelegate.setApplicationLocales( idiomaOpcions )
         }
 
     }
 
-    fun determinarIdioma(): String {
+    fun determinarIdioma(): Idioma {
 
         val opcions = appContext.getSharedPreferences( "opcions", Context.MODE_PRIVATE )
 
-        return opcions.getString( "IDIOMA", null ).takeIf { it in IDIOMAS_SOPORTADOS }
-            ?: Resources.getSystem().configuration.locales[ 0 ].toString().takeIf { it in IDIOMAS_SOPORTADOS }
-            ?: "es_ES"
+        return opcions.getString( "IDIOMA", null )?.let { Idioma.buscar( it ) }
+            ?: Resources.getSystem().configuration.locales[ 0 ].toString().let { Idioma.buscar( it ) }
+            ?: Idioma.CASTELAN
 
     }
 
-    fun collerIdioma(): String {
-        return idiomaActual
-    }
+    fun gardarIdioma( novoIdioma: Idioma, reiniciar: Boolean = false ) {
 
-    fun gardarIdioma( novoIdioma: String, reiniciar: Boolean = false ) {
-
-        if ( idiomaActual == novoIdioma || novoIdioma !in IDIOMAS_SOPORTADOS ) return
+        if ( idiomaActual == novoIdioma ) return
 
         idiomaActual = novoIdioma
 
         //Actívase commit para que se escriba no ficheiro directamente porque os lectores consumen memoria
         appContext.getSharedPreferences( "opcions", Context.MODE_PRIVATE )
-            .edit( commit = true ) { putString( "IDIOMA", novoIdioma ) }
+            .edit( commit = true ) { putString( "IDIOMA", novoIdioma.codigoRexion ) }
 
         if ( reiniciar ) reiniciarAplicacion( appContext )
 
@@ -73,12 +82,12 @@ object Localizacion {
     private fun collerArquivoIdioma( dominio: String ): String {
 
         val carpeta = "cadeas/$dominio"
-        val arquivoBase = "$dominio-${ idiomaActual.substringBefore( '_' ) }.json"
-        val arquivoRexion = "$dominio-$idiomaActual.json"
+        val arquivoBase = "$dominio-${ idiomaActual.codigo }.json"
+        val arquivoRexion = "$dominio-${idiomaActual.codigoRexion}}.json"
 
         val arquivos = appContext.assets.list( carpeta )!!
 
-        val direccionArquivo = if (arquivoBase in arquivos) arquivoBase else arquivoRexion
+        val direccionArquivo = if ( arquivoBase in arquivos ) arquivoBase else arquivoRexion
         val ruta = "$carpeta/$direccionArquivo"
 
         return appContext.assets.open( ruta ).bufferedReader().use { it.readText() }
@@ -87,9 +96,7 @@ object Localizacion {
 
     private fun cargarDominio( dominio: String ) {
 
-        if ( traducions.containsKey( dominio ) ) {
-            return
-        }
+        if ( traducions.containsKey( dominio ) ) return
 
         try {
 
@@ -123,8 +130,8 @@ object Localizacion {
 
             }
 
-        } catch ( _: FileNotFoundException ) {
-            Log.d( "IDIOMA", "O dominio $dominio non existe para o idioma $idiomaActual" )
+        } catch ( e: FileNotFoundException ) {
+            Log.w( "IDIOMA", "O dominio $dominio non existe para o idioma $idiomaActual", e )
         }
 
     }
@@ -135,8 +142,14 @@ object Localizacion {
     }
 
     fun l10n( indice: String, dominio: String ): String {
+
         cargarDominio( dominio )
-        return traducions[ dominio ]?.get( indice ) ?: PENDENTE
+
+        return traducions[ dominio ]?.get( indice ) ?: run {
+            Log.w(  "IDIOMA", "Falta a clave '$indice' no dominio '$dominio' para o idioma $idiomaActual" )
+            idiomaActual.pendente
+        }
+
     }
 
     fun l10nPlural( indice: String, num: Int, dominio: String ): String {
@@ -152,11 +165,17 @@ object Localizacion {
                 else -> "pl"
             }
 
-            return String.format( listaPlurais[ clavePlural ] ?: PENDENTE, num )
+            val patron = listaPlurais[ clavePlural ] ?: run {
+                Log.w( "IDIOMA", "Falta a clave plural '$clavePlural' para '$indice' no dominio '$dominio' para o idioma $idiomaActual" )
+                idiomaActual.pendente
+            }
+
+            return String.format( patron, num )
 
         }
 
-        return PENDENTE
+        Log.w( "IDIOMA", "Falta a entrada plural '$indice' no dominio '$dominio' para o idioma $idiomaActual" )
+        return idiomaActual.pendente
 
     }
 

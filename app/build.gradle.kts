@@ -81,7 +81,6 @@ dependencies {
     implementation( platform(libs.androidx.compose.bom ) )
     implementation( libs.androidx.activity.compose )
     implementation( libs.androidx.appcompat )
-    implementation(libs.androidx.camera.camera2.pipe)
     implementation(libs.androidx.compose.animation)
     implementation(libs.androidx.compose.animation.core)
     implementation(libs.androidx.compose.foundation)

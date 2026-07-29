@@ -21,12 +21,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -66,24 +63,23 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.Switch
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.key
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.aprengal.lendasnubeiras.accesibilidade.haiLector
-import com.aprengal.lendasnubeiras.navegacion.PantallaBase
+import com.aprengal.lendasnubeiras.localizacion.Idioma
 
 // Colores que quedaron fuera del ColorScheme (comentados en tu archivo
 // de colores). Se importan/declaran aquí para usarlos directamente.
 // Sustituye este import por el real de tu proyecto cuando los
 // descomentes en tu archivo de colores:
-private val CorExito = Color( 0xFF2E7D32 )
 
 private val CorGhost = Color( 0xFFB6F29A )
 
@@ -365,127 +361,85 @@ private fun CasillaDemo(
 @Composable
 fun ProbaTraducions() {
 
-    var idiomaActual by remember { mutableStateOf(Localizacion.collerIdioma() ) }
-    val esGalego = idiomaActual.startsWith( "gl" )
+    var idiomaActual by remember { mutableStateOf(Localizacion.idiomaActual ) }
+    val esGalego = idiomaActual.codigo == "gl"
     var mostrarDialogo by rememberSaveable { mutableStateOf(false) }
     val contexto = LocalContext.current
 
-    val nuevoIdioma = if (esGalego) "es_ES" else "gl_ES"
+    val nuevoIdioma = if (esGalego) Idioma.CASTELAN else Idioma.GALEGO
 
     PantallaBase {
 
         item {
 
-            Text(
-                text = Localizacion.l10n("carla", "test")
-            )
 
-        }
+            Column {
 
+                Text(
+                    text = Localizacion.l10n("carla", "test")
+                )
 
-        item {
-            Text(
-                text = Localizacion.l10n("natasha", "test"),
-                style = Fontes.cabeceira1
-            )
-        }
+                Text(
+                    text = Localizacion.l10n("natasha", "test"),
+                    style = Fontes.cabeceira1
+                )
 
-        item {
-            Text(
-                text = Localizacion.l10nPlural("mensajes_nuevos", 1, "test")
-            )
-        }
+                Text(
+                    text = Localizacion.l10nPlural("mensajes_nuevos", 1, "test")
+                )
 
-        item {
-            Text(
-                text = Localizacion.l10nPlural("mensajes_nuevos", 5, "test")
-            )
-        }
+                Text(
+                    text = Localizacion.l10nPlural("mensajes_nuevos", 5, "test")
+                )
 
-        item {
-            Text(
-                text = Localizacion.l10nPlural("mensajes_nuevos", 0, "test")
-            )
-        }
+                Text(
+                    text = Localizacion.l10nPlural("mensajes_nuevos", 0, "test")
+                )
 
-        item {
-            Text(
-                text = Localizacion.l10nPlural("mensajes_nuevos", 100, "test")
-            )
-        }
+                Text(
+                    text = Localizacion.l10nPlural("mensajes_nuevos", 100, "test")
+                )
 
-        item {
-            HorizontalDivider( modifier = Modifier.padding( vertical = 10.dp ), color = MaterialTheme.colorScheme.primary )
-        }
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 10.dp),
+                    color = MaterialTheme.colorScheme.primary
+                )
 
-        item {
+                Text(
+                    text = buildAnnotatedString {
+                        append("Idioma actual: ")
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append(if (esGalego) "Galego" else "Castellano")
+                        }
+                    },
+                    style = MaterialTheme.typography.titleMedium
+                )
 
-            Text(
-                text = buildAnnotatedString {
-                    append("Idioma actual: ")
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append(if (esGalego) "Galego" else "Castellano")
+                Button(
+                    onClick = {
+                        if (haiLector(contexto)) {
+                            mostrarDialogo = true
+                        } else {
+                            Localizacion.gardarIdioma( nuevoIdioma )
+                            idiomaActual = nuevoIdioma
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp)
+                ) {
+                    //Para que compose actualice o contido deste botón
+                    key(idiomaActual) {
+                        Text(
+                            text = Localizacion.l10n("cambio_idioma", "test")
+                        )
                     }
-                },
-                style = MaterialTheme.typography.titleMedium
-            )
-
-        }
-
-        item {
-
-            Button(
-                onClick = {
-                    if ( haiLector( contexto ) ) {
-                        mostrarDialogo = true
-                    } else {
-                        Localizacion.gardarIdioma(nuevoIdioma )
-                        idiomaActual = nuevoIdioma
-                    }
-                },
-                modifier = Modifier.fillMaxWidth().padding( top = 10.dp )
-            ) {
-
-                //val idioma = idiomaActual
-                key( idiomaActual) { //Solución temporal para obrigar a Compose a debuxar textos en botóns
-                    Text(text = Localizacion.l10n( "cambio_idioma", "test" ) )
                 }
             }
 
         }
 
-        if ( mostrarDialogo ) {
-
-            item {
-
-                AlertDialog(
-                    onDismissRequest = { mostrarDialogo = false },
-                    title = { Text(Localizacion.l10n("titulo_reiniciar", "test" )) },
-                    text = { Text(Localizacion.l10n("mensaxe_reiniciar", "test" ) ) },
-                    confirmButton = {
-                        TextButton(onClick = {
-                            mostrarDialogo = false
-                            Localizacion.gardarIdioma( nuevoIdioma, reiniciar = true )
-                        } ) {
-                            Text( Localizacion.l10n( "aceptar", "test" ) )
-                        }
-                    },
-                    dismissButton = {
-                        TextButton( onClick = { mostrarDialogo = false } ) {
-                            Text( Localizacion.l10n( "cancelar", "test" ) )
-                        }
-                    }
-                )
-
-            }
-
-        }
-
     }
-
-    Text(
-        text = Localizacion.l10n("carla", "test")
-    )
 
 }
 
@@ -520,84 +474,6 @@ fun ProbaActividade() {
 
     }
 
-}
-
-// =====================================================================
-// CUERPO DE PRUEBA — botones (principal/secundario/ghost) + input con
-// sus 3 estados, para validar visualmente el tema completo
-// =====================================================================
-@Composable
-fun ContenidoPrueba(modifier: Modifier = Modifier) {
-
-    var textoInput by remember { mutableStateOf("") }
-    var estadoInput by remember { mutableStateOf(EstadoInput.NORMAL) }
-
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll( rememberScrollState() ),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        Text("Botones", style = MaterialTheme.typography.titleMedium)
-
-        BotonPrincipal(texto = "Botón principal", onClick = { })
-        BotonSecundario(texto = "Botón secundario", onClick = { })
-        BotonGhost(texto = "Botón ghost", onClick = { })
-
-        HorizontalDivider( modifier = Modifier.padding( vertical = 8.dp ), color = MaterialTheme.colorScheme.primary )
-
-        Text("Input con estados", style = MaterialTheme.typography.titleMedium)
-
-        // Selector rápido de estado, solo para esta pantalla de prueba
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            EstadoInput.entries.forEach { estado ->
-                FilterChip(
-                    selected = estadoInput == estado,
-                    onClick = { estadoInput = estado },
-                    label = { Text(estado.etiqueta) }
-                )
-            }
-        }
-
-        val colorBorde = when (estadoInput) {
-            EstadoInput.NORMAL -> MaterialTheme.colorScheme.outline
-            EstadoInput.ERROR -> MaterialTheme.colorScheme.error
-            EstadoInput.EXITO -> CorExito
-        }
-
-        OutlinedTextField(
-            value = textoInput,
-            onValueChange = { textoInput = it },
-            label = { Text( "Campo de ejemplo" ) },
-            isError = estadoInput == EstadoInput.ERROR,
-            supportingText = {
-                when (estadoInput) {
-                    EstadoInput.ERROR -> Text(
-                        "Este campo tiene un error",
-                        color = MaterialTheme.colorScheme.error
-                    )
-                    EstadoInput.EXITO -> Text("Campo válido", color = CorExito)
-                    EstadoInput.NORMAL -> Text( "EHHHHHHHH", color = CorExito )
-                }
-            },
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = colorBorde,
-                unfocusedBorderColor = colorBorde,
-                errorBorderColor = MaterialTheme.colorScheme.error,
-
-                focusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                errorLabelColor = MaterialTheme.colorScheme.onBackground
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-    }
-}
-
-private enum class EstadoInput(val etiqueta: String) {
-    NORMAL("Normal"),
-    ERROR("Error"),
-    EXITO("Éxito")
 }
 
 @Composable
@@ -714,4 +590,19 @@ fun XogoDados() {
 @Composable
 fun Espazador( multiplicador: Int = 1 ) {
     Spacer( modifier = Modifier.height( 10.dp * multiplicador ) )
+}
+
+@Composable
+fun PantallaBase( contido: LazyListScope.() -> Unit ) {
+
+    LazyColumn( modifier = Modifier.fillMaxSize() ) {
+
+        item {
+            Espazador()
+        }
+
+        contido()
+
+    }
+
 }

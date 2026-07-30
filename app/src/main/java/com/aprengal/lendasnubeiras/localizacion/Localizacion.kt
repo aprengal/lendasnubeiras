@@ -4,8 +4,11 @@ import android.content.Context
 import android.content.res.Resources
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.edit
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.core.os.LocaleListCompat
+import com.aprengal.lendasnubeiras.Axustes.collerOpcion
+import com.aprengal.lendasnubeiras.Axustes.gardarOpcion
 import com.aprengal.lendasnubeiras.accesibilidade.haiLector
 import com.aprengal.lendasnubeiras.reiniciarAplicacion
 import org.json.JSONObject
@@ -18,7 +21,9 @@ enum class Idioma( val nome: String, val codigo: String, val rexion: String, val
 
     GALEGO( "Galego", "gl", "ES", pendente = "PENDENTE!!" ),
     CASTELAN( "Español", "es", "ES", pendente = "¡PENDIENTE!" ),
-    INGLES( "English", "en", "GB", pendente = "PENDING!!" );
+    INGLES( "English", "en", "GB", pendente = "PENDING!!" ),
+
+    NADA( "", "", "", "" );
 
     val codigoRexion: String get() = "{$codigo}_$rexion"
 
@@ -35,42 +40,36 @@ object Localizacion {
     private val traducions = mutableMapOf<String, MutableMap<String, String>>()
     private val traducionsPlurais = mutableMapOf<String, MutableMap<String, Map<String, String>>>()
 
-    lateinit var idiomaActual: Idioma
+    var idiomaActual: MutableState<Idioma> = mutableStateOf( Idioma.NADA )
     private set
 
-    fun arrancar( contexto: Context ) {
+    suspend fun arrancar(contexto: Context ) {
 
-        if ( ::appContext.isInitialized || ::idiomaActual.isInitialized ) return
+        if ( ::appContext.isInitialized || idiomaActual.value != Idioma.NADA ) return
 
         appContext = contexto
-        idiomaActual = determinarIdioma()
+        idiomaActual.value = determinarIdioma()
 
         if ( haiLector( contexto ) ) {
-            val idiomaOpcions = LocaleListCompat.forLanguageTags( idiomaActual.codigoRexion.replace( "_", "-" ) )
+            val idiomaOpcions = LocaleListCompat.forLanguageTags( idiomaActual.value.codigoRexion.replace( "_", "-" ) )
             AppCompatDelegate.setApplicationLocales( idiomaOpcions )
         }
 
     }
 
-    fun determinarIdioma(): Idioma {
+    suspend fun determinarIdioma(): Idioma {
 
-        val opcions = appContext.getSharedPreferences( "opcions", Context.MODE_PRIVATE )
-
-        return opcions.getString( "IDIOMA", null )?.let { Idioma.buscar( it ) }
+        return collerOpcion( "idioma", "" ).let { Idioma.buscar( it ) }
             ?: Resources.getSystem().configuration.locales[ 0 ].toString().let { Idioma.buscar( it ) }
             ?: Idioma.CASTELAN
 
     }
 
-    fun gardarIdioma( novoIdioma: Idioma, reiniciar: Boolean = false ) {
+    suspend fun gardarIdioma( novoIdioma: Idioma, reiniciar: Boolean = false ) {
 
-        if ( idiomaActual == novoIdioma ) return
+        if ( idiomaActual.value == novoIdioma || !gardarOpcion( "idioma", novoIdioma.codigoRexion ) ) return
 
-        idiomaActual = novoIdioma
-
-        //Actívase commit para que se escriba no ficheiro directamente porque os lectores consumen memoria
-        appContext.getSharedPreferences( "opcions", Context.MODE_PRIVATE )
-            .edit( commit = true ) { putString( "IDIOMA", novoIdioma.codigoRexion ) }
+        idiomaActual.value = novoIdioma
 
         if ( reiniciar ) reiniciarAplicacion( appContext )
 
@@ -82,8 +81,8 @@ object Localizacion {
     private fun collerArquivoIdioma( dominio: String ): String {
 
         val carpeta = "cadeas/$dominio"
-        val arquivoBase = "$dominio-${ idiomaActual.codigo }.json"
-        val arquivoRexion = "$dominio-${idiomaActual.codigoRexion}}.json"
+        val arquivoBase = "$dominio-${ idiomaActual.value.codigo }.json"
+        val arquivoRexion = "$dominio-${ idiomaActual.value.codigoRexion }.json"
 
         val arquivos = appContext.assets.list( carpeta )!!
 
@@ -147,7 +146,7 @@ object Localizacion {
 
         return traducions[ dominio ]?.get( indice ) ?: run {
             Log.w(  "IDIOMA", "Falta a clave '$indice' no dominio '$dominio' para o idioma $idiomaActual" )
-            idiomaActual.pendente
+            idiomaActual.value.pendente
         }
 
     }
@@ -166,16 +165,16 @@ object Localizacion {
             }
 
             val patron = listaPlurais[ clavePlural ] ?: run {
-                Log.w( "IDIOMA", "Falta a clave plural '$clavePlural' para '$indice' no dominio '$dominio' para o idioma $idiomaActual" )
-                idiomaActual.pendente
+                Log.w( "IDIOMA", "Falta a clave plural '$clavePlural' para '$indice' no dominio '$dominio' para o idioma ${ idiomaActual.value }" )
+                idiomaActual.value.pendente
             }
 
             return String.format( patron, num )
 
         }
 
-        Log.w( "IDIOMA", "Falta a entrada plural '$indice' no dominio '$dominio' para o idioma $idiomaActual" )
-        return idiomaActual.pendente
+        Log.w( "IDIOMA", "Falta a entrada plural '$indice' no dominio '$dominio' para o idioma ${ idiomaActual.value }" )
+        return idiomaActual.value.pendente
 
     }
 

@@ -1,13 +1,17 @@
 package com.aprengal.lendasnubeiras.tema
 
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -17,7 +21,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import com.aprengal.lendasnubeiras.Axustes.collerOpcion
+import com.aprengal.lendasnubeiras.Axustes.gardarOpcion
 import com.aprengal.lendasnubeiras.R
+import com.aprengal.lendasnubeiras.localizacion.Localizacion.l10n
+import com.aprengal.lendasnubeiras.tema.Tema.collerCoresTema
 
 //Constantes relacionadas co tema que non se poden usar directamente noutros arquivos
 
@@ -141,44 +149,84 @@ private val CorGhost = Color( 0xFFB6F29A )
 // Tema — ColorScheme claro/escuro + composable TemaNubeiro
 // ============================================================
 
-private val PaletaClara = lightColorScheme(
-    primary = FondoEscuro,
-    onPrimary = TextoClaro,
-    secondary = CorLogo,
-    onSecondary = TextoEscuro,
-    background = FondoClaro,
-    onBackground = TextoEscuro,
-    surface = FondoClaro,
-    onSurface = TextoEscuro,
-    error = CorErro,
-    onError = TextoClaro,
-    outline = FondoEscuro
-)
+object Tema {
 
-private val PaletaEscura = darkColorScheme(
-    primary = FondoClaro,
-    onPrimary = TextoEscuro,
-    secondary = CorLogo,
-    onSecondary = TextoEscuro,
-    background = FondoEscuro,
-    onBackground = TextoClaro,
-    surface = FondoEscuro,
-    onSurface = TextoClaro,
-    error = CorErro,
-    onError = TextoClaro,
-    outline = CorLogo
-)
+    private val PaletaClara = lightColorScheme(
+        primary = FondoEscuro,
+        onPrimary = TextoClaro,
+        secondary = CorLogo,
+        onSecondary = TextoEscuro,
+        background = FondoClaro,
+        onBackground = TextoEscuro,
+        surface = FondoClaro,
+        onSurface = TextoEscuro,
+        error = CorErro,
+        onError = TextoClaro,
+        outline = FondoEscuro
+    )
+
+    private val PaletaEscura = darkColorScheme(
+        primary = FondoClaro,
+        onPrimary = TextoEscuro,
+        secondary = CorLogo,
+        onSecondary = TextoEscuro,
+        background = FondoEscuro,
+        onBackground = TextoClaro,
+        surface = FondoEscuro,
+        onSurface = TextoClaro,
+        error = CorErro,
+        onError = TextoClaro,
+        outline = CorLogo
+    )
+
+    // Valor inicial por defecto para que la app no pete al arrancar mientras lee el disco
+    var temaActual: MutableState<Variante> = mutableStateOf( Variante.PREDETERMINADO )
+        private set
+
+    enum class Variante( val clave: String ) {
+        CLARO( "tema_claro" ),
+        ESCURO( "tema_escuro" ),
+        PREDETERMINADO( "tema_predeterminado" );
+
+        companion object {
+            fun buscar( clave: String ): Variante {
+                return entries.find { it.clave == clave } ?: PREDETERMINADO
+            }
+        }
+
+    }
+
+    suspend fun arrancar() {
+        val claveGuardada = collerOpcion("tema", Variante.PREDETERMINADO.clave )
+        temaActual.value = Variante.buscar( claveGuardada )
+    }
+
+    suspend fun gardarTema( novoTema: Variante ) {
+        gardarOpcion( "tema", novoTema.clave )
+        temaActual.value = novoTema
+    }
+
+    fun collerCoresTema( temaEscuro: Boolean ): ColorScheme {
+
+        val esquemaCores = when( temaActual.value ) {
+            Variante.CLARO -> PaletaClara
+            Variante.ESCURO -> PaletaEscura
+            Variante.PREDETERMINADO -> if ( temaEscuro ) PaletaEscura else PaletaClara
+        }
+
+        return esquemaCores
+
+    }
+
+}
 
 @Composable
 fun TemaNubeiro(
-    useDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
 
-    val esquemaCores = if ( useDarkTheme ) PaletaEscura else PaletaClara
-
     MaterialTheme(
-        colorScheme = esquemaCores,
+        colorScheme = collerCoresTema( isSystemInDarkTheme() ),
         typography = Tipografias,
         shapes = Bordos,
         content = content

@@ -9,13 +9,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.aprengal.lendasnubeiras.localizacion.Localizacion
 import com.aprengal.lendasnubeiras.navegacion.PantallaPrincipal
+import com.aprengal.lendasnubeiras.tema.Tema
 import com.aprengal.lendasnubeiras.tema.TemaNubeiro
+import kotlinx.coroutines.runBlocking
 
 class Entrada : AppCompatActivity() {
 
     override fun attachBaseContext( contexto: Context ) {
         super.attachBaseContext( contexto )
-        Localizacion.arrancar( contexto )
+        arrancarConfiguracion( contexto )
     }
 
     override fun onCreate( savedInstanceState: Bundle?) {
@@ -32,6 +34,17 @@ class Entrada : AppCompatActivity() {
 
         }
 
+    }
+
+}
+
+fun arrancarConfiguracion( contexto: Context ) {
+
+    Axustes.arrancar( contexto )
+
+    runBlocking {
+        Localizacion.arrancar( contexto )
+        Tema.arrancar()
     }
 
 }

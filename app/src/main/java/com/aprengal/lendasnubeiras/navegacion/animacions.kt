@@ -7,6 +7,14 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+
+fun corrutina( bloque: suspend CoroutineScope.() -> Unit ) {
+    CoroutineScope( Dispatchers.IO + SupervisorJob() ).launch( block = bloque )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

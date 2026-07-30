@@ -3,8 +3,15 @@
   "natasha": "Y el karma se lo devolvió",
   "aceptar": "Aceptar",
   "cancelar": "Cancelar",
-  "cambio_idioma": "Mudar a galego",
-  "mensajes_nuevos": {
+  "boton_cambio_idioma": "Cambiar idioma",
+  "dialogo_cambio_idioma": "Seleccionar idioma",
+  "mensaxe_reiniciar_idioma": "La aplicación se reiniciará al cambiar el idioma",
+  "boton_cambio_tema": "Cambiar tema",
+  "dialogo_cambio_tema": "Seleccionar tema",
+  "tema_claro": "Claro",
+  "tema_escuro": "Oscuro",
+  "tema_predeterminado": "Predeterminado",
+  "mensaxes_novas": {
     "s": "Tienes %d mensaje nuevo",
     "pl": "Tienes %d mensajes nuevos",
     "0": "No tienes mensajes nuevos",

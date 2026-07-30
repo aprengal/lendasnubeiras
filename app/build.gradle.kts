@@ -116,4 +116,7 @@ dependencies {
     implementation( libs.androidx.startup.runtime )
     testImplementation( kotlin( "reflect" ) )
 
+    //DataStorage
+    implementation( libs.androidx.datastore.preferences )
+
 }

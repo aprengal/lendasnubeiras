@@ -75,6 +75,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.aprengal.lendasnubeiras.accesibilidade.haiLector
 import com.aprengal.lendasnubeiras.localizacion.Idioma
+import com.aprengal.lendasnubeiras.navegacion.corrutina
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 // Colores que quedaron fuera del ColorScheme (comentados en tu archivo
 // de colores). Se importan/declaran aquí para usarlos directamente.
@@ -362,7 +367,7 @@ private fun CasillaDemo(
 fun ProbaTraducions() {
 
     var idiomaActual by remember { mutableStateOf(Localizacion.idiomaActual ) }
-    val esGalego = idiomaActual.codigo == "gl"
+    val esGalego = idiomaActual.value.codigo == "gl"
     var mostrarDialogo by rememberSaveable { mutableStateOf(false) }
     val contexto = LocalContext.current
 
@@ -417,11 +422,15 @@ fun ProbaTraducions() {
 
                 Button(
                     onClick = {
-                        if (haiLector(contexto)) {
+                        if ( haiLector( contexto ) ) {
                             mostrarDialogo = true
                         } else {
-                            Localizacion.gardarIdioma( nuevoIdioma )
-                            idiomaActual = nuevoIdioma
+
+                            corrutina {
+                                Localizacion.gardarIdioma( nuevoIdioma )
+                                idiomaActual.value = nuevoIdioma
+                            }
+
                         }
                     },
                     modifier = Modifier

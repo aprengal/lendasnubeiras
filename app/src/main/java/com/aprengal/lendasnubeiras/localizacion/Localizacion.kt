@@ -135,6 +135,7 @@ object Localizacion {
 
     }
 
+    //Se as actividades non teñen traducións, entón igual xa non ten sentido descargar a localización dun idioma
     fun quitarDominio( dominio: String ) {
         traducions.remove( dominio )
         traducionsPlurais.remove( dominio )

@@ -1,5 +1,6 @@
 package com.aprengal.lendasnubeiras.tema
 
+import android.util.Patterns.EMAIL_ADDRESS
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -62,17 +63,25 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.runtime.key
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.Dp
 import com.aprengal.lendasnubeiras.accesibilidade.haiLector
 import com.aprengal.lendasnubeiras.localizacion.Idioma
 import com.aprengal.lendasnubeiras.navegacion.corrutina
@@ -167,11 +176,11 @@ fun BotonGhost(
 }
 
 @Composable
-fun Logo() {
+fun Logo( tamano: Dp = 30.dp ) {
 
     Image(
         painter = painterResource( R.drawable.logo ),
-        modifier = Modifier.size( 30.dp ),
+        modifier = Modifier.size( tamano ),
         contentDescription = stringResource( R.string.nome_app )
     )
 
@@ -613,5 +622,107 @@ fun PantallaBase( contido: LazyListScope.() -> Unit ) {
         contido()
 
     }
+
+}
+
+@Composable
+private fun PantallaAcceso(
+    tituloBoton: String,
+    amosarCheckbox: Boolean,
+    botonPulsado: ( correo: String ) -> String
+) {
+
+    var correo by rememberSaveable { mutableStateOf( "" ) }
+    var aceptaTerminos by rememberSaveable { mutableStateOf( false ) }
+    var texto by rememberSaveable { mutableStateOf( "" ) }
+
+    val correoValido = EMAIL_ADDRESS.matcher( correo ).matches()
+    val podeContinuar = correoValido && ( !amosarCheckbox || aceptaTerminos )
+
+    Column(
+        modifier = Modifier.fillMaxSize()
+            .windowInsetsPadding( WindowInsets.safeDrawing )
+            .verticalScroll( rememberScrollState() )
+            .padding( horizontal = 5.dp, vertical = 10.dp ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+
+        Logo( 90.dp )
+
+        Espazador( 2 )
+
+        if ( texto != "" ) {
+            Text( texto )
+            Espazador()
+        }
+
+        OutlinedTextField(
+            value = correo,
+            onValueChange = { correo = it },
+            label = { Text( "Correo electrónico" ) },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions( keyboardType = KeyboardType.Email ),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Espazador()
+
+        if ( amosarCheckbox ) {
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Checkbox(
+                    checked = aceptaTerminos,
+                    onCheckedChange = { aceptaTerminos = it }
+                )
+                Text( "Acepto os termos e condicións" )
+            }
+
+            Espazador()
+
+        }
+
+        Button(
+            onClick = { texto = botonPulsado( correo ) },
+            enabled = podeContinuar,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text( tituloBoton )
+        }
+
+    }
+
+}
+
+@Composable
+fun PantallaRexistro() {
+
+    PantallaAcceso(
+        tituloBoton = "Rexistrarse",
+        amosarCheckbox = true,
+        botonPulsado = { correo ->
+            when {
+                correo.contains( "erd248@", ignoreCase = true ) -> "O furacán C7w6so acaba de pasar por aquí"
+                correo.contains( "n" ) -> "N de ninguén"
+                else -> "As malas linguas din que usar o teu correo trae un bo regalo"
+            }
+        }
+    )
+
+}
+
+@Composable
+fun PantallaIniciarSesion() {
+
+    PantallaAcceso(
+        tituloBoton = "Iniciar sesión",
+        amosarCheckbox = false,
+        botonPulsado = { correo ->
+            "Comprobando correo..." // aquí irá a lóxica real de login
+        }
+    )
 
 }

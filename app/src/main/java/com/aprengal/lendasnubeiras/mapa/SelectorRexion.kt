@@ -11,7 +11,7 @@ import androidx.core.graphics.toColorInt
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
-class SelectorRexion( contexto: Context, idRecurso: Int) {
+/*class SelectorRexion( contexto: Context, idRecurso: Int) {
 
     private val rexions: Map<Int, Pair<String, Int>> = mapOf(
         1 to ( "África" to "#e8a33d".toColorInt() ),
@@ -98,4 +98,4 @@ class SelectorRexion( contexto: Context, idRecurso: Int) {
 
     }
 
-}
+}*/

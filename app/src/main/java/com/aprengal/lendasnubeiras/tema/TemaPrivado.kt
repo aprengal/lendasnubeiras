@@ -1,6 +1,5 @@
 package com.aprengal.lendasnubeiras.tema
 
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ColorScheme
@@ -13,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.sp
 import com.aprengal.lendasnubeiras.Axustes.collerOpcion
 import com.aprengal.lendasnubeiras.Axustes.gardarOpcion
 import com.aprengal.lendasnubeiras.R
-import com.aprengal.lendasnubeiras.localizacion.Localizacion.l10n
 import com.aprengal.lendasnubeiras.tema.Tema.collerCoresTema
 
 //Constantes relacionadas co tema que non se poden usar directamente noutros arquivos
@@ -129,7 +128,7 @@ private val Bordos = Shapes(
 private val FondoEscuro = Color( 0xFF00093D )
 private val TextoEscuro = Color( 0xFF000000 )
 
-private val FondoClaro = Color( 0xFFCCCCCC )
+private val FondoClaro = Color( 0xFFF4F3F4 )//Color( 0xFFCCCCCC )
 private val TextoClaro = Color( 0xFFFFFFFF )
 
 private val CorLogo = Color( 0xFF3BFFFF )
@@ -160,6 +159,7 @@ object Tema {
         onBackground = TextoEscuro,
         surface = FondoClaro,
         onSurface = TextoEscuro,
+        surfaceContainer = FondoEscuro.copy( alpha = 0.3f ).compositeOver( FondoClaro ),
         error = CorErro,
         onError = TextoClaro,
         outline = FondoEscuro
@@ -174,6 +174,7 @@ object Tema {
         onBackground = TextoClaro,
         surface = FondoEscuro,
         onSurface = TextoClaro,
+        surfaceContainer = FondoClaro.copy( alpha = 0.6f ).compositeOver( FondoEscuro ),
         error = CorErro,
         onError = TextoClaro,
         outline = CorLogo

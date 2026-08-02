@@ -5,10 +5,12 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDeepLink
 import androidx.navigation.navDeepLink
 import com.aprengal.lendasnubeiras.PantallaDetalle
-import com.aprengal.lendasnubeiras.mapa.MapaMundial
+//import com.aprengal.lendasnubeiras.mapa.MapaMundial
 import com.aprengal.lendasnubeiras.pantallas.PantallaAxustes
 import com.aprengal.lendasnubeiras.tema.Iconas
 import com.aprengal.lendasnubeiras.tema.MirarAnimacions
+import com.aprengal.lendasnubeiras.tema.PantallaIniciarSesion
+import com.aprengal.lendasnubeiras.tema.PantallaRexistro
 import com.aprengal.lendasnubeiras.tema.ProbaActividade
 import com.aprengal.lendasnubeiras.tema.ProbaTraducions
 import com.aprengal.lendasnubeiras.tema.XogoDados
@@ -16,7 +18,9 @@ import com.aprengal.lendasnubeiras.tema.XogoDados
 sealed class Pantalla(
 
     val nome: String,
-    val icono: @Composable () -> Unit,
+    val icono: @Composable () -> Unit = {},
+    val navSuperior: Boolean = true,
+    val navInferior: Boolean = true,
     val contido: @Composable (NavBackStackEntry?) -> Unit = {},
     val enlaces: List<NavDeepLink> = emptyList() ) {
 
@@ -25,16 +29,19 @@ sealed class Pantalla(
     companion object {
 
         val todas: List<Pantalla> by lazy {
-            listOf( Inicio, Perfil, Mapa, Idioma, Animacions, Axustes, Detalle )
+            listOf( Rexistro, IniciarSesion, Inicio, Perfil, /*Mapa,*/ Idioma, Animacions, Axustes, Detalle )
         }
 
     }
 
     //TODO: traducir nome da pantalla
+    object Rexistro: Pantalla( "Rexistro", { Iconas.OlloAberto() }, navSuperior = false, navInferior = false, contido = { PantallaRexistro() } )
+    object IniciarSesion: Pantalla( "Iniciar sesion", { Iconas.OlloAberto() }, navSuperior = false, navInferior = false, contido = { PantallaIniciarSesion() } )
+
     object Inicio: Pantalla("Inicio" ,{ Iconas.Inicio() }, contido = { ProbaTraducions() } )
     object Perfil: Pantalla("Perfil", { Iconas.Perfil() }, contido = { ProbaActividade() }, enlaces = listOf( navDeepLink { uriPattern = "nubeiras://perfil" } ) )
-    object Axustes: Pantalla("Axustes", { Iconas.Axustes() }, contido = { PantallaAxustes() }, enlaces = listOf( navDeepLink { uriPattern = "nubeiras://axustes" } ) )
-    object Mapa: Pantalla("Mapa", { Iconas.Mapa() }, contido = { MapaMundial() }, enlaces = listOf( navDeepLink { uriPattern = "nubeiras://mapa" } ) )
+    object Axustes: Pantalla("Axustes", { Iconas.Axustes() }, navInferior = false, contido = { PantallaAxustes() }, enlaces = listOf( navDeepLink { uriPattern = "nubeiras://axustes" } ) )
+    //object Mapa: Pantalla("Mapa", { Iconas.Mapa() }, contido = { MapaMundial() }, enlaces = listOf( navDeepLink { uriPattern = "nubeiras://mapa" } ) )
     object Idioma: Pantalla("Dados", { Iconas.Idioma() }, contido = { XogoDados() } )
     object Animacions: Pantalla("Animacións", { Iconas.OlloAberto() }, contido = { MirarAnimacions() } )
 
@@ -43,6 +50,8 @@ sealed class Pantalla(
     object Detalle : Pantalla(
         nome = "Detalles",
         icono = { Iconas.OlloPechado() },
+        navSuperior = false,
+        navInferior = false,
         contido = { entry ->
             val id = entry?.arguments?.getString( "id" )?.toIntOrNull() ?: 0
             val test = entry?.arguments?.getString( "test" ) ?: ""

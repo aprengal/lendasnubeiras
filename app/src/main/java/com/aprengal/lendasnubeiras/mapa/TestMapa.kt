@@ -37,7 +37,7 @@ import com.aprengal.lendasnubeiras.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-@Composable
+/*@Composable
 fun MapaMundial() {
 
     val context = LocalContext.current
@@ -125,4 +125,4 @@ fun MapaMundial() {
 
     }
 
-}
+}*/

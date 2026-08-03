@@ -11,6 +11,14 @@
   "tema_claro": "Claro",
   "tema_escuro": "Oscuro",
   "tema_predeterminado": "Predeterminado",
+
+  "menu_inicio": "Inicio",
+  "menu_rexistro": "Registro",
+  "menu_iniciarSesion": "Iniciar sesión",
+  "menu_perfil": "Perfil",
+  "menu_idioma": "Dados",
+  "menu_animacions": "Animaciones",
+
   "mensaxes_novas": {
     "s": "Tienes %d mensaje nuevo",
     "pl": "Tienes %d mensajes nuevos",

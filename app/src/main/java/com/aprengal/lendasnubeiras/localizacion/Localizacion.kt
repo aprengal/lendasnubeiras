@@ -43,11 +43,11 @@ object Localizacion {
     var idiomaActual: MutableState<Idioma> = mutableStateOf( Idioma.NADA )
     private set
 
-    suspend fun arrancar(contexto: Context ) {
+    suspend fun arrancar( contexto: Context ) {
 
         if ( ::appContext.isInitialized || idiomaActual.value != Idioma.NADA ) return
 
-        appContext = contexto
+        appContext = contexto.applicationContext
         idiomaActual.value = determinarIdioma()
 
         if ( haiLector( contexto ) ) {

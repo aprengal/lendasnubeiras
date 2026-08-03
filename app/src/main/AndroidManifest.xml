@@ -5,7 +5,12 @@
     <!-- Permiso internet. Pode quitarse? -->
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- Permiso para consultar se hai internet -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Para permitir conexións http. Quitar en produción cona -->
     <application
+        android:usesCleartextTraffic="true"
         android:allowBackup="false"
         android:label="@string/nome_app"
         android:icon="@mipmap/datos_logo"
@@ -27,6 +32,7 @@
         <activity
             android:name=".Entrada"
             android:exported="true"
+            android:launchMode="singleTask"
             android:theme="@style/TemaNubeiro"
             android:windowSoftInputMode="adjustResize">
 

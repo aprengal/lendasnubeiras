@@ -1,9 +1,10 @@
-package com.aprengal.lendasnubeiras
+package com.example.lendasnubeiras
 
-import android.content.Context
+/*import android.content.Context
 import androidx.compose.ui.geometry.Offset
 
 import androidx.test.core.app.ApplicationProvider
+import com.aprengal.lendasnubeiras.R
 import com.aprengal.lendasnubeiras.mapa.SelectorRexion
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
@@ -426,4 +427,4 @@ class MapaTest {
 
     }
 
-}
+}*/

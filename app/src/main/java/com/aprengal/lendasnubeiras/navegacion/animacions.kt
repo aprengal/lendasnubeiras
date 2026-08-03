@@ -5,6 +5,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
-fun corrutina( bloque: suspend CoroutineScope.() -> Unit ) {
-    CoroutineScope( Dispatchers.IO + SupervisorJob() ).launch( block = bloque )
+fun corrutina( alcance: CoroutineScope = CoroutineScope( Dispatchers.IO + SupervisorJob() ), bloque: suspend CoroutineScope.() -> Unit ) {
+    alcance.launch( block = bloque )
 }

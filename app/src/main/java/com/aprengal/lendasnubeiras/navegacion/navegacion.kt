@@ -1,21 +1,18 @@
 package com.aprengal.lendasnubeiras.navegacion
 
-
+import android.util.Log
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
@@ -33,10 +30,13 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
@@ -48,36 +48,66 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.aprengal.lendasnubeiras.Axustes.collerOpcion
+import com.aprengal.lendasnubeiras.conexion.ConexionApi
+import com.aprengal.lendasnubeiras.localizacion.Localizacion.idiomaActual
 import com.aprengal.lendasnubeiras.tema.Logo
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import com.aprengal.lendasnubeiras.localizacion.Localizacion.l10n
+import com.aprengal.lendasnubeiras.usuarios.Rol
+import com.aprengal.lendasnubeiras.usuarios.Usuario
+import com.aprengal.lendasnubeiras.usuarios.UsuarioActual
+
+@Composable
+fun IniciarAplicacion() {
+
+    var usuarioActual by remember { mutableStateOf(Usuario( id = -10, correo = "", rol = Rol.LECTOR ) ) }
+    var sesionAnonima by rememberSaveable { mutableStateOf( false ) }
+
+    LaunchedEffect( Unit ) {
+        usuarioActual = UsuarioActual.coller()
+        sesionAnonima = collerOpcion( "sesion_anonima", false )
+    }
+
+    key( usuarioActual ) {
+
+        val controlador = rememberNavController()
+
+        if ( usuarioActual.id > 0 || sesionAnonima ) { //Iniciouse sesión?
+
+            Contido( controlador, Pantalla.Inicio, Pantalla.todas )
+
+        } else {
+
+            Contido( controlador, Pantalla.Apertura, Pantalla.autenticacion )
+
+        }
+
+    }
+
+}
+
+@Composable
+fun Contido( controlador: NavHostController, pantallaInicial: Pantalla, pantallas: List<Pantalla> ) {
+
+    val backStackEntry by controlador.currentBackStackEntryAsState()
+    val pantallaActual = Pantalla.todas.find { it.ruta == backStackEntry?.destination?.route } ?: pantallaInicial
+
+    val amosarSuperior = pantallaActual.tipo != Pantalla.Companion.TIPO.SEN_MENUS
+    val amosarInferior = pantallaActual.tipo == Pantalla.Companion.TIPO.SCAFFOLD
+
+    PantallaScaffold( controlador, pantallaActual.ruta, amosarSuperior, amosarInferior ) {
+        CargarNavegacion( controlador, pantallaInicial, pantallas )
+    }
+
+}
 
 @OptIn( ExperimentalMaterial3Api::class )
 @Composable
-fun PantallaScaffold( controlador: NavHostController, pantallaActual: Pantalla, navegacionContido: @Composable () -> Unit ) {
-
-    val rutaActual = pantallaActual.ruta
-
-    val elementosSuperior = remember { listOf(
-        Pantalla.Axustes, Pantalla.Detalle
-    ) }
-
-    //Igual se podería prescindir desta barra se só se pon unha ó final
-    val elementosSuperiorFiltrados = elementosSuperior.filter { it.ruta != rutaActual }
-
-    val elementosInferior = remember { listOf(
-        Pantalla.Inicio,
-        Pantalla.Perfil,
-        Pantalla.Rexistro,
-        Pantalla.IniciarSesion,
-        Pantalla.Idioma,
-        Pantalla.Animacions
-    ) }
+fun PantallaScaffold( controlador: NavHostController, rutaActual: String, amosarSuperior: Boolean, amosarInferior: Boolean, navegacionContido: @Composable () -> Unit ) {
 
     Scaffold(
-        topBar = { NavegacionSuperior( elementosSuperiorFiltrados, rutaActual, controlador, pantallaActual.navSuperior ) },
-        bottomBar = { NavegacionInferior( elementosInferior, rutaActual, controlador, pantallaActual.navInferior ) },
+        topBar = { if ( amosarSuperior ) NavegacionSuperior( rutaActual, controlador ) },
+        bottomBar = { if ( amosarInferior ) NavegacionInferior( rutaActual, controlador ) },
     ) { recheoInterno ->
 
         Column( modifier = Modifier.fillMaxSize().padding( recheoInterno ).padding( start = 10.dp, end = 10.dp ) ) {
@@ -88,174 +118,19 @@ fun PantallaScaffold( controlador: NavHostController, pantallaActual: Pantalla, 
 
 }
 
-@Composable
-fun NavegacionPrincipal() {
-
-    val controlador = rememberNavController()
-    val backStackEntry by controlador.currentBackStackEntryAsState()
-    val pantallaActual = Pantalla.todas.find { it.ruta == backStackEntry?.destination?.route } ?: Pantalla.Inicio
-
-    PantallaScaffold( controlador, pantallaActual ) {
-        NavHostContido( controlador )
-    }
-
-}
-
-@OptIn( ExperimentalMaterial3Api::class )
-@Composable
-fun NavegacionSuperior(
-    elementos: List<Pantalla>,
-    rutaActual: String,
-    controlador: NavHostController,
-    amosar: Boolean
-) {
-
-    val densidade = LocalDensity.current
-    val insetSuperior = WindowInsets.statusBars.getTop( densidade )
-    val alturaInsetDp = with(densidade) { insetSuperior.toDp() }
-    val alturaTotal = 86.dp
-
-    val valorInicial = if (amosar) alturaTotal else alturaInsetDp
-
-    var alturaGuardadaValue by rememberSaveable {
-        mutableFloatStateOf( valorInicial.value )
-    }
-
-    LaunchedEffect(amosar, alturaTotal ) {
-        alturaGuardadaValue = ( if ( amosar ) alturaTotal else alturaInsetDp ).value
-    }
-
-    val alturaDeseada = alturaGuardadaValue.dp
-
-    val altura by animateDpAsState(
-        targetValue = alturaDeseada,
-        animationSpec = tween(),
-        label = "alturaTopBar"
-    )
-
-    Column {
-
-        Box( modifier = Modifier.heightIn( max = altura ).clipToBounds() ) {
-
-            TopAppBar(
-                title = { Logo() },
-                modifier = Modifier.heightIn( max = 86.dp ).background( Color.Cyan ),
-                actions = {
-
-                    elementos.forEach { elemento ->
-
-                        val seleccionado = rutaActual == elemento.ruta
-
-                        val colorFondo by animateColorAsState(
-                            targetValue = if ( seleccionado ) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent,
-                            label = "colorFondo"
-                        )
-
-                        IconButton(
-                            onClick = {
-
-                                if ( !seleccionado ) {
-
-                                    val rutaDestino = when ( elemento ) {
-                                        is Pantalla.Detalle -> elemento.crearRuta(
-                                            "666",
-                                            "resacón"
-                                        )
-
-                                        else -> elemento.ruta
-                                    }
-
-                                    controlador.navigate( rutaDestino ) {
-                                        launchSingleTop = true
-                                    }
-
-                                }
-
-                            },
-                            modifier = Modifier.clip( RoundedCornerShape( 12.dp ) ).background( colorFondo )
-                        ) {
-                            elemento.icono()
-                        }
-
-                    }
-
-                }
-            )
-
-        }
-
-        HorizontalDivider( thickness = 1.dp, color = MaterialTheme.colorScheme.onSurface )
-
-    }
-
-}
 
 @Composable
-fun NavegacionInferior(
-    elementos: List<Pantalla>,
-    rutaActual: String,
-    controlador: NavHostController,
-    amosar: Boolean
-) {
+private fun CargarNavegacion( controlador: NavHostController, pantallaInicial: Pantalla, listaPantallas: List<Pantalla> ) {
 
-    val densidade = LocalDensity.current
-    val insetInferior = WindowInsets.navigationBars.getBottom( densidade )
-    val alturaTotal = 64.dp + with( densidade ) { insetInferior.toDp() }
+    NavHost( navController = controlador, startDestination = pantallaInicial.ruta ) {
 
-    val valorInicial = if (amosar) alturaTotal else 0.dp
-
-    var alturaGuardadaValue by rememberSaveable { mutableFloatStateOf( valorInicial.value ) }
-
-    // Sincronizamos se o parámetro externo cambia (por exemplo, ao navegar)
-    LaunchedEffect( amosar, alturaTotal ) {
-        alturaGuardadaValue = ( if ( amosar ) alturaTotal else 0.dp ).value
-    }
-
-    val alturaDeseada = alturaGuardadaValue.dp
-
-    val altura by animateDpAsState(
-        targetValue = alturaDeseada,
-        animationSpec = tween(),
-        label = "alturaBottomBar"
-    )
-
-    Box( modifier = Modifier.height( altura ).clipToBounds() ) {
-
-        NavigationBar {
-            elementos.forEach { elemento ->
-                NavigationBarItem(
-                    selected = rutaActual == elemento.ruta,
-                    onClick = {
-                        if ( rutaActual != elemento.ruta ) {
-                            controlador.navigate( elemento.ruta ) {
-                                launchSingleTop = true
-                            }
-                        }
-                    },
-                    icon = { elemento.icono() },
-                    label = { Text( elemento.nome, maxLines = 1, overflow = TextOverflow.Ellipsis ) }
-                )
-            }
-        }
-
-    }
-
-}
-
-@Composable
-private fun NavHostContido( controlador: NavHostController ) {
-
-    NavHost( navController = controlador, startDestination = Pantalla.Inicio.ruta ) {
-
-        Pantalla.todas.forEach { pantalla ->
+        listaPantallas.forEach { pantalla ->
 
             val argumentos = pantalla.ruta.split( "/{" ).drop( 1 ).map { it.removeSuffix( "}" ) }
 
             composable(
                 route = pantalla.ruta,
-                arguments = argumentos.map { nome ->
-                    navArgument( nome ) { type = NavType.StringType }
-                },
+                arguments = argumentos.map { nome -> navArgument( nome ) { type = NavType.StringType } },
                 enterTransition = { transicionEntrada( pantalla ) },
                 exitTransition = { transicionSaida( pantalla ) },
                 popEnterTransition = { transicionAtrasEntrada( pantalla ) },
@@ -266,54 +141,136 @@ private fun NavHostContido( controlador: NavHostController ) {
             }
 
         }
+
     }
 
 }
 
-fun transicionEntrada( pantalla: Pantalla ): EnterTransition {
+@OptIn( ExperimentalMaterial3Api::class )
+@Composable
+fun NavegacionSuperior(
+    rutaActual: String,
+    controlador: NavHostController
+) {
 
-    val transicion = if ( !pantalla.navInferior ) {
-        slideInHorizontally( tween() ) { ancho -> ancho }
-    } else {
-        fadeIn( tween() )
+    val densidade = LocalDensity.current
+    val insetSuperior = WindowInsets.statusBars.getTop( densidade )
+    val alturaTotal = 86.dp + with(densidade) { insetSuperior.toDp() }
+
+    val elementosSuperior = remember { listOf(
+        Pantalla.Axustes, Pantalla.Detalle
+    ) }
+
+    //Igual se podería prescindir desta barra se só se pon unha ó final
+    val elementos = elementosSuperior.filter { it.ruta != rutaActual }
+
+    Column {
+
+        TopAppBar(
+            title = { Logo() },
+            modifier = Modifier.heightIn( max = alturaTotal ),
+            actions = {
+
+                elementos.forEach { elemento ->
+
+                    val seleccionado = rutaActual == elemento.ruta
+
+                    val colorFondo by animateColorAsState(
+                        targetValue = if ( seleccionado ) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent,
+                        label = "colorFondo"
+                    )
+
+                    IconButton(
+                        onClick = {
+
+                            if ( !seleccionado ) {
+
+                                val rutaDestino = when ( elemento ) {
+                                    is Pantalla.Detalle -> elemento.crearRuta(
+                                        "666",
+                                        "resacón"
+                                    )
+
+                                    else -> elemento.ruta
+                                }
+
+                                controlador.navigate( rutaDestino ) {
+                                    launchSingleTop = true
+                                }
+
+                            }
+
+                        },
+                        modifier = Modifier.clip( RoundedCornerShape( 12.dp ) ).background( colorFondo )
+                    ) {
+                        elemento.icono()
+                    }
+
+                }
+
+            }
+        )
+
+        HorizontalDivider( thickness = 1.dp, color = MaterialTheme.colorScheme.onSurface )
+
     }
-
-    return transicion
 
 }
 
-fun transicionSaida( pantalla: Pantalla ): ExitTransition {
+@Composable
+fun NavegacionInferior(
+    rutaActual: String,
+    controlador: NavHostController
+) {
 
-    val transicion = if ( !pantalla.navInferior ) {
-        slideOutHorizontally( tween() ) { ancho -> -ancho }
-    } else {
-        fadeOut( tween() )
+    val densidade = LocalDensity.current
+    val insetInferior = WindowInsets.navigationBars.getBottom( densidade )
+    val alturaTotal = 64.dp + with( densidade ) { insetInferior.toDp() }
+
+    val elementos = remember { listOf(
+        Pantalla.Inicio,
+        Pantalla.Perfil,
+        Pantalla.Idioma,
+        Pantalla.Animacions
+    ) }
+
+    NavigationBar( modifier = Modifier.heightIn( max = alturaTotal ) ) {
+        elementos.forEach { elemento ->
+            NavigationBarItem(
+                selected = rutaActual == elemento.ruta,
+                onClick = {
+                    if ( rutaActual != elemento.ruta ) {
+                        controlador.navigate( elemento.ruta ) {
+                            launchSingleTop = true
+                        }
+                    }
+                },
+                icon = { elemento.icono() },
+                label = {
+                    key( idiomaActual.value ) {
+                        Text( l10n( "menu_" + elemento.ruta, "test" ), maxLines = 1, overflow = TextOverflow.Ellipsis ) }
+                    }
+
+            )
+        }
     }
-
-    return transicion
 
 }
 
-fun transicionAtrasEntrada( pantalla: Pantalla ): EnterTransition {
+private fun esCompleta( pantalla: Pantalla ) = pantalla.tipo == Pantalla.Companion.TIPO.SCAFFOLD
 
-    val transicion = if ( !pantalla.navInferior ) {
-        slideInHorizontally( tween() ) { ancho -> -ancho }
-    } else {
-        fadeIn( tween() )
-    }
+fun transicionEntrada( pantalla: Pantalla ): EnterTransition =
+    if ( esCompleta( pantalla ) ) fadeIn( tween() )
+    else slideInHorizontally( tween() ) { it }
 
-    return transicion
+fun transicionSaida( pantalla: Pantalla ): ExitTransition =
+    if ( esCompleta( pantalla ) ) fadeOut( tween() )
+    else slideOutHorizontally( tween() ) { -it }
 
-}
+fun transicionAtrasEntrada( pantalla: Pantalla ): EnterTransition =
+    if ( esCompleta( pantalla ) ) fadeIn( tween() )
+    else slideInHorizontally( tween() ) { -it }
 
-fun transicionAtrasSaida( pantalla: Pantalla ): ExitTransition {
-
-    val transicion = if ( !pantalla.navInferior ) {
-        slideOutHorizontally( tween() ) { ancho -> ancho }
-    } else {
-        fadeOut( tween() )
-    }
-
-    return transicion
-
-}
+fun transicionAtrasSaida( pantalla: Pantalla ): ExitTransition =
+    if ( esCompleta( pantalla ) ) fadeOut( tween() )
+    else slideOutHorizontally( tween() ) { it }

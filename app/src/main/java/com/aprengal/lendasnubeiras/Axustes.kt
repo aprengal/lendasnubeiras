@@ -15,7 +15,7 @@ object Axustes {
 
     fun arrancar( contexto: Context ) {
         if ( ::appContext.isInitialized ) return
-        appContext = contexto
+        appContext = contexto.applicationContext
     }
 
     suspend fun <T : Any> collerOpcion( nome: String, predeterminado: T ): T {

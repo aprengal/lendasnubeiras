@@ -75,6 +75,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.Alignment
@@ -83,12 +84,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
 import com.aprengal.lendasnubeiras.accesibilidade.haiLector
+import com.aprengal.lendasnubeiras.conexion.ConexionApi
 import com.aprengal.lendasnubeiras.localizacion.Idioma
 import com.aprengal.lendasnubeiras.navegacion.corrutina
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 
 // Colores que quedaron fuera del ColorScheme (comentados en tu archivo
 // de colores). Se importan/declaran aquí para usarlos directamente.
@@ -723,6 +726,35 @@ fun PantallaIniciarSesion() {
         botonPulsado = { correo ->
             "Comprobando correo..." // aquí irá a lóxica real de login
         }
+    )
+
+}
+
+@Composable
+fun PantallaApertura() {
+
+    var peido: String by rememberSaveable { mutableStateOf( "Esperando resposta..." ) }
+
+    LaunchedEffect( Unit ) {
+
+        val resultado = ConexionApi.get( "peido.php", emptyMap() )
+
+        //Isto vale para indicar que a operación foi exitosa
+        //if ( resultado.optBoolean( "exito" ) )
+
+        peido = resultado.optString( "mensaxe", "Escachou o servidor" ).toString()
+
+    }
+
+    PantallaAcceso(
+        tituloBoton = peido,
+        amosarCheckbox = false,
+        botonPulsado = { correo ->
+
+            if ( peido.startsWith( "Esperando" ) ) "Meh" else "Chi"
+
+        }
+
     )
 
 }

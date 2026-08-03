@@ -11,6 +11,14 @@
   "tema_claro": "Light",
   "tema_escuro": "Dark",
   "tema_predeterminado": "System default",
+
+  "menu_inicio": "Home",
+  "menu_rexistro": "Register",
+  "menu_iniciarSesion": "Login",
+  "menu_perfil": "Profile",
+  "menu_idioma": "Dices",
+  "menu_animacions": "Animations",
+
   "mensaxes_novas": {
     "s": "You have %d new message",
     "pl": "You have %d new messages",

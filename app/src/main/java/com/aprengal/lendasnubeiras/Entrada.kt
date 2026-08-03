@@ -7,11 +7,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.aprengal.lendasnubeiras.conexion.ConexionApi
 import com.aprengal.lendasnubeiras.localizacion.Localizacion
-import com.aprengal.lendasnubeiras.navegacion.NavegacionPrincipal
+import com.aprengal.lendasnubeiras.navegacion.IniciarAplicacion
 import com.aprengal.lendasnubeiras.tema.Tema
 import com.aprengal.lendasnubeiras.tema.TemaNubeiro
 import kotlinx.coroutines.runBlocking
@@ -32,11 +32,9 @@ class Entrada : AppCompatActivity() {
         setContent {
 
             TemaNubeiro {
-                //A seguinte liña está marcada como obsoleta, pero é necesaria de Android 14 para atrás.
-                // Tamén é a única alternativa en Android 15 Xiaomi?
                 @Suppress( "DEPRECATION" )
                 window.navigationBarColor = MaterialTheme.colorScheme.surfaceContainer.toArgb()
-                NavegacionPrincipal()
+                IniciarAplicacion()
             }
 
         }
@@ -48,6 +46,7 @@ class Entrada : AppCompatActivity() {
 fun arrancarConfiguracion( contexto: Context ) {
 
     Axustes.arrancar( contexto )
+    ConexionApi.arrancar( contexto )
 
     runBlocking {
         Localizacion.arrancar( contexto )

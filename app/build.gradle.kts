@@ -50,12 +50,25 @@ android {
 
     buildTypes {
 
-        getByName( "release" ) {
+        getByName("debug") {
+            buildConfigField(
+                "String",
+                "API_URL",
+                "\"${localProperties.getProperty("API_URL_DEBUG")}\""
+            )
+        }
+
+        getByName("release") {
             isMinifyEnabled = true
             isShrinkResources = true
 
-            signingConfig = signingConfigs.getByName( "release" )
+            signingConfig = signingConfigs.getByName("release")
 
+            buildConfigField(
+                "String",
+                "API_URL",
+                "\"${localProperties.getProperty("API_URL_RELEASE")}\""
+            )
         }
 
     }
@@ -67,6 +80,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     testOptions {
@@ -94,12 +108,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.unit)
     implementation( libs.androidx.core.ktx )
     implementation( libs.androidx.lifecycle.runtime.ktx )
-    implementation( libs.androidx.material3 )
     implementation(libs.androidx.navigation.compose)
-    implementation( libs.androidx.runtime )
-    implementation( libs.androidx.ui )
-    implementation( libs.androidx.ui.graphics )
-    implementation( libs.core.ktx )
 
     debugImplementation( libs.androidx.compose.ui.tooling )
 
@@ -118,5 +127,8 @@ dependencies {
 
     //DataStorage
     implementation( libs.androidx.datastore.preferences )
+
+    //Conector coa APIA
+    implementation( libs.okhttp )
 
 }

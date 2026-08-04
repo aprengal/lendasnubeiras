@@ -1,0 +1,3 @@
+<?
+
+echo "Test api backend";

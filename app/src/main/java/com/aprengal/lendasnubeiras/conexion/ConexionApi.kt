@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
+import com.aprengal.lendasnubeiras.Axustes.collerOpcion
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.FormBody
@@ -18,7 +19,6 @@ import com.aprengal.lendasnubeiras.BuildConfig
 
 object ConexionApi {
 
-    //TODO: Cambiar ruta
     private const val URL_BASE = BuildConfig.API_URL
 
     private lateinit var appContext: Context
@@ -57,6 +57,12 @@ object ConexionApi {
 
         } catch ( e: ApiException ) {
 
+            //Usos
+
+            // 401: Invalidación da sesión actual
+            // Se o usuario iniciou sesión e se cambia a un estado de sesión inválida sen cambialo no dispositivo, igual
+            // o ideal é
+
             Log.e( "ConexionApi", "Erro en '$ruta': ${e.message} (codigo ${e.codigo})", e )
 
             return JSONObject().apply {
@@ -76,6 +82,8 @@ object ConexionApi {
 
     private suspend fun realizarPeticion( metodo: String, ruta: String, campos: Map<String, Any> ): Pair<String, Int> {
 
+        val clave = collerOpcion( "clave", "" )
+
         val resultado = withContext( Dispatchers.IO ) {
 
             val corpo = if ( campos.isNotEmpty() ) {
@@ -84,7 +92,7 @@ object ConexionApi {
                 }.build()
             } else null
 
-            val builder = Request.Builder().url( URL_BASE + ruta )
+            val builder = Request.Builder().url( URL_BASE + ruta ).addHeader("permiso", "Bearer $clave")
 
             when ( metodo ) {
                 "GET" -> builder.get()

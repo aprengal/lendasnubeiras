@@ -45,13 +45,13 @@ class Entrada : AppCompatActivity() {
 
 fun arrancarConfiguracion( contexto: Context ) {
 
-    Axustes.arrancar( contexto )
-    ConexionApi.arrancar( contexto )
-
     runBlocking {
-        Localizacion.arrancar( contexto )
-        Tema.arrancar()
+        Axustes.arrancar( contexto )
     }
+
+    ConexionApi.arrancar( contexto )
+    Localizacion.arrancar( contexto )
+    Tema.arrancar()
 
 }
 

@@ -197,7 +197,7 @@ object Tema {
 
     }
 
-    suspend fun arrancar() {
+    fun arrancar() {
         val claveGuardada = collerOpcion("tema", Variante.PREDETERMINADO.clave )
         temaActual.value = Variante.buscar( claveGuardada )
     }

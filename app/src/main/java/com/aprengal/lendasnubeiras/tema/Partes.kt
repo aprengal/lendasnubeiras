@@ -42,11 +42,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import com.aprengal.lendasnubeiras.tema.Iconas.PantallaPruebaIconas
-import com.aprengal.lendasnubeiras.tema.Iconas.lanzarDados
-import com.aprengal.lendasnubeiras.tema.Iconas.listarIconasActividades
-import com.aprengal.lendasnubeiras.R
-import com.aprengal.lendasnubeiras.localizacion.Localizacion
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
@@ -83,15 +78,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
+import com.aprengal.lendasnubeiras.tema.Iconas.PantallaPruebaIconas
+import com.aprengal.lendasnubeiras.tema.Iconas.lanzarDados
+import com.aprengal.lendasnubeiras.tema.Iconas.listarIconasActividades
+import com.aprengal.lendasnubeiras.R
+import com.aprengal.lendasnubeiras.localizacion.Localizacion
 import com.aprengal.lendasnubeiras.accesibilidade.haiLector
 import com.aprengal.lendasnubeiras.conexion.ConexionApi
 import com.aprengal.lendasnubeiras.localizacion.Idioma
 import com.aprengal.lendasnubeiras.navegacion.corrutina
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
-import org.json.JSONObject
 
 // Colores que quedaron fuera del ColorScheme (comentados en tu archivo
 // de colores). Se importan/declaran aquí para usarlos directamente.

@@ -1,6 +1,5 @@
 package com.aprengal.lendasnubeiras.navegacion
 
-import android.util.Log
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.animateColorAsState
@@ -49,7 +48,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.aprengal.lendasnubeiras.Axustes.collerOpcion
-import com.aprengal.lendasnubeiras.conexion.ConexionApi
 import com.aprengal.lendasnubeiras.localizacion.Localizacion.idiomaActual
 import com.aprengal.lendasnubeiras.tema.Logo
 import com.aprengal.lendasnubeiras.localizacion.Localizacion.l10n
@@ -60,7 +58,7 @@ import com.aprengal.lendasnubeiras.usuarios.UsuarioActual
 @Composable
 fun IniciarAplicacion() {
 
-    var usuarioActual by remember { mutableStateOf(Usuario( id = -10, correo = "", rol = Rol.LECTOR ) ) }
+    var usuarioActual by remember { mutableStateOf(Usuario( id = 0uL, correo = "", rol = Rol.LECTOR ) ) }
     var sesionAnonima by rememberSaveable { mutableStateOf( false ) }
 
     LaunchedEffect( Unit ) {
@@ -72,7 +70,7 @@ fun IniciarAplicacion() {
 
         val controlador = rememberNavController()
 
-        if ( usuarioActual.id > 0 || sesionAnonima ) { //Iniciouse sesión?
+        if ( usuarioActual.id > 0uL || sesionAnonima ) { //Iniciouse sesión?
 
             Contido( controlador, Pantalla.Inicio, Pantalla.todas )
 

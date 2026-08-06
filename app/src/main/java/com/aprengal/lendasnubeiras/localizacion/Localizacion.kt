@@ -14,9 +14,6 @@ import com.aprengal.lendasnubeiras.reiniciarAplicacion
 import org.json.JSONObject
 import java.io.FileNotFoundException
 
-
-//Valorar converter Idioma nun obxecto ou nunha clase selada
-
 enum class Idioma( val nome: String, val codigo: String, val rexion: String, val pendente:String ) {
 
     GALEGO( "Galego", "gl", "ES", pendente = "PENDENTE!!" ),
@@ -33,6 +30,8 @@ enum class Idioma( val nome: String, val codigo: String, val rexion: String, val
 
 }
 
+//TODO: Test unitario para verificar que todas as cadeas están definidas.
+//Neste test non se miraría o valor real e para iso habería facer unha revisión manual
 object Localizacion {
 
     private lateinit var appContext: Context
@@ -41,9 +40,26 @@ object Localizacion {
     private val traducionsPlurais = mutableMapOf<String, MutableMap<String, Map<String, String>>>()
 
     var idiomaActual: MutableState<Idioma> = mutableStateOf( Idioma.NADA )
-    private set
+        private set
 
-    suspend fun arrancar( contexto: Context ) {
+    private var dominiosRecordados: MutableSet<String> = mutableSetOf()
+
+    var recordarDominios: Boolean = false
+
+        set( valor ) {
+
+            if ( field == valor ) return
+            field = valor
+
+            if ( !field && dominiosRecordados.isNotEmpty() ) {
+                dominiosRecordados.forEach { dominio -> descargarDominio( dominio ) }
+            }
+
+            dominiosRecordados.clear()
+
+        }
+
+    fun arrancar( contexto: Context ) {
 
         if ( ::appContext.isInitialized || idiomaActual.value != Idioma.NADA ) return
 
@@ -57,7 +73,7 @@ object Localizacion {
 
     }
 
-    suspend fun determinarIdioma(): Idioma {
+    fun determinarIdioma(): Idioma {
 
         return collerOpcion( "idioma", "" ).let { Idioma.buscar( it ) }
             ?: Resources.getSystem().configuration.locales[ 0 ].toString().let { Idioma.buscar( it ) }
@@ -129,14 +145,17 @@ object Localizacion {
 
             }
 
+            if ( recordarDominios && dominio.startsWith( "actividade" ) ) {
+                dominiosRecordados.add( dominio )
+            }
+
         } catch ( e: FileNotFoundException ) {
             Log.w( "IDIOMA", "O dominio $dominio non existe para o idioma $idiomaActual", e )
         }
 
     }
 
-    //Se as actividades non teñen traducións, entón igual xa non ten sentido descargar a localización dun idioma
-    fun quitarDominio( dominio: String ) {
+    private fun descargarDominio( dominio: String ) {
         traducions.remove( dominio )
         traducionsPlurais.remove( dominio )
     }
@@ -145,10 +164,8 @@ object Localizacion {
 
         cargarDominio( dominio )
 
-        return traducions[ dominio ]?.get( indice ) ?: run {
-            Log.w(  "IDIOMA", "Falta a clave '$indice' no dominio '$dominio' para o idioma $idiomaActual" )
-            idiomaActual.value.pendente
-        }
+        //Log.w(  "IDIOMA", "Falta a clave '$indice' no dominio '$dominio' para o idioma $idiomaActual" )
+        return traducions[ dominio ]?.get( indice ) ?: idiomaActual.value.pendente
 
     }
 
@@ -165,16 +182,14 @@ object Localizacion {
                 else -> "pl"
             }
 
-            val patron = listaPlurais[ clavePlural ] ?: run {
-                Log.w( "IDIOMA", "Falta a clave plural '$clavePlural' para '$indice' no dominio '$dominio' para o idioma ${ idiomaActual.value }" )
-                idiomaActual.value.pendente
-            }
+            //Log.w( "IDIOMA", "Falta a clave plural '$clavePlural' para '$indice' no dominio '$dominio' para o idioma ${ idiomaActual.value }" )
+            val patron = listaPlurais[ clavePlural ] ?: idiomaActual.value.pendente
 
             return String.format( patron, num )
 
         }
 
-        Log.w( "IDIOMA", "Falta a entrada plural '$indice' no dominio '$dominio' para o idioma ${ idiomaActual.value }" )
+        //Log.w( "IDIOMA", "Falta a entrada plural '$indice' no dominio '$dominio' para o idioma ${ idiomaActual.value }" )
         return idiomaActual.value.pendente
 
     }

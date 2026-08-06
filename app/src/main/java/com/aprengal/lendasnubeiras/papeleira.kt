@@ -60,7 +60,7 @@ fun ContenidoPrueba(modifier: Modifier = Modifier) {
         Text("Input con estados", style = MaterialTheme.typography.titleMedium)
 
         // Selector rápido de estado, solo para esta pantalla de prueba
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row( horizontalArrangement = Arrangement.spacedBy( 8.dp ) ) {
             EstadoInput.entries.forEach { estado ->
                 FilterChip(
                     selected = estadoInput == estado,
@@ -78,7 +78,7 @@ fun ContenidoPrueba(modifier: Modifier = Modifier) {
 
         OutlinedTextField(
             value = textoInput,
-            onValueChange = { textoInput = it },
+            onValueChange = { contido -> textoInput = contido },
             label = { Text( "Campo de ejemplo" ) },
             isError = estadoInput == EstadoInput.ERROR,
             supportingText = {

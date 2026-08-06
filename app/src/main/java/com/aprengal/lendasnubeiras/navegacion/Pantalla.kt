@@ -26,7 +26,7 @@ sealed class Pantalla(
     val contido: @Composable (NavBackStackEntry?) -> Unit = {},
     val enlaces: List<NavDeepLink> = emptyList() ) {
 
-    open val ruta: String = this::class.simpleName!!.replaceFirstChar { it.lowercase() }
+    open val ruta: String = this::class.simpleName!!.replaceFirstChar { ruta -> ruta.lowercase() }
 
     companion object {
 
@@ -75,7 +75,7 @@ sealed class Pantalla(
 
         var rutaFinal = ruta
 
-        valores.forEach { valor ->
+        for ( valor in valores ) {
 
             val inicio = rutaFinal.indexOf( "{" )
             val fin = rutaFinal.indexOf( "}" )

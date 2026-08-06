@@ -191,7 +191,7 @@ object Tema {
 
         companion object {
             fun buscar( clave: String ): Variante {
-                return entries.find { it.clave == clave } ?: PREDETERMINADO
+                return entries.find { variante -> variante.clave == clave } ?: PREDETERMINADO
             }
         }
 

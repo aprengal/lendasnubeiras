@@ -212,8 +212,8 @@ fun MirarAnimacions() {
         SeccionAnimacion("AnimatedVisibility — slideInHorizontally") { activo ->
             AnimatedVisibility(
                 visible = activo,
-                enter = slideInHorizontally(animationSpec = tween(600)) { it },
-                exit = slideOutHorizontally(animationSpec = tween(600)) { it }
+                enter = slideInHorizontally(animationSpec = tween(600)) { ancho -> ancho },
+                exit = slideOutHorizontally(animationSpec = tween(600)) { ancho -> ancho }
             ) { CasillaDemo("Slide") }
         }
 
@@ -657,7 +657,7 @@ private fun PantallaAcceso(
 
         OutlinedTextField(
             value = correo,
-            onValueChange = { correo = it },
+            onValueChange = { novoCoreo -> correo = novoCoreo },
             label = { Text( "Correo electrónico" ) },
             singleLine = true,
             keyboardOptions = KeyboardOptions( keyboardType = KeyboardType.Email ),
@@ -674,7 +674,7 @@ private fun PantallaAcceso(
             ) {
                 Checkbox(
                     checked = aceptaTerminos,
-                    onCheckedChange = { aceptaTerminos = it }
+                    onCheckedChange = { estado -> aceptaTerminos = estado }
                 )
                 Text( "Acepto os termos e condicións" )
             }
@@ -728,7 +728,7 @@ fun PantallaIniciarSesion() {
 @Composable
 fun PantallaApertura() {
 
-    var peido: String by rememberSaveable { mutableStateOf( "Esperando resposta..." ) }
+    var apertura: String by rememberSaveable { mutableStateOf( "Esperando resposta..." ) }
 
     LaunchedEffect( Unit ) {
 
@@ -737,16 +737,16 @@ fun PantallaApertura() {
         //Isto vale para indicar que a operación foi exitosa
         //if ( resultado.optBoolean( "exito" ) )
 
-        peido = resultado.optString( "mensaxe", "Escachou o servidor" ).toString()
+        apertura = resultado.optString( "mensaxe", "Escachou o servidor" ).toString()
 
     }
 
     PantallaAcceso(
-        tituloBoton = peido,
+        tituloBoton = apertura,
         amosarCheckbox = false,
         botonPulsado = { correo ->
 
-            if ( peido.startsWith( "Esperando" ) ) "Meh" else "Chi"
+            if ( apertura.startsWith( "Esperando" ) ) "Meh" else "Chi"
 
         }
 

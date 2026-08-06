@@ -10,7 +10,7 @@ val localProperties = Properties().apply {
     val arquivo = rootProject.file( "local.properties" )
 
     if ( arquivo.exists() ) {
-        arquivo.inputStream().use { load( it ) }
+        arquivo.inputStream().use { elemento -> load( elemento ) }
     }
 
 }

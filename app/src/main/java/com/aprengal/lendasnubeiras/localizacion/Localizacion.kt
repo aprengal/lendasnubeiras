@@ -25,7 +25,7 @@ enum class Idioma( val nome: String, val codigo: String, val rexion: String, val
     val codigoRexion: String get() = "{$codigo}_$rexion"
 
     companion object {
-        fun buscar( etiqueta: String ): Idioma? = entries.find { it.codigoRexion == etiqueta }
+        fun buscar( etiqueta: String ): Idioma? = entries.find { idioma -> idioma.codigoRexion == etiqueta }
     }
 
 }
@@ -75,8 +75,8 @@ object Localizacion {
 
     fun determinarIdioma(): Idioma {
 
-        return collerOpcion( "idioma", "" ).let { Idioma.buscar( it ) }
-            ?: Resources.getSystem().configuration.locales[ 0 ].toString().let { Idioma.buscar( it ) }
+        return collerOpcion( "idioma", "" ).let { idioma -> Idioma.buscar( idioma ) }
+            ?: Resources.getSystem().configuration.locales[ 0 ].toString().let { idioma -> Idioma.buscar( idioma ) }
             ?: Idioma.CASTELAN
 
     }
@@ -105,7 +105,7 @@ object Localizacion {
         val direccionArquivo = if ( arquivoBase in arquivos ) arquivoBase else arquivoRexion
         val ruta = "$carpeta/$direccionArquivo"
 
-        return appContext.assets.open( ruta ).bufferedReader().use { it.readText() }
+        return appContext.assets.open( ruta ).bufferedReader().use { arquivo -> arquivo.readText() }
 
     }
 

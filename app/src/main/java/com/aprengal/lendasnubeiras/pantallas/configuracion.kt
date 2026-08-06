@@ -47,9 +47,9 @@ fun PantallaAxustes() {
             textoBoton = l10n( "boton_cambio_idioma", "test" ),
             tituloDialogo = l10n( "dialogo_cambio_idioma", "test" ),
             avisoDialogo = l10n( "mensaxe_reiniciar_idioma", "test" ),
-            opcions = Idioma.entries.filter { it != Idioma.NADA },
+            opcions = Idioma.entries.filter { idioma -> idioma != Idioma.NADA },
             valorInicial = Localizacion.idiomaActual.value,
-            obterNome = { it.nome },
+            obterNome = { opcion -> opcion.nome },
             accion = { novoIdioma -> gardarIdioma( novoIdioma ) }
         )
 
@@ -60,7 +60,7 @@ fun PantallaAxustes() {
             tituloDialogo = l10n( "dialogo_cambio_tema", "test" ),
             opcions = Tema.Variante.entries,
             valorInicial = Tema.temaActual.value,
-            obterNome = { l10n( it.clave, "test" ) },
+            obterNome = { elemento -> l10n( elemento.clave, "test" ) },
             accion = { novoTema -> gardarTema( novoTema ) }
         )
 
@@ -101,12 +101,12 @@ fun <T> BotonOpcion(
             titulo = tituloDialogo,
             opciones = opcions,
             opcionActual = valorActual,
-            obterTexto = { obterNome( it ) },
+            obterTexto = { texto -> obterNome( texto ) },
             aviso = if ( haiLector ) avisoDialogo else null,
             aceptar = { novoValor ->
 
                 corrutina {
-                    accion(novoValor)
+                    accion( novoValor )
                     valorActual = novoValor
                     amosarDialogo = false
                 }
@@ -150,7 +150,7 @@ fun <T> DialogoSeleccion(
 
                 }
 
-                opciones.forEach { opcion ->
+                for ( opcion in opciones ) {
 
                     Row(
                         modifier = Modifier

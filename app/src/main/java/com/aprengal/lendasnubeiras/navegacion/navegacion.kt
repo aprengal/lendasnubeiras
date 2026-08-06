@@ -88,7 +88,7 @@ fun IniciarAplicacion() {
 fun Contido( controlador: NavHostController, pantallaInicial: Pantalla, pantallas: List<Pantalla> ) {
 
     val backStackEntry by controlador.currentBackStackEntryAsState()
-    val pantallaActual = Pantalla.todas.find { it.ruta == backStackEntry?.destination?.route } ?: pantallaInicial
+    val pantallaActual = Pantalla.todas.find { pantalla -> pantalla.ruta == backStackEntry?.destination?.route } ?: pantallaInicial
 
     val amosarSuperior = pantallaActual.tipo != Pantalla.Companion.TIPO.SEN_MENUS
     val amosarInferior = pantallaActual.tipo == Pantalla.Companion.TIPO.SCAFFOLD
@@ -122,9 +122,9 @@ private fun CargarNavegacion( controlador: NavHostController, pantallaInicial: P
 
     NavHost( navController = controlador, startDestination = pantallaInicial.ruta ) {
 
-        listaPantallas.forEach { pantalla ->
+        for ( pantalla in listaPantallas ) {
 
-            val argumentos = pantalla.ruta.split( "/{" ).drop( 1 ).map { it.removeSuffix( "}" ) }
+            val argumentos = pantalla.ruta.split( "/{" ).drop( 1 ).map { ruta -> ruta.removeSuffix( "}" ) }
 
             composable(
                 route = pantalla.ruta,
@@ -160,7 +160,7 @@ fun NavegacionSuperior(
     ) }
 
     //Igual se podería prescindir desta barra se só se pon unha ó final
-    val elementos = elementosSuperior.filter { it.ruta != rutaActual }
+    val elementos = elementosSuperior.filter { pantalla -> pantalla.ruta != rutaActual }
 
     Column {
 
@@ -169,7 +169,7 @@ fun NavegacionSuperior(
             modifier = Modifier.heightIn( max = alturaTotal ),
             actions = {
 
-                elementos.forEach { elemento ->
+                for ( elemento in elementos ) {
 
                     val seleccionado = rutaActual == elemento.ruta
 
@@ -233,7 +233,9 @@ fun NavegacionInferior(
     ) }
 
     NavigationBar( modifier = Modifier.heightIn( max = alturaTotal ) ) {
-        elementos.forEach { elemento ->
+
+        for ( elemento in elementos ) {
+
             NavigationBarItem(
                 selected = rutaActual == elemento.ruta,
                 onClick = {
@@ -250,7 +252,9 @@ fun NavegacionInferior(
                     }
 
             )
+
         }
+
     }
 
 }
@@ -259,16 +263,16 @@ private fun esCompleta( pantalla: Pantalla ) = pantalla.tipo == Pantalla.Compani
 
 fun transicionEntrada( pantalla: Pantalla ): EnterTransition =
     if ( esCompleta( pantalla ) ) fadeIn( tween() )
-    else slideInHorizontally( tween() ) { it }
+    else slideInHorizontally( tween() ) {  ancho -> ancho }
 
 fun transicionSaida( pantalla: Pantalla ): ExitTransition =
     if ( esCompleta( pantalla ) ) fadeOut( tween() )
-    else slideOutHorizontally( tween() ) { -it }
+    else slideOutHorizontally( tween() ) { ancho -> -ancho }
 
 fun transicionAtrasEntrada( pantalla: Pantalla ): EnterTransition =
     if ( esCompleta( pantalla ) ) fadeIn( tween() )
-    else slideInHorizontally( tween() ) { -it }
+    else slideInHorizontally( tween() ) { ancho -> -ancho }
 
 fun transicionAtrasSaida( pantalla: Pantalla ): ExitTransition =
     if ( esCompleta( pantalla ) ) fadeOut( tween() )
-    else slideOutHorizontally( tween() ) { it }
+    else slideOutHorizontally( tween() ) { ancho -> ancho }

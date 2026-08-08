@@ -84,7 +84,7 @@ import com.aprengal.lendasnubeiras.tema.Iconas.listarIconasActividades
 import com.aprengal.lendasnubeiras.R
 import com.aprengal.lendasnubeiras.localizacion.Localizacion
 import com.aprengal.lendasnubeiras.accesibilidade.haiLector
-import com.aprengal.lendasnubeiras.conexion.ConexionApi
+import com.aprengal.lendasnubeiras.conexions.ConexionApi
 import com.aprengal.lendasnubeiras.localizacion.Idioma
 import com.aprengal.lendasnubeiras.navegacion.corrutina
 

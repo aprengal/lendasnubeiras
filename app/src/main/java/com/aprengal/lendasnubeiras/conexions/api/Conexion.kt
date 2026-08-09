@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.conexions
+package com.aprengal.lendasnubeiras.conexions.api
 
 import android.content.Context
 import android.net.ConnectivityManager
@@ -17,7 +17,7 @@ import java.net.SocketTimeoutException
 import java.util.concurrent.TimeUnit
 import com.aprengal.lendasnubeiras.BuildConfig
 
-object ConexionApi {
+object Conexion {
 
     private const val URL_BASE = BuildConfig.API_URL
 
@@ -48,9 +48,7 @@ object ConexionApi {
 
         try {
 
-            if ( !haiConexion() ) {
-                throw SenConexionException( "O dispositivo non ten conexión a internet" )
-            }
+            if ( !haiConexion() ) throw SenConexionException( "O dispositivo non ten conexión a internet" )
 
             val datos = realizarPeticion( metodo, ruta, campos )
             return interpretarResposta( datos.first, datos.second )
@@ -92,7 +90,7 @@ object ConexionApi {
                 }.build()
             } else null
 
-            val builder = Request.Builder().url( URL_BASE + ruta ).addHeader("permiso", "Bearer $clave")
+            val builder = Request.Builder().url( URL_BASE + ruta ).addHeader( "permiso", "Bearer $clave" )
 
             when ( metodo ) {
                 "GET" -> builder.get()

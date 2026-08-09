@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.conexions
+package com.aprengal.lendasnubeiras.conexions.db
 
 import android.content.ContentValues
 import android.content.Context
@@ -39,7 +39,7 @@ object DB {
         filtros.forEach { ( campo, valor ) -> onde[ "a.$campo" ] = mapOf( "valor" to valor ) }
 
         val resultados = db.seleccionar(
-            "actividade",
+            "actividades",
             mapOf(
                 "columnas" to listOf( "a.titulo", "a.descricion", "a.obxectivo", "a.materiais" ),
                 "alias" to "a",
@@ -99,6 +99,8 @@ object DB {
 
 private class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, null, DB_VERSION ) {
 
+    private val taboasPemitidas = listOf( "actividades" )
+
     // Estrutura
     companion object {
         const val DB_NOME = "lendas_nubeiras.db"
@@ -113,12 +115,16 @@ private class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, n
         EstruturaDB().actualizar( db, oldVersion, newVersion )
     }
 
+    private fun verificarTaboa( taboa: String ) {
+        require( taboa in taboasPemitidas ) { "A táboa $taboa non está na lista de táboas permitidas" }
+    }
+
     // Operacións
     private fun crearValores( datos: Map<String, Any> ): ContentValues = crearValores( listOf( datos ) )[ 0 ]
 
     private fun crearValores( listaValores: List<Map<String, Any>> ): List<ContentValues> {
 
-        return listaValores.map { datos ->
+        val valores = listaValores.map { datos ->
             ContentValues().apply {
                 datos.forEach { ( campo, valor ) ->
                     when ( valor ) {
@@ -129,6 +135,8 @@ private class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, n
             }
         }
 
+        return valores
+
     }
 
     fun insertar( taboa: String, listaValores: Map<String, Any> ): Long = insertar( taboa, listOf( listaValores ) )[ 0 ]
@@ -136,15 +144,16 @@ private class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, n
     fun insertar( taboa: String, listaValores: List<Map<String, Any>> ): List<Long> {
 
         require( listaValores.isNotEmpty() ) { "Non se pode insertar unha lista baleira" }
+        verificarTaboa( taboa )
 
         val valores = crearValores( listaValores )
 
         if ( valores.size == 1 ) {
-            return listOf( writableDatabase.insert( taboa, null, valores[ 0 ] ) )
+            return listOf( writableDatabase.insertOrThrow( taboa, null, valores[ 0 ] ) )
         }
 
         val ids = writableDatabase.transaction {
-             valores.map { elemento -> insert( taboa, null, elemento ) }
+             valores.map { elemento -> insertOrThrow( taboa, null, elemento ) }
         }
 
         return ids
@@ -152,6 +161,8 @@ private class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, n
     }
 
     fun seleccionar( taboa: String, datos: Map<String, Any> ): List<Map<String, Any>> {
+
+        verificarTaboa( taboa )
 
         val distinto = datos[ "distinto" ] as? Boolean ?: false
         val columnas = datos[ "columnas" ] as? List<*> ?: error( "Faltan as columnas" )
@@ -235,6 +246,7 @@ private class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, n
 
     fun actualizar( taboa: String, valores: Map<String, Any>, onde: Map<String, Map<String, Any>> ): Int {
 
+        verificarTaboa( taboa )
         val datos = crearValores( valores )
         val ( condicions, argumentos ) = establecerCondicions( onde )
 
@@ -244,7 +256,9 @@ private class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, n
 
     fun eliminar( taboa: String, onde: Map<String, Map<String, Any>> ): Int {
 
+        verificarTaboa( taboa )
         val ( condicions, argumentos ) = establecerCondicions( onde )
+
         return writableDatabase.delete(taboa, condicions, argumentos )
 
     }
@@ -304,6 +318,7 @@ private class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, n
                 val ( aliasSecundario, campoSecundario ) = colSecundaria.split( ".", limit = 2 )
 
                 val taboaSecundaria = join[ "taboa-join" ] ?: error( "Nunha join hai que indicar a táboa secundaria" )
+                verificarTaboa( taboaSecundaria )
                 val condicionCombinacion = if ( colPrincipal != campoSecundario ) " ON $aliasPrincipal.$colPrincipal = $colSecundaria" else " USING ( $colPrincipal )"
 
                 append( " $tipoCombinacion JOIN $taboaSecundaria AS ${ aliasSecundario }$condicionCombinacion" )

@@ -9,8 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.aprengal.lendasnubeiras.conexions.ConexionApi
-import com.aprengal.lendasnubeiras.conexions.DB
+import com.aprengal.lendasnubeiras.conexions.api.Conexion
+import com.aprengal.lendasnubeiras.conexions.db.DB
 import com.aprengal.lendasnubeiras.localizacion.Localizacion
 import com.aprengal.lendasnubeiras.navegacion.IniciarAplicacion
 import com.aprengal.lendasnubeiras.tema.Tema
@@ -50,7 +50,7 @@ fun arrancarConfiguracion( contexto: Context ) {
         Axustes.arrancar( contexto )
     }
 
-    ConexionApi.arrancar( contexto )
+    Conexion.arrancar( contexto )
     DB.arrancar( contexto )
     Localizacion.arrancar( contexto )
     Tema.arrancar()

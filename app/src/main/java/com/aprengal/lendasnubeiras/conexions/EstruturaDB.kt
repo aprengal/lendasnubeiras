@@ -9,7 +9,7 @@ class EstruturaDB {
         db.execSQL(
             """
             CREATE TABLE actividade (
-                id              BIGINT NOT NULL,
+                id              INTEGER PRIMARY KEY,
                 titulo          VARCHAR(100) NOT NULL,
                 id_autoria      BIGINT NOT NULL,
                 id_categoria    VARCHAR(15) NOT NULL,
@@ -21,7 +21,6 @@ class EstruturaDB {
                 obxectivo       TEXT NOT NULL,
                 materiais       TEXT NOT NULL,
                 data_modificado BIGINT NOT NULL,
-                PRIMARY KEY ( id ),
                 UNIQUE ( titulo, id_idioma ),
                 CHECK ( id >= 0 ),
                 CHECK ( estado BETWEEN -3 AND 3 ),
@@ -33,12 +32,12 @@ class EstruturaDB {
             """
         )
 
-        db.execSQL("CREATE INDEX idx_actividade_autoria ON actividade( id_autoria )")
-        db.execSQL("CREATE INDEX idx_actividade_categoria ON actividade( id_categoria )")
-        db.execSQL("CREATE INDEX idx_actividade_destinatario ON actividade( id_destinatario )")
-        db.execSQL("CREATE INDEX idx_actividade_idioma ON actividade( id_idioma )")
-        db.execSQL("CREATE INDEX idx_actividade_estado ON actividade( estado )")
-        db.execSQL("CREATE INDEX idx_actividade_data_modificado ON actividade( data_modificado )")
+        db.execSQL( "CREATE INDEX idx_actividade_autoria ON actividade( id_autoria )" )
+        db.execSQL( "CREATE INDEX idx_actividade_categoria ON actividade( id_categoria )" )
+        db.execSQL( "CREATE INDEX idx_actividade_destinatario ON actividade( id_destinatario )" )
+        db.execSQL( "CREATE INDEX idx_actividade_idioma ON actividade( id_idioma )" )
+        db.execSQL( "CREATE INDEX idx_actividade_estado ON actividade( estado )" )
+        db.execSQL( "CREATE INDEX idx_actividade_data_modificado ON actividade( data_modificado )" )
 
         db.execSQL(
             """
@@ -57,28 +56,25 @@ class EstruturaDB {
             CREATE TRIGGER trg_actividade_del
             BEFORE DELETE ON actividade
             FOR EACH ROW
-            WHEN NOT (OLD.estado < 0 OR OLD.estado = 3)
+            WHEN NOT ( OLD.estado < 0 OR OLD.estado = 3 )
             BEGIN
                 SELECT RAISE( ABORT, 'Só se poden eliminar actividades non enviadas ou xa borradas no servidor' );
             END
             """
         )
 
+        //Anotar este problema de SQLITe helper que non funciona con FTS5. Baixouse a fts4 porque si está habilitado en Android
         db.execSQL(
             """
-            CREATE VIRTUAL TABLE buscador_actividades USING fts5(
-                titulo, descricion, obxectivo, materiais,
-                content='actividade',
-                content_rowid='id'
-            )
+            CREATE VIRTUAL TABLE buscador_actividades USING fts4( titulo, descricion, obxectivo, materiais )
             """
         )
 
         db.execSQL(
             """
             CREATE TRIGGER trg_actividades_ins AFTER INSERT ON actividade BEGIN
-                INSERT INTO buscador_actividades(rowid, titulo, descricion, obxectivo, materiais)
-                VALUES (new.id, new.titulo, new.descricion, new.obxectivo, new.materiais);
+                INSERT INTO buscador_actividades(docid, titulo, descricion, obxectivo, materiais)
+                VALUES ( new.id, new.titulo, new.descricion, new.obxectivo, new.materiais );
             END
             """
         )
@@ -86,8 +82,7 @@ class EstruturaDB {
         db.execSQL(
             """
             CREATE TRIGGER trg_actividades_del AFTER DELETE ON actividade BEGIN
-                INSERT INTO buscador_actividades(buscador_actividades, rowid, titulo, descricion, obxectivo, materiais)
-                VALUES('delete', old.id, old.titulo, old.descricion, old.obxectivo, old.materiais);
+                DELETE FROM buscador_actividades WHERE docid = old.id;
             END
             """
         )
@@ -95,10 +90,8 @@ class EstruturaDB {
         db.execSQL(
             """
             CREATE TRIGGER trg_actividades_upd AFTER UPDATE ON actividade BEGIN
-                INSERT INTO buscador_actividades(buscador_actividades, rowid, titulo, descricion, obxectivo, materiais)
-                VALUES('delete', old.id, old.titulo, old.descricion, old.obxectivo, old.materiais);
-                INSERT INTO buscador_actividades(rowid, titulo, descricion, obxectivo, materiais)
-                VALUES (new.id, new.titulo, new.descricion, new.obxectivo, new.materiais);
+                UPDATE buscador_actividades SET titulo = new.titulo, descricion = new.descricion, obxectivo = new.obxectivo, materiais = new.materiais
+                WHERE docid = new.id;
             END
             """
         )

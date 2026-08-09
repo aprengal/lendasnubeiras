@@ -13,21 +13,31 @@ material = "1.14.0"
 okhttp = "5.4.0"
 robolectric = "4.16.1"
 appcompat = "1.7.1"
+rules = "1.7.0"
+runner = "1.7.0"
 runtimeVersion = "1.11.4"
 
 foundation = "1.11.4"
+sqlite = "2.7.0"
+sqliteAndroid = "3.45.0"
+sqliteBundled = "2.7.0"
 uiText = "1.11.4"
 animationCore = "1.11.4"
 animation = "1.11.4"
 navigationCompose = "2.9.8"
 startup = "1.2.0"
 uiUnit = "1.11.4"
+coreKtxVersion = "1.7.0"
 
 [libraries]
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+androidx-rules = { module = "androidx.test:rules", version.ref = "rules" }
+androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
+androidx-sqlite = { module = "androidx.sqlite:sqlite", version.ref = "sqlite" }
+androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqliteBundled" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
@@ -49,6 +59,8 @@ androidx-compose-animation = { group = "androidx.compose.animation", name = "ani
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 androidx-startup-runtime = { group = "androidx.startup", name = "startup-runtime", version.ref = "startup" }
 androidx-compose-ui-unit = { group = "androidx.compose.ui", name = "ui-unit", version.ref = "uiUnit" }
+core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "coreKtxVersion" }
+sqlite-android = { module = "io.requery:sqlite-android", version.ref = "sqliteAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

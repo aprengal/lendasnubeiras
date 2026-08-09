@@ -26,7 +26,7 @@ object DB {
 
     private lateinit var db: BBDD
 
-    fun arrancar(contexto: Context) {
+    fun arrancar( contexto: Context ) {
         if ( ::db.isInitialized ) return
         db = BBDD( contexto.applicationContext )
     }
@@ -47,7 +47,7 @@ object DB {
                     mapOf(
                         "tipo" to "INNER",
                         "principal" to "id",
-                        "secundaria" to "f.rowid",
+                        "secundaria" to "f.docid",
                         "taboa-join" to "buscador_actividades"
                     )
                 ),
@@ -73,6 +73,27 @@ object DB {
         materiais = datos[ "materiais" ] as String,
         dataModificado = datos[ "data_modificado" ] as Long
     )
+
+    fun insertar( taboa: String, datos: Map<String, String> ): Long {
+        return db.insertar( taboa, datos )
+    }
+
+    fun insertar( taboa: String, datos: List<Map<String, Any>> ): List<Long> {
+        return db.insertar( taboa, datos )
+    }
+
+    fun seleccionar( taboa: String, datos: Map<String, Any> ): List<Map<String, Any>> {
+        return db.seleccionar( taboa, datos )
+    }
+
+
+    fun actualizar( taboa: String, valores: Map<String, Any>, onde: Map<String, Map<String, Any>> ): Int {
+        return db.actualizar( taboa, valores, onde )
+    }
+
+    fun eliminar( taboa: String, onde: Map<String, Map<String, Any>> ): Int {
+        return db.eliminar( taboa, onde )
+    }
 
 }
 
@@ -122,9 +143,11 @@ private class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, n
             return listOf( writableDatabase.insert( taboa, null, valores[ 0 ] ) )
         }
 
-        writableDatabase.transaction {
-            return valores.map { elemento -> insert( taboa, null, elemento ) }
+        val ids = writableDatabase.transaction {
+             valores.map { elemento -> insert( taboa, null, elemento ) }
         }
+
+        return ids
 
     }
 
@@ -281,9 +304,9 @@ private class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, n
                 val ( aliasSecundario, campoSecundario ) = colSecundaria.split( ".", limit = 2 )
 
                 val taboaSecundaria = join[ "taboa-join" ] ?: error( "Nunha join hai que indicar a táboa secundaria" )
-                val datosCombinacion = if ( colPrincipal != campoSecundario ) " ON $aliasPrincipal.$colPrincipal = $colSecundaria" else " USING ( $colPrincipal )"
+                val condicionCombinacion = if ( colPrincipal != campoSecundario ) " ON $aliasPrincipal.$colPrincipal = $colSecundaria" else " USING ( $colPrincipal )"
 
-                append( " $tipoCombinacion JOIN $taboaSecundaria AS ${ aliasSecundario }$datosCombinacion" )
+                append( " $tipoCombinacion JOIN $taboaSecundaria AS ${ aliasSecundario }$condicionCombinacion" )
 
             }
 

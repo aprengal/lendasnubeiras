@@ -109,10 +109,11 @@ dependencies {
     implementation( libs.androidx.core.ktx )
     implementation( libs.androidx.lifecycle.runtime.ktx )
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.core.ktx)
 
     debugImplementation( libs.androidx.compose.ui.tooling )
 
-    testImplementation( libs.junit )
+    //testImplementation( libs.junit )
     testImplementation( libs.robolectric )
 
     //Librería para cambiar a cor antes de que arranque a aplicación
@@ -130,5 +131,11 @@ dependencies {
 
     //Conector coa APIA
     implementation( libs.okhttp )
+    testImplementation( kotlin( "test" ) )
+
+    //Testeo Android en vivo
+    androidTestImplementation( libs.junit )
+    androidTestImplementation( libs.androidx.runner )
+    androidTestImplementation( libs.androidx.rules )
 
 }

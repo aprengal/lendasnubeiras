@@ -1,18 +1,11 @@
-package com.aprengal.lendasnubeiras
+package com.example.lendasnubeiras
 
 import com.aprengal.lendasnubeiras.navegacion.Pantalla
-import org.junit.Test
+import kotlin.test.DefaultAsserter.assertEquals
+import kotlin.test.DefaultAsserter.assertTrue
 
-import org.junit.Assert.*
+class TestUnitarios {
 
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
-class ExampleUnitTest {
-
-    @Test
     fun navegacionCompleta() {
 
         val subclasesReales = Pantalla::class.sealedSubclasses

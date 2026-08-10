@@ -31,7 +31,7 @@ sealed class Pantalla(
     companion object {
 
         val todas: List<Pantalla> by lazy {
-            listOf( Inicio, Perfil, /*Mapa,*/ Idioma, Animacions, Axustes, Detalle )
+            listOf( Inicio, Perfil, /*Mapa,*/ /*Idioma,*/ Animacions, Axustes, Detalle )
         }
 
         val autenticacion: List<Pantalla> by lazy {
@@ -51,7 +51,7 @@ sealed class Pantalla(
     object Perfil: Pantalla( { Iconas.Perfil() }, contido = { ProbaActividade() }, enlaces = listOf( navDeepLink { uriPattern = "nubeiras://perfil" } ) )
     object Axustes: Pantalla( { Iconas.Axustes() }, tipo = TIPO.SOSUPERIOR, contido = { PantallaAxustes() }, enlaces = listOf( navDeepLink { uriPattern = "nubeiras://axustes" } ) )
     //object Mapa: Pantalla("Mapa", { Iconas.Mapa() }, contido = { MapaMundial() }, enlaces = listOf( navDeepLink { uriPattern = "nubeiras://mapa" } ) )
-    object Idioma: Pantalla( { Iconas.Idioma() }, contido = { XogoDados() } )
+    //object Idioma: Pantalla( { Iconas.Idioma() }, contido = { XogoDados() } )
     object Animacions: Pantalla( { Iconas.OlloAberto() }, contido = { MirarAnimacions() } )
 
 

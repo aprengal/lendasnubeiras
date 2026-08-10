@@ -2,7 +2,7 @@ package com.example.lendasnubeiras
 
 import android.database.sqlite.SQLiteConstraintException
 import androidx.test.core.app.ApplicationProvider
-import com.aprengal.lendasnubeiras.conexions.db.DB
+import com.aprengal.lendasnubeiras.configuracion.db.DB
 import org.junit.After
 
 import org.junit.Assert.assertEquals

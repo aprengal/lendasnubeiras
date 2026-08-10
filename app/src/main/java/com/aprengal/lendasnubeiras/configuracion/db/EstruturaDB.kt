@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.conexions.db
+package com.aprengal.lendasnubeiras.configuracion.db
 
 import android.database.sqlite.SQLiteDatabase
 
@@ -97,7 +97,8 @@ class EstruturaDB {
 
     }
 
-    // Hai cambios?
+    // Hai cambios. O importante igual sería ver se hai borradores no dispositivo.
+    // Se non os hai, igual é mellor borrar a DB e creala de novo
     fun actualizar( db: SQLiteDatabase, oldVersion: Int, newVersion: Int ) {
 
         if ( oldVersion < 2 && newVersion == 3 ) {

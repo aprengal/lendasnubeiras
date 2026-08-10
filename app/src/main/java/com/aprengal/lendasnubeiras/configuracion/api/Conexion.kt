@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.conexions.api
+package com.aprengal.lendasnubeiras.configuracion.api
 
 import android.content.Context
 import android.net.ConnectivityManager

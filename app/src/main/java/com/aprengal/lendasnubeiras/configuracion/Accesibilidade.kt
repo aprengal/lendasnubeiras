@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.accesibilidade
+package com.aprengal.lendasnubeiras.configuracion
 
 import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Context

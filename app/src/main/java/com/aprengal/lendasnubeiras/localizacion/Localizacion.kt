@@ -9,26 +9,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.core.os.LocaleListCompat
 import com.aprengal.lendasnubeiras.Axustes.collerOpcion
 import com.aprengal.lendasnubeiras.Axustes.gardarOpcion
-import com.aprengal.lendasnubeiras.accesibilidade.haiLector
+import com.aprengal.lendasnubeiras.configuracion.haiLector
+import com.aprengal.lendasnubeiras.elementos.actividades.Idioma
 import com.aprengal.lendasnubeiras.reiniciarAplicacion
 import org.json.JSONObject
 import java.io.FileNotFoundException
-
-enum class Idioma( val nome: String, val codigo: String, val rexion: String, val pendente:String ) {
-
-    GALEGO( "Galego", "gl", "ES", pendente = "PENDENTE!!" ),
-    CASTELAN( "Español", "es", "ES", pendente = "¡PENDIENTE!" ),
-    INGLES( "English", "en", "GB", pendente = "PENDING!!" ),
-
-    NADA( "", "", "", "" );
-
-    val codigoRexion: String get() = "{$codigo}_$rexion"
-
-    companion object {
-        fun buscar( etiqueta: String ): Idioma? = entries.find { idioma -> idioma.codigoRexion == etiqueta }
-    }
-
-}
 
 //TODO: Test unitario para verificar que todas as cadeas están definidas.
 //Neste test non se miraría o valor real e para iso habería facer unha revisión manual
@@ -73,10 +58,10 @@ object Localizacion {
 
     }
 
-    fun determinarIdioma(): Idioma {
+    private fun determinarIdioma(): Idioma {
 
-        return collerOpcion( "idioma", "" ).let { idioma -> Idioma.buscar( idioma ) }
-            ?: Resources.getSystem().configuration.locales[ 0 ].toString().let { idioma -> Idioma.buscar( idioma ) }
+        return Idioma.buscarIdioma( collerOpcion( "idioma", "" ) )
+            ?: Idioma.buscarIdioma( Resources.getSystem().configuration.locales[ 0 ].toString() )
             ?: Idioma.CASTELAN
 
     }

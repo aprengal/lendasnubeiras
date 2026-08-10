@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.conexions.api
+package com.aprengal.lendasnubeiras.configuracion.api
 
 open class ApiException( message: String, val codigo: String ) : Exception( message )
 

@@ -25,8 +25,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
-import com.aprengal.lendasnubeiras.accesibilidade.haiLector
-import com.aprengal.lendasnubeiras.localizacion.Idioma
+import com.aprengal.lendasnubeiras.configuracion.haiLector
+import com.aprengal.lendasnubeiras.elementos.actividades.Idioma
 import com.aprengal.lendasnubeiras.localizacion.Localizacion.gardarIdioma
 import com.aprengal.lendasnubeiras.localizacion.Localizacion.l10n
 import com.aprengal.lendasnubeiras.navegacion.corrutina

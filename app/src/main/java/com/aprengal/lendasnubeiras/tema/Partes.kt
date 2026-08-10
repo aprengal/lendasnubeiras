@@ -83,9 +83,9 @@ import com.aprengal.lendasnubeiras.tema.Iconas.lanzarDados
 import com.aprengal.lendasnubeiras.tema.Iconas.listarIconasActividades
 import com.aprengal.lendasnubeiras.R
 import com.aprengal.lendasnubeiras.localizacion.Localizacion
-import com.aprengal.lendasnubeiras.accesibilidade.haiLector
-import com.aprengal.lendasnubeiras.conexions.api.Conexion
-import com.aprengal.lendasnubeiras.localizacion.Idioma
+import com.aprengal.lendasnubeiras.configuracion.haiLector
+import com.aprengal.lendasnubeiras.configuracion.api.Conexion
+import com.aprengal.lendasnubeiras.elementos.actividades.Idioma
 import com.aprengal.lendasnubeiras.navegacion.corrutina
 
 // Colores que quedaron fuera del ColorScheme (comentados en tu archivo

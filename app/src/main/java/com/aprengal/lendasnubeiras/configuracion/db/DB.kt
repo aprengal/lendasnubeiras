@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.conexions.db
+package com.aprengal.lendasnubeiras.configuracion.db
 
 import android.content.ContentValues
 import android.content.Context
@@ -6,21 +6,10 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.core.database.sqlite.transaction
-
-data class Actividade(
-    val id: Long,
-    val titulo: String,
-    val idAutoria: Long,
-    val idCategoria: String,
-    val idDestinatario: String,
-    val idIdioma: String,
-    val estado: Int,
-    val duracion: Int,
-    val descricion: String,
-    val obxectivo: String,
-    val materiais: String,
-    val dataModificado: Long
-)
+import com.aprengal.lendasnubeiras.elementos.actividades.Actividade
+import com.aprengal.lendasnubeiras.elementos.actividades.Categoria.Companion.escollerCategoria
+import com.aprengal.lendasnubeiras.elementos.actividades.Destinatario.Companion.escollerDestinatario
+import com.aprengal.lendasnubeiras.elementos.actividades.Idioma.Companion.escollerIdioma
 
 object DB {
 
@@ -31,7 +20,7 @@ object DB {
         db = BBDD( contexto.applicationContext )
     }
 
-    fun buscarActividade( termo: String, filtros: Map<String, Any> = emptyMap() ): List<Actividade> {
+    fun buscarActividades( termo: String, filtros: Map<String, Any> = emptyMap() ): List<Actividade> {
 
         val onde = mutableMapOf<String, Map<String, Any>>()
         onde[ "f" ] = mapOf( "operador" to "MATCH",  "valor" to termo )
@@ -55,7 +44,7 @@ object DB {
             )
         )
 
-        return resultados.map { crearActividade(it ) }
+        return resultados.map { actividade -> crearActividade(actividade ) }
 
     }
 
@@ -63,9 +52,9 @@ object DB {
         id = datos[ "id" ] as Long,
         titulo = datos[ "titulo" ] as String,
         idAutoria = datos[ "id_autoria" ] as Long,
-        idCategoria = datos[ "id_categoria" ] as String,
-        idDestinatario = datos[ "id_destinatario" ] as String,
-        idIdioma = datos[ "id_idioma" ] as String,
+        idCategoria = escollerCategoria( datos[ "id_categoria" ] as String ),
+        idDestinatario = escollerDestinatario( datos[ "id_destinatario" ] as String ),
+        idIdioma = escollerIdioma( datos[ "id_idioma" ] as String ),
         estado = datos[ "estado" ] as Int,
         duracion = datos[ "duracion" ] as Int,
         descricion = datos[ "descricion" ] as String,
@@ -139,7 +128,9 @@ private class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, n
 
     }
 
-    fun insertar( taboa: String, listaValores: Map<String, Any> ): Long = insertar( taboa, listOf( listaValores ) )[ 0 ]
+    fun insertar( taboa: String, listaValores: Map<String, Any> ): Long {
+        return insertar( taboa, listOf( listaValores ) )[ 0 ]
+    }
 
     fun insertar( taboa: String, listaValores: List<Map<String, Any>> ): List<Long> {
 

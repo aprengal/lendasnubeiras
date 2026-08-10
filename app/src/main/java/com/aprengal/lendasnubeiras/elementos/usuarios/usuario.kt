@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.usuarios
+package com.aprengal.lendasnubeiras.elementos.usuarios
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -7,7 +7,7 @@ import com.aprengal.lendasnubeiras.Axustes.collerOpcion
 import com.aprengal.lendasnubeiras.Axustes.gardarOpcion
 
 data class Usuario(
-    val id: ULong,
+    val id: Long,
     val correo: String = "",
     val rol: Rol = Rol.LECTOR
 ) {
@@ -18,11 +18,11 @@ data class Usuario(
 
 object UsuarioActual {
 
-    private var usuario: Usuario by mutableStateOf( Usuario( id = 0uL, correo = "", rol = Rol.LECTOR ) )
+    private var usuario: Usuario by mutableStateOf( Usuario( id = 0L, correo = "", rol = Rol.LECTOR ) )
 
     fun coller(): Usuario {
 
-        if ( usuario.id != 0uL ) { return usuario }
+        if ( usuario.id != 0L ) { return usuario }
 
         val datos = collerOpcion( "datos_usuario", "" )
         usuario = validarUsuario( datos )
@@ -33,7 +33,7 @@ object UsuarioActual {
 
     suspend fun pecharSesion() {
 
-        require( usuario.id != 1uL && usuario.existe ) {
+        require( usuario.id != 1L && usuario.existe ) {
             "Só se pode reiniciar o usuario actual se está definido e fai referencia a un usuario que exista"
         }
 
@@ -42,7 +42,7 @@ object UsuarioActual {
 
         gardarOpcion( "usuarioActual", "" )
 
-        usuario = Usuario( id = 1uL, correo = "", rol = Rol.LECTOR )
+        usuario = Usuario( id = 1L, correo = "", rol = Rol.LECTOR )
 
     }
 
@@ -52,12 +52,12 @@ object UsuarioActual {
         // Caso 1. Non hai datos. Nada que mirar
         // Caso 2. A sesión é anónima
         if ( datos.isBlank() || collerOpcion( "sesion_anonima", false ) ) {
-            return Usuario( id = 1uL, correo = "", rol = Rol.LECTOR )
+            return Usuario( id = 1L, correo = "", rol = Rol.LECTOR )
         }
 
         // Envío dos datos e a ver que pasa
 
-        return Usuario( 50uL, "pataca@gmail.com", Rol.ADMIN )
+        return Usuario( 50L, "pataca@gmail.com", Rol.ADMIN )
 
     }
 

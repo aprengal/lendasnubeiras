@@ -33,9 +33,9 @@ class SQLITETest {
             "id" to System.currentTimeMillis().toString(),
             "titulo" to "Actividade de proba",
             "id_autoria" to "1",
-            "id_categoria" to "infantil",
-            "id_destinatario" to "individual",
-            "id_idioma" to "gl",
+            "id_categoria" to "nada",
+            "id_destinatario" to "xeral",
+            "id_idioma" to "gl_ES",
             "duracion" to "30",
             "descricion" to "Descrición de proba abondo longa",
             "obxectivo" to "Obxectivo de proba abondo longo para pasar o check",
@@ -50,9 +50,9 @@ class SQLITETest {
             "id" to System.currentTimeMillis(),
             "titulo" to "Actividade de proba",
             "id_autoria" to 1L,
-            "id_categoria" to "infantil",
-            "id_destinatario" to "individual",
-            "id_idioma" to "gl",
+            "id_categoria" to "nada",
+            "id_destinatario" to "xeral",
+            "id_idioma" to "gl_ES",
             "duracion" to 30,
             "descricion" to "Descrición de proba abondo longa",
             "obxectivo" to "Obxectivo de proba abondo longo para pasar o check",
@@ -140,7 +140,32 @@ class SQLITETest {
     }
 
     @Test
-    fun idNegativoRexeitado() {
+    fun eliminarActividadeEnviadaRexeitada() {
+
+        val estadosProhibidos = listOf( "0", "1", "2" )
+
+        for ( estado in estadosProhibidos ) {
+
+            val id = 800L + estado.toInt()
+            val datos = datosCompletos( mapOf( "id" to id.toString(), "estado" to estado ) )
+            db.insertar( "actividades", datos )
+
+            val onde = mapOf( "id" to mapOf( "valor" to id ) )
+
+            assertThrows( SQLiteConstraintException::class.java ) {
+                db.eliminar( "actividades", onde )
+            }
+
+            //Para que poida eliminarse
+            db.actualizar( "actividades", mapOf( "estado" to 3 ), onde )
+            db.eliminar( "actividades", onde )
+
+        }
+
+    }
+
+    @Test
+    fun idNegativaRexeitada() {
         assertThrows( SQLiteConstraintException::class.java ) {
             db.insertar( "actividades", datosCompletos( mapOf( "id" to "-1" ) ) )
         }
@@ -150,7 +175,7 @@ class SQLITETest {
     //nos métodos que realizan operacións coa base de datos directamente
 
     @Test
-    fun idDuplicadoRexeitado() {
+    fun idDuplicadaRexeitada() {
         val datos1 = datosCompletos( mapOf( "id" to "500", "titulo" to "Primeira" ) )
         db.insertar( "actividades", datos1 )
 
@@ -284,6 +309,57 @@ class SQLITETest {
         val actualizadas = db.actualizar( "actividades", cambios, onde )
 
         assertEquals( 1, actualizadas )
+
+    }
+
+    @Test
+    fun inserirActividadeNoBuscador() {
+
+        val id = 700L
+        val datos = datosCompletos( mapOf( "id" to id.toString(), "titulo" to "Busca Proba" ) )
+        db.insertar( "actividades", datos )
+
+        val onde = mapOf( "docid" to mapOf( "valor" to id ) )
+        val consulta = mapOf( "columnas" to listOf( "*" ), "onde" to onde )
+        val resultado = db.seleccionar( "buscador_actividades", consulta )
+
+        assertEquals( 1, resultado.size )
+        assertEquals( "Busca Proba", resultado[ 0 ][ "titulo" ] )
+
+    }
+
+    @Test
+    fun actualizarActividadeBuscador() {
+
+        val id = 701L
+        val datos = datosCompletos( mapOf( "id" to id.toString(), "titulo" to "Título orixinal" ) )
+        db.insertar( "actividades", datos )
+
+        val cambios = mapOf( "titulo" to "Título actualizado" )
+        val onde = mapOf( "id" to mapOf( "valor" to id ) )
+        db.actualizar( "actividades", cambios, onde )
+
+        val consulta = mapOf( "columnas" to listOf( "titulo" ), "onde" to mapOf( "docid" to mapOf( "valor" to id ) ) )
+        val resultado = db.seleccionar( "buscador_actividades", consulta )
+
+        assertEquals( "Título actualizado", resultado[ 0 ][ "titulo" ] )
+
+    }
+
+    @Test
+    fun eliminarActividadeBuscador() {
+
+        val id = 702L
+        val datos = datosCompletos( mapOf( "id" to id.toString(), "estado" to "-1" ) )
+        db.insertar( "actividades", datos )
+
+        val onde = mapOf( "id" to mapOf( "valor" to id ) )
+        db.eliminar( "actividades", onde )
+
+        val consulta = mapOf( "columnas" to listOf( "*" ), "onde" to mapOf( "docid" to mapOf( "valor" to id ) ) )
+        val resultado = db.seleccionar( "buscador_actividades", consulta )
+
+        assertTrue( resultado.isEmpty() )
 
     }
 

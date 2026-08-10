@@ -88,7 +88,7 @@ object DB {
 
 private class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, null, DB_VERSION ) {
 
-    private val taboasPemitidas = listOf( "actividades" )
+    private val taboasPermitidas = setOf( "actividades" )
 
     // Estrutura
     companion object {
@@ -104,8 +104,13 @@ private class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, n
         EstruturaDB().actualizar( db, oldVersion, newVersion )
     }
 
-    private fun verificarTaboa( taboa: String ) {
-        require( taboa in taboasPemitidas ) { "A táboa $taboa non está na lista de táboas permitidas" }
+    private fun verificarTaboa( taboa: String, contexto: String = "escritura" ) {
+
+        val permitidas = taboasPermitidas.toMutableSet()
+        if ( contexto == "lectura" ) permitidas.add( "buscador_actividades" )
+
+        require( taboa in permitidas ) { "A táboa $taboa non está na lista de táboas permitidas" }
+
     }
 
     // Operacións
@@ -153,11 +158,13 @@ private class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, n
 
     fun seleccionar( taboa: String, datos: Map<String, Any> ): List<Map<String, Any>> {
 
-        verificarTaboa( taboa )
+        verificarTaboa( taboa, "lectura" )
 
         val distinto = datos[ "distinto" ] as? Boolean ?: false
-        val columnas = datos[ "columnas" ] as? List<*> ?: error( "Faltan as columnas" )
         val alias = datos[ "alias" ] as? String ?: ""
+
+        @Suppress( "UNCHECKED_CAST" )
+        val columnas = datos[ "columnas" ] as? List<String> ?: error( "Faltan as columnas" )
 
         @Suppress( "UNCHECKED_CAST" )
         val joins = datos["joins"] as? List<Map<String, String>> ?: emptyList()
@@ -309,7 +316,7 @@ private class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, n
                 val ( aliasSecundario, campoSecundario ) = colSecundaria.split( ".", limit = 2 )
 
                 val taboaSecundaria = join[ "taboa-join" ] ?: error( "Nunha join hai que indicar a táboa secundaria" )
-                verificarTaboa( taboaSecundaria )
+                verificarTaboa( taboaSecundaria, "lectura" )
                 val condicionCombinacion = if ( colPrincipal != campoSecundario ) " ON $aliasPrincipal.$colPrincipal = $colSecundaria" else " USING ( $colPrincipal )"
 
                 append( " $tipoCombinacion JOIN $taboaSecundaria AS ${ aliasSecundario }$condicionCombinacion" )

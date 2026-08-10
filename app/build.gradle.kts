@@ -113,7 +113,7 @@ dependencies {
 
     debugImplementation( libs.androidx.compose.ui.tooling )
 
-    //testImplementation( libs.junit )
+    testImplementation( libs.junit )
     testImplementation( libs.robolectric )
 
     //Librería para cambiar a cor antes de que arranque a aplicación
@@ -134,7 +134,6 @@ dependencies {
     testImplementation( kotlin( "test" ) )
 
     //Testeo Android en vivo
-    androidTestImplementation( libs.junit )
     androidTestImplementation( libs.androidx.runner )
     androidTestImplementation( libs.androidx.rules )
 

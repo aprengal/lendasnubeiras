@@ -184,6 +184,8 @@ object Tema {
     var temaActual: MutableState<Variante> = mutableStateOf( Variante.PREDETERMINADO )
         private set
 
+    private var temaCargado = false
+
     enum class Variante( val clave: String ) {
         CLARO( "tema_claro" ),
         ESCURO( "tema_escuro" ),
@@ -198,8 +200,13 @@ object Tema {
     }
 
     fun arrancar() {
+
+        require( !temaCargado ) { "A aplicación xa estaba inicializada!" }
+        temaCargado = true
+
         val claveGuardada = collerOpcion("tema", Variante.PREDETERMINADO.clave )
         temaActual.value = Variante.buscar( claveGuardada )
+
     }
 
     suspend fun gardarTema( novoTema: Variante ) {

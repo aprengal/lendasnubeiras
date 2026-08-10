@@ -24,7 +24,7 @@ object Conexion {
     private lateinit var appContext: Context
 
     fun arrancar( contexto: Context ) {
-        if ( ::appContext.isInitialized ) return
+        require( !::appContext.isInitialized ) { "A aplicación xa estaba inicializada!" }
         appContext = contexto.applicationContext
     }
 

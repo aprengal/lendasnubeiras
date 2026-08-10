@@ -27,8 +27,9 @@ enum class Idioma( val nome: String, val codigo: String, val rexion: String, val
 
     companion object {
 
-        fun buscarIdioma( etiqueta: String ): Idioma? {
-            return entries.find { idioma -> idioma.codigoRexion == etiqueta }
+        fun escollerIdiomaAplicacion( vararg codigos: String ): Idioma {
+            codigos.forEach { codigoRexion -> entries.find { idioma -> idioma.codigoRexion == codigoRexion }?.let { resultado -> return resultado } }
+            return CASTELAN
         }
 
         fun escollerIdioma( etiqueta: String ): Idioma {
@@ -41,7 +42,6 @@ enum class Idioma( val nome: String, val codigo: String, val rexion: String, val
 
 enum class Categoria( val clave: String ) {
 
-    SEN_CATEGORIA( "nada" ),
     OUTROS( "outros" ),
     DIXITAL( "dixital" ),
     AIRE_LIBRE( "aire-libre" ),
@@ -51,7 +51,7 @@ enum class Categoria( val clave: String ) {
     companion object {
 
         fun escollerCategoria( clave: String ): Categoria {
-            return entries.find { categoria -> categoria.clave == clave } ?: SEN_CATEGORIA
+            return entries.find { categoria -> categoria.clave == clave } ?: OUTROS
         }
 
     }
@@ -66,6 +66,7 @@ enum class Destinatario( val clave: String ) {
     ADULTOS( "adultos" ),
     MAIORES( "maiores" ),
     MIXTO( "mixto" );
+
 
     companion object {
 

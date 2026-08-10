@@ -3,6 +3,8 @@ package com.aprengal.lendasnubeiras
 import android.content.Context
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
+import com.aprengal.lendasnubeiras.elementos.actividades.Idioma
+import com.aprengal.lendasnubeiras.localizacion.Localizacion.idiomaActual
 import kotlinx.coroutines.flow.first
 import okio.IOException
 
@@ -13,9 +15,9 @@ object Axustes {
 
     private val Context.opcions by preferencesDataStore( name = "opcions" )
 
-    suspend fun arrancar(contexto: Context ) {
+    suspend fun arrancar( contexto: Context ) {
 
-        if ( ::appContext.isInitialized ) return
+        require( !::appContext.isInitialized ) { "A aplicación xa estaba inicializada!" }
 
         appContext = contexto.applicationContext
         appContext.opcions.data.first().asMap().forEach { ( clave,  valor ) -> cache[ clave.name ] = valor }

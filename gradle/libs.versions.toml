@@ -18,9 +18,6 @@ runner = "1.7.0"
 runtimeVersion = "1.11.4"
 
 foundation = "1.11.4"
-sqlite = "2.7.0"
-sqliteAndroid = "3.45.0"
-sqliteBundled = "2.7.0"
 uiText = "1.11.4"
 animationCore = "1.11.4"
 animation = "1.11.4"
@@ -36,8 +33,6 @@ androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", versi
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-rules = { module = "androidx.test:rules", version.ref = "rules" }
 androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
-androidx-sqlite = { module = "androidx.sqlite:sqlite", version.ref = "sqlite" }
-androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqliteBundled" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
@@ -60,7 +55,6 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 androidx-startup-runtime = { group = "androidx.startup", name = "startup-runtime", version.ref = "startup" }
 androidx-compose-ui-unit = { group = "androidx.compose.ui", name = "ui-unit", version.ref = "uiUnit" }
 core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "coreKtxVersion" }
-sqlite-android = { module = "io.requery:sqlite-android", version.ref = "sqliteAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

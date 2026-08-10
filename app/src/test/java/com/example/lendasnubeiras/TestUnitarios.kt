@@ -1,21 +1,23 @@
 package com.example.lendasnubeiras
 
 import com.aprengal.lendasnubeiras.navegacion.Pantalla
+import org.junit.Test
 import kotlin.test.DefaultAsserter.assertEquals
 import kotlin.test.DefaultAsserter.assertTrue
 
 class TestUnitarios {
 
-    fun navegacionCompleta() {
+    @Test
+    fun todasPantallasUsadas() {
 
         val subclasesReales = Pantalla::class.sealedSubclasses
             .mapNotNull { it.objectInstance }
             .toSet()
 
-        val subclasesEnLista = Pantalla.todas.toSet()
-
-        val faltanEnLista = subclasesReales - subclasesEnLista
-        val sobranEnLista = subclasesEnLista - subclasesReales
+        val pantallasRegistradas = (Pantalla.todas + Pantalla.autenticacion).map { it::class }.toSet()
+        val subclasesRealesClasses = subclasesReales.map { it::class }.toSet()
+        val faltanEnLista = subclasesRealesClasses - pantallasRegistradas
+        val sobranEnLista = pantallasRegistradas - subclasesRealesClasses
 
         assertTrue(
             "Faltan en Pantalla.todas: ${faltanEnLista.map { it::class.simpleName }}",
@@ -30,8 +32,9 @@ class TestUnitarios {
         assertEquals(
             "El tamaño no coincide, revisa duplicados en Pantalla.todas",
             subclasesReales.size,
-            Pantalla.todas.size
+            Pantalla.todas.size + Pantalla.autenticacion.size
         )
+
     }
 
 }

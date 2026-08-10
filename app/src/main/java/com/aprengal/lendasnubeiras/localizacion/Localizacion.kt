@@ -46,23 +46,18 @@ object Localizacion {
 
     fun arrancar( contexto: Context ) {
 
-        if ( ::appContext.isInitialized || idiomaActual.value != Idioma.NADA ) return
+        require( !::appContext.isInitialized && idiomaActual.value == Idioma.NADA ) { "A aplicación xa estaba inicializada!" }
 
         appContext = contexto.applicationContext
-        idiomaActual.value = determinarIdioma()
+        idiomaActual.value = Idioma.escollerIdiomaAplicacion(
+            collerOpcion( "idioma", "" ),
+            Resources.getSystem().configuration.locales[ 0 ].toString()
+        )
 
         if ( haiLector( contexto ) ) {
             val idiomaOpcions = LocaleListCompat.forLanguageTags( idiomaActual.value.codigoRexion.replace( "_", "-" ) )
             AppCompatDelegate.setApplicationLocales( idiomaOpcions )
         }
-
-    }
-
-    private fun determinarIdioma(): Idioma {
-
-        return Idioma.buscarIdioma( collerOpcion( "idioma", "" ) )
-            ?: Idioma.buscarIdioma( Resources.getSystem().configuration.locales[ 0 ].toString() )
-            ?: Idioma.CASTELAN
 
     }
 

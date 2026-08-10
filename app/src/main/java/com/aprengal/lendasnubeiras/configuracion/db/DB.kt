@@ -16,7 +16,7 @@ object DB {
     private lateinit var db: BBDD
 
     fun arrancar( contexto: Context ) {
-        if ( ::db.isInitialized ) return
+        require( !::db.isInitialized  ) { "A base de datos xa estaba inicializada!" }
         db = BBDD( contexto.applicationContext )
     }
 
@@ -308,16 +308,16 @@ private class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, n
 
                 val tipoCombinacion = join[ "tipo" ] ?: error( "Falta o tipo de JOIN" )
                 val colPrincipal = join[ "principal" ] ?: error( "Falta a columna principal" )
-                val colSecundaria = join[ "secundaria" ] ?: error( "Falta a columna secundaria" )
+                val expresionColSecundaria = join[ "secundaria" ] ?: error( "Falta a columna secundaria" )
 
                 require( tipoCombinacion in tiposAdmitidos ) { "Tipo de JOIN non admitido: $tipoCombinacion" }
-                require( colSecundaria.contains( "." ) ) { "Unha join require un alias" }
+                require( expresionColSecundaria.contains( "." ) ) { "Unha join require un alias" }
 
-                val ( aliasSecundario, campoSecundario ) = colSecundaria.split( ".", limit = 2 )
+                val ( aliasSecundario, colSecundaria ) = expresionColSecundaria.split( ".", limit = 2 )
 
                 val taboaSecundaria = join[ "taboa-join" ] ?: error( "Nunha join hai que indicar a táboa secundaria" )
                 verificarTaboa( taboaSecundaria, "lectura" )
-                val condicionCombinacion = if ( colPrincipal != campoSecundario ) " ON $aliasPrincipal.$colPrincipal = $colSecundaria" else " USING ( $colPrincipal )"
+                val condicionCombinacion = if ( colPrincipal != colSecundaria ) " ON $aliasPrincipal.$colPrincipal = $expresionColSecundaria" else " USING ( $colPrincipal )"
 
                 append( " $tipoCombinacion JOIN $taboaSecundaria AS ${ aliasSecundario }$condicionCombinacion" )
 

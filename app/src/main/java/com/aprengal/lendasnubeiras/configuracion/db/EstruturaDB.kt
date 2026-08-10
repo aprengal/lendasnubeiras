@@ -15,7 +15,7 @@ class EstruturaDB {
                 id_categoria    VARCHAR(15) NOT NULL,
                 id_destinatario VARCHAR(15) NOT NULL,
                 id_idioma       VARCHAR(7) NOT NULL,
-                estado          TINYINT NOT NULL DEFAULT -1,
+                estado          TINYINT NOT NULL DEFAULT -1, -- Positivos = xa enviado ao servidor: 0=borrador, 1=pendente, 2=publicado, 3=borrado. Negativos = aínda non enviado: -1=borrador, -2=pendente, -3=publicado
                 duracion        TINYINT NOT NULL,
                 descricion      TEXT NOT NULL,
                 obxectivo       TEXT NOT NULL,
@@ -43,34 +43,16 @@ class EstruturaDB {
         db.execSQL( "CREATE VIRTUAL TABLE buscador_actividades USING fts4( titulo, descricion, obxectivo, materiais )" )
 
         //Disparadores
-        db.execSQL(
-            """
-            CREATE TRIGGER trg_actividades_ins_buscador AFTER INSERT ON actividades BEGIN
-                INSERT INTO buscador_actividades( docid, titulo, descricion, obxectivo, materiais )
-                VALUES ( new.id, new.titulo, new.descricion, new.obxectivo, new.materiais );
-            END
-            """
-        )
 
+        //Xenéricos
         db.execSQL(
             """
             CREATE TRIGGER trg_actividades_proteccion_upd
             BEFORE UPDATE ON actividades
             FOR EACH ROW
-            WHEN OLD.id != NEW.id AND OLD.estado >= 0
+            WHEN old.id != new.id AND old.estado >= 0
             BEGIN
                 SELECT RAISE( ABORT, 'A id da actividades non pode ser modificada unha vez enviada' );
-            END
-            """
-        )
-
-        db.execSQL(
-            """
-            CREATE TRIGGER trg_actividades_upd_buscador AFTER UPDATE ON actividades BEGIN
-                UPDATE buscador_actividades SET
-                    titulo = new.titulo, descricion = new.descricion,
-                    obxectivo = new.obxectivo, materiais = new.materiais
-                WHERE docid = new.id;
             END
             """
         )
@@ -80,13 +62,72 @@ class EstruturaDB {
             CREATE TRIGGER trg_actividades_proteccion_del
             BEFORE DELETE ON actividades
             FOR EACH ROW
-            WHEN NOT ( OLD.estado < 0 OR OLD.estado = 3 )
+            WHEN NOT ( old.estado < 0 OR old.estado = 3 )
             BEGIN
                 SELECT RAISE( ABORT, 'Só se poden eliminar actividades non enviadas ou xa borradas no servidor' );
             END
             """
         )
 
+        //Relacionados co buscador
+
+        //1. Inserción
+        db.execSQL(
+            """
+            CREATE TRIGGER trg_actividades_ins_buscador AFTER INSERT ON actividades 
+            WHEN new.estado IN ( -3, 2 )
+            BEGIN
+                INSERT INTO buscador_actividades( docid, titulo, descricion, obxectivo, materiais )
+                VALUES ( new.id, new.titulo, new.descricion, new.obxectivo, new.materiais );
+            END
+            """
+        )
+
+        //2. Actualizacións
+
+        // 2.1. De NON buscable a buscable
+        db.execSQL(
+            """
+            CREATE TRIGGER trg_actividades_upd_inserir AFTER UPDATE ON actividades 
+            FOR EACH ROW
+            WHEN old.estado NOT IN ( 2, -3 ) AND new.estado IN ( 2, -3 )
+            BEGIN
+                INSERT INTO buscador_actividades( docid, titulo, descricion, obxectivo, materiais )
+                VALUES ( new.id, new.titulo, new.descricion, new.obxectivo, new.materiais );
+            END
+            """
+        )
+
+        // 2.2. Segue en buscable
+        db.execSQL(
+            """
+            CREATE TRIGGER trg_actividades_upd_actualizar AFTER UPDATE ON actividades 
+            FOR EACH ROW
+            WHEN old.estado IN ( 2, -3 ) AND new.estado IN ( 2, -3 )
+            BEGIN
+                UPDATE buscador_actividades SET
+                    titulo = new.titulo,
+                    descricion = new.descricion,
+                    obxectivo = new.obxectivo,
+                    materiais = new.materiais
+                WHERE docid = new.id;
+            END
+            """
+        )
+
+        // 2.3. Deixou de ser buscable
+        db.execSQL(
+            """
+            CREATE TRIGGER trg_actividades_upd_borrar AFTER UPDATE ON actividades 
+            FOR EACH ROW
+            WHEN old.estado IN ( 2, -3 ) AND new.estado NOT IN ( 2, -3)
+            BEGIN
+                DELETE FROM buscador_actividades WHERE docid = old.id;
+            END
+            """
+        )
+
+        //3. Borrados
         db.execSQL(
             """
             CREATE TRIGGER trg_actividades_del_buscador AFTER DELETE ON actividades BEGIN

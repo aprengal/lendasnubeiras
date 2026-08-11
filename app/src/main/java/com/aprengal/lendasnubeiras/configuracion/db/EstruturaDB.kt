@@ -10,7 +10,7 @@ class EstruturaDB {
             """
             CREATE TABLE actividades (
                 id              INTEGER NOT NULL,
-                titulo          VARCHAR(100) NOT NULL,
+                titulo          VARCHAR(100) NOT NULL COLLATE NOCASE,
                 id_autoria      BIGINT NOT NULL,
                 id_categoria    VARCHAR(15) NOT NULL,
                 id_destinatario VARCHAR(15) NOT NULL,
@@ -22,7 +22,6 @@ class EstruturaDB {
                 materiais       TEXT NOT NULL,
                 data_modificado BIGINT NOT NULL,
                 PRIMARY KEY ( id ),
-                UNIQUE ( titulo, id_idioma ),
                 CHECK ( id >= 0 ),
                 CHECK ( estado BETWEEN -3 AND 3 ),
                 CHECK ( duracion BETWEEN 1 AND 180 ),
@@ -33,6 +32,7 @@ class EstruturaDB {
             """
         )
 
+        db.execSQL( "CREATE UNIQUE INDEX uq_actividades_titulo_idioma ON actividades( titulo, id_idioma )" )
         db.execSQL( "CREATE INDEX idx_actividades_autoria ON actividades( id_autoria )" )
         db.execSQL( "CREATE INDEX idx_actividades_categoria ON actividades( id_categoria )" )
         db.execSQL( "CREATE INDEX idx_actividades_destinatario ON actividades( id_destinatario )" )

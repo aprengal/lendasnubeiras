@@ -20,7 +20,7 @@ object UsuarioActual {
 
     private var usuario: Usuario by mutableStateOf( Usuario( id = 0L, correo = "", rol = Rol.LECTOR ) )
 
-    fun coller(): Usuario {
+    fun collerUsuarioActual(): Usuario {
 
         if ( usuario.id != 0L ) { return usuario }
 

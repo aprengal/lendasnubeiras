@@ -3,8 +3,6 @@ package com.aprengal.lendasnubeiras
 import android.content.Context
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
-import com.aprengal.lendasnubeiras.elementos.actividades.Idioma
-import com.aprengal.lendasnubeiras.localizacion.Localizacion.idiomaActual
 import kotlinx.coroutines.flow.first
 import okio.IOException
 

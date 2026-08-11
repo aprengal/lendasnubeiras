@@ -53,7 +53,7 @@ import com.aprengal.lendasnubeiras.tema.Logo
 import com.aprengal.lendasnubeiras.localizacion.Localizacion.l10n
 import com.aprengal.lendasnubeiras.elementos.usuarios.Rol
 import com.aprengal.lendasnubeiras.elementos.usuarios.Usuario
-import com.aprengal.lendasnubeiras.elementos.usuarios.UsuarioActual
+import com.aprengal.lendasnubeiras.elementos.usuarios.UsuarioActual.collerUsuarioActual
 
 @Composable
 fun IniciarAplicacion() {
@@ -62,7 +62,7 @@ fun IniciarAplicacion() {
     var sesionAnonima by rememberSaveable { mutableStateOf( false ) }
 
     LaunchedEffect( Unit ) {
-        usuarioActual = UsuarioActual.coller()
+        usuarioActual = collerUsuarioActual()
         sesionAnonima = collerOpcion( "sesion_anonima", false )
     }
 

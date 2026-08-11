@@ -1,5 +1,6 @@
 package com.example.lendasnubeiras
 
+import com.aprengal.lendasnubeiras.localizacion.Idioma
 import com.aprengal.lendasnubeiras.navegacion.Pantalla
 import org.junit.Test
 import kotlin.test.DefaultAsserter.assertEquals
@@ -34,6 +35,24 @@ class TestUnitarios {
             subclasesReales.size,
             Pantalla.todas.size + Pantalla.autenticacion.size
         )
+
+    }
+
+    @Test
+    fun idiomasCorrectos() {
+
+        val esperados = Idioma.entries.associateWith { idioma ->
+            when ( idioma ) {
+                Idioma.GALEGO -> "gl_ES"
+                Idioma.CASTELAN -> "es_ES"
+                Idioma.INGLES -> "en_GB"
+                Idioma.NADA -> "_"
+            }
+        }
+
+        esperados.forEach { ( idioma, codigo ) ->
+            assertEquals( "Código incorrecto para $idioma",codigo, idioma.codigoRexion )
+        }
 
     }
 

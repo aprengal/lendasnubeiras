@@ -10,10 +10,34 @@ import androidx.core.os.LocaleListCompat
 import com.aprengal.lendasnubeiras.Axustes.collerOpcion
 import com.aprengal.lendasnubeiras.Axustes.gardarOpcion
 import com.aprengal.lendasnubeiras.configuracion.haiLector
-import com.aprengal.lendasnubeiras.elementos.actividades.Idioma
 import com.aprengal.lendasnubeiras.reiniciarAplicacion
 import org.json.JSONObject
 import java.io.FileNotFoundException
+
+enum class Idioma( val nome: String, val codigo: String, val rexion: String, val pendente: String ) {
+
+    GALEGO( "Galego", "gl", "ES", pendente = "PENDENTE!!" ),
+    CASTELAN( "Español", "es", "ES", pendente = "¡PENDIENTE!" ),
+    INGLES( "English", "en", "GB", pendente = "PENDING!!" ),
+
+    NADA( "", "", "", "" );
+
+    val codigoRexion: String get() = "${codigo}_$rexion"
+
+    companion object {
+
+        fun escollerIdiomaAplicacion( vararg codigos: String ): Idioma {
+            codigos.forEach { codigoRexion -> entries.find { idioma -> idioma.codigoRexion == codigoRexion }?.let { resultado -> return resultado } }
+            return CASTELAN
+        }
+
+        fun escollerIdioma( etiqueta: String ): Idioma {
+            return entries.find { idioma -> idioma.codigoRexion == etiqueta } ?: NADA
+        }
+
+    }
+
+}
 
 //TODO: Test unitario para verificar que todas as cadeas están definidas.
 //Neste test non se miraría o valor real e para iso habería facer unha revisión manual

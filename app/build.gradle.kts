@@ -89,6 +89,12 @@ android {
         }
     }
 
+    sourceSets {
+        getByName( "androidTest" ) {
+            assets.directories.add( "src/main/java" )
+        }
+    }
+
 }
 
 dependencies {

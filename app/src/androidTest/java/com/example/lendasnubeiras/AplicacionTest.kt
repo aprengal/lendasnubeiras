@@ -21,12 +21,8 @@ class AplicacionTest {
 
         arrancarConfiguracion( contexto )
 
-        assertThrows( Exception::class.java ) {
-            arrancarConfiguracion( contexto )
-        }
+        revisarHashFuncion( "arrancarConfiguracion", "1ff641ef77b597c865cf9ca2411ed960ac075b6a09b48f5c12605d22804697eb" )
 
-        //Relanzamento específico de cada parte compoñente manual
-        //Habería que ilos engadindo manualmente un a un para verificar funciona cada clase de maneira específica
         assertThrows( Exception::class.java ) {
             runBlocking {
                 Axustes.arrancar( contexto )

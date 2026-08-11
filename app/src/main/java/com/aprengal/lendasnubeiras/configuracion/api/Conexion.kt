@@ -65,7 +65,7 @@ object Conexion {
 
             return JSONObject().apply {
                 put( "exito", false )
-                put( "erro", e::class.simpleName ?: "ErroDescoñecido" )
+                put( "erro", e::class.simpleName ?: "OutroErroApiException" )
                 put( "codigo", e.codigo )
             }
 
@@ -119,7 +119,7 @@ object Conexion {
 
             }
 
-            return@withContext respostaBruta
+            respostaBruta
 
         }
 

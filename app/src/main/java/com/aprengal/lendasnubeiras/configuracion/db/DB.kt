@@ -7,9 +7,15 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.core.database.sqlite.transaction
 import com.aprengal.lendasnubeiras.elementos.actividades.Actividade
+import com.aprengal.lendasnubeiras.elementos.actividades.ActividadeBuscada
+import com.aprengal.lendasnubeiras.elementos.actividades.Atributo
 import com.aprengal.lendasnubeiras.elementos.actividades.Categoria.Companion.escollerCategoria
 import com.aprengal.lendasnubeiras.elementos.actividades.Destinatario.Companion.escollerDestinatario
-import com.aprengal.lendasnubeiras.elementos.actividades.Idioma.Companion.escollerIdioma
+import com.aprengal.lendasnubeiras.elementos.actividades.Estado.Companion.escollerEstado
+import com.aprengal.lendasnubeiras.elementos.usuarios.Rol
+import com.aprengal.lendasnubeiras.elementos.usuarios.UsuarioActual.collerUsuarioActual
+import com.aprengal.lendasnubeiras.localizacion.Idioma
+import com.aprengal.lendasnubeiras.localizacion.Idioma.Companion.escollerIdioma
 
 object DB {
 
@@ -20,17 +26,27 @@ object DB {
         db = BBDD( contexto.applicationContext )
     }
 
-    fun buscarActividades( termo: String, filtros: Map<String, Any> = emptyMap() ): List<Actividade> {
+    fun buscarActividadesBuscables( termo: String, colOrdenable: String, dirOrdenable: String = "DESC", filtros: Map<String, Any> = emptyMap() ): List<ActividadeBuscada> {
 
         val onde = mutableMapOf<String, Map<String, Any>>()
-        onde[ "f" ] = mapOf( "operador" to "MATCH",  "valor" to termo )
+        onde[ "buscador_actividades" ] = mapOf( "operador" to "MATCH",  "valor" to termo )
 
-        filtros.forEach { ( campo, valor ) -> onde[ "a.$campo" ] = mapOf( "valor" to valor ) }
+        for ( ( campo, valor ) in filtros ) {
+
+            val valorFiltrado = when ( valor ) {
+                is Atributo -> valor.clave
+                is Idioma -> valor.codigoRexion
+                else -> error( "Tipo non soportado: ${ valor::class }" )
+            }
+
+            onde[ "a.$campo" ] = mapOf( "operador" to "=", "valor" to valorFiltrado )
+
+        }
 
         val resultados = db.seleccionar(
             "actividades",
             mapOf(
-                "columnas" to listOf( "a.titulo", "a.descricion", "a.obxectivo", "a.materiais" ),
+                "columnas" to setOf( "a.id", "a.titulo", "a.descricion", "a.id_categoria", "a.id_destinatario", "a.id_idioma", "a.estado" ),
                 "alias" to "a",
                 "joins" to listOf(
                     mapOf(
@@ -40,11 +56,54 @@ object DB {
                         "taboa-join" to "buscador_actividades"
                     )
                 ),
+                "onde" to onde,
+                "ordenar" to mapOf( colOrdenable to dirOrdenable )
+            )
+        )
+
+        return resultados.map { actividade -> crearActividadeBuscada( actividade ) }
+
+    }
+
+    fun collerActividade( id: Long ): Actividade? = buscarActividade( mapOf( "id" to mapOf( "operador" to "=", "valor" to id ) ) )
+
+    fun collerActividade( titulo: String, idioma: Idioma ): Actividade? {
+        val onde = mapOf( "titulo" to mapOf( "operador" to "=", "valor" to titulo ), "id_idioma" to mapOf( "operador" to "=", "valor" to idioma ) )
+        return buscarActividade( onde )
+    }
+
+    private fun buscarActividade( onde: Map<String, Map<String, Any>> ): Actividade? {
+
+        val resultados = db.seleccionar(
+            "actividades",
+            mapOf(
+                "columnas" to setOf( "*" ),
                 "onde" to onde
             )
         )
 
-        return resultados.map { actividade -> crearActividade(actividade ) }
+        return resultados.firstOrNull()?.let { actividade -> crearActividade( actividade ) }
+
+    }
+
+    fun listarActividades(): List<Actividade> {
+
+        val usuarioActual = collerUsuarioActual()
+
+        require( usuarioActual.rol != Rol.LECTOR ) { "Non se poden listar as actividades co rol actual" }
+
+        val datos: MutableMap<String, Any> = mutableMapOf( "columnas" to setOf( "*" ) )
+
+        if ( usuarioActual.rol !in setOf( Rol.EDITOR, Rol.ADMIN ) ) {
+            datos[ "onde" ] = mapOf( "id_autoria" to mapOf( "operador" to "=", "valor" to usuarioActual.id ) )
+        }
+
+        val resultados = db.seleccionar( "actividades", datos )
+        val saida = mutableListOf<Actividade>()
+
+        resultados.forEach { actividade -> saida.add( crearActividade( actividade ) ) }
+
+        return saida
 
     }
 
@@ -52,15 +111,25 @@ object DB {
         id = datos[ "id" ] as Long,
         titulo = datos[ "titulo" ] as String,
         idAutoria = datos[ "id_autoria" ] as Long,
-        idCategoria = escollerCategoria( datos[ "id_categoria" ] as String ),
-        idDestinatario = escollerDestinatario( datos[ "id_destinatario" ] as String ),
-        idIdioma = escollerIdioma( datos[ "id_idioma" ] as String ),
-        estado = datos[ "estado" ] as Int,
-        duracion = datos[ "duracion" ] as Int,
+        categoria = escollerCategoria( datos[ "id_categoria" ] as String ),
+        destinatario = escollerDestinatario( datos[ "id_destinatario" ] as String ),
+        idioma = escollerIdioma( datos[ "id_idioma" ] as String ),
+        estado = escollerEstado( ( datos[ "estado" ] as Long ).toInt() ),
+        duracion = ( datos[ "duracion" ] as Long ).toInt(),
         descricion = datos[ "descricion" ] as String,
         obxectivo = datos[ "obxectivo" ] as String,
         materiais = datos[ "materiais" ] as String,
         dataModificado = datos[ "data_modificado" ] as Long
+    )
+
+    private fun crearActividadeBuscada( datos: Map<String, Any> ): ActividadeBuscada = ActividadeBuscada(
+        id = datos[ "id" ] as Long,
+        titulo = datos[ "titulo" ] as String,
+        categoria = escollerCategoria( datos[ "id_categoria" ] as String ),
+        destinatario = escollerDestinatario( datos[ "id_destinatario" ] as String ),
+        idioma = escollerIdioma( datos[ "id_idioma" ] as String ),
+        estado = escollerEstado( ( datos[ "estado" ] as Long ).toInt() ),
+        descricion = datos[ "descricion" ] as String
     )
 
     fun insertar( taboa: String, datos: Map<String, String> ): Long {
@@ -118,18 +187,28 @@ private class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, n
 
     private fun crearValores( listaValores: List<Map<String, Any>> ): List<ContentValues> {
 
-        val valores = listaValores.map { datos ->
-            ContentValues().apply {
-                datos.forEach { ( campo, valor ) ->
-                    when ( valor ) {
-                        is String, is Number -> put( campo, valor.toString() )
-                        else -> error( "Tipo non soportado: ${ valor::class }" )
-                    }
-                }
-            }
+        val valores = mutableListOf<ContentValues>()
+
+        for ( datos in listaValores ) {
+            val contentValues = ContentValues()
+            datos.forEach { ( campo, valor ) -> contentValues.put( campo, procesarValor( valor ) ) }
+            valores += contentValues
         }
 
         return valores
+
+    }
+
+    private fun procesarValor( valor: Any ): String {
+
+        val procesado = when ( valor ) {
+            is String, is Number -> valor.toString()
+            is Atributo -> valor.clave
+            is Idioma -> valor.codigoRexion
+            else -> error( "Tipo non soportado: ${ valor::class }" )
+        }
+
+        return procesado
 
     }
 
@@ -164,7 +243,7 @@ private class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, n
         val alias = datos[ "alias" ] as? String ?: ""
 
         @Suppress( "UNCHECKED_CAST" )
-        val columnas = datos[ "columnas" ] as? List<String> ?: error( "Faltan as columnas" )
+        val columnas = datos[ "columnas" ] as? Set<String> ?: error( "Faltan as columnas" )
 
         @Suppress( "UNCHECKED_CAST" )
         val joins = datos["joins"] as? List<Map<String, String>> ?: emptyList()
@@ -175,10 +254,10 @@ private class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, n
         val ( condicions, argumentos ) = if ( onde.isEmpty() ) "" to emptyArray() else establecerCondicions( onde )
 
         @Suppress( "UNCHECKED_CAST" )
-        val ordenar = datos["ordenar"] as? Map<String, String> ?: emptyMap()
+        val ordenar = datos[ "ordenar" ] as? Map<String, String> ?: emptyMap()
 
         @Suppress( "UNCHECKED_CAST" )
-        val limite = datos["limit"] as? List<Int> ?: emptyList<Any>()
+        val limite = datos[ "limit" ] as? List<Int> ?: emptyList<Any>()
 
         val consulta = buildString {
 
@@ -266,29 +345,54 @@ private class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, n
         val partes = mutableListOf<String>()
         val valores = mutableListOf<String>()
 
-        val operadoresAdmitidos = setOf( "=", "!=", "<", "<=", ">", ">=", "MATCH", "LIKE", "NOT LIKE", "IN", "BETWEEN" )
+        for ( ( columna, info ) in datos ) {
 
-        datos.forEach { ( columna, info ) ->
+            val operador = info[ "operador" ] ?: error( "A condición en $columna non ten operador" )
 
-            val operador = info[ "operador" ]?.toString() ?: "="
+            when ( operador ) {
 
-            require( operador in operadoresAdmitidos ) { "Operador non soportado: $operador" }
+                "=", "!=", "<", "<=", ">", ">=", "MATCH", "LIKE", "NOT LIKE" -> {
 
-            val datosValores = when {
-                info.containsKey( "valor" ) -> listOf( info[ "valor" ] )
-                info.containsKey( "valores" ) -> info[ "valores" ] as List<*>
-                else -> listOf( info )
+                    val valor = info[ "valor" ] ?: error( "O operador $operador require a clave 'valor'" )
+
+                    partes += "$columna $operador ?"
+                    valores += procesarValor( valor )
+
+                }
+
+                "IN" -> {
+
+                    @Suppress( "UNCHECKED_CAST" )
+                    val datosValores = info[ "valores" ] as? List<Any> ?: error( "IN require a clave 'valores'" )
+                    require( datosValores.isNotEmpty() ) { "IN require polo menos un valor" }
+
+                    val reemprazos = mutableListOf<String>()
+
+                    for ( elemento in datosValores ) {
+                        valores += procesarValor( elemento )
+                        reemprazos.add( "?" )
+                    }
+
+                    partes += "$columna IN ( ${ reemprazos.joinToString(", ") } )"
+
+                }
+
+                "BETWEEN" -> {
+
+                    @Suppress( "UNCHECKED_CAST" )
+                    val datosValores = info[ "valores" ] as? List<Any> ?: error( "BETWEEN require a clave 'valores'" )
+                    require( datosValores.size == 2 ) { "BETWEEN require exactamente dous valores" }
+
+                    valores += procesarValor( datosValores[ 0 ] )
+                    valores += procesarValor( datosValores[ 1 ] )
+
+                    partes += "$columna BETWEEN ? AND ?"
+
+                }
+
+                else -> error( "Operador non soportado: $operador" )
+
             }
-
-            val reemplazos = datosValores.map { elemento -> valores += elemento.toString(); "?" }
-
-            val expresion = when ( reemplazos.size ) {
-                1 -> reemplazos[ 0 ]
-                2 -> "${ reemplazos[ 0 ] } AND ${ reemplazos[ 1 ] }"
-                else -> "( ${ reemplazos.joinToString( ", " ) } )"
-            }
-
-            partes += "$columna $operador $expresion"
 
         }
 

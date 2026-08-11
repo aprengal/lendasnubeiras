@@ -26,13 +26,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
 import com.aprengal.lendasnubeiras.configuracion.haiLector
-import com.aprengal.lendasnubeiras.elementos.actividades.Idioma
 import com.aprengal.lendasnubeiras.localizacion.Localizacion.gardarIdioma
 import com.aprengal.lendasnubeiras.localizacion.Localizacion.l10n
 import com.aprengal.lendasnubeiras.navegacion.corrutina
 import com.aprengal.lendasnubeiras.tema.Espazador
 import com.aprengal.lendasnubeiras.tema.Tema
 import com.aprengal.lendasnubeiras.tema.Tema.gardarTema
+import com.aprengal.lendasnubeiras.localizacion.Idioma
 
 //Axustes: idioma, modo escuro, desactivar animacións
 @Composable

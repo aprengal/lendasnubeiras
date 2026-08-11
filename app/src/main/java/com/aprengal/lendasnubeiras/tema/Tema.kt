@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.aprengal.lendasnubeiras.Axustes.collerOpcion
 import com.aprengal.lendasnubeiras.Axustes.gardarOpcion
+import com.aprengal.lendasnubeiras.NomeOpcion.TEMA
 import com.aprengal.lendasnubeiras.R
 import com.aprengal.lendasnubeiras.tema.Tema.collerCoresTema
 
@@ -97,17 +98,6 @@ private val Tipografias = Typography(
         lineHeight = 22.sp
     )
 )
-
-//Extensión da clase de tipografías para poder empregar outras propiedades traducidas no código
-object Fontes {
-    val cabeceira1: TextStyle = Tipografias.headlineLarge
-    val cabeceira2: TextStyle = Tipografias.headlineMedium
-    val cabeceira3: TextStyle = Tipografias.headlineSmall
-    val paragrafoNormal: TextStyle = Tipografias.bodyLarge
-    val paragrafoNegrita: TextStyle = Tipografias.bodyMedium
-    val anotacion: TextStyle = Tipografias.bodySmall
-    val etiquetaBoton: TextStyle = Tipografias.labelLarge
-}
 
 // ============================================================
 // Formas — usadas por defecto en Surface/Card/Button/etc.
@@ -204,13 +194,13 @@ object Tema {
         require( !temaCargado ) { "A aplicación xa estaba inicializada!" }
         temaCargado = true
 
-        val claveGuardada = collerOpcion("tema", Variante.PREDETERMINADO.clave )
+        val claveGuardada = collerOpcion( TEMA, Variante.PREDETERMINADO.clave )
         temaActual.value = Variante.buscar( claveGuardada )
 
     }
 
     suspend fun gardarTema( novoTema: Variante ) {
-        gardarOpcion( "tema", novoTema.clave )
+        gardarOpcion( TEMA, novoTema.clave )
         temaActual.value = novoTema
     }
 

@@ -6,6 +6,15 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.first
 import okio.IOException
 
+enum class NomeOpcion( val nome: String ) {
+
+    SESIONUSUARIO( "sesion_usuario" ),
+    SESIONANONIMA( "sesion_anonima" ),
+    TEMA( "tema" ),
+    IDIOMA( "idioma" );
+
+}
+
 object Axustes {
 
     private lateinit var appContext: Context
@@ -22,15 +31,16 @@ object Axustes {
 
     }
 
-    fun <T : Any> collerOpcion( nome: String, predeterminado: T ): T {
+    fun <T : Any> collerOpcion( nomeOpcion: NomeOpcion, predeterminado: T ): T {
         @Suppress( "UNCHECKED_CAST" )
-        return ( cache[ nome ] as? T ) ?: predeterminado
+        return ( cache[ nomeOpcion.nome ] as? T ) ?: predeterminado
     }
 
-    suspend fun gardarOpcion( nome: String, valor: Any ): Boolean {
+    suspend fun gardarOpcion( nomeOpcion: NomeOpcion, valor: Any ): Boolean {
 
         try {
 
+            val nome = nomeOpcion.nome
             appContext.opcions.edit { opcions ->
 
                 when ( valor ) {

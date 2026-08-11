@@ -86,7 +86,7 @@ object DB {
 
     }
 
-    fun listarActividades(): List<Actividade> {
+    fun listarActividadesEditables(): List<Actividade> {
 
         val usuarioActual = collerUsuarioActual()
 

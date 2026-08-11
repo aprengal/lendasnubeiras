@@ -393,7 +393,7 @@ fun ProbaTraducions() {
 
                 Text(
                     text = Localizacion.l10n("natasha", "test"),
-                    style = Fontes.cabeceira1
+                    style = MaterialTheme.typography.headlineLarge
                 )
 
                 Text(
@@ -481,7 +481,7 @@ fun ProbaActividade() {
                         append( Localizacion.l10nPlural("mensaxe_fallos", i , "test" ) )
 
                     },
-                    style = Fontes.paragrafoNormal, modifier = Modifier.padding( bottom = 10.dp )
+                    style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding( bottom = 10.dp )
                 )
 
             }
@@ -620,136 +620,5 @@ fun PantallaBase( contido: LazyListScope.() -> Unit ) {
         contido()
 
     }
-
-}
-
-@Composable
-private fun PantallaAcceso(
-    tituloBoton: String,
-    amosarCheckbox: Boolean,
-    botonPulsado: ( correo: String ) -> String
-) {
-
-    var correo by rememberSaveable { mutableStateOf( "" ) }
-    var aceptaTerminos by rememberSaveable { mutableStateOf( false ) }
-    var texto by rememberSaveable { mutableStateOf( "" ) }
-
-    val correoValido = EMAIL_ADDRESS.matcher( correo ).matches()
-    val podeContinuar = correoValido && ( !amosarCheckbox || aceptaTerminos )
-
-    Column(
-        modifier = Modifier.fillMaxSize()
-            .windowInsetsPadding( WindowInsets.safeDrawing )
-            .verticalScroll( rememberScrollState() )
-            .padding( horizontal = 5.dp, vertical = 10.dp ),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-
-        Logo( 90.dp )
-
-        Espazador( 2 )
-
-        if ( texto != "" ) {
-            Text( texto )
-            Espazador()
-        }
-
-        OutlinedTextField(
-            value = correo,
-            onValueChange = { novoCoreo -> correo = novoCoreo },
-            label = { Text( "Correo electrónico" ) },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions( keyboardType = KeyboardType.Email ),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Espazador()
-
-        if ( amosarCheckbox ) {
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Checkbox(
-                    checked = aceptaTerminos,
-                    onCheckedChange = { estado -> aceptaTerminos = estado }
-                )
-                Text( "Acepto os termos e condicións" )
-            }
-
-            Espazador()
-
-        }
-
-        Button(
-            onClick = { texto = botonPulsado( correo ) },
-            enabled = podeContinuar,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text( tituloBoton )
-        }
-
-    }
-
-}
-
-@Composable
-fun PantallaRexistro() {
-
-    PantallaAcceso(
-        tituloBoton = "Rexistrarse",
-        amosarCheckbox = true,
-        botonPulsado = { correo ->
-            when {
-                correo.contains( "erd248@", ignoreCase = true ) -> "O furacán C7w6so acaba de pasar por aquí"
-                correo.contains( "n" ) -> "N de ninguén"
-                else -> "As malas linguas din que usar o teu correo trae un bo regalo"
-            }
-        }
-    )
-
-}
-
-@Composable
-fun PantallaIniciarSesion() {
-
-    PantallaAcceso(
-        tituloBoton = "Iniciar sesión",
-        amosarCheckbox = false,
-        botonPulsado = { correo ->
-            "Comprobando correo..." // aquí irá a lóxica real de login
-        }
-    )
-
-}
-
-@Composable
-fun PantallaApertura() {
-
-    var apertura: String by rememberSaveable { mutableStateOf( "Esperando resposta..." ) }
-
-    LaunchedEffect( Unit ) {
-
-        val resultado = Conexion.get( "peido.php", emptyMap() )
-
-        //Isto vale para indicar que a operación foi exitosa
-        //if ( resultado.optBoolean( "exito" ) )
-
-        apertura = resultado.optString( "mensaxe", "Escachou o servidor" ).toString()
-
-    }
-
-    PantallaAcceso(
-        tituloBoton = apertura,
-        amosarCheckbox = false,
-        botonPulsado = { correo ->
-
-            if ( apertura.startsWith( "Esperando" ) ) "Meh" else "Chi"
-
-        }
-
-    )
 
 }

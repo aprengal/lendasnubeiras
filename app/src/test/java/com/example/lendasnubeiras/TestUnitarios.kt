@@ -1,7 +1,7 @@
 package com.example.lendasnubeiras
 
 import com.aprengal.lendasnubeiras.localizacion.Idioma
-import com.aprengal.lendasnubeiras.navegacion.Pantalla
+import com.aprengal.lendasnubeiras.pantallas.Pantalla
 import org.junit.Test
 import kotlin.test.DefaultAsserter.assertEquals
 import kotlin.test.DefaultAsserter.assertTrue

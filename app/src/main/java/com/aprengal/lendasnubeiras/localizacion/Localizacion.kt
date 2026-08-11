@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.core.os.LocaleListCompat
 import com.aprengal.lendasnubeiras.Axustes.collerOpcion
 import com.aprengal.lendasnubeiras.Axustes.gardarOpcion
+import com.aprengal.lendasnubeiras.NomeOpcion
 import com.aprengal.lendasnubeiras.configuracion.haiLector
 import com.aprengal.lendasnubeiras.reiniciarAplicacion
 import org.json.JSONObject
@@ -74,7 +75,7 @@ object Localizacion {
 
         appContext = contexto.applicationContext
         idiomaActual.value = Idioma.escollerIdiomaAplicacion(
-            collerOpcion( "idioma", "" ),
+            collerOpcion( NomeOpcion.IDIOMA, "" ),
             Resources.getSystem().configuration.locales[ 0 ].toString()
         )
 
@@ -87,7 +88,7 @@ object Localizacion {
 
     suspend fun gardarIdioma( novoIdioma: Idioma, reiniciar: Boolean = false ) {
 
-        if ( idiomaActual.value == novoIdioma || !gardarOpcion( "idioma", novoIdioma.codigoRexion ) ) return
+        if ( idiomaActual.value == novoIdioma || !gardarOpcion( NomeOpcion.IDIOMA, novoIdioma.codigoRexion ) ) return
 
         idiomaActual.value = novoIdioma
 

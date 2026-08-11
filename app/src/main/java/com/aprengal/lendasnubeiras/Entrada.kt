@@ -7,12 +7,25 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.compose.rememberNavController
+import com.aprengal.lendasnubeiras.NomeOpcion.SESIONANONIMA
+import com.aprengal.lendasnubeiras.Axustes.collerOpcion
 import com.aprengal.lendasnubeiras.configuracion.api.Conexion
 import com.aprengal.lendasnubeiras.configuracion.db.DB
+import com.aprengal.lendasnubeiras.elementos.usuarios.Usuario
+import com.aprengal.lendasnubeiras.elementos.usuarios.UsuarioActual.collerUsuarioActual
 import com.aprengal.lendasnubeiras.localizacion.Localizacion
-import com.aprengal.lendasnubeiras.navegacion.IniciarAplicacion
+import com.aprengal.lendasnubeiras.navegacion.Contido
+import com.aprengal.lendasnubeiras.pantallas.Pantalla
 import com.aprengal.lendasnubeiras.tema.Tema
 import com.aprengal.lendasnubeiras.tema.TemaNubeiro
 import kotlinx.coroutines.runBlocking
@@ -48,12 +61,36 @@ fun arrancarConfiguracion( contexto: Context ) {
 
     runBlocking {
         Axustes.arrancar( contexto )
+        Conexion.arrancar( contexto )
+        DB.arrancar( contexto )
+        Localizacion.arrancar( contexto )
+        Tema.arrancar()
+        collerUsuarioActual()
     }
 
-    Conexion.arrancar( contexto )
-    DB.arrancar( contexto )
-    Localizacion.arrancar( contexto )
-    Tema.arrancar()
+}
+
+@Composable
+fun IniciarAplicacion() {
+
+    var usuarioActual: Usuario by remember { mutableStateOf( collerUsuarioActual() ) }
+    var sesionAnonima by rememberSaveable { mutableStateOf( collerOpcion( SESIONANONIMA, false ) ) }
+
+    key( usuarioActual ) {
+
+        val controlador = rememberNavController()
+
+        if ( usuarioActual.id > 1L || sesionAnonima ) { //Iniciouse sesión?
+
+            Contido( controlador, Pantalla.Inicio, Pantalla.todas )
+
+        } else {
+
+            Contido( controlador, Pantalla.Apertura, Pantalla.autenticacion )
+
+        }
+
+    }
 
 }
 

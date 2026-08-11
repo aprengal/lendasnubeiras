@@ -5,6 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.aprengal.lendasnubeiras.Axustes.collerOpcion
 import com.aprengal.lendasnubeiras.Axustes.gardarOpcion
+import com.aprengal.lendasnubeiras.NomeOpcion.SESIONUSUARIO
+import com.aprengal.lendasnubeiras.NomeOpcion.SESIONANONIMA
 
 data class Usuario(
     val id: Long,
@@ -24,8 +26,7 @@ object UsuarioActual {
 
         if ( usuario.id != 0L ) { return usuario }
 
-        val datos = collerOpcion( "datos_usuario", "" )
-        usuario = validarUsuario( datos )
+        usuario = validarUsuario()
 
         return usuario
 
@@ -40,18 +41,18 @@ object UsuarioActual {
         // pecharSesion()
         // Aquí mandaríase unha corrutina que o que faría sería avisar ó servidor de que o Usuario solicitou pechar a sesión
 
-        gardarOpcion( "usuarioActual", "" )
+        gardarOpcion( SESIONUSUARIO, "" )
 
         usuario = Usuario( id = 1L, correo = "", rol = Rol.LECTOR )
 
     }
 
     // Placeholder — aquí valídase o usuario real enviando
-    private fun validarUsuario( datos: String ): Usuario {
+    private fun validarUsuario(): Usuario {
 
         // Caso 1. Non hai datos. Nada que mirar
         // Caso 2. A sesión é anónima
-        if ( datos.isBlank() || collerOpcion( "sesion_anonima", false ) ) {
+        if ( collerOpcion( SESIONUSUARIO, "" ).isBlank() || collerOpcion( SESIONANONIMA, false ) ) {
             return Usuario( id = 1L, correo = "", rol = Rol.LECTOR )
         }
 

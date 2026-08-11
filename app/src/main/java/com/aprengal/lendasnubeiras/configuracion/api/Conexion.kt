@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
+import com.aprengal.lendasnubeiras.NomeOpcion.SESIONUSUARIO
 import com.aprengal.lendasnubeiras.Axustes.collerOpcion
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -80,7 +81,7 @@ object Conexion {
 
     private suspend fun realizarPeticion( metodo: String, ruta: String, campos: Map<String, Any> ): Pair<String, Int> {
 
-        val clave = collerOpcion( "clave", "" )
+        val clave = collerOpcion( SESIONUSUARIO, "" )
 
         val resultado = withContext( Dispatchers.IO ) {
 

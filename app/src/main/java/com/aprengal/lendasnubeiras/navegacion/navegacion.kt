@@ -27,13 +27,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -45,44 +41,11 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.aprengal.lendasnubeiras.Axustes.collerOpcion
 import com.aprengal.lendasnubeiras.localizacion.Localizacion.idiomaActual
 import com.aprengal.lendasnubeiras.tema.Logo
 import com.aprengal.lendasnubeiras.localizacion.Localizacion.l10n
-import com.aprengal.lendasnubeiras.elementos.usuarios.Rol
-import com.aprengal.lendasnubeiras.elementos.usuarios.Usuario
-import com.aprengal.lendasnubeiras.elementos.usuarios.UsuarioActual.collerUsuarioActual
-
-@Composable
-fun IniciarAplicacion() {
-
-    var usuarioActual by remember { mutableStateOf(Usuario( id = 0L, correo = "", rol = Rol.LECTOR ) ) }
-    var sesionAnonima by rememberSaveable { mutableStateOf( false ) }
-
-    LaunchedEffect( Unit ) {
-        usuarioActual = collerUsuarioActual()
-        sesionAnonima = collerOpcion( "sesion_anonima", false )
-    }
-
-    key( usuarioActual ) {
-
-        val controlador = rememberNavController()
-
-        if ( usuarioActual.id > 0L || sesionAnonima ) { //Iniciouse sesión?
-
-            Contido( controlador, Pantalla.Inicio, Pantalla.todas )
-
-        } else {
-
-            Contido( controlador, Pantalla.Apertura, Pantalla.autenticacion )
-
-        }
-
-    }
-
-}
+import com.aprengal.lendasnubeiras.pantallas.Pantalla
 
 @Composable
 fun Contido( controlador: NavHostController, pantallaInicial: Pantalla, pantallas: List<Pantalla> ) {

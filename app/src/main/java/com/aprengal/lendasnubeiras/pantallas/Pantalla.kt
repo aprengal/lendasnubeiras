@@ -2,81 +2,213 @@ package com.aprengal.lendasnubeiras.pantallas
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavDeepLink
-import androidx.navigation.navDeepLink
+import androidx.navigation.NavHostController
 import com.aprengal.lendasnubeiras.PantallaDetalle
 import com.aprengal.lendasnubeiras.tema.Iconas
 import com.aprengal.lendasnubeiras.tema.MirarAnimacions
 import com.aprengal.lendasnubeiras.tema.ProbaActividade
 import com.aprengal.lendasnubeiras.tema.ProbaTraducions
+import com.aprengal.lendasnubeiras.tema.XogoDados
+import com.aprengal.lendasnubeiras.usuarios.Permisos.podeAdministrar
+import com.aprengal.lendasnubeiras.usuarios.Permisos.podeCrear
+import com.aprengal.lendasnubeiras.usuarios.Permisos.podeLer
+import com.aprengal.lendasnubeiras.usuarios.Permisos.podeRexistrarse
+import com.aprengal.lendasnubeiras.usuarios.UsuarioActual.collerUsuarioActual
 
-sealed class Pantalla(
+object Navegacion {
 
-    val icono: @Composable () -> Unit = {},
-    val tipo: TIPO = TIPO.SCAFFOLD,
-    val contido: @Composable (NavBackStackEntry?) -> Unit = {},
-    val enlaces: List<NavDeepLink> = emptyList() ) {
+    //Rol nada. Non pode facer nadiña
+    val pantallasAutenticacion = listOf(
+        Pantalla.Apertura,
+        Pantalla.Rexistro,
+        Pantalla.IniciarSesion
+    )
 
-    open val ruta: String = this::class.simpleName!!.replaceFirstChar { ruta -> ruta.lowercase() }
+    //Pantallas de grupo lector
+    val pantallasLectura = listOf(
+        Pantalla.Inicio,
+        //Pantalla.Perfil,
+        Pantalla.Axustes,
+        Pantalla.Idioma,
+        //Pantalla.Animacions,
+        Pantalla.Detalle,
+        Pantalla.Actividades,
+        Pantalla.ActividadeDetalle,
+        Pantalla.Buscar
+    )
 
-    companion object {
+    //Os colaboradores só poden modificar actividades marcadas como borrador ou pendente, pero a pantalla é a mesma
+    val pantallasCreacion: List<Pantalla> = pantallasLectura + listOf(
+        Pantalla.ListarActividades,
+        Pantalla.CrearActividade,
+        Pantalla.ModificarActividade
+    )
 
-        val todas: List<Pantalla> by lazy {
-            listOf( Inicio, Perfil, /*Mapa,*/ /*Idioma,*/ Animacions, Axustes, Detalle )
-        }
+    //Crearíase unha pantalla a maiores para administradores????
+    val pantallasAdmin = pantallasCreacion + listOf( Pantalla.Administrar )
 
-        val autenticacion: List<Pantalla> by lazy {
-            listOf( Apertura, Rexistro, IniciarSesion )
-        }
+    val menuSuperior = listOf( Pantalla.Axustes, Pantalla.Detalle )
 
-        enum class TIPO { SCAFFOLD, SOSUPERIOR, SEN_MENUS }
+    val menuInferior = listOf(
+        Pantalla.Inicio,
+        //Pantalla.Idioma,
+        Pantalla.Animacions,
+        Pantalla.Actividades
+    )
 
+}
+
+fun collerPantallas(): Pair<Pantalla, List<Pantalla>> {
+
+    val usuario = collerUsuarioActual()
+
+    val lista: List<Pantalla> = when {
+        podeAdministrar( usuario ) -> Navegacion.pantallasAdmin
+        podeCrear( usuario ) -> Navegacion.pantallasCreacion
+        podeLer( usuario ) -> Navegacion.pantallasLectura
+        podeRexistrarse( usuario ) -> Navegacion.pantallasAutenticacion
+        else -> error( "Non se puido asignar a lista de pantallas para o rol ${ usuario.rol }" )
     }
 
-    //TODO: traducir nome da pantalla
-    object Apertura: Pantalla( {}, tipo = TIPO.SEN_MENUS, contido = { PantallaApertura() } )
-    object Rexistro: Pantalla( { Iconas.OlloAberto() }, tipo = TIPO.SEN_MENUS, contido = { PantallaRexistro() } )
-    object IniciarSesion: Pantalla( { Iconas.OlloAberto() }, tipo = TIPO.SEN_MENUS, contido = { PantallaIniciarSesion() } )
+    return Pair( lista.first(), lista )
 
-    object Inicio: Pantalla( { Iconas.Inicio() }, contido = { ProbaTraducions() } )
-    object Perfil: Pantalla( { Iconas.Perfil() }, contido = { ProbaActividade() }, enlaces = listOf(navDeepLink { uriPattern = "nubeiras://perfil" }) )
-    object Axustes: Pantalla( { Iconas.Axustes() }, tipo = TIPO.SOSUPERIOR, contido = { PantallaAxustes() }, enlaces = listOf(
-        navDeepLink { uriPattern = "nubeiras://axustes" }) )
-    //object Mapa: Pantalla("Mapa", { Iconas.Mapa() }, contido = { MapaMundial() }, enlaces = listOf( navDeepLink { uriPattern = "nubeiras://mapa" } ) )
-    //object Idioma: Pantalla( { Iconas.Idioma() }, contido = { XogoDados() } )
-    object Animacions: Pantalla( { Iconas.OlloAberto() }, contido = { MirarAnimacions() } )
+}
 
+sealed class Pantalla( val tipo: TIPO, val enlaces: Boolean ) {
 
-    //Test
-    object Detalle : Pantalla(
-        icono = { Iconas.OlloPechado() },
-        contido = { entry ->
-            val id = entry?.arguments?.getString( "id" )?.toIntOrNull() ?: 0
-            val test = entry?.arguments?.getString( "test" ) ?: ""
-            PantallaDetalle(id = id, test = test)
-        },
-        enlaces = listOf(navDeepLink { uriPattern = "nubeiras://detalle/{id}/{test}" })
-    ) {
+    enum class TIPO { SCAFFOLD, SOSUPERIOR, SEN_MENUS }
+
+    open val ruta: String = this::class.simpleName!!.lowercase()
+
+    //Autenticación
+    object Apertura: Pantalla( TIPO.SEN_MENUS, false )
+    object Rexistro: Pantalla( TIPO.SEN_MENUS, false )
+    object IniciarSesion: Pantalla( TIPO.SEN_MENUS, false )
+
+    //Lectura
+    object Inicio: Pantalla( TIPO.SCAFFOLD, false )
+    //object Perfil: Pantalla( TIPO.SCAFFOLD, false )
+    object Axustes: Pantalla( TIPO.SOSUPERIOR, true )
+    object Actividades: Pantalla( TIPO.SOSUPERIOR, true )
+
+    object ActividadeDetalle: Pantalla( TIPO.SOSUPERIOR, true ) {
+        override val ruta: String = "${super.ruta}/{id}"
+    }
+
+    object Detalle : Pantalla( TIPO.SCAFFOLD, true ) {
         override val ruta: String = "${super.ruta}/{id}/{test}"
     }
 
+    object Buscar : Pantalla( TIPO.SCAFFOLD, true ) {
+        override val ruta: String = "${super.ruta}/{termo}"
+    }
+
+    //object Mapa: Pantalla( TIPO.SCAFFOLD, true )
+    object Idioma: Pantalla( TIPO.SCAFFOLD, true )
+    object Animacions: Pantalla( TIPO.SCAFFOLD, true )
+
+    //Creación
+    object ListarActividades: Pantalla( TIPO.SOSUPERIOR, false  )
+    object CrearActividade: Pantalla( TIPO.SOSUPERIOR, false )
+    object ModificarActividade: Pantalla( TIPO.SOSUPERIOR, false  )
+
+    //Administración
+    object Administrar: Pantalla( TIPO.SOSUPERIOR, false )
+
     fun crearRuta( vararg valores: Any ): String {
 
-        var rutaFinal = ruta
+        var rutaModificable = ruta
+
+        val aperturas = rutaModificable.count{ c -> c == '{' }
+        val cierres = rutaModificable.count { c -> c == '}' }
+
+        check( aperturas == cierres ) { "Ruta mal formada: $ruta" }
+        check( valores.size == aperturas ) { "Número incorrecto de argumentos para a ruta: $ruta (${ valores.contentToString() })" }
 
         for ( valor in valores ) {
 
-            val inicio = rutaFinal.indexOf( "{" )
-            val fin = rutaFinal.indexOf( "}" )
+            val inicio = rutaModificable.indexOf( "{" )
+            val fin = rutaModificable.indexOf( "}" )
 
-            if ( inicio != -1 && fin != -1 ) {
-                rutaFinal = rutaFinal.replaceRange( inicio, fin + 1, valor.toString() )
-            }
+            rutaModificable = rutaModificable.replaceRange( inicio, fin + 1, valor.toString() )
 
         }
 
-        return rutaFinal
+        return rutaModificable
 
+    }
+
+}
+
+@Composable
+fun CollerContido( pantalla: Pantalla, controlador: NavHostController, entrada: NavBackStackEntry ) {
+
+    when( pantalla ) {
+
+        //Autencicación
+        Pantalla.Apertura -> PantallaApertura( controlador )
+        Pantalla.IniciarSesion -> PantallaIniciarSesion()
+        Pantalla.Rexistro -> PantallaRexistro()
+
+        //Lector
+        Pantalla.Actividades -> TODO()
+        Pantalla.ActividadeDetalle -> TODO()
+        Pantalla.Animacions -> MirarAnimacions()
+
+        //Lector con argumentos
+        Pantalla.Detalle -> {
+
+            val id = entrada.arguments?.getString( "id" )?.toIntOrNull() ?: 0
+            val test = entrada.arguments?.getString( "test" ) ?: ""
+            PantallaDetalle( id = id, test = test )
+
+        }
+
+        Pantalla.Buscar -> {
+
+            val termo = entrada.arguments?.getString( "termo" ) ?: ""
+            PantallaBuscador( termo )
+
+        }
+
+        Pantalla.Axustes -> PantallaAxustes()
+        Pantalla.Idioma -> XogoDados()
+        Pantalla.Inicio -> ProbaTraducions()
+        //Pantalla.Mapa -> MapaMundial()
+        //Pantalla.Perfil -> ProbaActividade()
+
+        //Creación
+        Pantalla.ListarActividades -> TODO()
+        Pantalla.CrearActividade -> TODO()
+        Pantalla.ModificarActividade -> TODO() //Ten argumentos
+
+        //Administración
+        Pantalla.Administrar -> ProbaActividade()
+
+    }
+
+}
+
+@Composable
+fun PantallaBuscador( termo: String) {
+
+    println( termo  )
+    TODO("Not yet implemented")
+
+}
+
+@Composable
+fun CollerIconaMenu( pantalla: Pantalla ) {
+
+    when ( pantalla ) {
+        Pantalla.Rexistro -> Iconas.OlloAberto()
+        Pantalla.IniciarSesion -> Iconas.OlloAberto()
+        Pantalla.Inicio -> Iconas.Inicio()
+        Pantalla.Axustes -> Iconas.Axustes()
+        Pantalla.Animacions -> Iconas.OlloAberto()
+        Pantalla.Detalle -> Iconas.OlloPechado()
+        Pantalla.Actividades -> Iconas.Idioma()
+        else -> error( "A pantalla ${ pantalla.ruta } non ten icona asignada" )
     }
 
 }

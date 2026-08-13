@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.mapa
+package mapa
 
 import android.util.Log
 import androidx.compose.foundation.Image

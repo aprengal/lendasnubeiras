@@ -21,7 +21,7 @@ class AplicacionTest {
 
         arrancarConfiguracion( contexto )
 
-        revisarHashFuncion( "arrancarConfiguracion", "1ff641ef77b597c865cf9ca2411ed960ac075b6a09b48f5c12605d22804697eb" )
+        revisarHashElemento( "arrancarConfiguracion", "1ff641ef77b597c865cf9ca2411ed960ac075b6a09b48f5c12605d22804697eb" )
 
         assertThrows( Exception::class.java ) {
             runBlocking {

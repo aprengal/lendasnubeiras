@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.elementos.actividades
+package com.aprengal.lendasnubeiras.actividades
 
 import com.aprengal.lendasnubeiras.localizacion.Idioma
 

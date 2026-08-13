@@ -63,4 +63,55 @@ object Axustes {
 
     }
 
+    suspend fun borrarOpcion( nomeOpcion: NomeOpcion ): Boolean {
+
+        try {
+
+            val nome = nomeOpcion.nome
+
+            appContext.opcions.edit { opcions ->
+                opcions.asMap().keys.firstOrNull { clave -> clave.name == nome } ?.let { clave -> opcions.remove( clave ) }
+            }
+
+            cache.remove( nome )
+            return true
+
+        } catch ( _: IOException ) {}
+
+        return false
+
+    }
+
+    fun collerSesionLocal(sufixo: String ): String {
+        return cache[ NomeOpcion.SESIONUSUARIO.nome + "_" + sufixo ] as? String ?: ""
+    }
+
+    suspend fun gardarSesionLocal(sufixo: String, datos: String ) {
+
+        try {
+            val nome = NomeOpcion.SESIONUSUARIO.nome + "_" + sufixo
+            appContext.opcions.edit { opcions -> opcions[ stringPreferencesKey(nome ) ] = datos }
+        } catch ( _: IOException ) {}
+
+    }
+
+    suspend fun borrarSesionsLocais(): Boolean {
+
+        val nome = NomeOpcion.SESIONUSUARIO.nome
+
+        try {
+
+            appContext.opcions.edit { opcions ->
+                opcions.asMap().keys.filter { clave -> clave.name.startsWith( nome ) }
+                    .forEach { clave -> opcions.remove(stringPreferencesKey( clave.name ) ) }
+            }
+
+            return true
+
+        } catch ( _: IOException ) {}
+
+        return false
+
+    }
+
 }

@@ -3,7 +3,6 @@ package com.aprengal.lendasnubeiras.configuracion.api
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.util.Log
 import com.aprengal.lendasnubeiras.NomeOpcion.SESIONUSUARIO
 import com.aprengal.lendasnubeiras.Axustes.collerOpcion
 import kotlinx.coroutines.Dispatchers
@@ -17,6 +16,10 @@ import java.io.IOException
 import java.net.SocketTimeoutException
 import java.util.concurrent.TimeUnit
 import com.aprengal.lendasnubeiras.BuildConfig
+
+enum class MetodoPeticion {
+    GET, POST, DELETE;
+}
 
 object Conexion {
 
@@ -45,41 +48,32 @@ object Conexion {
         .writeTimeout( 5, TimeUnit.SECONDS )
         .build()
 
-    suspend fun peticion( metodo: String, ruta: String, campos: Map<String, Any> = emptyMap() ): JSONObject {
+    suspend fun <T : RespostaApi> procesarPeticion( metodoPeticion: MetodoPeticion, rutaApi: RutaApi, campos: Map<String, Any> = emptyMap() ): T {
 
-        try {
+        val datos = peticion( metodoPeticion, rutaApi, campos )
 
-            if ( !haiConexion() ) throw SenConexionException( "O dispositivo non ten conexión a internet" )
-
-            val datos = realizarPeticion( metodo, ruta, campos )
-            return interpretarResposta( datos.first, datos.second )
-
-        } catch ( e: ApiException ) {
-
-            //Usos
-
-            // 401: Invalidación da sesión actual
-            // Se o usuario iniciou sesión e se cambia a un estado de sesión inválida sen cambialo no dispositivo, igual
-            // o ideal é
-
-            Log.e( "ConexionApi", "Erro en '$ruta': ${e.message} (codigo ${e.codigo})", e )
-
-            return JSONObject().apply {
-                put( "exito", false )
-                put( "erro", e::class.simpleName ?: "OutroErroApiException" )
-                put( "codigo", e.codigo )
-            }
-
+        val saida = when( rutaApi ) {
+            RutaApi.VALIDARSESION -> SesionUsuario( datos )
+            RutaApi.REXISTRO, RutaApi.INICIOSESION -> RespostaXenerica( datos )
         }
+
+        @Suppress( "UNCHECKED_CAST" )
+        return saida as T
 
     }
 
-    suspend fun get( ruta: String, campos: Map<String, Any> = emptyMap() ) = peticion( "GET", ruta, campos )
-    suspend fun post( ruta: String, campos: Map<String, Any> = emptyMap() ) = peticion( "POST", ruta, campos )
-    suspend fun delete( ruta: String, campos: Map<String, Any> = emptyMap() ) = peticion( "DELETE", ruta, campos )
+    private suspend fun peticion(metodoPeticion: MetodoPeticion, rutaApi: RutaApi, campos: Map<String, Any> ): JSONObject {
 
+        val ruta = rutaApi.ruta
 
-    private suspend fun realizarPeticion( metodo: String, ruta: String, campos: Map<String, Any> ): Pair<String, Int> {
+        if ( !haiConexion() ) throw SenConexionException( "O dispositivo non ten conexión a internet" )
+
+        val ( codigo, contido ) = realizarPeticion( metodoPeticion, ruta, campos )
+        return interpretarResposta( codigo, contido )
+
+    }
+
+    private suspend fun realizarPeticion(metodoPeticion: MetodoPeticion, ruta: String, campos: Map<String, Any> ): Pair<Int, String> {
 
         val clave = collerOpcion( SESIONUSUARIO, "" )
 
@@ -93,11 +87,11 @@ object Conexion {
 
             val builder = Request.Builder().url( URL_BASE + ruta ).addHeader( "permiso", "Bearer $clave" )
 
-            when ( metodo ) {
+            when ( metodoPeticion.name ) {
                 "GET" -> builder.get()
                 "POST" -> builder.post( corpo ?: FormBody.Builder().build() )
                 "DELETE" -> if ( corpo != null ) builder.delete( corpo ) else builder.delete()
-                else -> throw IllegalArgumentException( "Método non soportado: $metodo" )
+                else -> throw IllegalArgumentException( "Método non soportado: $metodoPeticion" )
             }
 
             val peticion = builder.build()
@@ -105,12 +99,10 @@ object Conexion {
             val respostaBruta = try {
 
                 cliente.newCall( peticion ).execute().use { resposta ->
-                    Pair( resposta.body.string(), resposta.code )
+                    Pair( resposta.code, resposta.body.string() )
                 }
 
             } catch ( _: SocketTimeoutException ) {
-
-                //Quizais haxa que revisar estas mensaxes e tratar de traducilas a nivel de usuario?
 
                 throw TempoEsgotadoException( "A petición tardou demasiado en responder" )
 
@@ -128,19 +120,19 @@ object Conexion {
 
     }
 
-    private fun interpretarResposta( rbody: String, rcode: Int ): JSONObject {
+    private fun interpretarResposta( codigo: Int, contido: String ): JSONObject {
 
         val resposta = try {
-            JSONObject( rbody )
+            JSONObject( contido )
         } catch ( _: JSONException ) {
             throw OutroErroApiException(
-                "Resposta non válida da API con código HTTP $rcode",
+                "Resposta non válida da API con código HTTP $codigo",
                 codigo = ""
             )
         }
 
-        if ( rcode !in 200..< 300 ) {
-            xestionarRespostaErro( rcode, resposta )
+        if ( codigo !in 200..< 300 ) {
+            xestionarRespostaErro( codigo, resposta )
         }
 
         return resposta

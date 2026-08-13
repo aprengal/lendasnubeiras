@@ -24,7 +24,7 @@ private fun buscarArquivosKotlin( assets: AssetManager, directorio: String = "" 
 
 }
 
-private fun buscarFuncionEnProxecto( nomeFuncion: String ): Pair<String, String> {
+private fun buscarElemento( nomeFuncion: String, identificador: String ): Pair<String, String> {
 
     val assets = InstrumentationRegistry
         .getInstrumentation()
@@ -38,7 +38,7 @@ private fun buscarFuncionEnProxecto( nomeFuncion: String ): Pair<String, String>
                 .bufferedReader()
                 .use { it.readText() }
 
-            texto.contains( Regex( "fun\\s+${Regex.escape( nomeFuncion )}\\s*\\(" ) )
+            texto.contains( Regex( "$identificador\\s+${Regex.escape( nomeFuncion )}\\s*\\(" ) )
         }
 
     require( candidatos.isNotEmpty() ) {
@@ -57,10 +57,10 @@ private fun buscarFuncionEnProxecto( nomeFuncion: String ): Pair<String, String>
     return candidatos.first() to texto
 }
 
-private fun hashFuncion( nomeFuncion: String ): String {
+private fun hashElemento( nomeFuncion: String, identificador: String ): String {
 
-    val ( _, texto ) = buscarFuncionEnProxecto( nomeFuncion )
-    val inicio = texto.indexOf( "fun $nomeFuncion" )
+    val ( _, texto ) = buscarElemento( nomeFuncion, identificador )
+    val inicio = texto.indexOf( "$identificador $nomeFuncion" )
     var profundidade = 0
     var fin = inicio
 
@@ -87,9 +87,9 @@ private fun hashFuncion( nomeFuncion: String ): String {
 
 }
 
-fun revisarHashFuncion( nome: String, hashEsperado: String ) {
+fun revisarHashElemento( nome: String, hashEsperado: String, identificador: String = "fun",  ) {
 
-    val hashActual = hashFuncion( nome )
-    assertEquals( "$nome cambiou no código real: revisa e actualiza a copia do test", hashEsperado, hashActual )
+    val hashActual = hashElemento( nome, identificador )
+    assertEquals( "$nome cambiou no código real: revisa e actualiza a copia do test. Esperábase: $hashActual", hashEsperado, hashActual )
 
 }

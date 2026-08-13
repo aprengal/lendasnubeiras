@@ -109,8 +109,8 @@ object Iconas {
     @Composable
     fun Axustes(modifier: Modifier = Modifier) = Icona(AXUSTES, modifier )
 
-    //@Composable
-    //fun Idioma(modifier: Modifier = Modifier) = Icona(IDIOMA, modifier )
+    @Composable
+    fun Idioma(modifier: Modifier = Modifier) = Icona(IDIOMA, modifier )
 
     @Composable
     fun Mapa(modifier: Modifier = Modifier) = Icona(MAPA, modifier )

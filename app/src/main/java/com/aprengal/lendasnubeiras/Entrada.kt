@@ -21,13 +21,16 @@ import com.aprengal.lendasnubeiras.NomeOpcion.SESIONANONIMA
 import com.aprengal.lendasnubeiras.Axustes.collerOpcion
 import com.aprengal.lendasnubeiras.configuracion.api.Conexion
 import com.aprengal.lendasnubeiras.configuracion.db.DB
-import com.aprengal.lendasnubeiras.elementos.usuarios.Usuario
-import com.aprengal.lendasnubeiras.elementos.usuarios.UsuarioActual.collerUsuarioActual
+import com.aprengal.lendasnubeiras.usuarios.Usuario
+import com.aprengal.lendasnubeiras.usuarios.UsuarioActual.collerUsuarioActual
 import com.aprengal.lendasnubeiras.localizacion.Localizacion
 import com.aprengal.lendasnubeiras.navegacion.Contido
+import com.aprengal.lendasnubeiras.pantallas.Navegacion
 import com.aprengal.lendasnubeiras.pantallas.Pantalla
+import com.aprengal.lendasnubeiras.pantallas.collerPantallas
 import com.aprengal.lendasnubeiras.tema.Tema
 import com.aprengal.lendasnubeiras.tema.TemaNubeiro
+import com.aprengal.lendasnubeiras.usuarios.UsuarioActual.validarSesion
 import kotlinx.coroutines.runBlocking
 
 class Entrada : AppCompatActivity() {
@@ -65,7 +68,7 @@ fun arrancarConfiguracion( contexto: Context ) {
         DB.arrancar( contexto )
         Localizacion.arrancar( contexto )
         Tema.arrancar()
-        collerUsuarioActual()
+        validarSesion()
     }
 
 }
@@ -74,22 +77,12 @@ fun arrancarConfiguracion( contexto: Context ) {
 fun IniciarAplicacion() {
 
     var usuarioActual: Usuario by remember { mutableStateOf( collerUsuarioActual() ) }
-    var sesionAnonima by rememberSaveable { mutableStateOf( collerOpcion( SESIONANONIMA, false ) ) }
+    //var sesionAnonima by rememberSaveable { mutableStateOf( collerOpcion( SESIONANONIMA, false ) ) }
 
     key( usuarioActual ) {
-
         val controlador = rememberNavController()
-
-        if ( usuarioActual.id > 1L || sesionAnonima ) { //Iniciouse sesión?
-
-            Contido( controlador, Pantalla.Inicio, Pantalla.todas )
-
-        } else {
-
-            Contido( controlador, Pantalla.Apertura, Pantalla.autenticacion )
-
-        }
-
+        val ( pantallaInicial, pantallas ) = collerPantallas()
+        Contido( controlador, pantallaInicial, pantallas )
     }
 
 }

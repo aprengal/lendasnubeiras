@@ -36,25 +36,30 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.aprengal.lendasnubeiras.localizacion.Localizacion.idiomaActual
 import com.aprengal.lendasnubeiras.tema.Logo
 import com.aprengal.lendasnubeiras.localizacion.Localizacion.l10n
+import com.aprengal.lendasnubeiras.pantallas.CollerContido
+import com.aprengal.lendasnubeiras.pantallas.CollerIconaMenu
+import com.aprengal.lendasnubeiras.pantallas.Navegacion
 import com.aprengal.lendasnubeiras.pantallas.Pantalla
 
 @Composable
 fun Contido( controlador: NavHostController, pantallaInicial: Pantalla, pantallas: List<Pantalla> ) {
 
     val backStackEntry by controlador.currentBackStackEntryAsState()
-    val pantallaActual = Pantalla.todas.find { pantalla -> pantalla.ruta == backStackEntry?.destination?.route } ?: pantallaInicial
+    val pantallaActual = pantallas.find { pantalla -> pantalla.ruta == backStackEntry?.destination?.route } ?: pantallaInicial
 
-    val amosarSuperior = pantallaActual.tipo != Pantalla.Companion.TIPO.SEN_MENUS
-    val amosarInferior = pantallaActual.tipo == Pantalla.Companion.TIPO.SCAFFOLD
+    val amosarSuperior = pantallaActual.tipo != Pantalla.TIPO.SEN_MENUS
+    val amosarInferior = pantallaActual.tipo == Pantalla.TIPO.SCAFFOLD
 
     PantallaScaffold( controlador, pantallaActual.ruta, amosarSuperior, amosarInferior ) {
         CargarNavegacion( controlador, pantallaInicial, pantallas )
@@ -80,26 +85,37 @@ fun PantallaScaffold( controlador: NavHostController, rutaActual: String, amosar
 }
 
 
+private fun procesarArgumentos( pantalla: Pantalla ): List<NamedNavArgument> {
+
+    val argumentos = pantalla.ruta.split( "/{" ).drop( 1 ).map {
+        argumento -> navArgument( argumento.removeSuffix( "}" ) ) { type = NavType.StringType }
+    }
+
+    return argumentos
+
+}
+
 @Composable
 private fun CargarNavegacion( controlador: NavHostController, pantallaInicial: Pantalla, listaPantallas: List<Pantalla> ) {
+
+    val dominio = "nubeiras"
 
     NavHost( navController = controlador, startDestination = pantallaInicial.ruta ) {
 
         for ( pantalla in listaPantallas ) {
 
-            val argumentos = pantalla.ruta.split( "/{" ).drop( 1 ).map { ruta -> ruta.removeSuffix( "}" ) }
+            val argumentos = procesarArgumentos( pantalla )
+            val enlaces = if ( pantalla.enlaces ) listOf( navDeepLink { uriPattern = "$dominio://${ pantalla.ruta }" } ) else emptyList()
 
             composable(
                 route = pantalla.ruta,
-                arguments = argumentos.map { nome -> navArgument( nome ) { type = NavType.StringType } },
+                arguments = argumentos,
                 enterTransition = { transicionEntrada( pantalla ) },
                 exitTransition = { transicionSaida( pantalla ) },
                 popEnterTransition = { transicionAtrasEntrada( pantalla ) },
                 popExitTransition = { transicionAtrasSaida( pantalla ) },
-                deepLinks = pantalla.enlaces
-            ) { backStackEntry ->
-                pantalla.contido( backStackEntry )
-            }
+                deepLinks = enlaces
+            ) { entrada -> CollerContido( pantalla, controlador, entrada ) }
 
         }
 
@@ -118,9 +134,7 @@ fun NavegacionSuperior(
     val insetSuperior = WindowInsets.statusBars.getTop( densidade )
     val alturaTotal = 86.dp + with(densidade) { insetSuperior.toDp() }
 
-    val elementosSuperior = remember { listOf(
-        Pantalla.Axustes, Pantalla.Detalle
-    ) }
+    val elementosSuperior: List<Pantalla> = remember { Navegacion.menuSuperior }
 
     //Igual se podería prescindir desta barra se só se pon unha ó final
     val elementos = elementosSuperior.filter { pantalla -> pantalla.ruta != rutaActual }
@@ -164,7 +178,8 @@ fun NavegacionSuperior(
                         },
                         modifier = Modifier.clip( RoundedCornerShape( 12.dp ) ).background( colorFondo )
                     ) {
-                        elemento.icono()
+                        CollerIconaMenu( elemento )
+                        //elemento.icono()
                     }
 
                 }
@@ -188,12 +203,7 @@ fun NavegacionInferior(
     val insetInferior = WindowInsets.navigationBars.getBottom( densidade )
     val alturaTotal = 64.dp + with( densidade ) { insetInferior.toDp() }
 
-    val elementos = remember { listOf(
-        Pantalla.Inicio,
-        Pantalla.Perfil,
-        //Pantalla.Idioma,
-        Pantalla.Animacions
-    ) }
+    val elementos: List<Pantalla> = remember { Navegacion.menuInferior }
 
     NavigationBar( modifier = Modifier.heightIn( max = alturaTotal ) ) {
 
@@ -208,7 +218,7 @@ fun NavegacionInferior(
                         }
                     }
                 },
-                icon = { elemento.icono() },
+                icon = { CollerIconaMenu( elemento ) /*elemento.icono() */ },
                 label = {
                     key( idiomaActual.value ) {
                         Text( l10n( "menu_" + elemento.ruta, "test" ), maxLines = 1, overflow = TextOverflow.Ellipsis ) }
@@ -222,7 +232,7 @@ fun NavegacionInferior(
 
 }
 
-private fun esCompleta( pantalla: Pantalla ) = pantalla.tipo == Pantalla.Companion.TIPO.SCAFFOLD
+private fun esCompleta( pantalla: Pantalla ) = pantalla.tipo == Pantalla.TIPO.SCAFFOLD
 
 fun transicionEntrada( pantalla: Pantalla ): EnterTransition =
     if ( esCompleta( pantalla ) ) fadeIn( tween() )

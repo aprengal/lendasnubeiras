@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.elementos.actividades
+package com.aprengal.lendasnubeiras.actividades
 
 interface Atributo {
     val clave: String

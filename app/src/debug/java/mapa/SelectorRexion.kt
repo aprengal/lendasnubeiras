@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.mapa
+package mapa
 
 import android.content.Context
 import android.graphics.Canvas

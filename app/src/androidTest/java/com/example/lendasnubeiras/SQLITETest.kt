@@ -4,9 +4,11 @@ import android.database.sqlite.SQLiteConstraintException
 import androidx.test.platform.app.InstrumentationRegistry
 import com.aprengal.lendasnubeiras.configuracion.db.DB
 import com.aprengal.lendasnubeiras.configuracion.db.DB.collerActividade
-import com.aprengal.lendasnubeiras.elementos.actividades.Categoria
-import com.aprengal.lendasnubeiras.elementos.usuarios.Rol
-import com.aprengal.lendasnubeiras.elementos.usuarios.Usuario
+import com.aprengal.lendasnubeiras.actividades.Categoria
+import com.aprengal.lendasnubeiras.usuarios.Permisos.podeCrear
+import com.aprengal.lendasnubeiras.usuarios.Permisos.podeEditarOutras
+import com.aprengal.lendasnubeiras.usuarios.Rol
+import com.aprengal.lendasnubeiras.usuarios.Usuario
 import com.aprengal.lendasnubeiras.localizacion.Idioma
 import org.junit.After
 
@@ -486,11 +488,11 @@ class SQLITETest {
 
         val usuarioActual = collerUsuarioActualTest( id, rol )
 
-        require( usuarioActual.rol != Rol.LECTOR ) { "Non se poden listar as actividades co rol actual" }
+        require( podeCrear( usuarioActual ) ) { "Non se poden listar as actividades se non pode crealas" }
 
         val datos: MutableMap<String, Any> = mutableMapOf( "columnas" to setOf( "*" ) )
 
-        if ( usuarioActual.rol !in setOf( Rol.EDITOR, Rol.ADMIN ) ) {
+        if ( !podeEditarOutras( usuarioActual ) ) {
             datos[ "onde" ] = mapOf( "id_autoria" to mapOf( "operador" to "=", "valor" to usuarioActual.id ) )
         }
 
@@ -504,9 +506,9 @@ class SQLITETest {
     }
 
     @Test
-    fun listarActividadesSegundoRol() {
+    fun listarActividadesEditables() {
 
-        revisarHashFuncion( "listarActividades", "eb34661f39e29499f688c5e3a93c59ebc976530d174349e9d9011f568713d8ea" )
+        revisarHashElemento( "listarActividadesEditables", "dbf53731330bafa5a77a4e29f277953894cf22f9039638bcc2dd44f4b24a8583" )
 
         val datos = listOf(
             datosCompletosAny( mapOf( "id" to 1L, "id_autoria" to 30L, "titulo" to "Actividade A" ) ),
@@ -518,6 +520,8 @@ class SQLITETest {
 
         db.insertar( "actividades", datos )
 
+        // O ideal é comparar con permisos, non con roles directamente
+        // Pero neste caso o que se quere verificar é que cada rol ten os resultados esperados
         for( rol in Rol.entries ) {
 
             if ( rol == Rol.LECTOR ) {
@@ -533,9 +537,9 @@ class SQLITETest {
             val resultado = listarActividadesTest( id = 30L, rol = rol )
 
             if ( rol in setOf( Rol.EDITOR, Rol.ADMIN ) ) {
-                assertEquals( 5, resultado.size )
+                assertEquals( "Resultado inesperado con ${rol.name}", 5, resultado.size )
             } else {
-                assertEquals( 3, resultado.size )
+                assertEquals( "Resultado inesperado con ${rol.name}", 3, resultado.size )
             }
 
         }

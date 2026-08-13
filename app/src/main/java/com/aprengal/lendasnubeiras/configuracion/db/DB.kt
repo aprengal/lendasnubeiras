@@ -6,14 +6,15 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.core.database.sqlite.transaction
-import com.aprengal.lendasnubeiras.elementos.actividades.Actividade
-import com.aprengal.lendasnubeiras.elementos.actividades.ActividadeBuscada
-import com.aprengal.lendasnubeiras.elementos.actividades.Atributo
-import com.aprengal.lendasnubeiras.elementos.actividades.Categoria.Companion.escollerCategoria
-import com.aprengal.lendasnubeiras.elementos.actividades.Destinatario.Companion.escollerDestinatario
-import com.aprengal.lendasnubeiras.elementos.actividades.Estado.Companion.escollerEstado
-import com.aprengal.lendasnubeiras.elementos.usuarios.Rol
-import com.aprengal.lendasnubeiras.elementos.usuarios.UsuarioActual.collerUsuarioActual
+import com.aprengal.lendasnubeiras.actividades.Actividade
+import com.aprengal.lendasnubeiras.actividades.ActividadeBuscada
+import com.aprengal.lendasnubeiras.actividades.Atributo
+import com.aprengal.lendasnubeiras.actividades.Categoria.Companion.escollerCategoria
+import com.aprengal.lendasnubeiras.actividades.Destinatario.Companion.escollerDestinatario
+import com.aprengal.lendasnubeiras.actividades.Estado.Companion.escollerEstado
+import com.aprengal.lendasnubeiras.usuarios.Permisos.podeCrear
+import com.aprengal.lendasnubeiras.usuarios.Permisos.podeEditarOutras
+import com.aprengal.lendasnubeiras.usuarios.UsuarioActual.collerUsuarioActual
 import com.aprengal.lendasnubeiras.localizacion.Idioma
 import com.aprengal.lendasnubeiras.localizacion.Idioma.Companion.escollerIdioma
 
@@ -90,11 +91,11 @@ object DB {
 
         val usuarioActual = collerUsuarioActual()
 
-        require( usuarioActual.rol != Rol.LECTOR ) { "Non se poden listar as actividades co rol actual" }
+        require( podeCrear( usuarioActual ) ) { "Non se poden listar as actividades se non pode crealas" }
 
         val datos: MutableMap<String, Any> = mutableMapOf( "columnas" to setOf( "*" ) )
 
-        if ( usuarioActual.rol !in setOf( Rol.EDITOR, Rol.ADMIN ) ) {
+        if ( !podeEditarOutras( usuarioActual ) ) {
             datos[ "onde" ] = mapOf( "id_autoria" to mapOf( "operador" to "=", "valor" to usuarioActual.id ) )
         }
 

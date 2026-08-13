@@ -1,6 +1,7 @@
 package com.example.lendasnubeiras
 
 import com.aprengal.lendasnubeiras.localizacion.Idioma
+import com.aprengal.lendasnubeiras.pantallas.Navegacion
 import com.aprengal.lendasnubeiras.pantallas.Pantalla
 import org.junit.Test
 import kotlin.test.DefaultAsserter.assertEquals
@@ -11,29 +12,26 @@ class TestUnitarios {
     @Test
     fun todasPantallasUsadas() {
 
-        val subclasesReales = Pantalla::class.sealedSubclasses
-            .mapNotNull { it.objectInstance }
-            .toSet()
+        val subclasesReais = Pantalla::class.sealedSubclasses.toSet()
 
-        val pantallasRegistradas = (Pantalla.todas + Pantalla.autenticacion).map { it::class }.toSet()
-        val subclasesRealesClasses = subclasesReales.map { it::class }.toSet()
-        val faltanEnLista = subclasesRealesClasses - pantallasRegistradas
-        val sobranEnLista = pantallasRegistradas - subclasesRealesClasses
+        val pantallasNavegacion = ( Navegacion.pantallas + Navegacion.autenticacion ).map { it::class }.toSet()
+        val faltanEnLista = subclasesReais - pantallasNavegacion
+        val sobranEnLista = pantallasNavegacion - subclasesReais
 
         assertTrue(
-            "Faltan en Pantalla.todas: ${faltanEnLista.map { it::class.simpleName }}",
+            "Faltan en Pantalla.todas: ${faltanEnLista.map { it.simpleName }}",
             faltanEnLista.isEmpty()
         )
 
         assertTrue(
-            "Sobran en Pantalla.todas (no son subclases de Pantalla): ${sobranEnLista.map { it::class.simpleName }}",
+            "Sobran en Pantalla.todas (no son subclases de Pantalla): ${sobranEnLista.map { it.simpleName }}",
             sobranEnLista.isEmpty()
         )
 
         assertEquals(
             "El tamaño no coincide, revisa duplicados en Pantalla.todas",
-            subclasesReales.size,
-            Pantalla.todas.size + Pantalla.autenticacion.size
+            subclasesReais.size,
+            Navegacion.pantallas.size + Navegacion.autenticacion.size
         )
 
     }

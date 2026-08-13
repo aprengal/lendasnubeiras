@@ -9,29 +9,39 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.aprengal.lendasnubeiras.configuracion.api.Conexion
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.aprengal.lendasnubeiras.configuracion.api.RutaApi
+import com.aprengal.lendasnubeiras.usuarios.UsuarioActual.sesionAnonima
 import com.aprengal.lendasnubeiras.localizacion.Localizacion.l10n
 import com.aprengal.lendasnubeiras.tema.Espazador
 import com.aprengal.lendasnubeiras.tema.Logo
+import com.aprengal.lendasnubeiras.tema.TemaNubeiro
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -45,10 +55,11 @@ private fun PantallaAcceso( tituloPantalla: String, tituloBoton: String, amosarC
     val podeContinuar = correoValido && ( !amosarCheckbox || aceptaTerminos )
 
     Column(
-        modifier = Modifier.fillMaxSize()
-            .windowInsetsPadding( WindowInsets.safeDrawing )
-            .verticalScroll( rememberScrollState() )
-            .padding( horizontal = 5.dp, vertical = 10.dp ),
+        modifier = Modifier
+            .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.safeDrawing)
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 5.dp, vertical = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -137,14 +148,14 @@ fun PantallaIniciarSesion() {
 
 }
 
-@Composable
+/*@Composable
 fun PantallaApertura() {
 
     var apertura: String by rememberSaveable { mutableStateOf( "Esperando resposta..." ) }
 
-    LaunchedEffect( Unit ) {
+    LaunchedEffect( Unit ) { //ISto quitaríase. É un exemplo para
 
-        val resultado = Conexion.get( "peido.php", emptyMap() )
+        val resultado = Conexion.coller( "peido.php", emptyMap() )
 
         //Isto vale para indicar que a operación foi exitosa
         //if ( resultado.optBoolean( "exito" ) )
@@ -163,6 +174,200 @@ fun PantallaApertura() {
 
         }
 
+    )
+
+}*/
+
+@Preview( showBackground = true )
+@Composable
+fun Test() = TemaNubeiro { PantallaApertura( rememberNavController() ) }
+
+@Composable
+fun PantallaApertura( controlador: NavHostController ) {
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .windowInsetsPadding( WindowInsets.safeDrawing )
+            .padding( horizontal = 24.dp, vertical = 16.dp ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+
+        Logo( 90.dp )
+        Espazador( 2 )
+
+        Text( l10n( "titulo_benvida", "autenticacion" ), style = MaterialTheme.typography.headlineLarge )
+        Espazador()
+
+        Button( onClick = { controlador.navigate( Pantalla.IniciarSesion.ruta ) }, modifier = Modifier.fillMaxWidth() ) {
+            Text( l10n( "boton_iniciar_sesion", "autenticacion" ) )
+        }
+
+        Espazador()
+
+        OutlinedButton( onClick = { sesionAnonima() }, modifier = Modifier.fillMaxWidth() ) {
+            Text( l10n( "boton_continuar_anonimo", "autenticacion" ) )
+        }
+
+    }
+
+}
+
+@Composable
+private fun PantallaAutenticacion(
+    tituloPantalla: String,
+    amosarCheckbox: Boolean,
+    amosarRexistrarse: Boolean,
+    rutaApiSolicitar: RutaApi,
+    rutaVerificar: String = "",
+    aoTerminarConExito: () -> Unit,
+    aoIrARexistro: ( () -> Unit )? = null
+) {
+    var correo by rememberSaveable { mutableStateOf( "" ) }
+    var codigo by rememberSaveable { mutableStateOf( "" ) }
+    var codigoSolicitado by rememberSaveable { mutableStateOf( false ) }
+    var aceptaTerminos by rememberSaveable { mutableStateOf( false ) }
+    var enviando by rememberSaveable { mutableStateOf( false ) }
+    var texto by rememberSaveable { mutableStateOf( "" ) }
+
+    val correoValido = EMAIL_ADDRESS.matcher( correo ).matches()
+    val scope = rememberCoroutineScope()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.safeDrawing)
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 5.dp, vertical = 10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Logo( 90.dp )
+        Espazador( 2 )
+
+        Text( l10n( tituloPantalla, "test" ), style = MaterialTheme.typography.headlineLarge )
+        Espazador()
+
+        if ( texto != "" ) {
+            Text( texto )
+            Espazador()
+        }
+
+        OutlinedTextField(
+            value = correo,
+            onValueChange = { correo = it },
+            label = { Text( "Correo electrónico" ) },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions( keyboardType = KeyboardType.Email ),
+            enabled = !codigoSolicitado && !enviando,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Espazador()
+
+        if ( !codigoSolicitado ) {
+
+            if ( amosarCheckbox ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Checkbox( checked = aceptaTerminos, onCheckedChange = { aceptaTerminos = it } )
+                    Text( "Acepto os termos e condicións" )
+                }
+                Espazador()
+            }
+
+            /*Button(
+                onClick = {
+                    enviando = true
+                    texto = ""
+                    scope.launch {
+                        val resultado = enviar( rutaApiSolicitar, mapOf( "correo" to correo ) )
+                        enviando = false
+                        if ( resultado.optBoolean( "exito" ) ) {
+                            codigoSolicitado = true
+                        } else {
+                            texto = resultado.optString( "mensaxe", "Escachou o servidor" )
+                        }
+                    }
+                },
+                enabled = correoValido && ( !amosarCheckbox || aceptaTerminos ) && !enviando,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                if ( enviando ) CircularProgressIndicator( Modifier.size( 20.dp ), strokeWidth = 2.dp )
+                else Text( "Enviar código" )
+            }*/
+
+            if ( amosarRexistrarse && aoIrARexistro != null ) {
+                Espazador()
+                TextButton( onClick = aoIrARexistro, modifier = Modifier.fillMaxWidth() ) {
+                    Text( "Rexistrarse" )
+                }
+            }
+
+        } else {
+
+            OutlinedTextField(
+                value = codigo,
+                onValueChange = { codigo = it },
+                label = { Text( "Código de autorización" ) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions( keyboardType = KeyboardType.Number ),
+                enabled = !enviando,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Espazador()
+
+            /*Button(
+                onClick = {
+                    enviando = true
+                    texto = ""
+                    scope.launch {
+                        val resultado = enviar( rutaVerificar, mapOf( "correo" to correo, "codigo" to codigo ) )
+                        enviando = false
+                        if ( resultado.optBoolean( "exito" ) ) {
+                            aoTerminarConExito()
+                        } else {
+                            texto = resultado.optString( "mensaxe", "Código incorrecto" )
+                        }
+                    }
+                },
+                enabled = codigo.isNotBlank() && !enviando,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                if ( enviando ) CircularProgressIndicator( Modifier.size( 20.dp ), strokeWidth = 2.dp )
+                else Text( "Verificar código" )
+            }*/
+        }
+
+    }
+
+}
+
+@Composable
+fun PantallaIniciarSesion( aoTerminarConExito: () -> Unit, aoIrARexistro: () -> Unit ) {
+    PantallaAutenticacion(
+        tituloPantalla = "titulo_iniciar_sesion",
+        amosarCheckbox = false,
+        amosarRexistrarse = true,
+        rutaApiSolicitar = RutaApi.INICIOSESION,//"solicitarCodigoLogin.php",
+        //rutaVerificar = "verificarCodigoLogin.php",
+        aoTerminarConExito = aoTerminarConExito,
+        aoIrARexistro = aoIrARexistro
+    )
+}
+
+@Composable
+fun PantallaRexistro( aoTerminarConExito: () -> Unit ) {
+
+    PantallaAutenticacion(
+        tituloPantalla = "titulo_rexistro",
+        amosarCheckbox = true,
+        amosarRexistrarse = false,
+        rutaApiSolicitar = RutaApi.INICIOSESION,
+        //rutaVerificar = "verificarCodigoRexistro.php",
+        aoTerminarConExito = aoTerminarConExito
     )
 
 }

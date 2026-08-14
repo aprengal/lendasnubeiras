@@ -25,11 +25,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.aprengal.lendasnubeiras.tema.BotonGhost
-import com.aprengal.lendasnubeiras.tema.BotonPrincipal
-import com.aprengal.lendasnubeiras.tema.BotonSecundario
-import com.aprengal.lendasnubeiras.tema.Espazador
-
+import com.aprengal.lendasnubeiras.ui.tema.BotonGhost
+import com.aprengal.lendasnubeiras.ui.tema.BotonPrincipal
+import com.aprengal.lendasnubeiras.ui.tema.BotonSecundario
+import com.aprengal.lendasnubeiras.ui.reutilizables.Espazador
 
 private val CorExito = Color( 0xFF2E7D32 )
 

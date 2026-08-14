@@ -9,9 +9,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.core.os.LocaleListCompat
 import com.aprengal.lendasnubeiras.Axustes.collerOpcion
 import com.aprengal.lendasnubeiras.Axustes.gardarOpcion
-import com.aprengal.lendasnubeiras.NomeOpcion
+import com.aprengal.lendasnubeiras.Opcion
 import com.aprengal.lendasnubeiras.configuracion.haiLector
-import com.aprengal.lendasnubeiras.reiniciarAplicacion
+import com.aprengal.lendasnubeiras.configuracion.reiniciarAplicacion
 import org.json.JSONObject
 import java.io.FileNotFoundException
 
@@ -75,24 +75,24 @@ object Localizacion {
 
         appContext = contexto.applicationContext
         idiomaActual.value = Idioma.escollerIdiomaAplicacion(
-            collerOpcion( NomeOpcion.IDIOMA, "" ),
+            collerOpcion( Opcion.Idioma ),
             Resources.getSystem().configuration.locales[ 0 ].toString()
         )
 
-        if ( haiLector( contexto ) ) {
+        if ( appContext.haiLector() ) {
             val idiomaOpcions = LocaleListCompat.forLanguageTags( idiomaActual.value.codigoRexion.replace( "_", "-" ) )
             AppCompatDelegate.setApplicationLocales( idiomaOpcions )
         }
 
     }
 
-    suspend fun gardarIdioma( novoIdioma: Idioma, reiniciar: Boolean = false ) {
+    suspend fun gardarIdioma( novoIdioma: Idioma ) {
 
-        if ( idiomaActual.value == novoIdioma || !gardarOpcion( NomeOpcion.IDIOMA, novoIdioma.codigoRexion ) ) return
+        if ( idiomaActual.value == novoIdioma || !gardarOpcion( Opcion.Idioma, novoIdioma.codigoRexion ) ) return
 
         idiomaActual.value = novoIdioma
 
-        if ( reiniciar ) reiniciarAplicacion( appContext )
+        if ( appContext.haiLector() ) appContext.reiniciarAplicacion()
 
         traducions.clear()
         traducionsPlurais.clear()

@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.ui.theme.partes
+package theme.partes
 
 /**
  * 2.3 Campos de texto — estados posibles do campo de formulario:

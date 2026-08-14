@@ -10,8 +10,8 @@ import com.aprengal.lendasnubeiras.usuarios.Permisos.podeEditarOutras
 import com.aprengal.lendasnubeiras.usuarios.Rol
 import com.aprengal.lendasnubeiras.usuarios.Usuario
 import com.aprengal.lendasnubeiras.localizacion.Idioma
-import org.junit.After
 
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
@@ -26,11 +26,17 @@ class SQLITETest {
 
         private val db: DB = DB
 
-        @BeforeClass
         @JvmStatic
+        @BeforeClass
         fun preparar() {
-            val context = InstrumentationRegistry.getInstrumentation().targetContext
-            db.arrancar( context )
+
+            try {
+                val contexto = InstrumentationRegistry.getInstrumentation().targetContext
+                db.arrancar(contexto )
+            } catch ( _: IllegalArgumentException ) {
+
+            }
+
         }
 
     }
@@ -524,7 +530,7 @@ class SQLITETest {
         // Pero neste caso o que se quere verificar é que cada rol ten os resultados esperados
         for( rol in Rol.entries ) {
 
-            if ( rol == Rol.LECTOR ) {
+            if ( rol in setOf( Rol.NADA, Rol.LECTOR ) ) {
 
                 assertThrows( IllegalArgumentException::class.java ) {
                     listarActividadesTest( id = 30L, rol = rol )

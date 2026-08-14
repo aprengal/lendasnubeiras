@@ -1,5 +1,8 @@
 package com.aprengal.lendasnubeiras.usuarios
 
+import com.aprengal.lendasnubeiras.Axustes.collerOpcion
+import com.aprengal.lendasnubeiras.Opcion.SesionAnonima
+
 enum class Rol {
 
     NADA,
@@ -22,6 +25,11 @@ enum class Rol {
 //Isto só valida o rol. A acción debe revisarse a nivel de servidor
 object Permisos {
 
+    //Permisos mira os permisos do usuario pasado como argumento
+    //Pero en PecharSesion só mira o valor global dunha opción
+
+    //Isto é un problema ou é unha opción para que un usuario anónimo poida cambiar de anónimo a iniciar sesión?
+
     fun podeRexistrarse( usuario: Usuario ): Boolean {
         return usuario.rol == Rol.NADA
     }
@@ -31,7 +39,7 @@ object Permisos {
     }
 
     fun podePecharSesion( usuario: Usuario ): Boolean {
-        return usuario.existe
+        return usuario.existe || collerOpcion( SesionAnonima )
     }
 
     fun podeLer( usuario: Usuario ): Boolean {

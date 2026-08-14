@@ -1,13 +1,3 @@
-import RegionPoligono
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.PaintFlagsDrawFilter
-import android.graphics.Paint
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.compose.ui.geometry.Offset
-
 /*import androidx.test.core.app.ApplicationProvider
 import com.example.lendasnubeiras.R
 import org.junit.Test

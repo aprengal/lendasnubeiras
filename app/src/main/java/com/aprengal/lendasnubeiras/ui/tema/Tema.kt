@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.tema
+package com.aprengal.lendasnubeiras.ui.tema
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,9 +23,9 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.aprengal.lendasnubeiras.Axustes.collerOpcion
 import com.aprengal.lendasnubeiras.Axustes.gardarOpcion
-import com.aprengal.lendasnubeiras.NomeOpcion.TEMA
+import com.aprengal.lendasnubeiras.Opcion.Tema
 import com.aprengal.lendasnubeiras.R
-import com.aprengal.lendasnubeiras.tema.Tema.collerCoresTema
+import com.aprengal.lendasnubeiras.ui.tema.Tema.collerCoresTema
 
 //Constantes relacionadas co tema que non se poden usar directamente noutros arquivos
 
@@ -194,13 +194,13 @@ object Tema {
         require( !temaCargado ) { "A aplicación xa estaba inicializada!" }
         temaCargado = true
 
-        val claveGuardada = collerOpcion( TEMA, Variante.PREDETERMINADO.clave )
+        val claveGuardada = collerOpcion( Tema )
         temaActual.value = Variante.buscar( claveGuardada )
 
     }
 
     suspend fun gardarTema( novoTema: Variante ) {
-        gardarOpcion( TEMA, novoTema.clave )
+        gardarOpcion( Tema, novoTema.clave )
         temaActual.value = novoTema
     }
 

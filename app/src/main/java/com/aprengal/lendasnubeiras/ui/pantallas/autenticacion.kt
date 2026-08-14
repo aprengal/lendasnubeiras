@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.pantallas
+package com.aprengal.lendasnubeiras.ui.pantallas
 
 import android.util.Patterns.EMAIL_ADDRESS
 import androidx.compose.foundation.layout.Arrangement
@@ -9,14 +9,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -35,13 +33,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.aprengal.lendasnubeiras.Axustes.collerOpcion
+import com.aprengal.lendasnubeiras.Axustes.gardarOpcion
+import com.aprengal.lendasnubeiras.Opcion
 import com.aprengal.lendasnubeiras.configuracion.api.RutaApi
+import com.aprengal.lendasnubeiras.configuracion.corrutina
 import com.aprengal.lendasnubeiras.usuarios.UsuarioActual.sesionAnonima
 import com.aprengal.lendasnubeiras.localizacion.Localizacion.l10n
-import com.aprengal.lendasnubeiras.tema.Espazador
-import com.aprengal.lendasnubeiras.tema.Logo
-import com.aprengal.lendasnubeiras.tema.TemaNubeiro
-import kotlinx.coroutines.launch
+import com.aprengal.lendasnubeiras.ui.reutilizables.Espazador
+import com.aprengal.lendasnubeiras.ui.tema.TemaNubeiro
+import java.util.UUID
 
 
 @Composable
@@ -145,6 +146,18 @@ fun PantallaIniciarSesion() {
             "Comprobando correo..." // aquí irá a lóxica real de login
         }
     )
+
+}
+
+fun crearIdDispositivo(): String {
+
+    var idDispositivo = collerOpcion( Opcion.IdDispositivo )
+    if ( idDispositivo.isNotBlank() ) return idDispositivo
+
+    idDispositivo = UUID.randomUUID().toString()
+    corrutina { gardarOpcion( Opcion.IdDispositivo, idDispositivo ) }
+
+    return idDispositivo
 
 }
 

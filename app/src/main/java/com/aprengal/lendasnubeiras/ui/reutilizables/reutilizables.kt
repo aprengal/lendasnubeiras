@@ -1,8 +1,10 @@
-package com.aprengal.lendasnubeiras.pantallas
+package com.aprengal.lendasnubeiras.ui.reutilizables
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
@@ -15,62 +17,24 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.aprengal.lendasnubeiras.localizacion.Localizacion
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.dp
+import com.aprengal.lendasnubeiras.configuracion.corrutina
 import com.aprengal.lendasnubeiras.configuracion.haiLector
-import com.aprengal.lendasnubeiras.localizacion.Localizacion.gardarIdioma
 import com.aprengal.lendasnubeiras.localizacion.Localizacion.l10n
-import com.aprengal.lendasnubeiras.navegacion.corrutina
-import com.aprengal.lendasnubeiras.tema.Espazador
-import com.aprengal.lendasnubeiras.tema.Tema
-import com.aprengal.lendasnubeiras.tema.Tema.gardarTema
-import com.aprengal.lendasnubeiras.localizacion.Idioma
 
-//Axustes: idioma, modo escuro, desactivar animacións
 @Composable
-fun PantallaAxustes() {
-
-    Column {
-
-        //Se se combina con Panatalla Base, igual hai que quitar isto
-        Espazador()
-
-        BotonOpcion(
-            textoBoton = l10n( "boton_cambio_idioma", "test" ),
-            tituloDialogo = l10n( "dialogo_cambio_idioma", "test" ),
-            avisoDialogo = l10n( "mensaxe_reiniciar_idioma", "test" ),
-            opcions = Idioma.entries.filter { idioma -> idioma != Idioma.NADA },
-            valorInicial = Localizacion.idiomaActual.value,
-            obterNome = { opcion -> opcion.nome },
-            accion = { novoIdioma -> gardarIdioma( novoIdioma ) }
-        )
-
-        Espazador()
-
-        BotonOpcion(
-            textoBoton = l10n( "boton_cambio_tema", "test" ),
-            tituloDialogo = l10n( "dialogo_cambio_tema", "test" ),
-            opcions = Tema.Variante.entries,
-            valorInicial = Tema.temaActual.value,
-            obterNome = { elemento -> l10n( elemento.clave, "test" ) },
-            accion = { novoTema -> gardarTema( novoTema ) }
-        )
-
-    }
-
+fun Espazador( multiplicador: Int = 1 ) {
+    Spacer( modifier = Modifier.height( 10.dp * multiplicador ) )
 }
 
-// ---------------------------------------------------------
-// 3. Botón en la pantalla de ajustes que abre el diálogo
-// ---------------------------------------------------------
 @Composable
 fun <T> BotonOpcion(
     textoBoton: String,
@@ -95,14 +59,14 @@ fun <T> BotonOpcion(
     if ( amosarDialogo ) {
 
         val contexto = LocalContext.current
-        val haiLector = remember { haiLector( contexto ) }
+        val haiLector = remember { contexto.haiLector() }
 
         DialogoSeleccion(
             titulo = tituloDialogo,
-            opciones = opcions,
+            opcions = opcions,
             opcionActual = valorActual,
             obterTexto = { texto -> obterNome( texto ) },
-            aviso = if ( haiLector ) avisoDialogo else null,
+            cabeceira = if ( haiLector ) avisoDialogo else null,
             aceptar = { novoValor ->
 
                 corrutina {
@@ -119,38 +83,36 @@ fun <T> BotonOpcion(
 
 }
 
-
 @Composable
 fun <T> DialogoSeleccion(
     titulo: String,
-    opciones: List<T>,
+    cabeceira: String? = null,
+    opcions: List<T>,
     opcionActual: T,
     obterTexto: (T) -> String,
     aceptar: (T) -> Unit,
-    rexeitar: () -> Unit,
-    aviso: String? = null
+    rexeitar: () -> Unit
 ) {
 
     var opcionSeleccionada by rememberSaveable( opcionActual ) { mutableStateOf(opcionActual ) }
 
     AlertDialog(
-        onDismissRequest = rexeitar,
         title = { Text( titulo ) },
         text = {
 
             Column( Modifier.selectableGroup() ) {
 
-                if ( aviso != null ) {
+                if ( cabeceira != null ) {
 
                     Text(
-                        text = aviso,
+                        text = cabeceira,
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.padding( bottom = 12.dp )
                     )
 
                 }
 
-                for ( opcion in opciones ) {
+                for ( opcion in opcions ) {
 
                     Row(
                         modifier = Modifier
@@ -178,6 +140,7 @@ fun <T> DialogoSeleccion(
                 Text( l10n( "aceptar", "test" ) )
             }
         },
+        onDismissRequest = rexeitar,
         dismissButton = {
             TextButton( onClick = rexeitar ) {
                 Text( l10n( "cancelar", "test" ) )

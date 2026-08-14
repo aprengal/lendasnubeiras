@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.tema
+package com.aprengal.lendasnubeiras.ui.tema
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

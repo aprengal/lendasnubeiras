@@ -1,16 +1,5 @@
 package mapa
 
-import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.compose.ui.geometry.Offset
-import androidx.core.graphics.createBitmap
-import androidx.core.graphics.get
-import androidx.core.graphics.toColorInt
-import kotlin.math.abs
-import kotlin.math.roundToInt
-
 /*class SelectorRexion( contexto: Context, idRecurso: Int) {
 
     private val rexions: Map<Int, Pair<String, Int>> = mapOf(

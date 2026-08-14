@@ -3,15 +3,19 @@ package com.aprengal.lendasnubeiras
 import android.content.Context
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
+import com.aprengal.lendasnubeiras.ui.tema.Tema.Variante
 import kotlinx.coroutines.flow.first
 import okio.IOException
 
-enum class NomeOpcion( val nome: String ) {
+sealed class Opcion<T : Any>( val predeterminado: T ) {
 
-    SESIONUSUARIO( "sesion_usuario" ),
-    SESIONANONIMA( "sesion_anonima" ),
-    TEMA( "tema" ),
-    IDIOMA( "idioma" );
+    val nome: String = this::class.simpleName!!.lowercase()
+
+    data object SesionUsuario: Opcion<String>( "" )
+    data object SesionAnonima: Opcion<Boolean>( false )
+    data object Tema: Opcion<String>( Variante.PREDETERMINADO.clave )
+    data object Idioma: Opcion<String>( "" )
+    data object IdDispositivo: Opcion<String> ( "" )
 
 }
 
@@ -31,23 +35,23 @@ object Axustes {
 
     }
 
-    fun <T : Any> collerOpcion( nomeOpcion: NomeOpcion, predeterminado: T ): T {
+    fun <T : Any> collerOpcion( opcion: Opcion<T> ): T {
         @Suppress( "UNCHECKED_CAST" )
-        return ( cache[ nomeOpcion.nome ] as? T ) ?: predeterminado
+        return ( cache[ opcion.nome ] as? T ) ?: opcion.predeterminado
     }
 
-    suspend fun gardarOpcion( nomeOpcion: NomeOpcion, valor: Any ): Boolean {
+    suspend fun <T : Any> gardarOpcion( opcion: Opcion<T>, valor: T ): Boolean {
 
         try {
 
-            val nome = nomeOpcion.nome
+            val nome = opcion.nome
             appContext.opcions.edit { opcions ->
 
                 when ( valor ) {
                     is String -> opcions[ stringPreferencesKey( nome ) ] = valor
                     is Int -> opcions[ intPreferencesKey( nome ) ] = valor
                     is Boolean -> opcions[ booleanPreferencesKey( nome ) ] = valor
-                    is Float -> opcions[ floatPreferencesKey( nome ) ] = valor
+                    //is Float -> opcions[ floatPreferencesKey( nome ) ] = valor
                     is Long -> opcions[ longPreferencesKey( nome ) ] = valor
                     else -> throw IllegalArgumentException( "Tipo non soportado: ${valor::class.simpleName}" )
                 }
@@ -63,14 +67,22 @@ object Axustes {
 
     }
 
-    suspend fun borrarOpcion( nomeOpcion: NomeOpcion ): Boolean {
+    suspend fun <T : Any> borrarOpcion( opcion: Opcion<T> ): Boolean {
 
         try {
 
-            val nome = nomeOpcion.nome
+            val nome = opcion.nome
+            val predeterminado = opcion.predeterminado
 
             appContext.opcions.edit { opcions ->
-                opcions.asMap().keys.firstOrNull { clave -> clave.name == nome } ?.let { clave -> opcions.remove( clave ) }
+                when ( predeterminado ) {
+                    is String -> opcions.remove( stringPreferencesKey( nome ) )
+                    is Int -> opcions.remove( intPreferencesKey( nome ) )
+                    is Boolean -> opcions.remove( booleanPreferencesKey( nome ) )
+                    //is Float -> opcions.remove( floatPreferencesKey( nome ) )
+                    is Long -> opcions.remove( longPreferencesKey( nome ) )
+                    else -> throw IllegalArgumentException( "Tipo non soportado: ${predeterminado::class.simpleName}" )
+                }
             }
 
             cache.remove( nome )
@@ -82,28 +94,28 @@ object Axustes {
 
     }
 
-    fun collerSesionLocal(sufixo: String ): String {
-        return cache[ NomeOpcion.SESIONUSUARIO.nome + "_" + sufixo ] as? String ?: ""
+    fun collerSesionLocal( sufixo: String ): String {
+        return cache[ Opcion.SesionUsuario.nome + "_" + sufixo ] as? String ?: ""
     }
 
-    suspend fun gardarSesionLocal(sufixo: String, datos: String ) {
+    suspend fun gardarSesionLocal( sufixo: String, datos: String ) {
 
         try {
-            val nome = NomeOpcion.SESIONUSUARIO.nome + "_" + sufixo
-            appContext.opcions.edit { opcions -> opcions[ stringPreferencesKey(nome ) ] = datos }
+            val nome = Opcion.SesionUsuario.nome + "_" + sufixo
+            appContext.opcions.edit { opcions -> opcions[ stringPreferencesKey( nome ) ] = datos }
         } catch ( _: IOException ) {}
 
     }
 
     suspend fun borrarSesionsLocais(): Boolean {
 
-        val nome = NomeOpcion.SESIONUSUARIO.nome
+        val nome = Opcion.SesionUsuario.nome
 
         try {
 
             appContext.opcions.edit { opcions ->
                 opcions.asMap().keys.filter { clave -> clave.name.startsWith( nome ) }
-                    .forEach { clave -> opcions.remove(stringPreferencesKey( clave.name ) ) }
+                    .forEach { clave -> opcions.remove( stringPreferencesKey( clave.name ) ) }
             }
 
             return true

@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.ui.theme.partes
+package theme.partes
 
 /**
  * 2.4 Botóns — Botón principal

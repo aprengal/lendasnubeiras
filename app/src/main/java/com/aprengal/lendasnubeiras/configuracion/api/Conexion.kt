@@ -3,7 +3,6 @@ package com.aprengal.lendasnubeiras.configuracion.api
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import com.aprengal.lendasnubeiras.NomeOpcion.SESIONUSUARIO
 import com.aprengal.lendasnubeiras.Axustes.collerOpcion
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -16,6 +15,7 @@ import java.io.IOException
 import java.net.SocketTimeoutException
 import java.util.concurrent.TimeUnit
 import com.aprengal.lendasnubeiras.BuildConfig
+import com.aprengal.lendasnubeiras.Opcion
 
 enum class MetodoPeticion {
     GET, POST, DELETE;
@@ -73,9 +73,9 @@ object Conexion {
 
     }
 
-    private suspend fun realizarPeticion(metodoPeticion: MetodoPeticion, ruta: String, campos: Map<String, Any> ): Pair<Int, String> {
+    private suspend fun realizarPeticion( metodoPeticion: MetodoPeticion, ruta: String, campos: Map<String, Any> ): Pair<Int, String> {
 
-        val clave = collerOpcion( SESIONUSUARIO, "" )
+        val sesion = collerOpcion( Opcion.SesionUsuario )
 
         val resultado = withContext( Dispatchers.IO ) {
 
@@ -85,13 +85,12 @@ object Conexion {
                 }.build()
             } else null
 
-            val builder = Request.Builder().url( URL_BASE + ruta ).addHeader( "permiso", "Bearer $clave" )
+            val builder = Request.Builder().url( URL_BASE + ruta ).addHeader( "permiso", "Bearer $sesion" )
 
-            when ( metodoPeticion.name ) {
-                "GET" -> builder.get()
-                "POST" -> builder.post( corpo ?: FormBody.Builder().build() )
-                "DELETE" -> if ( corpo != null ) builder.delete( corpo ) else builder.delete()
-                else -> throw IllegalArgumentException( "Método non soportado: $metodoPeticion" )
+            when ( metodoPeticion ) {
+                MetodoPeticion.GET -> builder.get()
+                MetodoPeticion.POST -> builder.post( corpo ?: FormBody.Builder().build() )
+                MetodoPeticion.DELETE -> if ( corpo != null ) builder.delete( corpo ) else builder.delete()
             }
 
             val peticion = builder.build()
@@ -125,10 +124,7 @@ object Conexion {
         val resposta = try {
             JSONObject( contido )
         } catch ( _: JSONException ) {
-            throw OutroErroApiException(
-                "Resposta non válida da API con código HTTP $codigo",
-                codigo = ""
-            )
+            throw OutroErroApiException( "Resposta non válida da API con código HTTP $codigo" )
         }
 
         if ( codigo !in 200..< 300 ) {
@@ -139,27 +135,22 @@ object Conexion {
 
     }
 
-    private fun xestionarRespostaErro( rcode: Int, resposta: JSONObject ) {
+    private fun xestionarRespostaErro( codigo: Int, resposta: JSONObject ) {
 
         if ( !resposta.has( "erro" ) ) {
-            throw OutroErroApiException(
-                "Obxecto de resposta inválido da API con código HTTP $rcode",
-                codigo = ""
-            )
+            throw OutroErroApiException( "Obxecto de resposta inválido da API con código HTTP $codigo" )
         }
 
         val datosErro = resposta.optJSONObject( "erro" )
-
         val mensaxe = datosErro?.optString( "mensaxe" ) ?: "Erro descoñecido"
-        val codigo = datosErro?.optString( "codigo" ) ?: ""
 
-        val erro: ApiException = when ( rcode ) {
-            400, 404 -> PeticionInvalidaException( mensaxe, codigo )
-            401 -> AutenticacionException( mensaxe, codigo )
-            403 -> PermisoException( mensaxe, codigo )
-            429 -> LimiteTaxaException( mensaxe, codigo )
-            503 -> ServidorCaidoException( mensaxe, codigo )
-            else -> OutroErroApiException( mensaxe, codigo )
+        val erro: ApiException = when ( codigo ) {
+            400, 404 -> PeticionInvalidaException( mensaxe )
+            401 -> AutenticacionException( mensaxe )
+            403 -> PermisoException( mensaxe )
+            429 -> LimiteTaxaException( mensaxe )
+            503 -> ServidorCaidoException( mensaxe )
+            else -> OutroErroApiException( mensaxe )
         }
 
         throw erro

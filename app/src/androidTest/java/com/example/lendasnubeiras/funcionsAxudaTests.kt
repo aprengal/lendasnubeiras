@@ -87,7 +87,7 @@ private fun hashElemento( nomeFuncion: String, identificador: String ): String {
 
 }
 
-fun revisarHashElemento( nome: String, hashEsperado: String, identificador: String = "fun",  ) {
+fun revisarHashElemento(nome: String, hashEsperado: String, identificador: String = "fun") {
 
     val hashActual = hashElemento( nome, identificador )
     assertEquals( "$nome cambiou no código real: revisa e actualiza a copia do test. Esperábase: $hashActual", hashEsperado, hashActual )

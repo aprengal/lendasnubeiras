@@ -10,17 +10,22 @@ import com.aprengal.lendasnubeiras.Axustes.collerOpcion
 import com.aprengal.lendasnubeiras.Axustes.collerSesionLocal
 import com.aprengal.lendasnubeiras.Axustes.gardarOpcion
 import com.aprengal.lendasnubeiras.Axustes.gardarSesionLocal
-import com.aprengal.lendasnubeiras.NomeOpcion.SESIONUSUARIO
-import com.aprengal.lendasnubeiras.NomeOpcion.SESIONANONIMA
+import com.aprengal.lendasnubeiras.Opcion
 import com.aprengal.lendasnubeiras.configuracion.api.ApiException
 import com.aprengal.lendasnubeiras.configuracion.api.AutenticacionException
 import com.aprengal.lendasnubeiras.configuracion.api.Conexion.procesarPeticion
+import com.aprengal.lendasnubeiras.configuracion.api.LimiteTaxaException
 import com.aprengal.lendasnubeiras.configuracion.api.MetodoPeticion
+import com.aprengal.lendasnubeiras.configuracion.api.OutroErroApiException
+import com.aprengal.lendasnubeiras.configuracion.api.PermisoException
+import com.aprengal.lendasnubeiras.configuracion.api.PeticionInvalidaException
 import com.aprengal.lendasnubeiras.configuracion.api.RespostaXenerica
 import com.aprengal.lendasnubeiras.configuracion.api.RutaApi
 import com.aprengal.lendasnubeiras.configuracion.api.SenConexionException
+import com.aprengal.lendasnubeiras.configuracion.api.ServidorCaidoException
 import com.aprengal.lendasnubeiras.configuracion.api.SesionUsuario
-import com.aprengal.lendasnubeiras.navegacion.corrutina
+import com.aprengal.lendasnubeiras.configuracion.api.TempoEsgotadoException
+import com.aprengal.lendasnubeiras.configuracion.corrutina
 import com.aprengal.lendasnubeiras.usuarios.Permisos.podePecharSesion
 import com.aprengal.lendasnubeiras.usuarios.Rol.Companion.buscarRol
 
@@ -43,11 +48,11 @@ object UsuarioActual {
 
     fun sesionAnonima() {
 
-        require( collerOpcion( SESIONUSUARIO, "" ).isBlank() ) { "Unha sesión anónima só se pode outorgar se non hai ningunha sesión válida" }
+        require( collerOpcion( Opcion.SesionUsuario ).isBlank() ) { "Unha sesión anónima só se pode outorgar se non hai ningunha sesión válida" }
 
         corrutina {
-            gardarOpcion( SESIONANONIMA, true )
-            gardarOpcion( SESIONUSUARIO, "" )
+            gardarOpcion( Opcion.SesionAnonima, true )
+            borrarOpcion( Opcion.SesionUsuario )
             usuario = Usuario( id = 1L, correo = "", rol = Rol.LECTOR )
         }
 
@@ -62,7 +67,6 @@ object UsuarioActual {
             try {
 
                 procesarPeticion( MetodoPeticion.DELETE, RutaApi.VALIDARSESION ) as RespostaXenerica
-
                 borrarSesionsLocais()
                 usuario = Usuario( id = 1L, correo = "", rol = Rol.LECTOR )
 
@@ -76,12 +80,12 @@ object UsuarioActual {
 
     fun validarSesion() {
 
-        if ( collerOpcion( SESIONANONIMA, false ) ) {
+        if ( collerOpcion( Opcion.SesionAnonima ) ) { //Sesión anónima
             usuario = Usuario( id = 1L, correo = "", rol = Rol.LECTOR )
             return
         }
 
-        val sesionActual = collerOpcion( SESIONUSUARIO, "" )
+        val sesionActual = collerOpcion( Opcion.SesionUsuario )
         if ( sesionActual.isBlank() ) return //Baleiro = descartado
 
         corrutina {
@@ -92,11 +96,13 @@ object UsuarioActual {
 
             try {
 
-                val datos: SesionUsuario = procesarPeticion( MetodoPeticion.GET, RutaApi.VALIDARSESION, mapOf( "sesion" to sesionActual ) )
+                val idDispositivo = collerOpcion( Opcion.IdDispositivo )
+                val datos: SesionUsuario = procesarPeticion( MetodoPeticion.GET, RutaApi.VALIDARSESION, mapOf( "id" to idDispositivo ) )
 
                 if ( datos.exito ) { //Usuario atopado
 
-                    gardarOpcion( SESIONUSUARIO, datos.sesion )
+                    gardarOpcion( Opcion.SesionUsuario, datos.sesion )
+                    borrarOpcion( Opcion.SesionAnonima )
                     gardarSesionLocal( datos.sesion, datos.info )
 
                     id = datos.idUsuario
@@ -104,28 +110,35 @@ object UsuarioActual {
                     rol = datos.rol
 
                 } else { //Non se atopou ningún usuario. Malformación ou sesión caducada
-                    borrarOpcion( SESIONUSUARIO )
+                    borrarOpcion( Opcion.SesionUsuario )
                 }
 
-            } catch ( _: AutenticacionException ) { //Erro de autenticación
+            } catch ( e: ApiException ) {
 
-                borrarOpcion( SESIONUSUARIO )
+                when ( e ) {
 
-            } catch ( _: SenConexionException ) { //Quedamos sen spaguetti
+                    is AutenticacionException, is PermisoException -> { borrarOpcion( Opcion.SesionUsuario ) }
+                    is LimiteTaxaException, is OutroErroApiException, is PeticionInvalidaException,
+                    is SenConexionException, is ServidorCaidoException, is TempoEsgotadoException -> {
 
-                val datosAlmacenados = collerSesionLocal( sesionActual )
+                        Log.v( "SESIONINVALIDA", e.message ?: "Erro sen mensaxe" )
+                        val datosAlmacenados = collerSesionLocal( sesionActual )
 
-                if ( datosAlmacenados.isNotBlank() ) {
+                        if ( datosAlmacenados.isNotBlank() ) {
 
-                    val infoSesion = datosAlmacenados.split( "|" )
+                            val infoSesion = datosAlmacenados.split( "|" )
 
-                    if ( infoSesion.size == 2 ) {
+                            if ( infoSesion.size == 2 ) {
 
-                        try {
-                            id = infoSesion[ 0 ].toLong()
-                            rol = buscarRol( infoSesion[ 1 ] )
-                        } catch ( _: NumberFormatException ) { // Datos corruptos
-                            borrarSesionsLocais()
+                                try {
+                                    id = infoSesion[ 0 ].toLong()
+                                    rol = buscarRol( infoSesion[ 1 ] )
+                                } catch ( _: NumberFormatException ) { //Datos corruptos
+                                    borrarSesionsLocais()
+                                }
+
+                            }
+
                         }
 
                     }

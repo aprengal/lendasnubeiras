@@ -1,11 +1,10 @@
-package com.aprengal.lendasnubeiras.tema
+package com.aprengal.lendasnubeiras.ui.tema
 
-import android.util.Patterns.EMAIL_ADDRESS
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.scaleIn
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,8 +34,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -57,36 +54,27 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.Dp
-import com.aprengal.lendasnubeiras.tema.Iconas.PantallaPruebaIconas
-import com.aprengal.lendasnubeiras.tema.Iconas.lanzarDados
-import com.aprengal.lendasnubeiras.tema.Iconas.listarIconasActividades
-import com.aprengal.lendasnubeiras.R
-import com.aprengal.lendasnubeiras.localizacion.Localizacion
+import com.aprengal.lendasnubeiras.ui.tema.Iconas.PantallaPruebaIconas
+import com.aprengal.lendasnubeiras.ui.tema.Iconas.lanzarDados
+import com.aprengal.lendasnubeiras.ui.tema.Iconas.listarIconasActividades
 import com.aprengal.lendasnubeiras.configuracion.haiLector
-import com.aprengal.lendasnubeiras.configuracion.api.Conexion
+import com.aprengal.lendasnubeiras.configuracion.corrutina
 import com.aprengal.lendasnubeiras.localizacion.Idioma
-import com.aprengal.lendasnubeiras.navegacion.corrutina
+import com.aprengal.lendasnubeiras.localizacion.Localizacion.idiomaActual
+import com.aprengal.lendasnubeiras.localizacion.Localizacion.gardarIdioma
+import com.aprengal.lendasnubeiras.localizacion.Localizacion.l10n
+import com.aprengal.lendasnubeiras.localizacion.Localizacion.l10nPlural
+import com.aprengal.lendasnubeiras.ui.reutilizables.Espazador
 
 // Colores que quedaron fuera del ColorScheme (comentados en tu archivo
 // de colores). Se importan/declaran aquí para usarlos directamente.
@@ -171,17 +159,6 @@ fun BotonGhost(
     ) {
         Text(texto)
     }
-}
-
-@Composable
-fun Logo( tamano: Dp = 30.dp ) {
-
-    Image(
-        painter = painterResource( R.drawable.logo ),
-        modifier = Modifier.size( tamano ),
-        contentDescription = stringResource( R.string.nome_app )
-    )
-
 }
 
 @Composable
@@ -373,7 +350,7 @@ private fun CasillaDemo(
 @Composable
 fun ProbaTraducions() {
 
-    var idiomaActual by remember { mutableStateOf(Localizacion.idiomaActual ) }
+    var idiomaActual by remember { mutableStateOf(idiomaActual ) }
     val esGalego = idiomaActual.value.codigo == "gl"
     var mostrarDialogo by rememberSaveable { mutableStateOf(false) }
     val contexto = LocalContext.current
@@ -388,28 +365,28 @@ fun ProbaTraducions() {
             Column {
 
                 Text(
-                    text = Localizacion.l10n("carla", "test")
+                    text = l10n("carla", "test")
                 )
 
                 Text(
-                    text = Localizacion.l10n("natasha", "test"),
+                    text = l10n("natasha", "test"),
                     style = MaterialTheme.typography.headlineLarge
                 )
 
                 Text(
-                    text = Localizacion.l10nPlural("mensajes_nuevos", 1, "test")
+                    text = l10nPlural("mensajes_nuevos", 1, "test")
                 )
 
                 Text(
-                    text = Localizacion.l10nPlural("mensajes_nuevos", 5, "test")
+                    text = l10nPlural("mensajes_nuevos", 5, "test")
                 )
 
                 Text(
-                    text = Localizacion.l10nPlural("mensajes_nuevos", 0, "test")
+                    text = l10nPlural("mensajes_nuevos", 0, "test")
                 )
 
                 Text(
-                    text = Localizacion.l10nPlural("mensajes_nuevos", 100, "test")
+                    text = l10nPlural("mensajes_nuevos", 100, "test")
                 )
 
                 HorizontalDivider(
@@ -429,12 +406,12 @@ fun ProbaTraducions() {
 
                 Button(
                     onClick = {
-                        if ( haiLector( contexto ) ) {
+                        if ( contexto.haiLector() ) {
                             mostrarDialogo = true
                         } else {
 
                             corrutina {
-                                Localizacion.gardarIdioma( nuevoIdioma )
+                                gardarIdioma( nuevoIdioma )
                                 idiomaActual.value = nuevoIdioma
                             }
 
@@ -447,7 +424,7 @@ fun ProbaTraducions() {
                     //Para que compose actualice o contido deste botón
                     key(idiomaActual) {
                         Text(
-                            text = Localizacion.l10n("cambio_idioma", "test")
+                            text = l10n("cambio_idioma", "test")
                         )
                     }
                 }
@@ -478,7 +455,7 @@ fun ProbaActividade() {
                             append( "$acertos - " )
                         }
 
-                        append( Localizacion.l10nPlural("mensaxe_fallos", i , "test" ) )
+                        append( l10nPlural( "mensaxe_fallos", i , "test" ) )
 
                     },
                     style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding( bottom = 10.dp )
@@ -601,11 +578,6 @@ fun XogoDados() {
 
     }
 
-}
-
-@Composable
-fun Espazador( multiplicador: Int = 1 ) {
-    Spacer( modifier = Modifier.height( 10.dp * multiplicador ) )
 }
 
 @Composable

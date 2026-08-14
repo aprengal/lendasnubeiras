@@ -1,0 +1,164 @@
+[33mcommit cf15a5753691f64e73482a2b506f0e47d7cb7c7f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: aprengal <diego92v@gmail.com>
+Date:   Tue Aug 11 23:33:03 2026 +0200
+
+    Reorganización do código para facilitar a creación de Pantallas que permitirán iniciar sesión ou identificarte cunha sesión anónima.
+    
+    Enumerado NomeOpcion para mitigar a posibilidade de cambiar de maneira accidental o nome dunha opción a través dunha cadea manual.
+
+[33mcommit 1a974178c7ab83c6f9225d58ad117efcb92e3fcc[m
+Author: aprengal <diego92v@gmail.com>
+Date:   Tue Aug 11 21:13:46 2026 +0200
+
+    Axustáronse funcións na clase de base de datos que producían resultados inconsistentes e corrixíronse os tipos de variables para evitar resultados extraños, como que puidesen aparecer columnas duplicadas en consultas sen empreg>
+    
+    Creación de tests que axudan a verificar cómo se comporta unha función á hora de listas as actividades á hora de editalas.
+    
+    Agora, o índice "operador" é obrigatorio á hora de realizar consultas.
+
+[33mcommit 44298132e1530a74ab05d1b409dfaeaff7f329a2[m
+Author: aprengal <diego92v@gmail.com>
+Date:   Mon Aug 10 23:09:16 2026 +0200
+
+    Engadíronse máis tests unitarios e revisáronse varios disparadores que non metían ou quitaban as actividades da táboa do buscador se non tiñan o estado publicado axeitado para estar aí.
+    
+    Cambiouse o comportamente de varios métodos que se executaban ao arrancar a aplicación para que lancen unha excepción e non fallen de maneira silenciosa se se chaman posteriormente durante a execución.
+    
+    Revisión do test unitario que indicaba que todas as pantallas estaban incluidas nas diferentes listas de pantallas (todas/autenticación).
+    
+    Revisións menores que reducen e simplifican o código.
+
+[33mcommit 11180a69afbad286c82d3a9c9ce1a2b430521b77[m
+Author: aprengal <diego92v@gmail.com>
+Date:   Mon Aug 10 18:03:18 2026 +0200
+
+    Engadíronse máis tests unitarios para revisar os disparadores que afectaban á táboa para realizar buscar.
+    
+    Solucionouse un problema que evitaba realizar consultas de lectura sobre a táboa de buscas
+
+[33mcommit 8c2a953d2278a34cc2194f3e661a507403d838ff[m
+Author: aprengal <diego92v@gmail.com>
+Date:   Mon Aug 10 03:44:57 2026 +0200
+
+    Preparación de elementos para poder permitir a inserción de datos na aplicación a nivel local
+
+[33mcommit e37273da11fb479ae6c22f8a7b0e3464aeff56e0[m
+Author: aprengal <diego92v@gmail.com>
+Date:   Sun Aug 9 17:31:33 2026 +0200
+
+    Revisión do código de SQLite. Organización dos paquetes de conexións.
+    
+    Engadíronse tests unitarios para verificar que SQLITE funciona correctamente (androidTest requerido).
+    
+    Engadida a función verificarTaboa para indicar que a clase só poderá modificar directamente as táboas incluidas nunha lista.
+
+[33mcommit 53bf9c1f75d2db5632b6a625c89e407e9ac1bc85[m
+Author: aprengal <diego92v@gmail.com>
+Date:   Sun Aug 9 04:18:27 2026 +0200
+
+    Realización de tests unitarios para verificar que SQLITE funciona correctamente tras descubrir que non se pode usar FTS5 en Android de entrada. Baixouse a FTS4, sistema que crea unha copia das columnas e non só unha referencia como facía FTS5.
+
+[33mcommit 41dcb62116e50ba7a2907624a303df75ff4f09bd[m
+Author: aprengal <diego92v@gmail.com>
+Date:   Sun Aug 9 01:43:47 2026 +0200
+
+    Preparación da base de datos SQLITE que terá a aplicación
+
+[33mcommit 10252e5fc852025359c2f3905459fa51aa567fbf[m
+Author: aprengal <diego92v@gmail.com>
+Date:   Thu Aug 6 23:10:01 2026 +0200
+
+    Revisión e supresión da variable 'it' en varias funciósn lambda por claridade.
+
+[33mcommit fd5389131c9ecf38a1b63cda21c68557f3538796[m
+Author: aprengal <diego92v@gmail.com>
+Date:   Thu Aug 6 21:47:05 2026 +0200
+
+    Revisión do código da clase de Axustes para que non sexa necesario meter a unha función suspendida cada vez que se chama a collerOpcion.
+    
+    Agora, o obxecto de localización garda os dominios vinculados ás actividades e descárgaos ao cambiar o valor da propiedade recordar.
+    
+    Revisión das propiedades numéricas dalgunhas clases para que sexan UNSIGNED e sigan as características da base de datos.
+    
+    Modificación na API do xerador de IDs que tiña en conta a marca de tempo actual (timestamp) para admitir que se poida crear máis dun elemento dese tipo por segundo.
+
+[33mcommit e8092acd45d3c58915eaf6895f77f4aa08713d07[m
+Author: aprengal <diego92v@gmail.com>
+Date:   Tue Aug 4 09:32:33 2026 +0200
+
+    Preparación dos directorios e elementos base para a Api que se empregará para conectar a aplicación co servidor
+
+[33mcommit 49e9c3de233ec56432e4e685edf88de05c399fc1[m
+Author: aprengal <diego92v@gmail.com>
+Date:   Mon Aug 3 06:16:33 2026 +0200
+
+    Engadíronse varias clases e elementos que fan posible a conexión cliente servidor cunha api
+    
+    Separáronse as pantallas que só se amosan sen iniciar sesión das que só se amosan ó validar a sesión ou iniciar como usuario anónimo
+    
+    Engadíronse as clases de usuario, permisos e roles para ir asentando as bases desta api.
+
+[33mcommit 69fde546dbf88f5fa49507b525ac7fb16cc71b2b[m
+Author: aprengal <diego92v@gmail.com>
+Date:   Sun Aug 2 03:19:46 2026 +0200
+
+    Revisión da pantalla principal para que se poida reutilizar para diferentes pantallas que non precisan os menús inferiores e superiores.
+    
+    Corrección dun erro polo que o menú inferior non se actualizaba correctamente a súa altura.
+    
+    Revisáronse os enlaces profundos para garantir o seu funcionamento.
+    
+    Insertáronse e quitáronse varias pantallas (o mapa volverá)
+    
+    Revisión da cor do fondo no tema principal e da barra inferior nos dous temas.
+    
+    Comezaron a insertarse as animacións entre pantallas.
+
+[33mcommit 93f5a69f3fcdd494d324e863f3602ec5b792030d[m
+Author: aprengal <diego92v@gmail.com>
+Date:   Thu Jul 30 05:09:40 2026 +0200
+
+    Engadíronse varias clases para xestionar o inicio da aplicación.
+    
+    Agora as opcións gárdanse en DataStore en lugar de SharedPreferences para evitar problemas de modificacións non desexadas ó mesmo tempo.
+    
+    Unificouse o estilo dos elementos que forman cada opción individual no apartado de configuración.
+    
+    Engadiouse o inglés como idioma. Tamén é posible cambiar o tema de claro a escura, aínda que se detectou un problema de que a cor de carga non se actualiza segundo o tema escollido, pero isto é unha limitación de Android que tamén ocorre nas aplicacións de Google.
+
+[33mcommit 2b9351a18b1fddd30ea95d4c80ce375789af5380[m
+Merge: 947c981 2e789a0
+Author: aprengal <diego92v@gmail.com>
+Date:   Wed Jul 29 04:43:05 2026 +0200
+
+    Merge branch 'main' of https://github.com/aprengal/lendasnubeiras
+
+[33mcommit 947c9819822d2eb076e0a693f4cfb7d609b68b21[m
+Author: aprengal <diego92v@gmail.com>
+Date:   Wed Jul 29 03:58:10 2026 +0200
+
+    Engadiuse o enumado Idioma para definir un idioma e asociar varias características a cada un para facilitar a súa xestión en diferentes pantallas da aplicación. Actualización da clase Localización a estes novos cambios
+    
+    Reorganización dos paquetes para facilitar a organización do proxecto.
+    
+    Creación inicial da pantalla de axustes.
+
+[33mcommit 2e789a0782798e4fd9a6480de49b18a9f057b9e9[m
+Author: aprengal <diego92v@gmail.com>
+Date:   Wed Jul 29 03:58:10 2026 +0200
+
+    Engadiuse a clase selada Idioma para definir un idioma e asociar varias características a cada un para facilitar a súa xestión en diferentes pantallas da aplicación. Actualización da clase Localización a estes novos cambios
+    
+    Reorganización dos paquetes para facilitar a organización do proxecto.
+    
+    Creación inicial da pantalla de axustes.
+
+[33mcommit b9ccd91fcb4976cedee17df10c8b3d726307dcb3[m
+Author: aprengal <diego92v@gmail.com>
+Date:   Tue Jul 28 22:35:40 2026 +0200
+
+    - Revisión profunda para establecer correctamente a navegación principal da aplicación.
+    
+    - Refactorización das partes que compoñen a pantalla principal para facilitar a lectura
+    
+    - Axustes das barras superior e inferior para

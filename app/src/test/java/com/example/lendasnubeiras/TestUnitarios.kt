@@ -1,11 +1,12 @@
 package com.example.lendasnubeiras
 
 import com.aprengal.lendasnubeiras.localizacion.Idioma
-import com.aprengal.lendasnubeiras.pantallas.Navegacion
-import com.aprengal.lendasnubeiras.pantallas.Pantalla
+import com.aprengal.lendasnubeiras.navegacion.Navegacion
+import com.aprengal.lendasnubeiras.ui.pantallas.Pantalla
+
 import org.junit.Test
-import kotlin.test.DefaultAsserter.assertEquals
-import kotlin.test.DefaultAsserter.assertTrue
+import org.junit.Assert.assertTrue
+import org.junit.Assert.assertEquals
 
 class TestUnitarios {
 
@@ -14,24 +15,24 @@ class TestUnitarios {
 
         val subclasesReais = Pantalla::class.sealedSubclasses.toSet()
 
-        val pantallasNavegacion = ( Navegacion.pantallas + Navegacion.autenticacion ).map { it::class }.toSet()
+        val pantallasNavegacion = ( Navegacion.pantallasAdmin + Navegacion.pantallasAutenticacion ).map { it::class }.toSet()
         val faltanEnLista = subclasesReais - pantallasNavegacion
         val sobranEnLista = pantallasNavegacion - subclasesReais
 
         assertTrue(
-            "Faltan en Pantalla.todas: ${faltanEnLista.map { it.simpleName }}",
+            "Faltan as seguintes pantallas por asignar ao Menú: ${ faltanEnLista.map { e -> e.simpleName } }",
             faltanEnLista.isEmpty()
         )
 
         assertTrue(
-            "Sobran en Pantalla.todas (no son subclases de Pantalla): ${sobranEnLista.map { it.simpleName }}",
+            "Sobran os seguintes elementos: ${sobranEnLista.map { e -> e.simpleName }}",
             sobranEnLista.isEmpty()
         )
 
         assertEquals(
-            "El tamaño no coincide, revisa duplicados en Pantalla.todas",
+            "O tamano non coincide",
             subclasesReais.size,
-            Navegacion.pantallas.size + Navegacion.autenticacion.size
+            Navegacion.pantallasAdmin.size + Navegacion.pantallasAutenticacion.size
         )
 
     }
@@ -49,7 +50,7 @@ class TestUnitarios {
         }
 
         esperados.forEach { ( idioma, codigo ) ->
-            assertEquals( "Código incorrecto para $idioma",codigo, idioma.codigoRexion )
+            assertEquals( "Código incorrecto para $idioma", codigo, idioma.codigoRexion, )
         }
 
     }

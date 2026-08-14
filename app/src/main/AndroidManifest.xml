@@ -2,13 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Permiso internet. Pode quitarse? -->
+    <!-- Permiso internet -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- Permiso para consultar se hai internet -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <!-- Para permitir conexións http. Quitar en produción cona -->
+    <!-- usesCleartextTraffic: Para permitir conexións http. Quitar en produción cona -->
     <application
         android:usesCleartextTraffic="true"
         android:allowBackup="false"

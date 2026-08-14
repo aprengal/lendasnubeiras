@@ -15,6 +15,12 @@ val localProperties = Properties().apply {
 
 }
 
+val copiarArquivosMainParaAndroidTest = tasks.register<Copy>( "copiarArquivosMainParaAndroidTest" ) {
+    description = "shhh"
+    from( "src/main/kotlin" )
+    into( layout.buildDirectory.dir( "generated/androidTest/assets" ) )
+}
+
 android {
 
     namespace = "com.aprengal.lendasnubeiras"
@@ -91,7 +97,13 @@ android {
 
     sourceSets {
         getByName( "androidTest" ) {
-            assets.directories.add( "src/main/java" )
+            assets.directories.add(
+                layout.buildDirectory
+                    .dir( "generated/androidTest/assets" )
+                    .get()
+                    .asFile
+                    .absolutePath
+            )
         }
     }
 
@@ -135,6 +147,8 @@ dependencies {
 
     //Conector coa API
     implementation( libs.okhttp )
+    testImplementation( kotlin( "test" ) )
+    testImplementation( libs.robolectric )
 
     //Tests unitarios
     testImplementation( libs.junit )

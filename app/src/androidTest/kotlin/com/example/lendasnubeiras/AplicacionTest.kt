@@ -1,8 +1,8 @@
 package com.example.lendasnubeiras
 
 import android.content.Context
-import androidx.test.core.app.ApplicationProvider
-import com.aprengal.lendasnubeiras.Axustes
+import androidx.test.platform.app.InstrumentationRegistry
+import com.aprengal.lendasnubeiras.configuracion.Axustes
 import com.aprengal.lendasnubeiras.configuracion.api.Conexion
 import com.aprengal.lendasnubeiras.configuracion.db.DB
 import com.aprengal.lendasnubeiras.localizacion.Localizacion
@@ -28,7 +28,7 @@ class AplicacionTest {
     @Test
     fun dobreArranqueFallido() {
 
-        val contexto = ApplicationProvider.getApplicationContext<Context>()
+        val contexto = InstrumentationRegistry.getInstrumentation().targetContext
 
         arrancarConfiguracionTest( contexto )
 

@@ -4,7 +4,9 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
 import androidx.core.database.sqlite.transaction
 import com.aprengal.lendasnubeiras.actividades.Actividade
 import com.aprengal.lendasnubeiras.actividades.ActividadeBuscada
@@ -14,7 +16,7 @@ import com.aprengal.lendasnubeiras.actividades.Destinatario.Companion.escollerDe
 import com.aprengal.lendasnubeiras.actividades.Estado.Companion.escollerEstado
 import com.aprengal.lendasnubeiras.usuarios.Permisos.podeCrear
 import com.aprengal.lendasnubeiras.usuarios.Permisos.podeEditarOutras
-import com.aprengal.lendasnubeiras.usuarios.UsuarioActual.collerUsuarioActual
+import com.aprengal.lendasnubeiras.usuarios.SesionActual.collerUsuarioActual
 import com.aprengal.lendasnubeiras.localizacion.Idioma
 import com.aprengal.lendasnubeiras.localizacion.Idioma.Companion.escollerIdioma
 
@@ -134,24 +136,64 @@ object DB {
     )
 
     fun insertar( taboa: String, datos: Map<String, String> ): Long {
-        return db.insertar( taboa, datos )
+
+        try {
+            return db.insertar( taboa, datos )
+        } catch ( e: SQLiteException ) {
+            Log.e( "BBDD", "Fallou unha inserción simple", e )
+        }
+
+        return -1
+
     }
 
     fun insertar( taboa: String, datos: List<Map<String, Any>> ): List<Long> {
-        return db.insertar( taboa, datos )
+
+        try {
+            return db.insertar( taboa, datos )
+        } catch ( e: SQLiteException ) {
+            Log.e( "BBDD", "Fallou unha inserción múltiple", e )
+        }
+
+        return listOf( -1 )
+
     }
 
     fun seleccionar( taboa: String, datos: Map<String, Any> ): List<Map<String, Any>> {
-        return db.seleccionar( taboa, datos )
+
+        try {
+            return db.seleccionar( taboa, datos )
+        } catch ( e: SQLiteException ) {
+            Log.e( "BBDD", "Fallou unha busca para realizar resultados", e )
+        }
+
+        return listOf( mapOf() )
+
     }
 
 
     fun actualizar( taboa: String, valores: Map<String, Any>, onde: Map<String, Map<String, Any>> ): Int {
-        return db.actualizar( taboa, valores, onde )
+
+        try {
+            return db.actualizar( taboa, valores, onde )
+        } catch ( e: SQLiteException ) {
+            Log.e( "BBDD", "Fallou unha consulta de actualización", e )
+        }
+
+        return -1
+
     }
 
     fun eliminar( taboa: String, onde: Map<String, Map<String, Any>> ): Int {
-        return db.eliminar( taboa, onde )
+
+        try {
+            return db.eliminar( taboa, onde )
+        } catch ( e: SQLiteException ) {
+            Log.e( "BBDD", "Fallou unha consulta de borrado", e )
+        }
+
+        return -1
+
     }
 
 }

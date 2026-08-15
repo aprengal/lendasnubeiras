@@ -26,9 +26,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
@@ -54,6 +57,7 @@ import com.aprengal.lendasnubeiras.R
 import com.aprengal.lendasnubeiras.localizacion.Localizacion.idiomaActual
 import com.aprengal.lendasnubeiras.localizacion.Localizacion.l10n
 import com.aprengal.lendasnubeiras.navegacion.Navegacion
+import com.aprengal.lendasnubeiras.ui.reutilizables.LocalAviso
 import com.aprengal.lendasnubeiras.ui.tema.Iconas
 import com.aprengal.lendasnubeiras.ui.tema.MirarAnimacions
 import com.aprengal.lendasnubeiras.ui.tema.ProbaActividade
@@ -77,15 +81,22 @@ fun Contido( controlador: NavHostController, pantallaInicial: Pantalla, pantalla
 
 @OptIn( ExperimentalMaterial3Api::class )
 @Composable
-fun PantallaScaffold( controlador: NavHostController, rutaActual: String, amosarSuperior: Boolean, amosarInferior: Boolean, navegacionContido: @Composable () -> Unit ) {
+fun PantallaScaffold( controlador: NavHostController, rutaActual: String, mSuperior: Boolean, mInferior: Boolean, contido: @Composable () -> Unit ) {
 
-    Scaffold(
-        topBar = { if ( amosarSuperior ) NavegacionSuperior( rutaActual, controlador ) },
-        bottomBar = { if ( amosarInferior ) NavegacionInferior( rutaActual, controlador ) },
-    ) { recheoInterno ->
+    val aviso = remember { SnackbarHostState() }
 
-        Column( modifier = Modifier.fillMaxSize().padding( recheoInterno ).padding( start = 10.dp, end = 10.dp ) ) {
-            navegacionContido()
+    CompositionLocalProvider( LocalAviso provides aviso ) {
+
+        Scaffold(
+            topBar = { if (mSuperior) NavegacionSuperior( rutaActual, controlador) },
+            bottomBar = { if (mInferior) NavegacionInferior( rutaActual, controlador ) },
+            snackbarHost = { SnackbarHost( aviso ) }
+        ) { recheoInterno ->
+
+            Column( modifier = Modifier.fillMaxSize().padding( recheoInterno ).padding(start = 10.dp, end = 10.dp ) ) {
+                contido()
+            }
+
         }
 
     }

@@ -1,6 +1,5 @@
 package com.example.lendasnubeiras
 
-import android.database.sqlite.SQLiteConstraintException
 import androidx.test.platform.app.InstrumentationRegistry
 import com.aprengal.lendasnubeiras.configuracion.db.DB
 import com.aprengal.lendasnubeiras.configuracion.db.DB.collerActividade
@@ -170,10 +169,7 @@ class SQLITETest {
             db.insertar( "actividades", datos )
 
             val onde = mapOf( "id" to mapOf( "operador" to "=", "valor" to id ) )
-
-            assertThrows( SQLiteConstraintException::class.java ) {
-                db.eliminar( "actividades", onde )
-            }
+            assertEquals( -1, db.eliminar( "actividades", onde ) )
 
             //Para que poida eliminarse
             db.actualizar( "actividades", mapOf( "estado" to 3 ), onde )
@@ -185,9 +181,7 @@ class SQLITETest {
 
     @Test
     fun idNegativaRexeitada() {
-        assertThrows( SQLiteConstraintException::class.java ) {
-            db.insertar( "actividades", datosCompletos( mapOf( "id" to "-1" ) ) )
-        }
+        assertEquals( -1, db.insertar( "actividades", datosCompletos( mapOf( "id" to "-1" ) ) ) )
     }
 
     //Non se pode facer o test de comprobar que non se admiten valores nulos porque xa non se admiten estes valores
@@ -200,9 +194,7 @@ class SQLITETest {
         db.insertar( "actividades", datos1 )
 
         val datos2 = datosCompletos( mapOf( "id" to "500", "titulo" to "Segunda" ) )
-        assertThrows( SQLiteConstraintException::class.java ) {
-            db.insertar( "actividades", datos2 )
-        }
+        assertEquals( -1, db.insertar( "actividades", datos2 ) )
 
     }
 
@@ -213,75 +205,38 @@ class SQLITETest {
         db.insertar( "actividades", datos1 )
 
         val datos2 = datosCompletos( mapOf( "id" to "502", "titulo" to "Repetido", "id_idioma" to "gl" ) )
-        assertThrows( SQLiteConstraintException::class.java ) {
-            db.insertar( "actividades", datos2 )
-        }
+        assertEquals( -1, db.insertar( "actividades", datos2 ) )
 
     }
 
     @Test
     fun estadoForaDeRangoRexeitado() {
-
-        assertThrows( SQLiteConstraintException::class.java ) {
-            db.insertar( "actividades", datosCompletos( mapOf( "id" to "503", "estado" to "4" ) ) )
-        }
-
-        assertThrows( SQLiteConstraintException::class.java ) {
-            db.insertar( "actividades", datosCompletos( mapOf( "id" to "504", "estado" to "-4" ) ) )
-        }
-
+        assertEquals( -1, db.insertar( "actividades", datosCompletos( mapOf( "id" to "503", "estado" to "4" ) ) ) )
+        assertEquals( -1, db.insertar( "actividades", datosCompletos( mapOf( "id" to "504", "estado" to "-4" ) ) ) )
     }
 
     @Test
     fun duracionForaDeRangoRexeitado() {
-
-        assertThrows( SQLiteConstraintException::class.java ) {
-            db.insertar( "actividades", datosCompletos( mapOf( "id" to "505", "duracion" to "0" ) ) )
-        }
-
-        assertThrows( SQLiteConstraintException::class.java ) {
-            db.insertar( "actividades", datosCompletos( mapOf( "id" to "506", "duracion" to "181" ) ) )
-        }
-
+        assertEquals( -1, db.insertar( "actividades", datosCompletos( mapOf( "id" to "505", "duracion" to "0" ) ) ) )
+        assertEquals( -1, db.insertar( "actividades", datosCompletos( mapOf( "id" to "506", "duracion" to "181" ) ) ) )
     }
 
     @Test
     fun descricionRexeitada() {
-
-        assertThrows( SQLiteConstraintException::class.java ) {
-            db.insertar( "actividades", datosCompletos( mapOf( "id" to "507", "descricion" to "curta" ) ) )
-        }
-
-        assertThrows( SQLiteConstraintException::class.java ) {
-            db.insertar( "actividades", datosCompletos( mapOf( "id" to "508", "descricion" to "a".repeat( 1001 ) ) ) )
-        }
-
+        assertEquals( -1, db.insertar( "actividades", datosCompletos( mapOf( "id" to "507", "descricion" to "curta" ) ) ) )
+        assertEquals( -1, db.insertar( "actividades", datosCompletos( mapOf( "id" to "508", "descricion" to "a".repeat( 1001 ) ) ) ) )
     }
 
     @Test
     fun obxectivoRexeitado() {
-
-        assertThrows( SQLiteConstraintException::class.java ) {
-            db.insertar( "actividades", datosCompletos( mapOf( "id" to "509", "obxectivo" to "curto" ) ) )
-        }
-
-        assertThrows( SQLiteConstraintException::class.java ) {
-            db.insertar( "actividades", datosCompletos( mapOf( "id" to "510", "obxectivo" to "a".repeat( 201 ) ) ) )
-        }
-
+        assertEquals( -1, db.insertar( "actividades", datosCompletos( mapOf( "id" to "509", "obxectivo" to "curto" ) ) ) )
+        assertEquals( -1, db.insertar( "actividades", datosCompletos( mapOf( "id" to "510", "obxectivo" to "a".repeat( 201 ) ) ) ) )
     }
 
     @Test
     fun materiaisRexeitados() {
-
-        assertThrows( SQLiteConstraintException::class.java ) {
-            db.insertar( "actividades", datosCompletos( mapOf( "id" to "511", "materiais" to "curto" ) ) )
-        }
-
-        assertThrows( SQLiteConstraintException::class.java ) {
-            db.insertar( "actividades", datosCompletos( mapOf( "id" to "512", "materiais" to "a".repeat( 201 ) ) ) )
-        }
-
+        assertEquals( -1, db.insertar( "actividades", datosCompletos( mapOf( "id" to "511", "materiais" to "curto" ) ) ) )
+        assertEquals( -1, db.insertar( "actividades", datosCompletos( mapOf( "id" to "512", "materiais" to "a".repeat( 201 ) ) ) ) )
     }
 
     @Test
@@ -296,9 +251,7 @@ class SQLITETest {
         val cambios = mapOf( "id" to 600L )
         val onde = mapOf( "id" to mapOf( "operador" to "=", "valor" to 601L ) )
 
-        assertThrows( SQLiteConstraintException::class.java ) {
-            db.actualizar( "actividades", cambios, onde )
-        }
+        assertEquals( -1, db.actualizar( "actividades", cambios, onde ) )
 
     }
 
@@ -311,9 +264,7 @@ class SQLITETest {
         val cambios = mapOf( "id" to 999L )
         val onde = mapOf( "id" to mapOf( "operador" to "=", "valor" to 602L ) )
 
-        assertThrows( SQLiteConstraintException::class.java ) {
-            db.actualizar( "actividades", cambios, onde )
-        }
+        assertEquals( -1, db.actualizar( "actividades", cambios, onde ) )
 
         //Actualización de estado para que sexa borrado ou iso crea conflitos noutros tests
         db.actualizar( "actividades", mapOf( "estado" to 3 ), onde )
@@ -486,13 +437,13 @@ class SQLITETest {
     }
 
     //Esta función permite que se poida cambiar a ID e o Rol a nivel interno
-    fun collerUsuarioActualTest( id: Long = 0L, rol: Rol ): Usuario {
-        return Usuario( id = id, correo = "test@test.com",  rol = rol )
+    fun collerUsuarioActualTest( id: Long = 0L, rolchave: String ): Usuario {
+        return Usuario( id = id, correo = "test@test.com",rolchave )
     }
 
-    fun listarActividadesTest( id: Long, rol: Rol ): List<Map<String, Any>> {
+    fun listarActividadesTest( id: Long, rolchave: String ): List<Map<String, Any>> {
 
-        val usuarioActual = collerUsuarioActualTest( id, rol )
+        val usuarioActual = collerUsuarioActualTest( id, rolchave )
 
         require( podeCrear( usuarioActual ) ) { "Non se poden listar as actividades se non pode crealas" }
 
@@ -533,14 +484,14 @@ class SQLITETest {
             if ( rol in setOf( Rol.NADA, Rol.LECTOR ) ) {
 
                 assertThrows( IllegalArgumentException::class.java ) {
-                    listarActividadesTest( id = 30L, rol = rol )
+                    listarActividadesTest( 30L, rol.name )
                 }
 
                 continue
 
             }
 
-            val resultado = listarActividadesTest( id = 30L, rol = rol )
+            val resultado = listarActividadesTest( 30L, rol.name )
 
             if ( rol in setOf( Rol.EDITOR, Rol.ADMIN ) ) {
                 assertEquals( "Resultado inesperado con ${rol.name}", 5, resultado.size )

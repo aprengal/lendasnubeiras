@@ -9,13 +9,16 @@ import com.aprengal.lendasnubeiras.ui.tema.Tema.gardarTema
 import com.aprengal.lendasnubeiras.localizacion.Idioma
 import com.aprengal.lendasnubeiras.ui.reutilizables.BotonOpcion
 import com.aprengal.lendasnubeiras.ui.reutilizables.Espazador
+import com.aprengal.lendasnubeiras.ui.reutilizables.LocalAviso
 import com.aprengal.lendasnubeiras.usuarios.Permisos.podePecharSesion
-import com.aprengal.lendasnubeiras.usuarios.UsuarioActual.collerUsuarioActual
-import com.aprengal.lendasnubeiras.usuarios.UsuarioActual.pecharSesion
+import com.aprengal.lendasnubeiras.usuarios.SesionActual.collerUsuarioActual
+import com.aprengal.lendasnubeiras.usuarios.SesionActual.pecharSesion
 
 //Axustes: idioma, modo escuro, desactivar animacións
 @Composable
 fun PantallaAxustes() {
+
+    val aviso = LocalAviso.current
 
     Column {
 
@@ -53,7 +56,15 @@ fun PantallaAxustes() {
                 opcions = listOf( "afirmar", "denegar" ),
                 valorInicial = Tema.temaActual.value,
                 obterNome = { elemento -> l10n( elemento.toString(), "test" ) },
-                accion = { _ -> pecharSesion() }
+                accion = { _ ->
+
+                    val mensaxe = pecharSesion()
+
+                    if ( mensaxe.isNotBlank() ) {
+                        aviso.showSnackbar( mensaxe )
+                    }
+
+                }
             )
 
         }

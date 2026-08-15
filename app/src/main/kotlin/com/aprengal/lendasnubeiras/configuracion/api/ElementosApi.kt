@@ -1,6 +1,11 @@
 package com.aprengal.lendasnubeiras.configuracion.api
 
-enum class RutaApi( val ruta: String ) {
+
+enum class MetodoApi {
+    GET, POST, DELETE;
+}
+
+enum class RutaApi (val ruta: String ) {
 
     REXISTRO( "rexistro" ),
     INICIOSESION( "iniciar-sesion" ),

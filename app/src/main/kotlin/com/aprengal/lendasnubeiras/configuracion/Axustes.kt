@@ -1,6 +1,8 @@
-package com.aprengal.lendasnubeiras
+package com.aprengal.lendasnubeiras.configuracion
 
 import android.content.Context
+import android.util.Log
+import androidx.datastore.core.CorruptionException
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
 import com.aprengal.lendasnubeiras.ui.tema.Tema.Variante
@@ -31,7 +33,14 @@ object Axustes {
         require( !::appContext.isInitialized ) { "A aplicación xa estaba inicializada!" }
 
         appContext = contexto.applicationContext
-        appContext.opcions.data.first().asMap().forEach { ( clave,  valor ) -> cache[ clave.name ] = valor }
+
+        try {
+            appContext.opcions.data.first().asMap().forEach { ( clave,  valor ) -> cache[ clave.name ] = valor }
+        } catch ( e: CorruptionException ) {
+            Log.w( "OPCIONS", "As opcións están corruptas: ${ e.message }" )
+        } catch ( e: IOException ) {
+            Log.w( "OPCIONS", "Fallou a carga de opcións: ${ e.message }" )
+        }
 
     }
 
@@ -42,9 +51,10 @@ object Axustes {
 
     suspend fun <T : Any> gardarOpcion( opcion: Opcion<T>, valor: T ): Boolean {
 
+        val nome = opcion.nome
+
         try {
 
-            val nome = opcion.nome
             appContext.opcions.edit { opcions ->
 
                 when ( valor ) {
@@ -61,7 +71,9 @@ object Axustes {
             cache[ nome ] = valor
             return true
 
-        } catch ( _: IOException ) {}
+        } catch ( e: IOException ) {
+            Log.w( "OPCIONS", "Non se puido gardar a opción $nome: ${ e.message }" )
+        }
 
         return false
 
@@ -69,9 +81,10 @@ object Axustes {
 
     suspend fun <T : Any> borrarOpcion( opcion: Opcion<T> ): Boolean {
 
+        val nome = opcion.nome
+
         try {
 
-            val nome = opcion.nome
             val predeterminado = opcion.predeterminado
 
             appContext.opcions.edit { opcions ->
@@ -88,7 +101,9 @@ object Axustes {
             cache.remove( nome )
             return true
 
-        } catch ( _: IOException ) {}
+        } catch ( e: IOException ) {
+            Log.w( "OPCIONS", "Non se puido borrar a opción $nome: ${ e.message }" )
+        }
 
         return false
 
@@ -98,12 +113,17 @@ object Axustes {
         return cache[ Opcion.SesionUsuario.nome + "_" + sufixo ] as? String ?: ""
     }
 
-    suspend fun gardarSesionLocal( sufixo: String, datos: String ) {
+    suspend fun gardarSesionLocal( sufixo: String, datos: String ): Boolean {
 
         try {
             val nome = Opcion.SesionUsuario.nome + "_" + sufixo
             appContext.opcions.edit { opcions -> opcions[ stringPreferencesKey( nome ) ] = datos }
-        } catch ( _: IOException ) {}
+            return true
+        } catch ( e: IOException ) {
+            Log.i( "OPCIONS", "Non se puido gardar unha sesión local: ${ e.message }" )
+        }
+
+        return false
 
     }
 
@@ -120,7 +140,9 @@ object Axustes {
 
             return true
 
-        } catch ( _: IOException ) {}
+        } catch ( e: IOException ) {
+            Log.i( "OPCIONS", "Non se puideron borrar as sesións locais: ${ e.message }" )
+        }
 
         return false
 

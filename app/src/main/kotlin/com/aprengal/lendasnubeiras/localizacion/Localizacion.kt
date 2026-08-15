@@ -7,38 +7,13 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.os.LocaleListCompat
-import com.aprengal.lendasnubeiras.Axustes.collerOpcion
-import com.aprengal.lendasnubeiras.Axustes.gardarOpcion
-import com.aprengal.lendasnubeiras.Opcion
+import com.aprengal.lendasnubeiras.configuracion.Axustes.collerOpcion
+import com.aprengal.lendasnubeiras.configuracion.Axustes.gardarOpcion
+import com.aprengal.lendasnubeiras.configuracion.Opcion
 import com.aprengal.lendasnubeiras.configuracion.haiLector
 import com.aprengal.lendasnubeiras.configuracion.reiniciarAplicacion
 import org.json.JSONObject
 import java.io.FileNotFoundException
-
-enum class Idioma( val nome: String, val codigo: String, val rexion: String, val pendente: String ) {
-
-    GALEGO( "Galego", "gl", "ES", pendente = "PENDENTE!!" ),
-    CASTELAN( "Español", "es", "ES", pendente = "¡PENDIENTE!" ),
-    INGLES( "English", "en", "GB", pendente = "PENDING!!" ),
-
-    NADA( "", "", "", "" );
-
-    val codigoRexion: String get() = "${codigo}_$rexion"
-
-    companion object {
-
-        fun escollerIdiomaAplicacion( vararg codigos: String ): Idioma {
-            codigos.forEach { codigoRexion -> entries.find { idioma -> idioma.codigoRexion == codigoRexion }?.let { resultado -> return resultado } }
-            return CASTELAN
-        }
-
-        fun escollerIdioma( etiqueta: String ): Idioma {
-            return entries.find { idioma -> idioma.codigoRexion == etiqueta } ?: NADA
-        }
-
-    }
-
-}
 
 //TODO: Test unitario para verificar que todas as cadeas están definidas.
 //Neste test non se miraría o valor real e para iso habería facer unha revisión manual
@@ -166,36 +141,22 @@ object Localizacion {
     }
 
     fun l10n( indice: String, dominio: String ): String {
-
         cargarDominio( dominio )
-
-        //Log.w(  "IDIOMA", "Falta a clave '$indice' no dominio '$dominio' para o idioma $idiomaActual" )
         return traducions[ dominio ]?.get( indice ) ?: idiomaActual.value.pendente
-
     }
 
     fun l10nPlural( indice: String, num: Int, dominio: String ): String {
 
         cargarDominio( dominio )
-        val listaPlurais = traducionsPlurais[ dominio ]?.get( indice )
+        val listaPlurais = traducionsPlurais[ dominio ]?.get( indice ) ?: return idiomaActual.value.pendente
 
-        if ( listaPlurais != null ) {
-
-            val clavePlural = when {
-                listaPlurais.containsKey( num.toString() ) -> num.toString()
-                num == 1 -> "s"
-                else -> "pl"
-            }
-
-            //Log.w( "IDIOMA", "Falta a clave plural '$clavePlural' para '$indice' no dominio '$dominio' para o idioma ${ idiomaActual.value }" )
-            val patron = listaPlurais[ clavePlural ] ?: idiomaActual.value.pendente
-
-            return String.format( patron, num )
-
+        val clavePlural = when {
+            listaPlurais.containsKey( num.toString() ) -> num.toString()
+            num == 1 -> "s"
+            else -> "pl"
         }
 
-        //Log.w( "IDIOMA", "Falta a entrada plural '$indice' no dominio '$dominio' para o idioma ${ idiomaActual.value }" )
-        return idiomaActual.value.pendente
+        return listaPlurais[ clavePlural ]?.let { clave -> String.format( clave, num ) } ?: idiomaActual.value.pendente
 
     }
 

@@ -50,7 +50,7 @@ class TestUnitarios {
         }
 
         esperados.forEach { ( idioma, codigo ) ->
-            assertEquals( "Código incorrecto para $idioma", codigo, idioma.codigoRexion, )
+            assertEquals( "Código incorrecto para $idioma", codigo, idioma.codigoRexion )
         }
 
     }

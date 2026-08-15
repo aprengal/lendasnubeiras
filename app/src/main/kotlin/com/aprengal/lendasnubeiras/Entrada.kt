@@ -15,16 +15,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
+import com.aprengal.lendasnubeiras.configuracion.Axustes
 import com.aprengal.lendasnubeiras.configuracion.api.Conexion
 import com.aprengal.lendasnubeiras.configuracion.db.DB
 import com.aprengal.lendasnubeiras.usuarios.Usuario
-import com.aprengal.lendasnubeiras.usuarios.UsuarioActual.collerUsuarioActual
+import com.aprengal.lendasnubeiras.usuarios.SesionActual.collerUsuarioActual
 import com.aprengal.lendasnubeiras.localizacion.Localizacion
 import com.aprengal.lendasnubeiras.navegacion.Navegacion.collerPantallas
 import com.aprengal.lendasnubeiras.ui.pantallas.Contido
 import com.aprengal.lendasnubeiras.ui.tema.Tema
 import com.aprengal.lendasnubeiras.ui.tema.TemaNubeiro
-import com.aprengal.lendasnubeiras.usuarios.UsuarioActual.validarSesion
+import com.aprengal.lendasnubeiras.usuarios.SesionActual.validarSesion
 import kotlinx.coroutines.runBlocking
 
 class Entrada : AppCompatActivity() {

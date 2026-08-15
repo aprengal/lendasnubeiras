@@ -1,9 +1,8 @@
 package com.aprengal.lendasnubeiras.configuracion.api
 
 import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import com.aprengal.lendasnubeiras.Axustes.collerOpcion
+import android.util.Log
+import com.aprengal.lendasnubeiras.configuracion.Axustes.collerOpcion
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.FormBody
@@ -15,11 +14,9 @@ import java.io.IOException
 import java.net.SocketTimeoutException
 import java.util.concurrent.TimeUnit
 import com.aprengal.lendasnubeiras.BuildConfig
-import com.aprengal.lendasnubeiras.Opcion
+import com.aprengal.lendasnubeiras.configuracion.Opcion
 
-enum class MetodoPeticion {
-    GET, POST, DELETE;
-}
+private class ApiException( mensaxe: String, val codigo: Int ) : Exception( mensaxe )
 
 object Conexion {
 
@@ -32,25 +29,15 @@ object Conexion {
         appContext = contexto.applicationContext
     }
 
-    private fun haiConexion(): Boolean {
-
-        val xestor = appContext.getSystemService( Context.CONNECTIVITY_SERVICE ) as ConnectivityManager
-        val rede = xestor.activeNetwork ?: return false
-        val capacidades = xestor.getNetworkCapabilities( rede ) ?: return false
-
-        return capacidades.hasCapability( NetworkCapabilities.NET_CAPABILITY_VALIDATED )
-
-    }
-
     private val cliente = OkHttpClient.Builder()
         .connectTimeout( 5, TimeUnit.SECONDS )
         .readTimeout( 5, TimeUnit.SECONDS )
         .writeTimeout( 5, TimeUnit.SECONDS )
         .build()
 
-    suspend fun <T : RespostaApi> procesarPeticion( metodoPeticion: MetodoPeticion, rutaApi: RutaApi, campos: Map<String, Any> = emptyMap() ): T {
+    suspend fun <T : RespostaApi> procesarPeticion( metodoApi: MetodoApi, rutaApi: RutaApi, campos: Map<String, Any> = emptyMap() ): T {
 
-        val datos = peticion( metodoPeticion, rutaApi, campos )
+        val datos = peticion( metodoApi, rutaApi, campos )
 
         val saida = when( rutaApi ) {
             RutaApi.VALIDARSESION -> SesionUsuario( datos )
@@ -62,18 +49,20 @@ object Conexion {
 
     }
 
-    private suspend fun peticion(metodoPeticion: MetodoPeticion, rutaApi: RutaApi, campos: Map<String, Any> ): JSONObject {
+    private suspend fun peticion( metodoApi: MetodoApi, rutaApi: RutaApi, campos: Map<String, Any> ): JSONObject {
 
-        val ruta = rutaApi.ruta
+        try {
+            return realizarPeticion( metodoApi, rutaApi, campos )
+        } catch ( e: ApiException ) {
 
-        if ( !haiConexion() ) throw SenConexionException( "O dispositivo non ten conexión a internet" )
+            e.message?.let { mensaxe -> Log.i( "API", mensaxe ) }
+            return JSONObject().apply { put( "codigo", e.codigo ) }
 
-        val ( codigo, contido ) = realizarPeticion( metodoPeticion, ruta, campos )
-        return interpretarResposta( codigo, contido )
+        }
 
     }
 
-    private suspend fun realizarPeticion( metodoPeticion: MetodoPeticion, ruta: String, campos: Map<String, Any> ): Pair<Int, String> {
+    private suspend fun realizarPeticion( metodoApi: MetodoApi, ruta: RutaApi, campos: Map<String, Any> ): JSONObject {
 
         val sesion = collerOpcion( Opcion.SesionUsuario )
 
@@ -85,12 +74,13 @@ object Conexion {
                 }.build()
             } else null
 
-            val builder = Request.Builder().url( URL_BASE + ruta ).addHeader( "permiso", "Bearer $sesion" )
+            val builder = Request.Builder().url( URL_BASE + ruta.ruta )
+            if ( sesion.isNotBlank() ) builder.addHeader( "permiso", "Bearer $sesion" )
 
-            when ( metodoPeticion ) {
-                MetodoPeticion.GET -> builder.get()
-                MetodoPeticion.POST -> builder.post( corpo ?: FormBody.Builder().build() )
-                MetodoPeticion.DELETE -> if ( corpo != null ) builder.delete( corpo ) else builder.delete()
+            when ( metodoApi ) {
+                MetodoApi.GET -> builder.get()
+                MetodoApi.POST -> builder.post( corpo ?: FormBody.Builder().build() )
+                MetodoApi.DELETE -> if ( corpo != null ) builder.delete( corpo ) else builder.delete()
             }
 
             val peticion = builder.build()
@@ -98,16 +88,28 @@ object Conexion {
             val respostaBruta = try {
 
                 cliente.newCall( peticion ).execute().use { resposta ->
-                    Pair( resposta.code, resposta.body.string() )
+
+                    val corpo = resposta.body.string()
+
+                    if ( corpo.isNotBlank() ) {
+                        JSONObject( corpo ).apply { put( "codigo", resposta.code ) }
+                    } else {
+                        JSONObject().apply { put( "codigo", resposta.code ) }
+                    }
+
                 }
 
             } catch ( _: SocketTimeoutException ) {
 
-                throw TempoEsgotadoException( "A petición tardou demasiado en responder" )
+                throw ApiException( "A petición tardou demasiado en responder", 408 )
 
             } catch ( _: IOException ) {
 
-                throw SenConexionException( "Non hai conexión ou o servidor non responde" )
+                throw ApiException( "Non hai conexión ou o servidor non responde", 0 )
+
+            } catch ( _: JSONException ) {
+
+                throw ApiException( "A API respondeu con formato descoñecido", 1 )
 
             }
 
@@ -116,44 +118,6 @@ object Conexion {
         }
 
         return resultado
-
-    }
-
-    private fun interpretarResposta( codigo: Int, contido: String ): JSONObject {
-
-        val resposta = try {
-            JSONObject( contido )
-        } catch ( _: JSONException ) {
-            throw OutroErroApiException( "Resposta non válida da API con código HTTP $codigo" )
-        }
-
-        if ( codigo !in 200..< 300 ) {
-            xestionarRespostaErro( codigo, resposta )
-        }
-
-        return resposta
-
-    }
-
-    private fun xestionarRespostaErro( codigo: Int, resposta: JSONObject ) {
-
-        if ( !resposta.has( "erro" ) ) {
-            throw OutroErroApiException( "Obxecto de resposta inválido da API con código HTTP $codigo" )
-        }
-
-        val datosErro = resposta.optJSONObject( "erro" )
-        val mensaxe = datosErro?.optString( "mensaxe" ) ?: "Erro descoñecido"
-
-        val erro: ApiException = when ( codigo ) {
-            400, 404 -> PeticionInvalidaException( mensaxe )
-            401 -> AutenticacionException( mensaxe )
-            403 -> PermisoException( mensaxe )
-            429 -> LimiteTaxaException( mensaxe )
-            503 -> ServidorCaidoException( mensaxe )
-            else -> OutroErroApiException( mensaxe )
-        }
-
-        throw erro
 
     }
 

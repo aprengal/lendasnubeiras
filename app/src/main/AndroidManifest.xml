@@ -5,9 +5,6 @@
     <!-- Permiso internet -->
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- Permiso para consultar se hai internet -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
     <!-- usesCleartextTraffic: Para permitir conexións http. Quitar en produción cona -->
     <application
         android:usesCleartextTraffic="true"

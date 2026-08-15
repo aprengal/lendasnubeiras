@@ -1,7 +1,20 @@
 package com.aprengal.lendasnubeiras.usuarios
 
-import com.aprengal.lendasnubeiras.Axustes.collerOpcion
-import com.aprengal.lendasnubeiras.Opcion.SesionAnonima
+import com.aprengal.lendasnubeiras.configuracion.Axustes.collerOpcion
+import com.aprengal.lendasnubeiras.configuracion.Opcion.SesionAnonima
+import com.aprengal.lendasnubeiras.usuarios.Rol.Companion.buscarRol
+
+class Usuario(
+    val id: Long,
+    val correo: String,
+    rolclave: String
+) {
+
+    val rol: Rol = buscarRol( rolclave )
+    val existe: Boolean
+        get() = this.rol != Rol.NADA && correo.isNotBlank()
+
+}
 
 enum class Rol {
 

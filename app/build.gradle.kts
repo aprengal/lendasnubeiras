@@ -15,10 +15,16 @@ val localProperties = Properties().apply {
 
 }
 
-val copiarArquivosMainParaAndroidTest = tasks.register<Copy>( "copiarArquivosMainParaAndroidTest" ) {
-    description = "shhh"
+val copiarArquivosMain = tasks.register<Sync>( "copiarArquivosTesteoAndroid" ) {
+    description = "Shhh"
     from( "src/main/kotlin" )
-    into( layout.buildDirectory.dir( "generated/androidTest/assets" ) )
+    into( "src/androidTest/assets" )
+}
+
+tasks.configureEach {
+    if ( name.contains( "AndroidTest" ) ) {
+        dependsOn( copiarArquivosMain )
+    }
 }
 
 android {
@@ -110,6 +116,7 @@ android {
 }
 
 dependencies {
+
     implementation( platform(libs.androidx.compose.bom ) )
     implementation( libs.androidx.activity.compose )
     implementation( libs.androidx.appcompat )
@@ -126,9 +133,7 @@ dependencies {
     implementation( libs.androidx.compose.ui.unit)
     implementation( libs.androidx.core.ktx )
     implementation( libs.androidx.lifecycle.runtime.ktx )
-    implementation( libs.androidx.material3 )
     implementation( libs.androidx.navigation.compose )
-    implementation( libs.core.ktx )
 
     debugImplementation( libs.androidx.compose.ui.tooling )
 
@@ -147,8 +152,6 @@ dependencies {
 
     //Conector coa API
     implementation( libs.okhttp )
-    testImplementation( kotlin( "test" ) )
-    testImplementation( libs.robolectric )
 
     //Tests unitarios
     testImplementation( libs.junit )

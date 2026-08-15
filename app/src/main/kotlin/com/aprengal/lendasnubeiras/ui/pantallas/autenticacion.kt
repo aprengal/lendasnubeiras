@@ -33,12 +33,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.aprengal.lendasnubeiras.Axustes.collerOpcion
-import com.aprengal.lendasnubeiras.Axustes.gardarOpcion
-import com.aprengal.lendasnubeiras.Opcion
+import com.aprengal.lendasnubeiras.configuracion.Axustes.collerOpcion
+import com.aprengal.lendasnubeiras.configuracion.Axustes.gardarOpcion
+import com.aprengal.lendasnubeiras.configuracion.Opcion
 import com.aprengal.lendasnubeiras.configuracion.api.RutaApi
 import com.aprengal.lendasnubeiras.configuracion.corrutina
-import com.aprengal.lendasnubeiras.usuarios.UsuarioActual.sesionAnonima
+import com.aprengal.lendasnubeiras.usuarios.SesionActual.crearSesionAnonima
 import com.aprengal.lendasnubeiras.localizacion.Localizacion.l10n
 import com.aprengal.lendasnubeiras.ui.reutilizables.Espazador
 import com.aprengal.lendasnubeiras.ui.tema.TemaNubeiro
@@ -219,7 +219,7 @@ fun PantallaApertura( controlador: NavHostController ) {
 
         Espazador()
 
-        OutlinedButton( onClick = { sesionAnonima() }, modifier = Modifier.fillMaxWidth() ) {
+        OutlinedButton( onClick = { crearSesionAnonima() }, modifier = Modifier.fillMaxWidth() ) {
             Text( l10n( "boton_continuar_anonimo", "autenticacion" ) )
         }
 

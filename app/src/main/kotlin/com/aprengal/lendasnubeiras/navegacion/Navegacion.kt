@@ -5,7 +5,7 @@ import com.aprengal.lendasnubeiras.usuarios.Permisos.podeAdministrar
 import com.aprengal.lendasnubeiras.usuarios.Permisos.podeCrear
 import com.aprengal.lendasnubeiras.usuarios.Permisos.podeLer
 import com.aprengal.lendasnubeiras.usuarios.Permisos.podeRexistrarse
-import com.aprengal.lendasnubeiras.usuarios.UsuarioActual.collerUsuarioActual
+import com.aprengal.lendasnubeiras.usuarios.SesionActual.collerUsuarioActual
 
 object Navegacion {
 

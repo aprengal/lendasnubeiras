@@ -5,8 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.view.accessibility.AccessibilityManager
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 // Extensións de Context. Accesibilidade e reinicio de aplicación
@@ -32,4 +34,8 @@ fun Context.reiniciarAplicacion() {
 // Funcións libres
 fun corrutina( alcance: CoroutineScope = CoroutineScope( Dispatchers.IO + SupervisorJob() ), bloque: suspend CoroutineScope.() -> Unit ) {
     alcance.launch( block = bloque )
+}
+
+fun <T> corrutinaResposta( alcance: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob() ), bloque: suspend CoroutineScope.() -> T ): Deferred<T> {
+    return alcance.async( block = bloque )
 }

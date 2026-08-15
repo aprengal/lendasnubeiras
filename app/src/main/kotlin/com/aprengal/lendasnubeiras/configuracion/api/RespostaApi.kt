@@ -1,12 +1,10 @@
 package com.aprengal.lendasnubeiras.configuracion.api
 
-import com.aprengal.lendasnubeiras.usuarios.Rol
-import com.aprengal.lendasnubeiras.usuarios.Rol.Companion.buscarRol
 import org.json.JSONObject
 
-abstract class RespostaApi( val exito: Boolean )
+abstract class RespostaApi( val codigo: Int, val exito: Boolean = codigo in 200..299 )
 
-class SesionUsuario( datos: JSONObject ): RespostaApi( datos.optBoolean( "exito" ) ) {
+class SesionUsuario( datos: JSONObject ): RespostaApi( datos.optInt( "codigo" ) ) {
 
     val sesion: String = datos.optString( "sesion" )
 
@@ -14,10 +12,10 @@ class SesionUsuario( datos: JSONObject ): RespostaApi( datos.optBoolean( "exito"
 
     val correo: String = datos.optString( "correo" )
 
-    val rol: Rol = buscarRol( datos.optString( "rol" ) )
+    val rol: String = datos.optString( "rol" )
 
-    val info: String = "$idUsuario|${ rol.name }"
+    val info: String = "$idUsuario|${ rol }"
 
 }
 
-class RespostaXenerica( datos: JSONObject ): RespostaApi( datos.optBoolean( "exito" ) )
+class RespostaXenerica( datos: JSONObject ): RespostaApi( datos.optInt( "codigo" ) )

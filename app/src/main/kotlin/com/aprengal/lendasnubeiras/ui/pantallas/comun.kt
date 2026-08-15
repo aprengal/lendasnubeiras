@@ -52,7 +52,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
-import com.aprengal.lendasnubeiras.PantallaDetalle
+//import com.aprengal.lendasnubeiras.PantallaDetalle
 import com.aprengal.lendasnubeiras.R
 import com.aprengal.lendasnubeiras.localizacion.Localizacion.idiomaActual
 import com.aprengal.lendasnubeiras.localizacion.Localizacion.l10n
@@ -172,10 +172,10 @@ fun NavegacionSuperior(
                             if ( !seleccionado ) {
 
                                 val rutaDestino = when ( elemento ) {
-                                    is Pantalla.Detalle -> elemento.crearRuta(
+                                    /*is Pantalla.Detalle -> elemento.crearRuta(
                                         "666",
                                         "resacón"
-                                    )
+                                    )*/
 
                                     else -> elemento.ruta
                                 }
@@ -255,18 +255,14 @@ fun CollerContido( pantalla: Pantalla, controlador: NavHostController, entrada: 
         Pantalla.Rexistro -> PantallaRexistro()
 
         //Lector
-        Pantalla.Actividades -> TODO()
-        Pantalla.ActividadeDetalle -> TODO()
-        Pantalla.Animacions -> MirarAnimacions()
-
-        //Lector con argumentos
-        Pantalla.Detalle -> {
+        Pantalla.Actividades -> PantallaActividade()
+        Pantalla.ActividadeDetalle -> {
 
             val id = entrada.arguments?.getString( "id" )?.toIntOrNull() ?: 0
-            val test = entrada.arguments?.getString( "test" ) ?: ""
-            PantallaDetalle( id = id, test = test )
+            PantallaActividadeDetalle( id )
 
         }
+        Pantalla.Animacions -> MirarAnimacions()
 
         Pantalla.Buscar -> {
 
@@ -293,6 +289,20 @@ fun CollerContido( pantalla: Pantalla, controlador: NavHostController, entrada: 
 }
 
 @Composable
+fun PantallaActividadeDetalle( id: Int) {
+
+    Text( "DEtalle de $id" )
+
+}
+
+@Composable
+fun PantallaActividade() {
+
+    Text( "EHHHHHHHHHHHHHHHHHHHHHHH" )
+
+}
+
+@Composable
 fun Logo( tamano: Dp = 30.dp ) {
 
     Image(
@@ -312,7 +322,7 @@ fun CollerIconaMenu( pantalla: Pantalla ) {
         Pantalla.Inicio -> Iconas.Inicio()
         Pantalla.Axustes -> Iconas.Axustes()
         Pantalla.Animacions -> Iconas.OlloAberto()
-        Pantalla.Detalle -> Iconas.OlloPechado()
+        //Pantalla.Detalle -> Iconas.OlloPechado()
         Pantalla.Actividades -> Iconas.Idioma()
         else -> error( "A pantalla ${ pantalla.ruta } non ten icona asignada" )
     }

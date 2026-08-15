@@ -350,12 +350,12 @@ private fun CasillaDemo(
 @Composable
 fun ProbaTraducions() {
 
-    var idiomaActual by remember { mutableStateOf(idiomaActual ) }
-    val esGalego = idiomaActual.value.codigo == "gl"
-    var mostrarDialogo by rememberSaveable { mutableStateOf(false) }
-    val contexto = LocalContext.current
+    //var idiomaActual by remember { mutableStateOf(idiomaActual ) }
+    //val esGalego = idiomaActual.value.codigo == "gl"
+    //var mostrarDialogo by rememberSaveable { mutableStateOf(false) }
+    //val contexto = LocalContext.current
 
-    val nuevoIdioma = if (esGalego) Idioma.CASTELAN else Idioma.GALEGO
+    //val nuevoIdioma = if (esGalego) Idioma.CASTELAN else Idioma.GALEGO
 
     PantallaBase {
 
@@ -394,7 +394,7 @@ fun ProbaTraducions() {
                     color = MaterialTheme.colorScheme.primary
                 )
 
-                Text(
+                /*Text(
                     text = buildAnnotatedString {
                         append("Idioma actual: ")
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
@@ -427,7 +427,7 @@ fun ProbaTraducions() {
                             text = l10n("cambio_idioma", "test")
                         )
                     }
-                }
+                }*/
             }
 
         }

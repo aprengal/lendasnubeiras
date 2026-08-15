@@ -30,7 +30,7 @@ object Axustes {
 
     suspend fun arrancar( contexto: Context ) {
 
-        require( !::appContext.isInitialized ) { "A aplicación xa estaba inicializada!" }
+        if ( ::appContext.isInitialized ) return
 
         appContext = contexto.applicationContext
 

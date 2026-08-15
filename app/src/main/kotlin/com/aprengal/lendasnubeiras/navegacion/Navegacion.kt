@@ -1,5 +1,6 @@
 package com.aprengal.lendasnubeiras.navegacion
 
+import android.util.Log
 import com.aprengal.lendasnubeiras.ui.pantallas.Pantalla
 import com.aprengal.lendasnubeiras.usuarios.Permisos.podeAdministrar
 import com.aprengal.lendasnubeiras.usuarios.Permisos.podeCrear
@@ -22,7 +23,7 @@ object Navegacion {
         Pantalla.Axustes,
         Pantalla.Idioma,
         Pantalla.Animacions,
-        Pantalla.Detalle,
+        //Pantalla.Detalle,
         Pantalla.Actividades,
         Pantalla.ActividadeDetalle,
         Pantalla.Buscar
@@ -38,7 +39,7 @@ object Navegacion {
     //Crearíase unha pantalla a maiores para administradores????
     val pantallasAdmin = pantallasCreacion + listOf( Pantalla.Administrar )
 
-    val menuSuperior = listOf( Pantalla.Axustes, Pantalla.Detalle )
+    val menuSuperior = listOf( Pantalla.Axustes )//, Pantalla.Detalle )
 
     //O menú inferior debería cambiar por rol lector ou creador?
     val menuInferior = listOf(

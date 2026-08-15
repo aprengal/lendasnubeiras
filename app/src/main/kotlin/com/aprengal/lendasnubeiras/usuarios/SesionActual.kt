@@ -1,5 +1,6 @@
 package com.aprengal.lendasnubeiras.usuarios
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -36,7 +37,7 @@ object SesionActual {
         corrutina {
             borrarSesionsLocais()
             gardarOpcion( Opcion.SesionAnonima, true )
-            usuario = Usuario( 0L, "", "lector" )
+            usuario = Usuario( 1L, "", "lector" )
         }
 
     }
@@ -111,7 +112,7 @@ object SesionActual {
             if ( sesionAnonima ) {
 
                 if ( borrarOpcion( Opcion.SesionAnonima ) ) {
-                    usuario = Usuario( 1L, "", "nada" )
+                    usuario = Usuario( 0L, "", "nada" )
                     return@corrutinaResposta "exito"
                 }
 
@@ -124,7 +125,7 @@ object SesionActual {
             if ( resposta.exito ) {
 
                 if ( borrarSesionsLocais() ) {
-                    usuario = Usuario( 1L, "", "nada" )
+                    usuario = Usuario( 0L, "", "nada" )
                     return@corrutinaResposta "exito"
                 }
 

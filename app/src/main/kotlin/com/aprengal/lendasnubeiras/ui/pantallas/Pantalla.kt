@@ -20,9 +20,9 @@ sealed class Pantalla( val tipo: TIPO, val enlaces: Boolean ) {
         override val ruta: String = "${super.ruta}/{id}"
     }
 
-    object Detalle : Pantalla( TIPO.SCAFFOLD, true ) {
+    /*object Detalle : Pantalla( TIPO.SCAFFOLD, true ) {
         override val ruta: String = "${super.ruta}/{id}/{test}"
-    }
+    }*/
 
     object Buscar : Pantalla( TIPO.SCAFFOLD, true ) {
         override val ruta: String = "${super.ruta}/{termo}"

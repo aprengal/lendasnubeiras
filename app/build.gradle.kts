@@ -38,7 +38,7 @@ android {
         minSdk = 29
         targetSdk = 37
         versionCode = 2
-        versionName = "0.1.02"
+        versionName = "0.1.03"
 
         ndk {
             //noinspection ChromeOsAbiSupport
@@ -62,25 +62,32 @@ android {
 
     buildTypes {
 
-        getByName("debug") {
+        getByName( "debug" ) {
             buildConfigField(
                 "String",
                 "API_URL",
-                "\"${localProperties.getProperty("API_URL_DEBUG")}\""
+                "\"${localProperties.getProperty( "API_URL_DEBUG" )}\""
             )
         }
 
-        getByName("release") {
+        getByName( "release" ) {
+
             isMinifyEnabled = true
             isShrinkResources = true
 
-            signingConfig = signingConfigs.getByName("release")
+            proguardFiles(
+                getDefaultProguardFile( "proguard-android-optimize.txt" ),
+                "regras-mellorado.pro"
+            )
+
+            signingConfig = signingConfigs.getByName( "release" )
 
             buildConfigField(
                 "String",
                 "API_URL",
-                "\"${localProperties.getProperty("API_URL_RELEASE")}\""
+                "\"${localProperties.getProperty( "API_URL_RELEASE" )}\""
             )
+
         }
 
     }

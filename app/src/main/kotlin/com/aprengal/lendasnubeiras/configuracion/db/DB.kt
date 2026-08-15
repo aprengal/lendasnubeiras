@@ -25,7 +25,7 @@ object DB {
     private lateinit var db: BBDD
 
     fun arrancar( contexto: Context ) {
-        require( !::db.isInitialized  ) { "A base de datos xa estaba inicializada!" }
+        if ( ::db.isInitialized ) return
         db = BBDD( contexto.applicationContext )
     }
 

@@ -52,7 +52,6 @@ fun MapaMundial() {
                                 if ( rexionPulsada != "Ningunha" ) {
 
                                     //Aquí faríase o cambio se a rexión fose diferente a Ningunha
-                                    Log.d( "EHHH", rexionPulsada )
 
                                 }
 

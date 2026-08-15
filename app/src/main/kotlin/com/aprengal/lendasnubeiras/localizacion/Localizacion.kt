@@ -46,7 +46,7 @@ object Localizacion {
 
     fun arrancar( contexto: Context ) {
 
-        require( !::appContext.isInitialized && idiomaActual.value == Idioma.NADA ) { "A aplicación xa estaba inicializada!" }
+        if ( ::appContext.isInitialized && idiomaActual.value != Idioma.NADA ) return
 
         appContext = contexto.applicationContext
         idiomaActual.value = Idioma.escollerIdiomaAplicacion(

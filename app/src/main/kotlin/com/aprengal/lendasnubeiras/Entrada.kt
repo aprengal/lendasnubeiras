@@ -2,6 +2,7 @@ package com.aprengal.lendasnubeiras
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.aprengal.lendasnubeiras.configuracion.Axustes
 import com.aprengal.lendasnubeiras.configuracion.api.Conexion
@@ -25,7 +27,9 @@ import com.aprengal.lendasnubeiras.navegacion.Navegacion.collerPantallas
 import com.aprengal.lendasnubeiras.ui.pantallas.Contido
 import com.aprengal.lendasnubeiras.ui.tema.Tema
 import com.aprengal.lendasnubeiras.ui.tema.TemaNubeiro
+import com.aprengal.lendasnubeiras.usuarios.SesionActual
 import com.aprengal.lendasnubeiras.usuarios.SesionActual.validarSesion
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class Entrada : AppCompatActivity() {
@@ -43,7 +47,6 @@ class Entrada : AppCompatActivity() {
             DB.arrancar( contexto )
             Localizacion.arrancar( contexto )
             Tema.arrancar()
-            validarSesion()
         }
 
     }
@@ -53,6 +56,10 @@ class Entrada : AppCompatActivity() {
         installSplashScreen()
         enableEdgeToEdge()
         super.onCreate( savedInstanceState )
+
+        lifecycleScope.launch {
+            validarSesion()
+        }
 
         setContent {
 
@@ -69,7 +76,7 @@ class Entrada : AppCompatActivity() {
     @Composable
     private fun IniciarAplicacion() {
 
-        var usuarioActual: Usuario by remember { mutableStateOf( collerUsuarioActual() ) }
+        val usuarioActual: Usuario = collerUsuarioActual()
 
         key( usuarioActual ) {
             val controlador = rememberNavController()

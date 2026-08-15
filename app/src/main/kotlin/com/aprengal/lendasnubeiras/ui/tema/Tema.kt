@@ -191,7 +191,7 @@ object Tema {
 
     fun arrancar() {
 
-        require( !temaCargado ) { "A aplicación xa estaba inicializada!" }
+        if ( temaCargado ) return
         temaCargado = true
 
         val claveGuardada = collerOpcion( Tema )

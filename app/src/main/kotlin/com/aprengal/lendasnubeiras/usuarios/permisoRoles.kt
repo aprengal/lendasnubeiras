@@ -25,10 +25,12 @@ enum class Rol {
     EDITOR,
     ADMIN;
 
+    private val nome = name.lowercase()
+
     companion object {
 
         fun buscarRol( clave: String ): Rol {
-            return entries.find { it.name == clave } ?: NADA
+            return entries.find { elemento -> elemento.nome == clave } ?: NADA
         }
 
     }

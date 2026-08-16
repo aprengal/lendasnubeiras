@@ -18,17 +18,29 @@ import com.aprengal.lendasnubeiras.configuracion.api.RutaApi
 import com.aprengal.lendasnubeiras.configuracion.api.SesionUsuario
 import com.aprengal.lendasnubeiras.configuracion.corrutina
 import com.aprengal.lendasnubeiras.configuracion.corrutinaResposta
-import com.aprengal.lendasnubeiras.localizacion.Localizacion.l10n
 import com.aprengal.lendasnubeiras.usuarios.Permisos.podePecharSesion
+import com.aprengal.lendasnubeiras.usuarios.Rol.Companion.buscarRol
+import java.util.UUID
 
 object SesionActual {
 
-    private var usuario: Usuario by mutableStateOf( Usuario( 0L, "", "nada" ) )
+    private var usuario by mutableStateOf( Usuario( 0L, "", Rol.NADA ) )
+
+    var idSesion by mutableStateOf( "" )
+        private set
 
     val sesionAnonima: Boolean
         get() = collerOpcion( Opcion.SesionAnonima )
 
-    fun collerUsuarioActual(): Usuario = usuario
+    fun collerUsuarioActual(): Usuario {
+        if ( idSesion.isBlank() ) validarSesion()
+        return usuario
+    }
+
+    private fun cambiarSesion( id: Long = 0L, correo: String = "", rol: Rol = Rol.NADA ) {
+        usuario = Usuario( id, correo, rol )
+        idSesion = UUID.randomUUID().toString()
+    }
 
     fun crearSesionAnonima() {
 
@@ -37,15 +49,15 @@ object SesionActual {
         corrutina {
             borrarSesionsLocais()
             gardarOpcion( Opcion.SesionAnonima, true )
-            usuario = Usuario( 1L, "", "lector" )
+            cambiarSesion( 1L, "", Rol.LECTOR )
         }
 
     }
 
-    fun validarSesion() {
+    private fun validarSesion() {
 
         if ( sesionAnonima ) {
-            usuario = Usuario( 1L, "", "lector" )
+            cambiarSesion( 1L, "", Rol.LECTOR )
             return
         }
 
@@ -56,7 +68,7 @@ object SesionActual {
 
             var id = 1L
             var correo = ""
-            var rol = "lector"
+            var rol = Rol.LECTOR
 
             val idDispositivo = collerOpcion( Opcion.IdDispositivo )
             val datos: SesionUsuario = procesarPeticion( MetodoApi.GET, RutaApi.VALIDARSESION, mapOf( "id" to idDispositivo ) )
@@ -68,13 +80,13 @@ object SesionActual {
 
                 id = datos.idUsuario
                 correo = datos.correo
-                rol = datos.rol
+                rol = buscarRol( datos.rol )
 
             } else if ( datos.codigo in setOf( 401, 403 ) ) { //Usuario non atopado ou denegouse a entrada
 
                 borrarOpcion( Opcion.SesionUsuario )
 
-            } else { //Outros: servidor de vacacións, non hai internet ou
+            } else { //Outros: servidor de vacacións, non hai internet ou a saber, pero non se puido chegar ao servidor
 
                 val datosAlmacenados = collerSesionLocal( sesionActual )
 
@@ -86,7 +98,7 @@ object SesionActual {
 
                         try {
                             id = infoSesion[ 0 ].toLong()
-                            rol = infoSesion[ 1 ]
+                            rol = buscarRol( infoSesion[ 1 ] )
                         } catch ( _: NumberFormatException ) { //Datos corruptos
                             borrarSesionsLocais()
                         }
@@ -97,26 +109,27 @@ object SesionActual {
 
             }
 
-            usuario = Usuario( id, correo, rol )
+            cambiarSesion( id, correo, rol )
 
         }
 
     }
 
-    suspend fun pecharSesion(): String {
+    suspend fun pecharSesion(): Boolean {
 
         require( podePecharSesion( usuario ) ) { "Só se pode pechar sesión se o usuario actual existe" }
 
-        val resposta: String = corrutinaResposta {
+        val resposta = corrutinaResposta {
 
             if ( sesionAnonima ) {
 
                 if ( borrarOpcion( Opcion.SesionAnonima ) ) {
-                    usuario = Usuario( 0L, "", "nada" )
-                    return@corrutinaResposta "exito"
+                    cambiarSesion()
+                    return@corrutinaResposta true
                 }
 
-                return@corrutinaResposta "peche_anonimo_fallido"
+                Log.i( "Sesion", "Fallou o peche de sesión anónimo" )
+                return@corrutinaResposta false
 
             }
 
@@ -125,19 +138,21 @@ object SesionActual {
             if ( resposta.exito ) {
 
                 if ( borrarSesionsLocais() ) {
-                    usuario = Usuario( 0L, "", "nada" )
-                    return@corrutinaResposta "exito"
+                    cambiarSesion()
+                    return@corrutinaResposta true
                 }
 
-                return@corrutinaResposta "peche_local_fallido"
+                Log.i( "Sesion", "Fallou o peche de sesión a nivel local, pero si se fixo no servidor" )
+                return@corrutinaResposta false
 
             }
 
-            return@corrutinaResposta "peche_servidor_fallidoº"
+            Log.w( "Sesion", "Non se puido pechar a sesión no servidor" )
+            return@corrutinaResposta false
 
         }.await()
 
-        return if ( resposta != "exito" ) l10n( resposta, "autenticacion" ) else ""
+        return resposta
 
     }
 

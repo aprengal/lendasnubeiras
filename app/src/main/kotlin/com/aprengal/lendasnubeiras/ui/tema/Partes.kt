@@ -59,19 +59,12 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Switch
-import androidx.compose.runtime.key
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import com.aprengal.lendasnubeiras.ui.tema.Iconas.PantallaPruebaIconas
 import com.aprengal.lendasnubeiras.ui.tema.Iconas.lanzarDados
 import com.aprengal.lendasnubeiras.ui.tema.Iconas.listarIconasActividades
-import com.aprengal.lendasnubeiras.configuracion.haiLector
-import com.aprengal.lendasnubeiras.configuracion.corrutina
-import com.aprengal.lendasnubeiras.localizacion.Idioma
-import com.aprengal.lendasnubeiras.localizacion.Localizacion.idiomaActual
-import com.aprengal.lendasnubeiras.localizacion.Localizacion.gardarIdioma
 import com.aprengal.lendasnubeiras.localizacion.Localizacion.l10n
 import com.aprengal.lendasnubeiras.localizacion.Localizacion.l10nPlural
 import com.aprengal.lendasnubeiras.ui.reutilizables.Espazador
@@ -365,11 +358,11 @@ fun ProbaTraducions() {
             Column {
 
                 Text(
-                    text = l10n("carla", "test")
+                    text = l10n( "carla", "test" )
                 )
 
                 Text(
-                    text = l10n("natasha", "test"),
+                    text = l10n( "natasha", "test" ),
                     style = MaterialTheme.typography.headlineLarge
                 )
 

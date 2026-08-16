@@ -4,15 +4,13 @@ import com.aprengal.lendasnubeiras.configuracion.Axustes.collerOpcion
 import com.aprengal.lendasnubeiras.configuracion.Opcion.SesionAnonima
 import com.aprengal.lendasnubeiras.usuarios.Rol.Companion.buscarRol
 
-class Usuario(
+data class Usuario(
     val id: Long,
     val correo: String,
-    rolclave: String
+    val rol: Rol
 ) {
 
-    val rol: Rol = buscarRol( rolclave )
-    val existe: Boolean
-        get() = this.rol != Rol.NADA && correo.isNotBlank()
+    val existe = this.rol != Rol.NADA && correo.isNotBlank()
 
 }
 

@@ -15,7 +15,7 @@ sealed class Opcion<T : Any>( val predeterminado: T ) {
 
     data object SesionUsuario: Opcion<String>( "" )
     data object SesionAnonima: Opcion<Boolean>( false )
-    data object Tema: Opcion<String>( Variante.PREDETERMINADO.clave )
+    data object Tema: Opcion<String>( Variante.PREDETERMINADO.name )
     data object Idioma: Opcion<String>( "" )
     data object IdDispositivo: Opcion<String> ( "" )
 

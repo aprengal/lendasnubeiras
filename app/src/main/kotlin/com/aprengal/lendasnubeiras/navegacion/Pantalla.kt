@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.ui.pantallas
+package com.aprengal.lendasnubeiras.navegacion
 
 sealed class Pantalla( val tipo: TIPO, val enlaces: Boolean ) {
 

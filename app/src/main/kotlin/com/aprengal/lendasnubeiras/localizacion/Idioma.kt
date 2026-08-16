@@ -21,6 +21,10 @@ enum class Idioma( val nome: String, val codigo: String, val rexion: String, val
             return entries.find { idioma -> idioma.codigoRexion == etiqueta } ?: NADA
         }
 
+        fun buscarNome( nome: String ): Idioma? {
+            return entries.find { idioma -> idioma.nome == nome }
+        }
+
     }
 
 }

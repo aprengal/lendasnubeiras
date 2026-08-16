@@ -1,7 +1,6 @@
 package com.aprengal.lendasnubeiras.navegacion
 
 import android.util.Log
-import com.aprengal.lendasnubeiras.ui.pantallas.Pantalla
 import com.aprengal.lendasnubeiras.usuarios.Permisos.podeAdministrar
 import com.aprengal.lendasnubeiras.usuarios.Permisos.podeCrear
 import com.aprengal.lendasnubeiras.usuarios.Permisos.podeLer
@@ -48,9 +47,11 @@ object Navegacion {
         Pantalla.Actividades
     )
 
-    fun collerPantallas(): Pair<Pantalla, List<Pantalla>> {
+    fun collerPantallas(): Pair<Pantalla, Set<Pantalla>> {
 
         val usuario = collerUsuarioActual()
+
+        Log.d( "SESION", "O rol é ${ usuario.id } ${usuario.rol.name}" )
 
         val lista: List<Pantalla> = when {
             podeAdministrar( usuario ) -> pantallasAdmin
@@ -60,7 +61,7 @@ object Navegacion {
             else -> error( "Non se puido asignar a lista de pantallas para o rol ${ usuario.rol }" )
         }
 
-        return Pair( lista.first(), lista )
+        return Pair( lista.first(), lista.toSet() )
 
     }
 

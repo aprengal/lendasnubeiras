@@ -20,6 +20,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import com.aprengal.lendasnubeiras.R
 
 object Iconas {
@@ -83,52 +85,54 @@ object Iconas {
         "\u0055", "\u0056", "\u0057", "\u0058", "\u0059", "\u0030", "\u005A"
     )
 
-    // Función interna reutilizable: crea el Text con la fuente ya aplicada
+    // Función interna reutilizable
     @Composable
-    private fun Icona( codigo: String, modifier: Modifier = Modifier ) {
+    private fun Icona( codigo: String, descricion: String, modifier: Modifier = Modifier ) {
         Text(
             text = codigo,
             fontFamily = fontFamily,
             color = LocalContentColor.current,
             fontSize = 20.sp,
             lineHeight = 1.sp,
-            modifier = modifier
+            modifier = modifier.semantics {
+                this.contentDescription = descricion
+            }
         )
     }
 
     // Funciones públicas
     @Composable
-    fun Inicio(modifier: Modifier = Modifier) = Icona(INICIO, modifier )
+    fun Inicio( descricion: String, modifier: Modifier = Modifier ) = Icona(INICIO, descricion, modifier )
 
     @Composable
-    fun Perfil(modifier: Modifier = Modifier) = Icona(PERFIL, modifier )
+    fun Perfil( descricion: String, modifier: Modifier = Modifier ) = Icona(PERFIL, descricion, modifier )
 
     @Composable
-    fun Buscar(modifier: Modifier = Modifier) = Icona(BUSCAR, modifier )
+    fun Buscar( descricion: String, modifier: Modifier = Modifier ) = Icona(BUSCAR, descricion, modifier )
 
     @Composable
-    fun Axustes(modifier: Modifier = Modifier) = Icona(AXUSTES, modifier )
+    fun Axustes( descricion: String, modifier: Modifier = Modifier ) = Icona(AXUSTES, descricion, modifier )
 
     @Composable
-    fun Idioma(modifier: Modifier = Modifier) = Icona(IDIOMA, modifier )
+    fun Idioma( descricion: String, modifier: Modifier = Modifier ) = Icona(IDIOMA, descricion, modifier )
 
     @Composable
-    fun Mapa(modifier: Modifier = Modifier) = Icona(MAPA, modifier )
+    fun Mapa( descricion: String, modifier: Modifier = Modifier ) = Icona(MAPA, descricion, modifier )
 
     @Composable
-    fun Atras(modifier: Modifier = Modifier) = Icona(ATRAS, modifier )
+    fun Atras( descricion: String, modifier: Modifier = Modifier ) = Icona(ATRAS, descricion, modifier )
 
     @Composable
-    fun Menu(modifier: Modifier = Modifier) = Icona(MENU, modifier )
+    fun Menu( descricion: String, modifier: Modifier = Modifier ) = Icona(MENU, descricion, modifier )
 
     @Composable
-    fun Engadir(modifier: Modifier = Modifier) = Icona(ENGADIR, modifier )
+    fun Engadir( descricion: String, modifier: Modifier = Modifier ) = Icona(ENGADIR, descricion, modifier )
 
     @Composable
-    fun OlloAberto(modifier: Modifier = Modifier) = Icona(OLLOABERTO, modifier )
+    fun OlloAberto( descricion: String, modifier: Modifier = Modifier ) = Icona(OLLOABERTO, descricion, modifier )
 
     @Composable
-    fun OlloPechado(modifier: Modifier = Modifier) = Icona(OLLOPECHADO, modifier )
+    fun OlloPechado( descricion: String, modifier: Modifier = Modifier ) = Icona(OLLOPECHADO, descricion, modifier )
 
     fun lanzarDados( cantidad: Int ): List<String> {
         return iconasActividades.shuffled().take( cantidad )

@@ -9,8 +9,9 @@ import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.text.TextStyle
@@ -171,19 +172,21 @@ object Tema {
     )
 
     // Valor inicial por defecto para que la app no pete al arrancar mientras lee el disco
-    var temaActual: MutableState<Variante> = mutableStateOf( Variante.PREDETERMINADO )
+    var temaActual by mutableStateOf( Variante.PREDETERMINADO )
         private set
 
     private var temaCargado = false
 
-    enum class Variante( val clave: String ) {
-        CLARO( "tema_claro" ),
-        ESCURO( "tema_escuro" ),
-        PREDETERMINADO( "tema_predeterminado" );
+    enum class Variante {
+        CLARO,
+        ESCURO,
+        PREDETERMINADO;
+
+        val nome = name.lowercase()
 
         companion object {
             fun buscar( clave: String ): Variante {
-                return entries.find { variante -> variante.clave == clave } ?: PREDETERMINADO
+                return entries.find { variante -> variante.nome == clave } ?: PREDETERMINADO
             }
         }
 
@@ -195,18 +198,21 @@ object Tema {
         temaCargado = true
 
         val claveGuardada = collerOpcion( Tema )
-        temaActual.value = Variante.buscar( claveGuardada )
+        temaActual = Variante.buscar( claveGuardada )
 
     }
 
-    suspend fun gardarTema( novoTema: Variante ) {
-        gardarOpcion( Tema, novoTema.clave )
-        temaActual.value = novoTema
+    suspend fun gardarTema( novoTema: Variante ): Boolean {
+
+        return gardarOpcion( Tema, novoTema.name ).also {
+            estado -> if ( estado ) temaActual = novoTema
+        }
+
     }
 
     fun collerCoresTema( temaEscuro: Boolean ): ColorScheme {
 
-        val esquemaCores = when( temaActual.value ) {
+        val esquemaCores = when( temaActual ) {
             Variante.CLARO -> PaletaClara
             Variante.ESCURO -> PaletaEscura
             Variante.PREDETERMINADO -> if ( temaEscuro ) PaletaEscura else PaletaClara

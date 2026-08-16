@@ -1,11 +1,13 @@
 package com.aprengal.lendasnubeiras.ui.reutilizables
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
@@ -13,6 +15,9 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -24,8 +29,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.aprengal.lendasnubeiras.R
 import com.aprengal.lendasnubeiras.configuracion.corrutina
 import com.aprengal.lendasnubeiras.configuracion.haiLector
 import com.aprengal.lendasnubeiras.localizacion.Localizacion.l10n
@@ -36,43 +45,78 @@ fun Espazador( multiplicador: Int = 1 ) {
 }
 
 @Composable
+fun Logo( tamano: Dp = 30.dp ) {
+
+    Image(
+        painter = painterResource( R.drawable.logo ),
+        modifier = Modifier.size( tamano ),
+        contentDescription = stringResource( R.string.nome_app )
+    )
+
+}
+
+@Composable
 fun <T> BotonOpcion(
-    textoBoton: String,
-    tituloDialogo: String,
-    avisoDialogo: String? = null,
+    clave: String,
+    dominio: String,
+    avisoDialogo: Boolean = false,
     opcions: List<T>,
     valorInicial: T,
-    obterNome: (T) -> String,
-    accion: suspend (T) -> Unit
+    nomeUI: (T) -> String,
+    accion: suspend ( T ) -> Boolean
 ) {
 
     var amosarDialogo by rememberSaveable { mutableStateOf( false ) }
-    var valorActual by remember { mutableStateOf( valorInicial ) }
+    var valorActual by rememberSaveable { mutableStateOf( valorInicial ) }
+    val traducirOpcions = clave != "cambio_idioma"
 
     Button(
         onClick = { amosarDialogo = true },
         modifier = Modifier
             .fillMaxWidth()
             .padding( top = 10.dp )
-    ) { Text( textoBoton ) }
+    ) { Text( l10n( "boton_$clave", dominio ) ) }
 
     if ( amosarDialogo ) {
 
+        val aviso = LocalAviso.current
         val contexto = LocalContext.current
         val haiLector = remember { contexto.haiLector() }
+        var procesando by rememberSaveable { mutableStateOf( false ) }
 
         DialogoSeleccion(
-            titulo = tituloDialogo,
+            clave = clave,
+            dominio = dominio,
             opcions = opcions,
             opcionActual = valorActual,
-            obterTexto = { texto -> obterNome( texto ) },
-            cabeceira = if ( haiLector ) avisoDialogo else null,
-            aceptar = { novoValor ->
+            nomeUI = nomeUI,
+            traducirOpcions = traducirOpcions,
+            subtitulo = haiLector && avisoDialogo,
+            procesando = procesando,
+            aceptar = { novoValor -> procesando = true
 
                 corrutina {
-                    accion( novoValor )
-                    valorActual = novoValor
-                    amosarDialogo = false
+
+                    while ( true ) {
+
+                        val resultado = accion( novoValor )
+                        amosarDialogo = false
+
+                        if ( resultado ) {
+                            valorActual = novoValor
+                            procesando = false
+                            break
+                        }
+
+                        val resultadoAviso = amosarAviso( aviso, "gardado_fallido_$clave", dominio, true )
+
+                        if ( resultadoAviso != SnackbarResult.ActionPerformed ) {
+                            procesando = false
+                            break
+                        }
+
+                    }
+
                 }
 
             },
@@ -83,29 +127,44 @@ fun <T> BotonOpcion(
 
 }
 
+suspend fun amosarAviso( aviso: SnackbarHostState, claveMensaxe: String, dominio: String, repetir: Boolean ): SnackbarResult {
+
+    aviso.currentSnackbarData?.dismiss()
+    val mensaxe = l10n( claveMensaxe, dominio )
+
+    val reintentar = if ( repetir ) l10n( "reintentar_accion", "base" ) else null
+    val duracion = if ( repetir ) SnackbarDuration.Long else SnackbarDuration.Short
+
+    return aviso.showSnackbar( mensaxe, reintentar, repetir, duracion )
+
+}
+
 @Composable
 fun <T> DialogoSeleccion(
-    titulo: String,
-    cabeceira: String? = null,
+    clave: String,
+    dominio: String,
+    subtitulo: Boolean,
     opcions: List<T>,
     opcionActual: T,
-    obterTexto: (T) -> String,
+    nomeUI: (T) -> String,
+    traducirOpcions: Boolean,
+    procesando: Boolean,
     aceptar: (T) -> Unit,
     rexeitar: () -> Unit
 ) {
 
-    var opcionSeleccionada by rememberSaveable( opcionActual ) { mutableStateOf(opcionActual ) }
+    var seleccionado by rememberSaveable { mutableStateOf( opcionActual ) }
 
     AlertDialog(
-        title = { Text( titulo ) },
+        title = { Text( l10n( "dialogo_$clave", dominio ) ) },
         text = {
 
             Column( Modifier.selectableGroup() ) {
 
-                if ( cabeceira != null ) {
+                if ( subtitulo ) {
 
                     Text(
-                        text = cabeceira,
+                        text = l10n( "subtitulo_$clave", dominio ),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.padding( bottom = 12.dp )
                     )
@@ -114,20 +173,24 @@ fun <T> DialogoSeleccion(
 
                 for ( opcion in opcions ) {
 
+                    val textoUI = nomeUI( opcion )
+                    val texto = if ( traducirOpcions ) l10n( "${ clave }_${ textoUI }", dominio ) else textoUI
+
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .selectable(
-                                selected = opcion == opcionSeleccionada,
-                                onClick = { opcionSeleccionada = opcion },
+                                selected = seleccionado == opcion,
+                                enabled = !procesando,
+                                onClick = { seleccionado = opcion },
                                 role = Role.RadioButton
                             )
                             .padding( vertical = 8.dp ),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        RadioButton( selected = opcion == opcionSeleccionada, onClick = null )
+                        RadioButton( selected = seleccionado == opcion, enabled = !procesando, onClick = null )
                         Spacer( Modifier.width( 12.dp ) )
-                        Text( obterTexto( opcion ) )
+                        Text( texto )
                     }
 
                 }
@@ -136,13 +199,13 @@ fun <T> DialogoSeleccion(
 
         },
         confirmButton = {
-            TextButton( onClick = { aceptar( opcionSeleccionada ) } ) {
+            TextButton( enabled = !procesando, onClick = { aceptar( seleccionado ) } ) {
                 Text( l10n( "aceptar", "test" ) )
             }
         },
-        onDismissRequest = rexeitar,
+        onDismissRequest = { if ( !procesando ) rexeitar() },
         dismissButton = {
-            TextButton( onClick = rexeitar ) {
+            TextButton( enabled = !procesando, onClick = rexeitar ) {
                 Text( l10n( "cancelar", "test" ) )
             }
         }

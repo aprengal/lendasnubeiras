@@ -8,7 +8,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -16,33 +15,32 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
@@ -50,51 +48,56 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
-//import com.aprengal.lendasnubeiras.PantallaDetalle
-import com.aprengal.lendasnubeiras.R
 import com.aprengal.lendasnubeiras.localizacion.Localizacion.idiomaActual
 import com.aprengal.lendasnubeiras.localizacion.Localizacion.l10n
 import com.aprengal.lendasnubeiras.navegacion.Navegacion
+import com.aprengal.lendasnubeiras.navegacion.Navegacion.collerPantallas
+import com.aprengal.lendasnubeiras.navegacion.Pantalla
 import com.aprengal.lendasnubeiras.ui.reutilizables.LocalAviso
+import com.aprengal.lendasnubeiras.ui.reutilizables.LocalPantallas
+import com.aprengal.lendasnubeiras.ui.reutilizables.LocalPantallaInicial
+import com.aprengal.lendasnubeiras.ui.reutilizables.Logo
 import com.aprengal.lendasnubeiras.ui.tema.Iconas
 import com.aprengal.lendasnubeiras.ui.tema.MirarAnimacions
 import com.aprengal.lendasnubeiras.ui.tema.ProbaActividade
 import com.aprengal.lendasnubeiras.ui.tema.ProbaTraducions
 import com.aprengal.lendasnubeiras.ui.tema.XogoDados
-
-@Composable
-fun Contido( controlador: NavHostController, pantallaInicial: Pantalla, pantallas: List<Pantalla> ) {
-
-    val backStackEntry by controlador.currentBackStackEntryAsState()
-    val pantallaActual = pantallas.find { pantalla -> pantalla.ruta == backStackEntry?.destination?.route } ?: pantallaInicial
-
-    val amosarSuperior = pantallaActual.tipo != Pantalla.TIPO.SEN_MENUS
-    val amosarInferior = pantallaActual.tipo == Pantalla.TIPO.SCAFFOLD
-
-    PantallaScaffold( controlador, pantallaActual.ruta, amosarSuperior, amosarInferior ) {
-        CargarNavegacion( controlador, pantallaInicial, pantallas )
-    }
-
-}
+import com.aprengal.lendasnubeiras.usuarios.Permisos.podeCrear
+import com.aprengal.lendasnubeiras.usuarios.SesionActual.collerUsuarioActual
 
 @OptIn( ExperimentalMaterial3Api::class )
 @Composable
-fun PantallaScaffold( controlador: NavHostController, rutaActual: String, mSuperior: Boolean, mInferior: Boolean, contido: @Composable () -> Unit ) {
+fun PantallaBase() {
+
+    val controlador = rememberNavController()
+
+    val ( pantallaInicial, pantallas ) = collerPantallas()
+    val backStackEntry by controlador.currentBackStackEntryAsState()
+    val pantallaActual = pantallas.find { pantalla -> pantalla.ruta == backStackEntry?.destination?.route } ?: pantallaInicial
 
     val aviso = remember { SnackbarHostState() }
+    val amosarSuperior = pantallaActual.tipo != Pantalla.TIPO.SEN_MENUS
+    val amosarInferior = pantallaActual.tipo == Pantalla.TIPO.SCAFFOLD
+    val amosarAccion = podeCrear( collerUsuarioActual() ) && amosarInferior
 
-    CompositionLocalProvider( LocalAviso provides aviso ) {
+    LaunchedEffect( idiomaActual ) {
+        aviso.currentSnackbarData?.dismiss()
+    }
+
+    CompositionLocalProvider( LocalAviso provides aviso, LocalPantallaInicial provides pantallaInicial, LocalPantallas provides pantallas ) {
 
         Scaffold(
-            topBar = { if (mSuperior) NavegacionSuperior( rutaActual, controlador) },
-            bottomBar = { if (mInferior) NavegacionInferior( rutaActual, controlador ) },
-            snackbarHost = { SnackbarHost( aviso ) }
+            topBar = { if ( amosarSuperior ) NavegacionSuperior( pantallaActual, controlador) },
+            bottomBar = { if ( amosarInferior ) NavegacionInferior( pantallaActual, controlador ) },
+            snackbarHost = { SnackbarHost( aviso ) },
+            floatingActionButton = { if ( amosarAccion ) BotonCrearActividade( controlador ) }
         ) { recheoInterno ->
 
-            Column( modifier = Modifier.fillMaxSize().padding( recheoInterno ).padding(start = 10.dp, end = 10.dp ) ) {
-                contido()
+            Column( modifier = Modifier.fillMaxSize().padding( recheoInterno ).padding( start = 10.dp, end = 10.dp ) ) {
+                CargarNavegacion( controlador )
             }
 
         }
@@ -104,9 +107,11 @@ fun PantallaScaffold( controlador: NavHostController, rutaActual: String, mSuper
 }
 
 @Composable
-private fun CargarNavegacion( controlador: NavHostController, pantallaInicial: Pantalla, listaPantallas: List<Pantalla> ) {
+private fun CargarNavegacion( controlador: NavHostController ) {//}, pantallaInicial: Pantalla, listaPantallas: List<Pantalla> ) {
 
     val dominio = "nubeiras"
+    val listaPantallas = LocalPantallas.current
+    val pantallaInicial = LocalPantallaInicial.current
 
     NavHost( navController = controlador, startDestination = pantallaInicial.ruta ) {
 
@@ -136,8 +141,8 @@ private fun CargarNavegacion( controlador: NavHostController, pantallaInicial: P
 
 @OptIn( ExperimentalMaterial3Api::class )
 @Composable
-fun NavegacionSuperior(
-    rutaActual: String,
+private fun NavegacionSuperior(
+    pantallaActual: Pantalla,
     controlador: NavHostController
 ) {
 
@@ -148,7 +153,7 @@ fun NavegacionSuperior(
     val elementosSuperior: List<Pantalla> = remember { Navegacion.menuSuperior }
 
     //Igual se podería prescindir desta barra se só se pon unha ó final
-    val elementos = elementosSuperior.filter { pantalla -> pantalla.ruta != rutaActual }
+    val elementos = elementosSuperior.filter { pantalla -> pantalla != pantallaActual }
 
     Column {
 
@@ -159,8 +164,9 @@ fun NavegacionSuperior(
 
                 for ( elemento in elementos ) {
 
-                    val seleccionado = rutaActual == elemento.ruta
+                    val seleccionado = pantallaActual == elemento
 
+                    //Igual isto se ten que ir se só hai 1 elemento no menú superior e se quita o foreach?
                     val colorFondo by animateColorAsState(
                         targetValue = if ( seleccionado ) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent,
                         label = "colorFondo"
@@ -171,16 +177,16 @@ fun NavegacionSuperior(
 
                             if ( !seleccionado ) {
 
-                                val rutaDestino = when ( elemento ) {
+                                /*val rutaDestino = when ( elemento ) {
                                     /*is Pantalla.Detalle -> elemento.crearRuta(
                                         "666",
                                         "resacón"
                                     )*/
 
                                     else -> elemento.ruta
-                                }
+                                }*/
 
-                                controlador.navigate( rutaDestino ) {
+                                controlador.navigate( elemento.ruta ) {
                                     launchSingleTop = true
                                 }
 
@@ -190,7 +196,6 @@ fun NavegacionSuperior(
                         modifier = Modifier.clip( RoundedCornerShape( 12.dp ) ).background( colorFondo )
                     ) {
                         CollerIconaMenu( elemento )
-                        //elemento.icono()
                     }
 
                 }
@@ -205,10 +210,7 @@ fun NavegacionSuperior(
 }
 
 @Composable
-fun NavegacionInferior(
-    rutaActual: String,
-    controlador: NavHostController
-) {
+private fun NavegacionInferior( pantallaActual: Pantalla, controlador: NavHostController ) {
 
     val densidade = LocalDensity.current
     val insetInferior = WindowInsets.navigationBars.getBottom( densidade )
@@ -221,21 +223,15 @@ fun NavegacionInferior(
         for ( elemento in elementos ) {
 
             NavigationBarItem(
-                selected = rutaActual == elemento.ruta,
+                selected = pantallaActual == elemento,
                 onClick = {
-                    if ( rutaActual != elemento.ruta ) {
+                    if ( pantallaActual != elemento ) {
                         controlador.navigate( elemento.ruta ) {
                             launchSingleTop = true
                         }
                     }
                 },
-                icon = { CollerIconaMenu( elemento ) /*elemento.icono() */ },
-                label = {
-                    key( idiomaActual.value ) {
-                        Text( l10n( "menu_" + elemento.ruta, "test" ), maxLines = 1, overflow = TextOverflow.Ellipsis )
-                    }
-                }
-
+                icon = { CollerIconaMenu( elemento ) }
             )
 
         }
@@ -245,7 +241,18 @@ fun NavegacionInferior(
 }
 
 @Composable
-fun CollerContido( pantalla: Pantalla, controlador: NavHostController, entrada: NavBackStackEntry ) {
+private fun BotonCrearActividade( controlador: NavHostController ) {
+
+    val pantalla = Pantalla.CrearActividade
+
+    FloatingActionButton( onClick = { controlador.navigate(pantalla.ruta ) }, shape = CircleShape) {
+        CollerIconaMenu( pantalla )
+    }
+
+}
+
+@Composable
+private fun CollerContido( pantalla: Pantalla, controlador: NavHostController, entrada: NavBackStackEntry ) {
 
     when( pantalla ) {
 
@@ -258,7 +265,7 @@ fun CollerContido( pantalla: Pantalla, controlador: NavHostController, entrada: 
         Pantalla.Actividades -> PantallaActividade()
         Pantalla.ActividadeDetalle -> {
 
-            val id = entrada.arguments?.getString( "id" )?.toIntOrNull() ?: 0
+            val id = entrada.arguments?.getString( "id" )?.toLongOrNull() ?: 0
             PantallaActividadeDetalle( id )
 
         }
@@ -289,41 +296,18 @@ fun CollerContido( pantalla: Pantalla, controlador: NavHostController, entrada: 
 }
 
 @Composable
-fun PantallaActividadeDetalle( id: Int) {
+private fun CollerIconaMenu( pantalla: Pantalla ) {
 
-    Text( "DEtalle de $id" )
-
-}
-
-@Composable
-fun PantallaActividade() {
-
-    Text( "EHHHHHHHHHHHHHHHHHHHHHHH" )
-
-}
-
-@Composable
-fun Logo( tamano: Dp = 30.dp ) {
-
-    Image(
-        painter = painterResource( R.drawable.logo ),
-        modifier = Modifier.size( tamano ),
-        contentDescription = stringResource( R.string.nome_app )
-    )
-
-}
-
-@Composable
-fun CollerIconaMenu( pantalla: Pantalla ) {
+    val descricion = l10n( "menu_" + pantalla.ruta, "menu" )
 
     when ( pantalla ) {
-        Pantalla.Rexistro -> Iconas.OlloAberto()
-        Pantalla.IniciarSesion -> Iconas.OlloAberto()
-        Pantalla.Inicio -> Iconas.Inicio()
-        Pantalla.Axustes -> Iconas.Axustes()
-        Pantalla.Animacions -> Iconas.OlloAberto()
-        //Pantalla.Detalle -> Iconas.OlloPechado()
-        Pantalla.Actividades -> Iconas.Idioma()
+        Pantalla.Rexistro -> Iconas.OlloAberto( descricion )
+        Pantalla.IniciarSesion -> Iconas.OlloAberto( descricion )
+        Pantalla.Inicio -> Iconas.Inicio( descricion )
+        Pantalla.Axustes -> Iconas.Axustes( descricion )
+        Pantalla.Animacions -> Iconas.OlloAberto( descricion )
+        Pantalla.CrearActividade -> Iconas.Engadir( descricion )
+        Pantalla.Actividades -> Iconas.Idioma( descricion )
         else -> error( "A pantalla ${ pantalla.ruta } non ten icona asignada" )
     }
 
@@ -331,18 +315,18 @@ fun CollerIconaMenu( pantalla: Pantalla ) {
 
 private fun pantallaCompleta( pantalla: Pantalla ) = pantalla.tipo == Pantalla.TIPO.SCAFFOLD
 
-fun transicionEntrada( pantalla: Pantalla ): EnterTransition =
+private fun transicionEntrada( pantalla: Pantalla ): EnterTransition =
     if ( pantallaCompleta( pantalla ) ) fadeIn( tween() )
     else slideInHorizontally( tween() ) { ancho -> ancho }
 
-fun transicionSaida( pantalla: Pantalla ): ExitTransition =
+private fun transicionSaida( pantalla: Pantalla ): ExitTransition =
     if ( pantallaCompleta( pantalla ) ) fadeOut( tween() )
     else slideOutHorizontally( tween() ) { ancho -> -ancho }
 
-fun transicionAtrasEntrada( pantalla: Pantalla ): EnterTransition =
+private fun transicionAtrasEntrada( pantalla: Pantalla ): EnterTransition =
     if ( pantallaCompleta( pantalla ) ) fadeIn( tween() )
     else slideInHorizontally( tween() ) { ancho -> -ancho }
 
-fun transicionAtrasSaida( pantalla: Pantalla ): ExitTransition =
+private fun transicionAtrasSaida( pantalla: Pantalla ): ExitTransition =
     if ( pantallaCompleta( pantalla ) ) fadeOut( tween() )
     else slideOutHorizontally( tween() ) { ancho -> ancho }

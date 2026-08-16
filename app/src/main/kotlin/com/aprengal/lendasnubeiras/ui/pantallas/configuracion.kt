@@ -3,22 +3,20 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import com.aprengal.lendasnubeiras.localizacion.Localizacion
 import com.aprengal.lendasnubeiras.localizacion.Localizacion.gardarIdioma
-import com.aprengal.lendasnubeiras.localizacion.Localizacion.l10n
 import com.aprengal.lendasnubeiras.ui.tema.Tema
 import com.aprengal.lendasnubeiras.ui.tema.Tema.gardarTema
 import com.aprengal.lendasnubeiras.localizacion.Idioma
 import com.aprengal.lendasnubeiras.ui.reutilizables.BotonOpcion
 import com.aprengal.lendasnubeiras.ui.reutilizables.Espazador
-import com.aprengal.lendasnubeiras.ui.reutilizables.LocalAviso
+import com.aprengal.lendasnubeiras.ui.tema.Tema.Variante
 import com.aprengal.lendasnubeiras.usuarios.Permisos.podePecharSesion
 import com.aprengal.lendasnubeiras.usuarios.SesionActual.collerUsuarioActual
 import com.aprengal.lendasnubeiras.usuarios.SesionActual.pecharSesion
+import androidx.compose.runtime.saveable.Saver
 
 //Axustes: idioma, modo escuro, desactivar animacións
 @Composable
 fun PantallaAxustes() {
-
-    val aviso = LocalAviso.current
 
     Column {
 
@@ -26,23 +24,25 @@ fun PantallaAxustes() {
         Espazador()
 
         BotonOpcion(
-            textoBoton = l10n( "boton_cambio_idioma", "test" ),
-            tituloDialogo = l10n( "dialogo_cambio_idioma", "test" ),
-            avisoDialogo = l10n( "mensaxe_reiniciar_idioma", "test" ),
+            clave = "cambio_idioma",
+            dominio = "opcions",
+            avisoDialogo = true,
             opcions = Idioma.entries.filter { idioma -> idioma != Idioma.NADA },
-            valorInicial = Localizacion.idiomaActual.value,
-            obterNome = { opcion -> opcion.nome },
+            valorInicial = Localizacion.idiomaActual,
+            nomeUI = { idioma -> idioma.nome },
+            //saver = idiomaSaver,
             accion = { novoIdioma -> gardarIdioma( novoIdioma ) }
         )
 
         Espazador()
 
         BotonOpcion(
-            textoBoton = l10n( "boton_cambio_tema", "test" ),
-            tituloDialogo = l10n( "dialogo_cambio_tema", "test" ),
-            opcions = Tema.Variante.entries,
-            valorInicial = Tema.temaActual.value,
-            obterNome = { elemento -> l10n( elemento.clave, "test" ) },
+            clave = "cambio_tema",
+            dominio = "opcions",
+            opcions = Variante.entries,
+            valorInicial = Tema.temaActual,
+            nomeUI = { variante -> variante.nome },
+            //saver = varianteSaver,
             accion = { novoTema -> gardarTema( novoTema ) }
         )
 
@@ -51,20 +51,12 @@ fun PantallaAxustes() {
             Espazador()
 
             BotonOpcion(
-                textoBoton = l10n( "boton_cambio_tema", "test" ),
-                tituloDialogo = l10n( "dialogo_cambio_tema", "test" ),
+                clave = "peche_sesion",
+                dominio = "opcions",
                 opcions = listOf( "afirmar", "denegar" ),
-                valorInicial = Tema.temaActual.value,
-                obterNome = { elemento -> l10n( elemento.toString(), "test" ) },
-                accion = { _ ->
-
-                    val mensaxe = pecharSesion()
-
-                    if ( mensaxe.isNotBlank() ) {
-                        aviso.showSnackbar( mensaxe )
-                    }
-
-                }
+                valorInicial = "afirmar",
+                nomeUI = { texto -> texto },
+                accion = { _ -> pecharSesion() }
             )
 
         }

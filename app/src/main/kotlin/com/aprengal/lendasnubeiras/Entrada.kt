@@ -7,28 +7,19 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.compose.rememberNavController
 import com.aprengal.lendasnubeiras.configuracion.Axustes
 import com.aprengal.lendasnubeiras.configuracion.api.Conexion
 import com.aprengal.lendasnubeiras.configuracion.db.DB
-import com.aprengal.lendasnubeiras.usuarios.Usuario
-import com.aprengal.lendasnubeiras.usuarios.SesionActual.collerUsuarioActual
 import com.aprengal.lendasnubeiras.localizacion.Localizacion
-import com.aprengal.lendasnubeiras.navegacion.Navegacion.collerPantallas
-import com.aprengal.lendasnubeiras.ui.pantallas.Contido
+import com.aprengal.lendasnubeiras.ui.pantallas.PantallaBase
 import com.aprengal.lendasnubeiras.ui.tema.Tema
 import com.aprengal.lendasnubeiras.ui.tema.TemaNubeiro
-import com.aprengal.lendasnubeiras.usuarios.SesionActual
-import com.aprengal.lendasnubeiras.usuarios.SesionActual.validarSesion
+import com.aprengal.lendasnubeiras.usuarios.SesionActual.collerUsuarioActual
+import com.aprengal.lendasnubeiras.usuarios.SesionActual.idSesion
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -58,30 +49,24 @@ class Entrada : AppCompatActivity() {
         super.onCreate( savedInstanceState )
 
         lifecycleScope.launch {
-            validarSesion()
+            collerUsuarioActual()
         }
 
         setContent {
 
             TemaNubeiro {
+
                 @Suppress( "DEPRECATION" )
                 window.navigationBarColor = MaterialTheme.colorScheme.surfaceContainer.toArgb()
-                IniciarAplicacion()
+
+                Log.d( "SESION", "EHHHHHHHHHHHHHHHHHH" )
+
+                key( idSesion ) {
+                    PantallaBase()
+                }
+
             }
 
-        }
-
-    }
-
-    @Composable
-    private fun IniciarAplicacion() {
-
-        val usuarioActual: Usuario = collerUsuarioActual()
-
-        key( usuarioActual ) {
-            val controlador = rememberNavController()
-            val ( pantallaInicial, pantallas ) = collerPantallas()
-            Contido( controlador, pantallaInicial, pantallas )
         }
 
     }

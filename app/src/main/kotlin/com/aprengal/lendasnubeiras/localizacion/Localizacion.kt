@@ -4,14 +4,16 @@ import android.content.Context
 import android.content.res.Resources
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.os.LocaleListCompat
 import com.aprengal.lendasnubeiras.configuracion.Axustes.collerOpcion
 import com.aprengal.lendasnubeiras.configuracion.Axustes.gardarOpcion
 import com.aprengal.lendasnubeiras.configuracion.Opcion
 import com.aprengal.lendasnubeiras.configuracion.haiLector
 import com.aprengal.lendasnubeiras.configuracion.reiniciarAplicacion
+import org.json.JSONException
 import org.json.JSONObject
 import java.io.FileNotFoundException
 
@@ -24,7 +26,7 @@ object Localizacion {
     private val traducions = mutableMapOf<String, MutableMap<String, String>>()
     private val traducionsPlurais = mutableMapOf<String, MutableMap<String, Map<String, String>>>()
 
-    var idiomaActual: MutableState<Idioma> = mutableStateOf( Idioma.NADA )
+    var idiomaActual by mutableStateOf( Idioma.NADA )
         private set
 
     private var dominiosRecordados: MutableSet<String> = mutableSetOf()
@@ -46,39 +48,41 @@ object Localizacion {
 
     fun arrancar( contexto: Context ) {
 
-        if ( ::appContext.isInitialized && idiomaActual.value != Idioma.NADA ) return
+        if ( ::appContext.isInitialized && idiomaActual != Idioma.NADA ) return
 
         appContext = contexto.applicationContext
-        idiomaActual.value = Idioma.escollerIdiomaAplicacion(
+        idiomaActual = Idioma.escollerIdiomaAplicacion(
             collerOpcion( Opcion.Idioma ),
             Resources.getSystem().configuration.locales[ 0 ].toString()
         )
 
         if ( appContext.haiLector() ) {
-            val idiomaOpcions = LocaleListCompat.forLanguageTags( idiomaActual.value.codigoRexion.replace( "_", "-" ) )
+            val idiomaOpcions = LocaleListCompat.forLanguageTags( idiomaActual.codigoRexion.replace( "_", "-" ) )
             AppCompatDelegate.setApplicationLocales( idiomaOpcions )
         }
 
     }
 
-    suspend fun gardarIdioma( novoIdioma: Idioma ) {
+    suspend fun gardarIdioma( novoIdioma: Idioma ): Boolean {
 
-        if ( idiomaActual.value == novoIdioma || !gardarOpcion( Opcion.Idioma, novoIdioma.codigoRexion ) ) return
+        if ( idiomaActual == novoIdioma || !gardarOpcion( Opcion.Idioma, novoIdioma.codigoRexion ) ) return false
 
-        idiomaActual.value = novoIdioma
+        idiomaActual = novoIdioma
 
         if ( appContext.haiLector() ) appContext.reiniciarAplicacion()
 
         traducions.clear()
         traducionsPlurais.clear()
 
+        return true
+
     }
 
     private fun collerArquivoIdioma( dominio: String ): String {
 
         val carpeta = "cadeas/$dominio"
-        val arquivoBase = "$dominio-${ idiomaActual.value.codigo }.json"
-        val arquivoRexion = "$dominio-${ idiomaActual.value.codigoRexion }.json"
+        val arquivoBase = "$dominio-${ idiomaActual.codigo }.json"
+        val arquivoRexion = "$dominio-${ idiomaActual.codigoRexion }.json"
 
         val arquivos = appContext.assets.list( carpeta )!!
 
@@ -130,7 +134,9 @@ object Localizacion {
             }
 
         } catch ( e: FileNotFoundException ) {
-            Log.w( "IDIOMA", "O dominio $dominio non existe para o idioma $idiomaActual", e )
+            Log.wtf( "IDIOMA", "O dominio $dominio non existe para o idioma $idiomaActual", e )
+        } catch ( e: JSONException ) {
+            Log.wtf( "IDIOMA", "O arquivo $dominio do idioma $idiomaActual ten un formato incorrecto", e )
         }
 
     }
@@ -142,13 +148,13 @@ object Localizacion {
 
     fun l10n( indice: String, dominio: String ): String {
         cargarDominio( dominio )
-        return traducions[ dominio ]?.get( indice ) ?: idiomaActual.value.pendente
+        return traducions[ dominio ]?.get( indice ) ?: idiomaActual.pendente
     }
 
     fun l10nPlural( indice: String, num: Int, dominio: String ): String {
 
         cargarDominio( dominio )
-        val listaPlurais = traducionsPlurais[ dominio ]?.get( indice ) ?: return idiomaActual.value.pendente
+        val listaPlurais = traducionsPlurais[ dominio ]?.get( indice ) ?: return idiomaActual.pendente
 
         val clavePlural = when {
             listaPlurais.containsKey( num.toString() ) -> num.toString()
@@ -156,7 +162,7 @@ object Localizacion {
             else -> "pl"
         }
 
-        return listaPlurais[ clavePlural ]?.let { clave -> String.format( clave, num ) } ?: idiomaActual.value.pendente
+        return listaPlurais[ clavePlural ]?.let { clave -> String.format( clave, num ) } ?: idiomaActual.pendente
 
     }
 

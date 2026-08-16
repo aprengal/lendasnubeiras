@@ -40,7 +40,9 @@ import com.aprengal.lendasnubeiras.configuracion.api.RutaApi
 import com.aprengal.lendasnubeiras.configuracion.corrutina
 import com.aprengal.lendasnubeiras.usuarios.SesionActual.crearSesionAnonima
 import com.aprengal.lendasnubeiras.localizacion.Localizacion.l10n
+import com.aprengal.lendasnubeiras.navegacion.Pantalla
 import com.aprengal.lendasnubeiras.ui.reutilizables.Espazador
+import com.aprengal.lendasnubeiras.ui.reutilizables.Logo
 import com.aprengal.lendasnubeiras.ui.tema.TemaNubeiro
 import java.util.UUID
 

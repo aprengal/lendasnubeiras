@@ -32,7 +32,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.aprengal.lendasnubeiras.data.configuracion.Axustes.collerOpcion
 import com.aprengal.lendasnubeiras.data.configuracion.Axustes.gardarOpcion
+import com.aprengal.lendasnubeiras.data.configuracion.Opcion
 import com.aprengal.lendasnubeiras.data.configuracion.api.RutaApi
+import com.aprengal.lendasnubeiras.data.configuracion.corrutina
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.crearSesionAnonima
 import com.aprengal.lendasnubeiras.data.localizacion.Localizacion.l10n
 import com.aprengal.lendasnubeiras.ui.navegacion.Pantalla
@@ -148,16 +150,11 @@ fun PantallaIniciarSesion() {
 
 fun crearIdDispositivo(): String {
 
-    var idDispositivo = collerOpcion( _root_ide_package_.com.aprengal.lendasnubeiras.data.configuracion.Opcion.IdDispositivo )
+    var idDispositivo = collerOpcion( Opcion.IdDispositivo )
     if ( idDispositivo.isNotBlank() ) return idDispositivo
 
     idDispositivo = UUID.randomUUID().toString()
-    _root_ide_package_.com.aprengal.lendasnubeiras.data.configuracion.corrutina {
-        gardarOpcion(
-            _root_ide_package_.com.aprengal.lendasnubeiras.data.configuracion.Opcion.IdDispositivo,
-            idDispositivo
-        )
-    }
+    corrutina { gardarOpcion( Opcion.IdDispositivo, idDispositivo ) }
 
     return idDispositivo
 
@@ -232,7 +229,7 @@ private fun PantallaAutenticacion(
     tituloPantalla: String,
     amosarCheckbox: Boolean,
     amosarRexistrarse: Boolean,
-    rutaApiSolicitar: com.aprengal.lendasnubeiras.data.configuracion.api.RutaApi,
+    rutaApiSolicitar: RutaApi,
     rutaVerificar: String = "",
     aoTerminarConExito: () -> Unit,
     aoIrARexistro: ( () -> Unit )? = null
@@ -364,7 +361,7 @@ fun PantallaIniciarSesion( aoTerminarConExito: () -> Unit, aoIrARexistro: () -> 
         tituloPantalla = "titulo_iniciar_sesion",
         amosarCheckbox = false,
         amosarRexistrarse = true,
-        rutaApiSolicitar = _root_ide_package_.com.aprengal.lendasnubeiras.data.configuracion.api.RutaApi.INICIOSESION,//"solicitarCodigoLogin.php",
+        rutaApiSolicitar = RutaApi.INICIOSESION,//"solicitarCodigoLogin.php",
         //rutaVerificar = "verificarCodigoLogin.php",
         aoTerminarConExito = aoTerminarConExito,
         aoIrARexistro = aoIrARexistro
@@ -378,7 +375,7 @@ fun PantallaRexistro( aoTerminarConExito: () -> Unit ) {
         tituloPantalla = "titulo_rexistro",
         amosarCheckbox = true,
         amosarRexistrarse = false,
-        rutaApiSolicitar = _root_ide_package_.com.aprengal.lendasnubeiras.data.configuracion.api.RutaApi.INICIOSESION,
+        rutaApiSolicitar = RutaApi.INICIOSESION,
         //rutaVerificar = "verificarCodigoRexistro.php",
         aoTerminarConExito = aoTerminarConExito
     )

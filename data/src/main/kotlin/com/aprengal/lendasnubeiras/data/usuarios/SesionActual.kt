@@ -24,7 +24,7 @@ import java.util.UUID
 
 object SesionActual {
 
-    private var usuario by mutableStateOf(Usuario(0L, "", Rol.NADA))
+    private var usuario by mutableStateOf( Usuario( 0L, "", Rol.NADA ) )
 
     var idSesion by mutableStateOf( "" )
         private set
@@ -38,7 +38,7 @@ object SesionActual {
     }
 
     private fun cambiarSesion( id: Long = 0L, correo: String = "", rol: Rol = Rol.NADA ) {
-        usuario = Usuario(id, correo, rol)
+        usuario = Usuario( id, correo, rol )
         idSesion = UUID.randomUUID().toString()
     }
 
@@ -49,14 +49,14 @@ object SesionActual {
         corrutina {
             borrarSesionsLocais()
             gardarOpcion( Opcion.SesionAnonima, true )
-            cambiarSesion( 1L, "", Rol.AUTOR )//Rol.LECTOR )//OLLLOO!!!!
+            cambiarSesion( 1L, "", Rol.AUTOR )//Rol.LECTOR ) //TODO cambiar a lector
         }
 
     }
 
     private fun validarSesion() {
 
-        if ( sesionAnonima ) { //OLLOOOO!!!!
+        if ( sesionAnonima ) {  //TODO cambiar a lector
             cambiarSesion( 1L, "", Rol.AUTOR )//Rol.LECTOR )
             return
         }

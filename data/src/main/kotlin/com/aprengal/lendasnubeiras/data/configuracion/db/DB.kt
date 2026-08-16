@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.configuracion.db
+package com.aprengal.lendasnubeiras.data.configuracion.db
 
 import android.content.ContentValues
 import android.content.Context
@@ -8,18 +8,18 @@ import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import androidx.core.database.sqlite.transaction
-import com.aprengal.lendasnubeiras.actividades.Actividade
-import com.aprengal.lendasnubeiras.actividades.ActividadeBuscada
+import com.aprengal.lendasnubeiras.data.actividades.Actividade
+import com.aprengal.lendasnubeiras.data.actividades.ActividadeBuscada
 import com.aprengal.lendasnubeiras.actividades.Atributo
 import com.aprengal.lendasnubeiras.actividades.Categoria.Companion.escollerCategoria
 import com.aprengal.lendasnubeiras.actividades.Destinatario.Companion.escollerDestinatario
 import com.aprengal.lendasnubeiras.actividades.Estado.Companion.escollerEstado
-import com.aprengal.lendasnubeiras.data.configuracion.db.EstruturaDB
 import com.aprengal.lendasnubeiras.data.usuarios.Permisos.podeCrear
 import com.aprengal.lendasnubeiras.data.usuarios.Permisos.podeEditarOutras
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.collerUsuarioActual
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma.Companion.escollerIdioma
+import kotlin.collections.iterator
 
 object DB {
 

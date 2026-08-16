@@ -10,7 +10,7 @@ import androidx.compose.runtime.key
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
-import com.aprengal.lendasnubeiras.configuracion.db.DB
+import com.aprengal.lendasnubeiras.data.configuracion.db.DB
 import com.aprengal.lendasnubeiras.data.configuracion.api.Conexion
 import com.aprengal.lendasnubeiras.data.configuracion.Axustes
 import com.aprengal.lendasnubeiras.data.localizacion.Localizacion

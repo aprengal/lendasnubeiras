@@ -43,6 +43,7 @@ import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion.collerPantallas
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.collerUsuarioActual
 import com.aprengal.lendasnubeiras.ui.R
 import android.util.Log
+import com.aprengal.lendasnubeiras.data.configuracion.corrutina
 
 @Composable
 fun Espazador( multiplicador: Int = 1 ) {
@@ -100,22 +101,22 @@ fun <T> BotonOpcion(
             procesando = procesando,
             aceptar = { novoValor -> procesando = true
 
-                _root_ide_package_.com.aprengal.lendasnubeiras.data.configuracion.corrutina {
+                corrutina {
 
-                    while (true) {
+                    while ( true ) {
 
-                        val resultado = accion(novoValor)
+                        val resultado = accion( novoValor )
                         amosarDialogo = false
 
-                        if (resultado) {
+                        if ( resultado ) {
                             valorActual = novoValor
                             procesando = false
                             break
                         }
 
-                        val resultadoAviso = amosarAviso(aviso, "gardado_fallido_$clave", dominio, true)
+                        val resultadoAviso = amosarAviso( aviso, "gardado_fallido_$clave", dominio, true )
 
-                        if (resultadoAviso != SnackbarResult.ActionPerformed) {
+                        if ( resultadoAviso != SnackbarResult.ActionPerformed ) {
                             procesando = false
                             break
                         }

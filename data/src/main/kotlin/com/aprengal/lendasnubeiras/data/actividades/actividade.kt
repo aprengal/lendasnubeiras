@@ -1,6 +1,9 @@
-package com.aprengal.lendasnubeiras.actividades
+package com.aprengal.lendasnubeiras.data.actividades
 
-import com.aprengal.lendasnubeiras.localizacion.Idioma
+import com.aprengal.lendasnubeiras.actividades.Categoria
+import com.aprengal.lendasnubeiras.actividades.Destinatario
+import com.aprengal.lendasnubeiras.actividades.Estado
+import com.aprengal.lendasnubeiras.data.localizacion.Idioma
 
 data class Actividade(
     val id: Long,

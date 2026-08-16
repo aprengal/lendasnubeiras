@@ -26,6 +26,7 @@ import com.aprengal.lendasnubeiras.data.configuracion.Axustes.gardarOpcion
 import com.aprengal.lendasnubeiras.data.Variante
 import com.aprengal.lendasnubeiras.ui.tema.Tema.collerCoresTema
 import androidx.compose.material3.Typography
+import com.aprengal.lendasnubeiras.data.configuracion.Opcion
 import com.aprengal.lendasnubeiras.ui.R
 
 //Constantes relacionadas co tema que non se poden usar directamente noutros arquivos
@@ -182,14 +183,14 @@ object Tema {
         if ( temaCargado ) return
         temaCargado = true
 
-        val claveGuardada = collerOpcion( _root_ide_package_.com.aprengal.lendasnubeiras.data.configuracion.Opcion.Tema )
+        val claveGuardada = collerOpcion( Opcion.Tema )
         temaActual = Variante.buscar( claveGuardada )
 
     }
 
     suspend fun gardarTema( novoTema: Variante ): Boolean {
 
-        return gardarOpcion( _root_ide_package_.com.aprengal.lendasnubeiras.data.configuracion.Opcion.Tema, novoTema.name ).also {
+        return gardarOpcion( Opcion.Tema, novoTema.name ).also {
             estado -> if ( estado ) temaActual = novoTema
         }
 

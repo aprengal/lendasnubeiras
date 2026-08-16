@@ -16,7 +16,7 @@ sealed class Pantalla( val tipo: TIPO, val enlaces: Boolean, val permiso: ( Usua
 
     //Lectura
     object Inicio: Pantalla( TIPO.SCAFFOLD, false, Permisos::podeLer )
-    object Axustes: Pantalla( TIPO.SOSUPERIOR, true, Permisos::podeLer)
+    object Axustes: Pantalla( TIPO.SOSUPERIOR, true, Permisos::podeLer )
     object Actividades: Pantalla( TIPO.SOSUPERIOR, true, Permisos::podeLer )
 
     object ActividadeDetalle: Pantalla( TIPO.SOSUPERIOR, true, Permisos::podeLer ) {
@@ -36,7 +36,7 @@ sealed class Pantalla( val tipo: TIPO, val enlaces: Boolean, val permiso: ( Usua
     object Animacions: Pantalla( TIPO.SCAFFOLD, true )
 
     //Creación
-    object ListarActividades: Pantalla( TIPO.SOSUPERIOR, false, Permisos::podeCrear  )
+    object ListarActividades: Pantalla( TIPO.SOSUPERIOR, false, Permisos::podeCrear )
     object CrearActividade: Pantalla( TIPO.SOSUPERIOR, false, Permisos::podeCrear )
     object ModificarActividade: Pantalla( TIPO.SOSUPERIOR, false, Permisos::podeEditar )
 

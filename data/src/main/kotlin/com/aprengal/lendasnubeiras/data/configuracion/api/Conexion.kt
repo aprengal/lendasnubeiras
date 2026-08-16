@@ -35,7 +35,7 @@ object Conexion {
         .writeTimeout( 5, TimeUnit.SECONDS )
         .build()
 
-    suspend fun <T : RespostaApi> procesarPeticion(metodoApi: MetodoApi, rutaApi: RutaApi, campos: Map<String, Any> = emptyMap() ): T {
+    suspend fun <T : RespostaApi> procesarPeticion( metodoApi: MetodoApi, rutaApi: RutaApi, campos: Map<String, Any> = emptyMap() ): T {
 
         val datos = peticion( metodoApi, rutaApi, campos )
 
@@ -49,7 +49,7 @@ object Conexion {
 
     }
 
-    private suspend fun peticion(metodoApi: MetodoApi, rutaApi: RutaApi, campos: Map<String, Any> ): JSONObject {
+    private suspend fun peticion( metodoApi: MetodoApi, rutaApi: RutaApi, campos: Map<String, Any> ): JSONObject {
 
         try {
             return realizarPeticion( metodoApi, rutaApi, campos )
@@ -62,7 +62,7 @@ object Conexion {
 
     }
 
-    private suspend fun realizarPeticion(metodoApi: MetodoApi, ruta: RutaApi, campos: Map<String, Any> ): JSONObject {
+    private suspend fun realizarPeticion( metodoApi: MetodoApi, ruta: RutaApi, campos: Map<String, Any> ): JSONObject {
 
         val sesion = collerOpcion( Opcion.SesionUsuario )
 

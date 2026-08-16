@@ -1,8 +1,8 @@
 package com.example.lendasnubeiras
 
 import com.aprengal.lendasnubeiras.localizacion.Idioma
-import com.aprengal.lendasnubeiras.navegacion.Navegacion
-import com.aprengal.lendasnubeiras.ui.pantallas.Pantalla
+import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion
+import com.aprengal.lendasnubeiras.ui.navegacion.Pantalla
 
 import org.junit.Test
 import org.junit.Assert.assertTrue

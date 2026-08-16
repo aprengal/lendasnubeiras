@@ -29,4 +29,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Lendas Nubeiras"
-include(":app")
+include(":app", ":ui", ":data" )

@@ -1,7 +1,7 @@
 import java.util.Properties
 
 plugins {
-    alias( libs.plugins.android.application )
+    alias( libs.plugins.android.library )
     alias( libs.plugins.kotlin.compose )
 }
 
@@ -15,18 +15,26 @@ val localProperties = Properties().apply {
 
 }
 
+val copiarArquivosMain = tasks.register<Sync>( "copiarArquivosTesteoAndroid" ) {
+    description = "Shhh"
+    from( "src/main/kotlin" )
+    into( "src/androidTest/assets" )
+}
+
+tasks.configureEach {
+    if ( name.contains( "AndroidTest" ) ) {
+        dependsOn( copiarArquivosMain )
+    }
+}
+
 android {
 
-    namespace = "com.aprengal.lendasnubeiras"
+    namespace = "com.aprengal.lendasnubeiras.data"
     compileSdk = 37
 
     defaultConfig {
 
-        applicationId = "com.aprengal.lendasnubeiras"
         minSdk = 29
-        targetSdk = 37
-        versionCode = 2
-        versionName = "0.1.03"
 
         ndk {
             //noinspection ChromeOsAbiSupport
@@ -34,17 +42,6 @@ android {
         }
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-    }
-
-    signingConfigs {
-
-        create( "release" ) {
-            storeFile = file( localProperties.getProperty( "STORE_FILE" ) ?: "" )
-            storePassword = localProperties.getProperty( "STORE_PASSWORD" )
-            keyAlias = localProperties.getProperty( "KEY_ALIAS" )
-            keyPassword = localProperties.getProperty( "KEY_PASSWORD" )
-        }
 
     }
 
@@ -61,14 +58,10 @@ android {
         getByName( "release" ) {
 
             isMinifyEnabled = true
-            isShrinkResources = true
-
             proguardFiles(
                 getDefaultProguardFile( "proguard-android-optimize.txt" ),
                 "regras-mellorado.pro"
             )
-
-            signingConfig = signingConfigs.getByName( "release" )
 
             buildConfigField(
                 "String",
@@ -93,18 +86,6 @@ android {
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
-        }
-    }
-
-    sourceSets {
-        getByName( "androidTest" ) {
-            assets.directories.add(
-                layout.buildDirectory
-                    .dir( "generated/androidTest/assets" )
-                    .get()
-                    .asFile
-                    .absolutePath
-            )
         }
     }
 
@@ -142,15 +123,17 @@ dependencies {
     implementation( libs.androidx.startup.runtime )
     testImplementation( kotlin( "reflect" ) )
 
+    //DataStorage
+    implementation( libs.androidx.datastore.preferences )
+
+    //Conector coa API
+    implementation( libs.okhttp )
+
     //Tests unitarios
     testImplementation( libs.junit )
 
     //Tests instrumentais
     androidTestImplementation( libs.androidx.runner )
     androidTestImplementation( libs.androidx.rules )
-
-    //módulos internos
-    implementation( project( ":ui" ) )
-    implementation( project( ":data" ) )
 
 }

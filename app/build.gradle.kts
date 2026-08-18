@@ -112,42 +112,25 @@ android {
 
 dependencies {
 
+    //Dependecias de compose para arrancar a aplicación
     implementation( platform(libs.androidx.compose.bom ) )
-    implementation( libs.androidx.activity.compose )
-    implementation( libs.androidx.appcompat )
-    implementation( libs.androidx.compose.animation )
-    implementation( libs.androidx.compose.animation.core )
-    implementation( libs.androidx.compose.foundation)
-    implementation( libs.androidx.compose.foundation.layout )
     implementation( libs.androidx.compose.material3 )
-    implementation( libs.androidx.compose.runtime )
-    implementation( libs.androidx.compose.ui )
-    implementation( libs.androidx.compose.ui.graphics )
-    implementation( libs.androidx.compose.ui.text)
-    implementation( libs.androidx.compose.ui.tooling.preview )
-    implementation( libs.androidx.compose.ui.unit)
-    implementation( libs.androidx.core.ktx )
+    implementation( libs.androidx.activity.compose )
+
+    //Para actualizar o idioma en Android para lectores de pantalla
+    implementation( libs.androidx.appcompat )
+
+    //Exclusión da dependencia anterior para impedir que cargue emojis
+    implementation( libs.androidx.startup.runtime )
+
+    //Para esperar a que se obteña o usuario actual antes de que cargue a aplicación
     implementation( libs.androidx.lifecycle.runtime.ktx )
-    implementation( libs.androidx.navigation.compose )
 
-    debugImplementation( libs.androidx.compose.ui.tooling )
-
-    //Librería para cambiar a cor antes de que arranque a aplicación
+    //ambiar a cor antes de que arranque a aplicación
     implementation( libs.androidx.core.splashscreen )
 
-    //Librería para empregar temas de Google en themes.xml
+    //Emprego de temas de Google en themes.xml
     implementation( libs.material )
-
-    //Para quitar a chafallada de iconas de emojis que mete compact
-    implementation( libs.androidx.startup.runtime )
-    testImplementation( kotlin( "reflect" ) )
-
-    //Tests unitarios
-    testImplementation( libs.junit )
-
-    //Tests instrumentais
-    androidTestImplementation( libs.androidx.runner )
-    androidTestImplementation( libs.androidx.rules )
 
     //módulos internos
     implementation( project( ":ui" ) )

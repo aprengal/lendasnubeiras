@@ -79,7 +79,7 @@ android {
     }
 
     buildFeatures {
-        compose = true
+        //compose = true
         buildConfig = true
     }
 
@@ -93,35 +93,11 @@ android {
 
 dependencies {
 
-    implementation( platform(libs.androidx.compose.bom ) )
-    implementation( libs.androidx.activity.compose )
-    implementation( libs.androidx.appcompat )
-    implementation( libs.androidx.compose.animation )
-    implementation( libs.androidx.compose.animation.core )
-    implementation( libs.androidx.compose.foundation)
-    implementation( libs.androidx.compose.foundation.layout )
-    implementation( libs.androidx.compose.material3 )
+    //Para permitir que a UI se actualice ao cambiar varios valores delicados: idioma e sesión usuario
     implementation( libs.androidx.compose.runtime )
-    implementation( libs.androidx.compose.ui )
-    implementation( libs.androidx.compose.ui.graphics )
-    implementation( libs.androidx.compose.ui.text)
-    implementation( libs.androidx.compose.ui.tooling.preview )
-    implementation( libs.androidx.compose.ui.unit)
-    implementation( libs.androidx.core.ktx )
-    implementation( libs.androidx.lifecycle.runtime.ktx )
-    implementation( libs.androidx.navigation.compose )
 
-    debugImplementation( libs.androidx.compose.ui.tooling )
-
-    //Librería para cambiar a cor antes de que arranque a aplicación
-    implementation( libs.androidx.core.splashscreen )
-
-    //Librería para empregar temas de Google en themes.xml
-    implementation( libs.material )
-
-    //Para quitar a chafallada de iconas de emojis que mete compact
-    implementation( libs.androidx.startup.runtime )
-    testImplementation( kotlin( "reflect" ) )
+    //Para actualizar o idioma en Android para lectores de pantalla
+    implementation( libs.androidx.appcompat )
 
     //DataStorage
     implementation( libs.androidx.datastore.preferences )

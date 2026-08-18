@@ -12,7 +12,6 @@ android {
     defaultConfig {
 
         minSdk = 29
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
     }
@@ -36,6 +35,7 @@ android {
 
 dependencies {
 
+    //Unificador de versións de compose
     implementation( platform(libs.androidx.compose.bom ) )
 
     // Dependencias básicas de Compose
@@ -43,24 +43,23 @@ dependencies {
     implementation( libs.androidx.compose.ui.graphics )
     implementation( libs.androidx.compose.ui.text )
     implementation( libs.androidx.compose.ui.unit )
-    implementation( libs.androidx.compose.ui.tooling.preview )
     implementation( libs.androidx.compose.foundation )
     implementation( libs.androidx.compose.foundation.layout )
     implementation( libs.androidx.compose.material3 )
     implementation( libs.androidx.compose.runtime )
-
-    // Opcionales pero muy recomendados si usas animaciones o navegación en la UI
     implementation( libs.androidx.compose.animation )
     implementation( libs.androidx.navigation.compose )
 
-    // Para ver las previsualizaciones en el panel de Android Studio
-    debugImplementation( libs.androidx.compose.ui.tooling )
+    //Previsualización
+    implementation( libs.androidx.compose.ui.tooling.preview )
 
-    // Lo básico que ya tenías:
-    implementation( libs.androidx.core.ktx )
-    implementation( libs.androidx.appcompat )
-    implementation( libs.material )
+    //Tests unitarios
     testImplementation( libs.junit )
+    testImplementation( kotlin( "reflect" ) )
+
+    //Tests instrumentais
+    //androidTestImplementation( libs.androidx.runner )
+    //androidTestImplementation( libs.androidx.rules )
 
     //módulos proxecto
     implementation( project( ":data" ) )

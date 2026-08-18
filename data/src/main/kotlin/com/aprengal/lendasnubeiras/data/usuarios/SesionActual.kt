@@ -24,7 +24,8 @@ import java.util.UUID
 
 object SesionActual {
 
-    private var usuario by mutableStateOf( Usuario( 0L, "", Rol.NADA ) )
+    //private var usuario by mutableStateOf( Usuario( 0L, "", Rol.NADA ) )
+    private var usuario = Usuario( 0L, "", Rol.NADA )
 
     var idSesion by mutableStateOf( "" )
         private set

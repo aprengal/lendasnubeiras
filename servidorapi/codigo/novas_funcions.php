@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * Xera un identificador único (ID) numérico ordenado cronoloxicamente

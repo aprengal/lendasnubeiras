@@ -62,9 +62,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.aprengal.lendasnubeiras.ui.tema.Iconas.PantallaPruebaIconas
-import com.aprengal.lendasnubeiras.ui.tema.Iconas.lanzarDados
-import com.aprengal.lendasnubeiras.ui.tema.Iconas.listarIconasActividades
 import com.aprengal.lendasnubeiras.data.localizacion.Localizacion.l10n
 import com.aprengal.lendasnubeiras.data.localizacion.Localizacion.l10nPlural
 import com.aprengal.lendasnubeiras.ui.reutilizables.Espazador
@@ -456,117 +453,6 @@ fun ProbaActividade() {
 
             }
 
-        }
-
-    }
-
-}
-
-@Composable
-fun XogoDados() {
-
-    var resultadoDados by rememberSaveable { mutableStateOf<List<String>>(emptyList()) }
-    var cantidadeDados by rememberSaveable { mutableIntStateOf( 3 ) }
-
-    val iconos = remember { listarIconasActividades().toList() }
-
-    var amosarLista by rememberSaveable { mutableStateOf(false) }
-
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive( minSize = 64.dp ),
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy( 8.dp ),
-        verticalArrangement = Arrangement.spacedBy( 8.dp )
-    ) {
-
-        item(
-            span = { GridItemSpan(maxLineSpan) }
-        ) {
-            Espazador()
-        }
-
-        item(
-            span = { GridItemSpan(maxLineSpan) }
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Button(
-                    onClick = { cantidadeDados-- },
-                    enabled = cantidadeDados > 3
-                ) {
-                    Text("-")
-                }
-
-                Text( cantidadeDados.toString() )
-
-                Button(
-                    onClick = { cantidadeDados++ },
-                    enabled = cantidadeDados < 10
-                ) {
-                    Text("+")
-                }
-            }
-        }
-
-        item(
-            span = { GridItemSpan(maxLineSpan) }
-        ) {
-
-            val paddingInferior = if ( resultadoDados.isEmpty() ) 0.dp else 10.dp
-
-            Button(
-                onClick = {
-                    resultadoDados = lanzarDados( cantidadeDados )
-                },
-                modifier = Modifier.fillMaxWidth().padding( bottom = paddingInferior )
-            ) {
-
-                Text( text = "Lanzar dados" )
-
-            }
-
-        }
-
-        items( resultadoDados ) { icono ->
-            Iconas.CasillaIcono( icono )
-        }
-
-        // Separador / botón desplegable
-        item(
-            span = { GridItemSpan( maxLineSpan ) }
-        ) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 10.dp),
-                    color = MaterialTheme.colorScheme.primary
-                )
-
-                Button(
-                    onClick = { amosarLista = !amosarLista }
-                ) {
-
-                    Text(
-                        text = if ( amosarLista )
-                            "Tirar lista completa"
-                        else
-                            "Ver lista completa"
-                    )
-
-                }
-
-            }
-        }
-
-        if ( amosarLista ) {
-            items( iconos ) { icono ->
-                PantallaPruebaIconas( icono )
-            }
         }
 
     }

@@ -1,14 +1,14 @@
 package com.aprengal.lendasnubeiras
 
 import androidx.test.platform.app.InstrumentationRegistry
-import com.aprengal.lendasnubeiras.configuracion.db.DB
-import com.aprengal.lendasnubeiras.configuracion.db.DB.collerActividade
-import com.aprengal.lendasnubeiras.actividades.Categoria
-import com.aprengal.lendasnubeiras.usuarios.Permisos.podeCrear
-import com.aprengal.lendasnubeiras.usuarios.Permisos.podeEditarOutras
-import com.aprengal.lendasnubeiras.usuarios.Rol
-import com.aprengal.lendasnubeiras.usuarios.Usuario
-import com.aprengal.lendasnubeiras.localizacion.Idioma
+import com.aprengal.lendasnubeiras.data.actividades.Categoria
+import com.aprengal.lendasnubeiras.data.configuracion.db.DB
+import com.aprengal.lendasnubeiras.data.configuracion.db.DB.collerActividade
+import com.aprengal.lendasnubeiras.data.localizacion.Idioma
+import com.aprengal.lendasnubeiras.data.usuarios.Permisos.podeCrear
+import com.aprengal.lendasnubeiras.data.usuarios.Permisos.podeEditarOutras
+import com.aprengal.lendasnubeiras.data.usuarios.Rol
+import com.aprengal.lendasnubeiras.data.usuarios.Usuario
 
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -441,7 +441,7 @@ class SQLITETest {
         return Usuario( id = id, correo = "test@test.com", rol )
     }
 
-    fun listarActividadesTest( id: Long, rol: Rol ): List<Map<String, Any>> {
+    fun listarActividadesTest( id: Long, rol: Rol): List<Map<String, Any>> {
 
         val usuarioActual = collerUsuarioActualTest( id, rol )
 

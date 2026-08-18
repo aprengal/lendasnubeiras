@@ -5,9 +5,7 @@
     <!-- Permiso internet -->
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- usesCleartextTraffic: Para permitir conexións http. Quitar en produción cona -->
     <application
-        android:usesCleartextTraffic="true"
         android:allowBackup="false"
         android:label="@string/nome_app"
         android:icon="@mipmap/datos_logo"

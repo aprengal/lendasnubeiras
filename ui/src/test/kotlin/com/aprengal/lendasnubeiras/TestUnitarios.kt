@@ -1,12 +1,10 @@
-package com.example.lendasnubeiras
+package com.aprengal.lendasnubeiras
 
-import com.aprengal.lendasnubeiras.localizacion.Idioma
+import com.aprengal.lendasnubeiras.data.localizacion.Idioma
 import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion
 import com.aprengal.lendasnubeiras.ui.navegacion.Pantalla
-
+import org.junit.Assert
 import org.junit.Test
-import org.junit.Assert.assertTrue
-import org.junit.Assert.assertEquals
 
 class TestUnitarios {
 
@@ -19,17 +17,17 @@ class TestUnitarios {
         val faltanEnLista = subclasesReais - pantallasNavegacion
         val sobranEnLista = pantallasNavegacion - subclasesReais
 
-        assertTrue(
-            "Faltan as seguintes pantallas por asignar ao Menú: ${ faltanEnLista.map { e -> e.simpleName } }",
+        Assert.assertTrue(
+            "Faltan as seguintes pantallas por asignar ao Menú: ${faltanEnLista.map { e -> e.simpleName }}",
             faltanEnLista.isEmpty()
         )
 
-        assertTrue(
+        Assert.assertTrue(
             "Sobran os seguintes elementos: ${sobranEnLista.map { e -> e.simpleName }}",
             sobranEnLista.isEmpty()
         )
 
-        assertEquals(
+        Assert.assertEquals(
             "O tamano non coincide",
             subclasesReais.size,
             Navegacion.pantallasAdmin.size + Navegacion.pantallasAutenticacion.size
@@ -50,7 +48,7 @@ class TestUnitarios {
         }
 
         esperados.forEach { ( idioma, codigo ) ->
-            assertEquals( "Código incorrecto para $idioma", codigo, idioma.codigoRexion )
+            Assert.assertEquals("Código incorrecto para $idioma", codigo, idioma.codigoRexion)
         }
 
     }

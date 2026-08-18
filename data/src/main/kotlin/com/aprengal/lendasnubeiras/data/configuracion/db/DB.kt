@@ -10,10 +10,10 @@ import android.util.Log
 import androidx.core.database.sqlite.transaction
 import com.aprengal.lendasnubeiras.data.actividades.Actividade
 import com.aprengal.lendasnubeiras.data.actividades.ActividadeBuscada
-import com.aprengal.lendasnubeiras.actividades.Atributo
-import com.aprengal.lendasnubeiras.actividades.Categoria.Companion.escollerCategoria
-import com.aprengal.lendasnubeiras.actividades.Destinatario.Companion.escollerDestinatario
-import com.aprengal.lendasnubeiras.actividades.Estado.Companion.escollerEstado
+import com.aprengal.lendasnubeiras.data.actividades.Atributo
+import com.aprengal.lendasnubeiras.data.actividades.Categoria.Companion.escollerCategoria
+import com.aprengal.lendasnubeiras.data.actividades.Destinatario.Companion.escollerDestinatario
+import com.aprengal.lendasnubeiras.data.actividades.Estado.Companion.escollerEstado
 import com.aprengal.lendasnubeiras.data.usuarios.Permisos.podeCrear
 import com.aprengal.lendasnubeiras.data.usuarios.Permisos.podeEditarOutras
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.collerUsuarioActual

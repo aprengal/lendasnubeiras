@@ -42,7 +42,9 @@ object Navegacion {
     //O menú inferior debería cambiar por rol lector ou creador?
     val menuInferior = listOf(
         Pantalla.Inicio,
-        Pantalla.Animacions,
+        //Pantalla.Animacions,
+        Pantalla.Buscar,
+        Pantalla.Idioma,
         Pantalla.Actividades
     )
 

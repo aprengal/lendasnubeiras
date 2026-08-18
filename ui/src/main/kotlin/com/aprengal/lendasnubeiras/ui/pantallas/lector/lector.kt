@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.ui.pantallas
+package com.aprengal.lendasnubeiras.ui.pantallas.lector
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

@@ -23,9 +23,10 @@ import java.util.UUID
 
 object SesionActual {
 
+    //private var usuario by mutableStateOf( Usuario( 0L, "", Rol.NADA ) )
     private var usuario = Usuario( 0L, "", Rol.NADA )
 
-    private val _idSesion = MutableStateFlow( "" )
+    private val _idSesion = MutableStateFlow("")
 
     val idSesion = _idSesion.asStateFlow()
 

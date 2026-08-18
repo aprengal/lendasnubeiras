@@ -2,7 +2,6 @@ import java.util.Properties
 
 plugins {
     alias( libs.plugins.android.library )
-    alias( libs.plugins.kotlin.compose )
 }
 
 val localProperties = Properties().apply {
@@ -79,7 +78,6 @@ android {
     }
 
     buildFeatures {
-        //compose = true
         buildConfig = true
     }
 
@@ -92,9 +90,6 @@ android {
 }
 
 dependencies {
-
-    //Para permitir que a UI se actualice ao cambiar varios valores delicados: idioma e sesión usuario
-    implementation( libs.androidx.compose.runtime )
 
     //Para actualizar o idioma en Android para lectores de pantalla
     implementation( libs.androidx.appcompat )

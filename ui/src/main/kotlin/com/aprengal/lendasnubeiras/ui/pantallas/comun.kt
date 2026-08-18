@@ -56,7 +56,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
-import com.aprengal.lendasnubeiras.data.localizacion.Localizacion.idiomaActual
+import com.aprengal.lendasnubeiras.data.localizacion.Idioma
 import com.aprengal.lendasnubeiras.data.localizacion.Localizacion.l10n
 import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion
 import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion.collerPantallas
@@ -77,12 +77,14 @@ import com.aprengal.lendasnubeiras.ui.pantallas.lector.PantallaActividadeDetalle
 import com.aprengal.lendasnubeiras.ui.pantallas.lector.PantallaBuscador
 import com.aprengal.lendasnubeiras.ui.pantallas.lector.actividadesDixitais.XogoDados
 import com.aprengal.lendasnubeiras.ui.reutilizables.Icona
+import com.aprengal.lendasnubeiras.ui.reutilizables.LocalIdioma
 
 @OptIn( ExperimentalMaterial3Api::class )
 @Composable
-fun PantallaBase() {
+fun PantallaBase( idioma: Idioma ) {
 
     val controlador = rememberNavController()
+    //val idioma by idiomaActual.collectAsState()
 
     val ( pantallaInicial, pantallas ) = collerPantallas()
     val backStackEntry by controlador.currentBackStackEntryAsState()
@@ -93,11 +95,11 @@ fun PantallaBase() {
     val amosarInferior = pantallaActual.tipo == Pantalla.TIPO.SCAFFOLD
     val amosarAccion = podeCrear( collerUsuarioActual() ) && amosarInferior
 
-    LaunchedEffect( idiomaActual ) {
+    LaunchedEffect( idioma ) {
         aviso.currentSnackbarData?.dismiss()
     }
 
-    CompositionLocalProvider( LocalPantallaActual provides pantallaActual, LocalControlador provides controlador, LocalAviso provides aviso ) {
+    CompositionLocalProvider( LocalIdioma provides idioma, LocalPantallaActual provides pantallaActual, LocalControlador provides controlador, LocalAviso provides aviso ) {
 
         Scaffold(
             topBar = { if ( amosarSuperior ) NavegacionSuperior( pantallaActual, controlador) },

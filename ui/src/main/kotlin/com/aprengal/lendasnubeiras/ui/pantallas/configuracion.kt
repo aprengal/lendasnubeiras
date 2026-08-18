@@ -6,12 +6,12 @@ import com.aprengal.lendasnubeiras.data.localizacion.Localizacion.gardarIdioma
 import com.aprengal.lendasnubeiras.ui.tema.Tema
 import com.aprengal.lendasnubeiras.ui.tema.Tema.gardarTema
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
-import com.aprengal.lendasnubeiras.data.localizacion.Localizacion
 import com.aprengal.lendasnubeiras.ui.reutilizables.BotonOpcion
 import com.aprengal.lendasnubeiras.ui.reutilizables.Espazador
 import com.aprengal.lendasnubeiras.data.usuarios.Permisos.podePecharSesion
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.collerUsuarioActual
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.pecharSesion
+import com.aprengal.lendasnubeiras.ui.reutilizables.LocalIdioma
 
 //Axustes: idioma, modo escuro, desactivar animacións
 @Composable
@@ -27,9 +27,8 @@ fun PantallaAxustes() {
             dominio = "opcions",
             avisoDialogo = true,
             opcions = Idioma.entries.filter { idioma -> idioma != Idioma.NADA },
-            valorInicial = Localizacion.idiomaActual,
+            valorInicial = LocalIdioma.current,
             nomeUI = { idioma -> idioma.nome },
-            //saver = idiomaSaver,
             accion = { novoIdioma -> gardarIdioma( novoIdioma ) }
         )
 
@@ -41,7 +40,6 @@ fun PantallaAxustes() {
             opcions = Variante.entries,
             valorInicial = Tema.temaActual,
             nomeUI = { variante -> variante.nome },
-            //saver = varianteSaver,
             accion = { novoTema -> gardarTema( novoTema ) }
         )
 

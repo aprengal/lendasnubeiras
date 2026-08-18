@@ -27,7 +27,8 @@ object Localizacion {
 
     private val traducionsPlurais: MutableMap<String, Map<String, Map<String, String>>> = mutableMapOf()
 
-    private val _idiomaActual = MutableStateFlow( Idioma.NADA )
+    private val _idiomaActual = MutableStateFlow(Idioma.NADA)
+    //val idiomaActual = _idiomaActual.asStateFlow()
 
     private var dominiosRecordados: MutableSet<String> = mutableSetOf()
 

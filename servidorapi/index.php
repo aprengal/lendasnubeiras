@@ -19,4 +19,4 @@ $ruta = parse_url( $_SERVER[ 'REQUEST_URI' ], PHP_URL_PATH );
 
 $resposta = [ "mensaxe" => "O recurso solicitado " . $ruta . " non existe" ];
 
-echo json_encode( $resposta );
+echo json_encode( $resposta, JSON_UNESCAPED_SLASHES );

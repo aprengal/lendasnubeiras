@@ -43,6 +43,7 @@ import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion.collerPantallas
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.collerUsuarioActual
 import com.aprengal.lendasnubeiras.ui.R
 import android.util.Log
+import androidx.compose.runtime.rememberCoroutineScope
 import com.aprengal.lendasnubeiras.data.configuracion.corrutina
 
 @Composable

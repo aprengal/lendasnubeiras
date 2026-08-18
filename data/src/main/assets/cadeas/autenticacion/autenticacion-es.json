@@ -1,1 +1,5 @@
-{}
+{
+  "titulo_benvida": "Bienvenida",
+  "boton_iniciar_sesion": "Iniciar sesión",
+  "boton_continuar_anonimo": "Entrar como invitado"
+}

@@ -67,7 +67,8 @@ object Localizacion {
 
     suspend fun gardarIdioma( novoIdioma: Idioma ): Boolean {
 
-        if ( _idiomaActual.value == novoIdioma || !gardarOpcion( Opcion.Idioma, novoIdioma.codigoRexion ) ) return false
+        if ( _idiomaActual.value == novoIdioma ) return true
+        if ( !gardarOpcion( Opcion.Idioma, novoIdioma.codigoRexion ) ) return false
 
         _idiomaActual.value = novoIdioma
 

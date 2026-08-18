@@ -43,8 +43,9 @@ import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion.collerPantallas
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.collerUsuarioActual
 import com.aprengal.lendasnubeiras.ui.R
 import android.util.Log
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.foundation.isSystemInDarkTheme
 import com.aprengal.lendasnubeiras.data.configuracion.corrutina
+import com.aprengal.lendasnubeiras.ui.tema.Tema.escollerVarianteImaxe
 
 @Composable
 fun Espazador( multiplicador: Int = 1 ) {
@@ -54,8 +55,10 @@ fun Espazador( multiplicador: Int = 1 ) {
 @Composable
 fun Logo( tamano: Dp = 30.dp ) {
 
+    val logo = escollerVarianteImaxe( isSystemInDarkTheme(), R.drawable.logo_claro, R.drawable.logo_escuro )
+
     Image(
-        painter = painterResource( R.drawable.logo ),
+        painter = painterResource( logo ),
         modifier = Modifier.size( tamano ),
         contentDescription = l10n( "nome_app", "base" )
     )

@@ -50,8 +50,8 @@ fun PantallaAxustes() {
             BotonOpcion(
                 clave = "peche_sesion",
                 dominio = "opcions",
-                opcions = listOf( "afirmar", "denegar" ),
-                valorInicial = "afirmar",
+                opcions = listOf( "si", "non" ),
+                valorInicial = "si",
                 nomeUI = { texto -> texto },
                 accion = { _ -> pecharSesion() }
             )

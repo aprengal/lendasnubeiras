@@ -190,9 +190,11 @@ object Tema {
 
     suspend fun gardarTema( novoTema: Variante ): Boolean {
 
-        return gardarOpcion( Opcion.Tema, novoTema.name ).also {
-            estado -> if ( estado ) temaActual = novoTema
-        }
+        if ( temaActual == novoTema ) return true
+        if ( !gardarOpcion( Opcion.Tema, novoTema.name ) ) return false
+
+        temaActual = novoTema
+        return true
 
     }
 
@@ -205,6 +207,17 @@ object Tema {
         }
 
         return esquemaCores
+
+    }
+
+    fun escollerVarianteImaxe( temaEscuro: Boolean, claro: Int, escuro: Int ): Int {
+
+        return when ( temaActual ) {
+            Variante.CLARO -> claro
+            Variante.ESCURO -> escuro
+            Variante.PREDETERMINADO ->
+                if ( temaEscuro ) escuro else claro
+        }
 
     }
 

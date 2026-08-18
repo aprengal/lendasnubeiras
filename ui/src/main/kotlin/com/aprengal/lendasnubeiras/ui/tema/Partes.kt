@@ -13,10 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -27,10 +23,8 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -335,95 +329,6 @@ private fun CasillaDemo(
     ) {
         Text(texto, color = MaterialTheme.colorScheme.onSecondary)
     }
-}
-
-@Composable
-fun ProbaTraducions() {
-
-    //var idiomaActual by remember { mutableStateOf(idiomaActual ) }
-    //val esGalego = idiomaActual.value.codigo == "gl"
-    //var mostrarDialogo by rememberSaveable { mutableStateOf(false) }
-    //val contexto = LocalContext.current
-
-    //val nuevoIdioma = if (esGalego) Idioma.CASTELAN else Idioma.GALEGO
-
-    PantallaBase {
-
-        item {
-
-
-            Column {
-
-                Text(
-                    text = l10n( "carla", "test" )
-                )
-
-                Text(
-                    text = l10n( "natasha", "test" ),
-                    style = MaterialTheme.typography.headlineLarge
-                )
-
-                Text(
-                    text = l10nPlural("mensajes_nuevos", "test", 1 )
-                )
-
-                Text(
-                    text = l10nPlural("mensajes_nuevos", "test", 5 )
-                )
-
-                Text(
-                    text = l10nPlural("mensajes_nuevos", "test", 0 )
-                )
-
-                Text(
-                    text = l10nPlural("mensajes_nuevos", "test", 100 )
-                )
-
-                HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 10.dp),
-                    color = MaterialTheme.colorScheme.primary
-                )
-
-                /*Text(
-                    text = buildAnnotatedString {
-                        append("Idioma actual: ")
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append(if (esGalego) "Galego" else "Castellano")
-                        }
-                    },
-                    style = MaterialTheme.typography.titleMedium
-                )
-
-                Button(
-                    onClick = {
-                        if ( contexto.haiLector() ) {
-                            mostrarDialogo = true
-                        } else {
-
-                            corrutina {
-                                gardarIdioma( nuevoIdioma )
-                                idiomaActual.value = nuevoIdioma
-                            }
-
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp)
-                ) {
-                    //Para que compose actualice o contido deste botón
-                    key(idiomaActual) {
-                        Text(
-                            text = l10n("cambio_idioma", "test")
-                        )
-                    }
-                }*/
-            }
-
-        }
-
-    }
-
 }
 
 @Composable

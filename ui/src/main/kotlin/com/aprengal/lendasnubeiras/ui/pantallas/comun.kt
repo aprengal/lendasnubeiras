@@ -68,13 +68,13 @@ import com.aprengal.lendasnubeiras.ui.reutilizables.Logo
 import com.aprengal.lendasnubeiras.ui.reutilizables.comprobarPermisos
 import com.aprengal.lendasnubeiras.ui.tema.MirarAnimacions
 import com.aprengal.lendasnubeiras.ui.tema.ProbaActividade
-import com.aprengal.lendasnubeiras.ui.tema.ProbaTraducions
 import com.aprengal.lendasnubeiras.data.usuarios.Permisos.podeCrear
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.collerUsuarioActual
 import com.aprengal.lendasnubeiras.ui.R
 import com.aprengal.lendasnubeiras.ui.pantallas.lector.PantallaActividade
 import com.aprengal.lendasnubeiras.ui.pantallas.lector.PantallaActividadeDetalle
 import com.aprengal.lendasnubeiras.ui.pantallas.lector.PantallaBuscador
+import com.aprengal.lendasnubeiras.ui.pantallas.lector.PantallaInicio
 import com.aprengal.lendasnubeiras.ui.pantallas.lector.actividadesDixitais.XogoDados
 import com.aprengal.lendasnubeiras.ui.reutilizables.Icona
 import com.aprengal.lendasnubeiras.ui.reutilizables.LocalIdioma
@@ -292,7 +292,7 @@ private fun CollerContido( pantalla: Pantalla, entrada: NavBackStackEntry ) {
 
         Pantalla.Axustes -> PantallaAxustes()
         Pantalla.Idioma -> XogoDados()
-        Pantalla.Inicio -> ProbaTraducions()
+        Pantalla.Inicio -> PantallaInicio()
         //Pantalla.Mapa -> MapaMundial()
 
         //Creación

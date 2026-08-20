@@ -21,3 +21,20 @@ class SesionUsuario( datos: JSONObject ): RespostaApi( datos.optInt( "codigo" ) 
 }
 
 class RespostaXenerica( datos: JSONObject ): RespostaApi( datos.optInt( "codigo" ) )
+
+class DatosActividades( datos: JSONObject ): RespostaApi( datos.optInt( "codigo" ) ) {
+
+    val lista: List<Map<String, Any>>
+
+    init {
+
+        val actividades = datos.getJSONArray( "actividades" )
+
+        lista = ( 0 until actividades.length() ).map { i ->
+            val obxecto = actividades.getJSONObject( i )
+            actividades.getJSONObject( i ).keys().asSequence().associateWith { clave -> obxecto.get( clave ) }
+        }
+
+    }
+
+}

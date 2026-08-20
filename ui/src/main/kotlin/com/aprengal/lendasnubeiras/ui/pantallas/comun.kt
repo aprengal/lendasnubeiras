@@ -255,7 +255,9 @@ private fun BotonCrearActividade( controlador: NavHostController ) {
 
     val pantalla = Pantalla.CrearActividade
 
-    FloatingActionButton( onClick = { controlador.navigate(pantalla.ruta ) }, shape = CircleShape) {
+    FloatingActionButton( onClick = { controlador.navigate(pantalla.ruta ) },
+        containerColor = MaterialTheme.colorScheme.secondary,
+        contentColor = MaterialTheme.colorScheme.onSecondary, shape = CircleShape ) {
         DebuxarIconaMenu( pantalla )
     }
 

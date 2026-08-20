@@ -12,13 +12,27 @@ import com.aprengal.lendasnubeiras.data.actividades.Actividade
 import com.aprengal.lendasnubeiras.data.actividades.ActividadeBuscada
 import com.aprengal.lendasnubeiras.data.actividades.Atributo
 import com.aprengal.lendasnubeiras.data.actividades.Categoria.Companion.escollerCategoria
+import com.aprengal.lendasnubeiras.data.actividades.Clasificacion
 import com.aprengal.lendasnubeiras.data.actividades.Destinatario.Companion.escollerDestinatario
 import com.aprengal.lendasnubeiras.data.actividades.Estado.Companion.escollerEstado
+import com.aprengal.lendasnubeiras.data.actividades.Grupo
+import com.aprengal.lendasnubeiras.data.actividades.Xogador
+import com.aprengal.lendasnubeiras.data.actividades.dixitais.Dificultade
+import com.aprengal.lendasnubeiras.data.configuracion.api.Conexion.procesarPeticion
+import com.aprengal.lendasnubeiras.data.configuracion.api.DatosActividades
+import com.aprengal.lendasnubeiras.data.configuracion.api.MetodoApi
+import com.aprengal.lendasnubeiras.data.configuracion.api.RespostaXenerica
+import com.aprengal.lendasnubeiras.data.configuracion.api.RutaApi
+import com.aprengal.lendasnubeiras.data.configuracion.corrutinaResposta
 import com.aprengal.lendasnubeiras.data.usuarios.Permisos.podeCrear
 import com.aprengal.lendasnubeiras.data.usuarios.Permisos.podeEditarOutras
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.collerUsuarioActual
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma.Companion.escollerIdioma
+import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.collerSesionActual
+import kotlinx.coroutines.CoroutineScope
+import java.time.Instant
+import java.util.UUID
 import kotlin.collections.iterator
 
 object DB {
@@ -30,7 +44,7 @@ object DB {
         db = BBDD( contexto.applicationContext )
     }
 
-    fun buscarActividadesBuscables( termo: String, colOrdenable: String, dirOrdenable: String = "DESC", filtros: Map<String, Any> = emptyMap() ): List<ActividadeBuscada> {
+    fun collerActividadesBuscables( termo: String, colOrdenable: String, dirOrdenable: String = "DESC", filtros: Map<String, Any> = emptyMap() ): List<ActividadeBuscada> {
 
         val onde = mutableMapOf<String, Map<String, Any>>()
         onde[ "buscador_actividades" ] = mapOf( "operador" to "MATCH",  "valor" to termo )
@@ -69,24 +83,246 @@ object DB {
 
     }
 
-    fun collerActividade( id: Long ): Actividade? = buscarActividade( mapOf( "id" to mapOf( "operador" to "=", "valor" to id ) ) )
+    fun collerActividade( id: Long ): Actividade? {
+        return buscarActividade( mapOf( "id" to mapOf( "operador" to "=", "valor" to id ) ) )
+    }
 
     fun collerActividade( titulo: String, idioma: Idioma ): Actividade? {
         val onde = mapOf( "titulo" to mapOf( "operador" to "=", "valor" to titulo ), "id_idioma" to mapOf( "operador" to "=", "valor" to idioma ) )
         return buscarActividade( onde )
     }
 
+    fun collerActividades( onde: Map<String, Map<String, Any>> = mapOf() ): List<Actividade> {
+        return buscarElementos( "actividades", onde ) { actividade -> crearActividade( actividade ) }
+    }
+
     private fun buscarActividade( onde: Map<String, Map<String, Any>> ): Actividade? {
+        return buscarElemento( "actividades", onde ) { actividade -> crearActividade( actividade ) }
+    }
+
+    private fun <T> buscarElemento( taboa: String, onde: Map<String, Map<String, Any>>, accion: ( Map<String, Any> ) -> T ): T? {
 
         val resultados = db.seleccionar(
-            "actividades",
+            taboa,
             mapOf(
                 "columnas" to setOf( "*" ),
                 "onde" to onde
             )
         )
 
-        return resultados.firstOrNull()?.let { actividade -> crearActividade( actividade ) }
+        return resultados.firstOrNull()?.let( accion )
+
+    }
+
+
+
+    private fun <T> buscarElementos( taboa: String, onde: Map<String, Map<String, Any>> = mapOf(), accion: ( Map<String, Any> ) -> T ): List<T> {
+
+        val resultados = db.seleccionar(
+            taboa,
+            mapOf(
+                "columnas" to setOf( "*" ),
+                "onde" to onde
+            )
+        )
+
+        return resultados.map( accion )
+
+    }
+
+    fun collerGrupo( id: Long ): Grupo?{
+        val onde = mapOf( "id" to mapOf( "operador" to "=", "valor" to id ) )
+        return buscarElemento( "grupos", onde ) { fila -> crearGrupo( fila ) }
+    }
+
+    fun collerGrupos(): List<Grupo> {
+        return buscarElementos( "grupos" ) { grupo -> crearGrupo( grupo ) }
+    }
+
+    fun collerXogador( id: Long ): Xogador? {
+        val onde = mapOf( "id" to mapOf( "operador" to "=", "valor" to id ) )
+        return buscarElemento( "xogadores", onde ) { fila -> crearXogador( fila ) }
+    }
+
+    fun collerXogadores( grupo: Grupo ): List<Xogador> {
+        val onde = mapOf( "grupo_id" to mapOf( "operador" to "=", "valor" to grupo.id ) )
+        return buscarElementos( "xogadores", onde ) { xogador -> crearXogador( xogador ) }
+    }
+
+    fun collerClasificacion( actividade: Actividade, dificultade: Dificultade ): Clasificacion {
+
+        val onde = mapOf(
+            "p.actividade_id" to mapOf( "operador" to "=", "valor" to actividade.id ),
+            "p.dificultade" to mapOf( "operador" to "=", "valor" to dificultade.nome )
+        )
+
+        val resultados = db.seleccionar(
+            "puntuacions",
+            mapOf(
+                "columnas" to setOf( "x.nome", "p.puntos", "p.unix_rexistro" ),
+                "alias" to "p",
+                "joins" to listOf(
+                    mapOf(
+                        "tipo" to "INNER",
+                        "principal" to "xogador_id",
+                        "secundaria" to "x.id",
+                        "taboa-join" to "xogadores"
+                    )
+                ),
+                "onde" to onde,
+                "ordenar" to mapOf( "p.puntos" to "DESC", "p.unix_rexistro" to "ASC" )
+            )
+        )
+
+        val listaPuntuacions = resultados.associate { fila ->
+            ( fila[ "nome" ] as String ) to mapOf(
+                "puntos" to fila[ "puntos" ] as Long,
+                "unix_rexistro" to fila[ "unix_rexistro" ] as Long
+            )
+        }
+
+        return Clasificacion( actividade.titulo, dificultade, listaPuntuacions)
+
+    }
+
+    //Chamado ao eliminar unha actividade que se quita tras realizar unha actualización da táboa de actividades (as FK estarían desactivadas)
+    fun eliminarActividade( actividade: Actividade ): Int {
+
+        db.eliminar(
+            "puntuacions",
+            mapOf( "actividade_id" to mapOf( "operador" to "=", "valor" to actividade.id ) )
+        )
+
+        return db.eliminar(
+            "actividades",
+            mapOf( "id" to mapOf( "operador" to "=", "valor" to actividade.id ) )
+        )
+
+    }
+
+    suspend fun actualizarCatalogo( ambito: CoroutineScope ): Boolean {
+
+        val resposta = corrutinaResposta( ambito ) {
+
+            val problemas = mutableListOf<String>()
+            val idPeticion = UUID.randomUUID().toString()
+            val campos = mutableMapOf( "sesion" to collerSesionActual().value, "id_peticion" to idPeticion )
+
+            val actividadesServidor: DatosActividades = procesarPeticion( MetodoApi.GET, RutaApi.ACTUALIZAR, campos )
+
+            if ( !actividadesServidor.exito ) return@corrutinaResposta false
+
+            val ondeLocal = mapOf( "id" to mapOf( "operador" to ">=", "valor" to 0 ) )
+
+            val actividadesLocais = collerActividades( ondeLocal ).associateBy { it.id }
+            val actividadesObsoletas = actividadesLocais.toMutableMap()
+
+            actividadesServidor.lista.forEach { actServidor ->
+
+                try {
+
+                    val id = ( actServidor[ "id" ] as Number ).toLong()
+                    val actLocal = actividadesLocais[ id ]
+
+                    when {
+
+                        actLocal == null -> db.insertar( "actividades", actServidor )
+
+                        ( actServidor[ "dataModificado" ] as Number ).toLong() > actLocal.dataModificado -> {
+
+                            actividadesObsoletas.remove( id )
+                            db.actualizar( "actividades", actServidor, mapOf( "id" to mapOf( "operador" to "=", "valor" to id ) ) )
+
+                        }
+
+                        else -> actividadesObsoletas.remove( id )
+
+                    }
+
+                } catch ( e: ClassCastException ) {
+                    val mensaxe = "Actividade con formato inesperado do servidor: $actServidor"
+                    Log.wtf( "ActualizarCatalogo", mensaxe, e )
+                    problemas.add( mensaxe )
+                }
+
+            }
+
+            if ( problemas.isNotEmpty() ) {
+                campos[ "erro" ] = problemas.toString()
+                procesarPeticion( MetodoApi.POST, RutaApi.REPORTARERRO, campos ) as RespostaXenerica
+            }
+
+            actividadesObsoletas.values.forEach { actividade -> eliminarActividade( actividade ) }
+
+            return@corrutinaResposta true
+
+        }.await()
+
+        return resposta
+
+    }
+
+    fun insertarGrupo( nome: String ): Long {
+        return insertar( "grupos", mapOf( "nome" to nome ) )
+    }
+
+    fun actualizarGrupo( grupo: Grupo, campos: Map<String, Any> ): Int {
+        return actualizar( "grupos", campos, mapOf( "id" to mapOf( "operador" to "=", "valor" to grupo.id ) ) )
+    }
+
+    fun eliminarGrupo( grupo: Grupo ): Int {
+        return eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "=", "valor" to grupo.id ) ) )
+    }
+
+    fun insertarXogador( nome: String, grupo: Grupo ): Long {
+        return insertar( "xogadores", mapOf( "nome" to nome, "grupo_id" to grupo.id ) )
+    }
+
+    fun actualizarXogador( xogador: Xogador, campos: Map<String, Any> ): Int {
+        return actualizar( "xogadores", campos, mapOf( "id" to mapOf( "operador" to "=", "valor" to xogador.id ) ) )
+    }
+
+    fun eliminarXogador( xogador: Xogador ): Int {
+        return eliminar( "xogadores", mapOf( "id" to mapOf( "operador" to "=", "valor" to xogador.id ) ) )
+    }
+
+    fun insertarPuntuacion( actividade: Actividade, dificultade: Dificultade, xogador: Xogador, puntos: Long ): Long {
+
+        val onde = mapOf( "actividade_id" to actividade.id, "dificultade" to dificultade.nome,
+            "xogador_id" to xogador.id, "puntos" to puntos, "unix_rexistro" to Instant.now().epochSecond
+        )
+
+        return insertar( "puntuacions", onde )
+
+    }
+
+    //Só se podería actualizar unha puntuación se a nova é superior
+    fun actualizarPuntuacion( actividade: Actividade, dificultade: Dificultade, xogador: Xogador, puntos: Long ): Int {
+
+        val onde = mapOf(
+            "actividade_id" to mapOf( "operador" to "=", "valor" to actividade.id ),
+            "dificultade" to mapOf( "operador" to "=", "valor" to dificultade.nome ),
+            "xogador_id" to mapOf( "operador" to "=", "valor" to xogador.id ),
+            "puntos" to mapOf( "operador" to "<", "valor" to puntos )
+        )
+
+        return actualizar(
+            "puntuacions",
+            mapOf( "puntos" to puntos, "unix_rexistro" to Instant.now().epochSecond ),
+            onde
+        )
+
+    }
+
+    fun eliminarPuntuacion( actividade: Actividade, dificultade: Dificultade, xogador: Xogador ): Int {
+
+        val onde = mapOf(
+            "actividade_id" to mapOf( "operador" to "=", "valor" to actividade.id ),
+            "dificultade" to mapOf( "operador" to "=", "valor" to dificultade.nome ),
+            "xogador_id" to mapOf( "operador" to "=", "valor" to xogador.id )
+        )
+
+        return eliminar( "puntuacions", onde )
 
     }
 
@@ -96,20 +332,25 @@ object DB {
 
         require( podeCrear( usuarioActual ) ) { "Non se poden listar as actividades se non pode crealas" }
 
-        val datos: MutableMap<String, Any> = mutableMapOf( "columnas" to setOf( "*" ) )
+        val onde: MutableMap<String, Map<String, Any>> = mutableMapOf()
 
         if ( !podeEditarOutras( usuarioActual ) ) {
-            datos[ "onde" ] = mapOf( "id_autoria" to mapOf( "operador" to "=", "valor" to usuarioActual.id ) )
+            onde[ "id_autoria" ] = mapOf( "operador" to "=", "valor" to usuarioActual.id )
         }
 
-        val resultados = db.seleccionar( "actividades", datos )
-        val saida = mutableListOf<Actividade>()
-
-        resultados.forEach { actividade -> saida.add( crearActividade( actividade ) ) }
-
-        return saida
+        return buscarElementos( "actividades", onde ) { actividade -> crearActividade( actividade ) }
 
     }
+
+    private fun crearGrupo( datos: Map<String, Any> ): Grupo = Grupo(
+        id = datos[ "id" ] as Long,
+        nome = datos[ "nome" ] as String,
+    )
+
+    private fun crearXogador( datos: Map<String, Any> ): Xogador = Xogador(
+        id = datos[ "id" ] as Long,
+        nome = datos[ "nome" ] as String,
+    )
 
     private fun crearActividade( datos: Map<String, Any> ): Actividade = Actividade(
         id = datos[ "id" ] as Long,
@@ -136,7 +377,8 @@ object DB {
         descricion = datos[ "descricion" ] as String
     )
 
-    fun insertar( taboa: String, datos: Map<String, String> ): Long {
+
+    fun insertar( taboa: String, datos: Map<String, Any> ): Long {
 
         try {
             return db.insertar( taboa, datos )
@@ -201,7 +443,7 @@ object DB {
 
 private class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, null, DB_VERSION ) {
 
-    private val taboasPermitidas = setOf( "actividades" )
+    private val taboasPermitidas = setOf( "actividades", "grupos", "xogadores", "puntuacions" )
 
     // Estrutura
     companion object {
@@ -215,6 +457,11 @@ private class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, n
 
     override fun onUpgrade( db: SQLiteDatabase, oldVersion: Int, newVersion: Int ) {
         EstruturaDB().actualizar( db, oldVersion, newVersion )
+    }
+
+    override fun onConfigure( db: SQLiteDatabase ) {
+        super.onConfigure( db )
+        db.setForeignKeyConstraintsEnabled( true )
     }
 
     private fun verificarTaboa( taboa: String, contexto: String = "escritura" ) {

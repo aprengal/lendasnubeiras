@@ -1,6 +1,8 @@
 package com.aprengal.lendasnubeiras.data.actividades
 
+import com.aprengal.lendasnubeiras.data.actividades.dixitais.Dificultade
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
+import java.time.Instant
 
 data class Actividade(
     val id: Long,
@@ -26,3 +28,8 @@ data class ActividadeBuscada(
     val idioma: Idioma,
     val estado: Estado
 )
+
+data class Grupo( val id: Long, val nome: String )
+data class Xogador( val id: Long, val nome: String )
+
+data class Clasificacion( val tituloActividade: String, val dificultade: Dificultade, val listaPuntuacions: Map<String, Map<String, Long>> )

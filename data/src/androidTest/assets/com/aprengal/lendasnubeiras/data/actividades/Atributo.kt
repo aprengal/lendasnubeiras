@@ -1,8 +1,5 @@
 package com.aprengal.lendasnubeiras.data.actividades
 
-import com.aprengal.lendasnubeiras.data.actividades.Estado.BORRADOR_LOCAL
-import com.aprengal.lendasnubeiras.data.actividades.Estado.entries
-
 interface Atributo {
     val clave: String
 }

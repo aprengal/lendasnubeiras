@@ -18,24 +18,26 @@ import com.aprengal.lendasnubeiras.data.configuracion.corrutinaResposta
 import com.aprengal.lendasnubeiras.data.usuarios.Permisos.podePecharSesion
 import com.aprengal.lendasnubeiras.data.usuarios.Rol.Companion.buscarRol
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.UUID
 
 object SesionActual {
 
-    //private var usuario by mutableStateOf( Usuario( 0L, "", Rol.NADA ) )
     private var usuario = Usuario( 0L, "", Rol.NADA )
 
-    private val _idSesion = MutableStateFlow("")
-
-    val idSesion = _idSesion.asStateFlow()
+    private val _idSesion = MutableStateFlow( "" )
 
     val sesionAnonima: Boolean
         get() = collerOpcion( Opcion.SesionAnonima )
 
     fun collerUsuarioActual(): Usuario {
-        if ( _idSesion.value.isBlank() ) validarSesion()
         return usuario
+    }
+
+    fun collerSesionActual() : StateFlow<String> {
+        if ( _idSesion.value.isBlank() ) validarSesion()
+        return _idSesion.asStateFlow()
     }
 
     private fun cambiarSesion( id: Long = 0L, correo: String = "", rol: Rol = Rol.NADA ) {

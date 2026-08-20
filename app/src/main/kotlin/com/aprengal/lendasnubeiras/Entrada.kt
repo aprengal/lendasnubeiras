@@ -17,11 +17,10 @@ import com.aprengal.lendasnubeiras.data.configuracion.api.Conexion
 import com.aprengal.lendasnubeiras.data.configuracion.Axustes
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
 import com.aprengal.lendasnubeiras.data.localizacion.Localizacion
+import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.collerSesionActual
 import com.aprengal.lendasnubeiras.ui.pantallas.PantallaBase
 import com.aprengal.lendasnubeiras.ui.tema.Tema
 import com.aprengal.lendasnubeiras.ui.tema.TemaNubeiro
-import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.collerUsuarioActual
-import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.idSesion
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -34,6 +33,7 @@ class Entrada : AppCompatActivity() {
     }
 
     private lateinit var idioma: StateFlow<Idioma>
+    private lateinit var sesion: StateFlow<String>
 
     private fun arrancarConfiguracion( contexto: Context ) {
 
@@ -54,7 +54,7 @@ class Entrada : AppCompatActivity() {
         super.onCreate( savedInstanceState )
 
         lifecycleScope.launch {
-            collerUsuarioActual()
+            sesion = collerSesionActual()
         }
 
         setContent {
@@ -64,10 +64,10 @@ class Entrada : AppCompatActivity() {
                 @Suppress( "DEPRECATION" )
                 window.navigationBarColor = MaterialTheme.colorScheme.surfaceContainer.toArgb()
 
-                val idSesion by idSesion.collectAsState()
+                val sesion by sesion.collectAsState()
                 val idiomaActual by idioma.collectAsState()
 
-                key( idSesion ) {
+                key( sesion ) {
                     PantallaBase( idiomaActual )
                 }
 

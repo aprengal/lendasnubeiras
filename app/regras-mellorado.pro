@@ -7,6 +7,7 @@
 }
 
 # Reglas para clases movidas al módulo data (evitar warnings de R8 al minificar)
+-dontwarn com.aprengal.lendasnubeiras.data.actividades.dixitais.ActividadeDados
 -dontwarn com.aprengal.lendasnubeiras.data.Variante$Companion
 -dontwarn com.aprengal.lendasnubeiras.data.Variante
 -dontwarn com.aprengal.lendasnubeiras.data.configuracion.Axustes

@@ -87,9 +87,48 @@ private fun hashElemento( nomeFuncion: String, identificador: String ): String {
 
 }
 
-fun revisarHashElemento(nome: String, hashEsperado: String, identificador: String = "fun") {
+fun datosCompletos( overrides: Map<String, String> = emptyMap() ): Map<String, String> {
+
+    val base = mapOf(
+        "id" to System.currentTimeMillis().toString(),
+        "titulo" to "Actividade de proba",
+        "id_autoria" to "1",
+        "id_categoria" to "nada",
+        "id_destinatario" to "xeral",
+        "id_idioma" to "gl_ES",
+        "duracion" to "30",
+        "descricion" to "Descrición de proba abondo longa",
+        "obxectivo" to "Obxectivo de proba abondo longo para pasar o check",
+        "materiais" to "Materiais de proba abondo longos para pasar o check",
+        "data_modificado" to System.currentTimeMillis().toString()
+    )
+
+    return base + overrides
+
+}
+
+fun datosCompletosAny( overrides: Map<String, Any> = emptyMap() ): Map<String, Any> {
+
+    val base = mapOf(
+        "id" to System.currentTimeMillis(),
+        "titulo" to "Actividade de proba",
+        "id_autoria" to 1L,
+        "id_categoria" to "nada",
+        "id_destinatario" to "xeral",
+        "id_idioma" to "gl_ES",
+        "duracion" to 30,
+        "descricion" to "Descrición de proba abondo longa",
+        "obxectivo" to "Obxectivo de proba abondo longo para pasar o check",
+        "materiais" to "Materiais de proba abondo longos para pasar o check",
+        "data_modificado" to System.currentTimeMillis()
+    )
+    return base + overrides
+
+}
+
+fun revisarHashElemento( nome: String, hashEsperado: String, identificador: String = "fun" ) {
 
     val hashActual = hashElemento( nome, identificador )
-    assertEquals( "$nome cambiou no código real: revisa e actualiza a copia do test. Esperábase: $hashActual", hashEsperado, hashActual )
+    assertEquals( "$nome cambiou no código real: revisa e actualiza a copia do test. Esperábase: $hashEsperado", hashEsperado, hashActual )
 
 }

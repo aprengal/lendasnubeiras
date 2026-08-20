@@ -41,7 +41,8 @@ object Conexion {
 
         val saida = when( rutaApi ) {
             RutaApi.VALIDARSESION -> SesionUsuario( datos )
-            RutaApi.REXISTRO, RutaApi.INICIOSESION -> RespostaXenerica( datos )
+            RutaApi.REXISTRO, RutaApi.INICIOSESION, RutaApi.REPORTARERRO -> RespostaXenerica( datos )
+            RutaApi.ACTUALIZAR -> DatosActividades( datos )
         }
 
         @Suppress( "UNCHECKED_CAST" )

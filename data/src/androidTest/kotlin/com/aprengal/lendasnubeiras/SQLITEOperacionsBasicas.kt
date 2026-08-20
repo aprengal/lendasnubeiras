@@ -2,8 +2,11 @@ package com.aprengal.lendasnubeiras
 
 import androidx.test.platform.app.InstrumentationRegistry
 import com.aprengal.lendasnubeiras.data.actividades.Categoria
+import com.aprengal.lendasnubeiras.data.actividades.Grupo
+import com.aprengal.lendasnubeiras.data.actividades.dixitais.Dificultade
 import com.aprengal.lendasnubeiras.data.configuracion.db.DB
 import com.aprengal.lendasnubeiras.data.configuracion.db.DB.collerActividade
+import com.aprengal.lendasnubeiras.data.configuracion.db.DB.collerClasificacion
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
 import com.aprengal.lendasnubeiras.data.usuarios.Permisos.podeCrear
 import com.aprengal.lendasnubeiras.data.usuarios.Permisos.podeEditarOutras
@@ -12,14 +15,17 @@ import com.aprengal.lendasnubeiras.data.usuarios.Usuario
 
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
+import java.time.Instant
 
-class SQLITETest {
+class SQLITEOperacionsBasicas {
 
     companion object {
 
@@ -50,45 +56,6 @@ class SQLITETest {
     fun limparDespois() {
         val ondeLimpeza = mapOf( "estado" to mapOf( "operador" to "IN", "valores" to listOf( -3, -2, -1, 3 ) ) )
         db.eliminar( "actividades", ondeLimpeza )
-    }
-
-    private fun datosCompletos( overrides: Map<String, String> = emptyMap() ): Map<String, String> {
-
-        val base = mapOf(
-            "id" to System.currentTimeMillis().toString(),
-            "titulo" to "Actividade de proba",
-            "id_autoria" to "1",
-            "id_categoria" to "nada",
-            "id_destinatario" to "xeral",
-            "id_idioma" to "gl_ES",
-            "duracion" to "30",
-            "descricion" to "Descrición de proba abondo longa",
-            "obxectivo" to "Obxectivo de proba abondo longo para pasar o check",
-            "materiais" to "Materiais de proba abondo longos para pasar o check",
-            "data_modificado" to System.currentTimeMillis().toString()
-        )
-
-        return base + overrides
-
-    }
-
-    private fun datosCompletosAny( overrides: Map<String, Any> = emptyMap() ): Map<String, Any> {
-
-        val base = mapOf(
-            "id" to System.currentTimeMillis(),
-            "titulo" to "Actividade de proba",
-            "id_autoria" to 1L,
-            "id_categoria" to "nada",
-            "id_destinatario" to "xeral",
-            "id_idioma" to "gl_ES",
-            "duracion" to 30,
-            "descricion" to "Descrición de proba abondo longa",
-            "obxectivo" to "Obxectivo de proba abondo longo para pasar o check",
-            "materiais" to "Materiais de proba abondo longos para pasar o check",
-            "data_modificado" to System.currentTimeMillis()
-        )
-        return base + overrides
-
     }
 
     @Test
@@ -180,8 +147,8 @@ class SQLITETest {
     }
 
     @Test
-    fun idNegativaRexeitada() {
-        assertEquals( -1, db.insertar( "actividades", datosCompletos( mapOf( "id" to "-1" ) ) ) )
+    fun idNegativaAceptada() {
+        assertNotEquals( -1, db.insertar( "actividades", datosCompletos( mapOf( "id" to "-200" ) ) ) )
     }
 
     //Non se pode facer o test de comprobar que non se admiten valores nulos porque xa non se admiten estes valores
@@ -201,12 +168,18 @@ class SQLITETest {
     @Test
     fun tituloIdiomaDuplicadoRexeitado() {
 
-        val datos1 = datosCompletos( mapOf( "id" to "501", "titulo" to "Repetido", "id_idioma" to "gl" ) )
-        db.insertar( "actividades", datos1 )
+        val datos1 = datosCompletos( mapOf( "id" to "501", "titulo" to "Repetido", "id_idioma" to Idioma.GALEGO.codigoRexion ) )
+        assertEquals( 501, db.insertar( "actividades", datos1 ) )
 
-        val datos2 = datosCompletos( mapOf( "id" to "502", "titulo" to "Repetido", "id_idioma" to "gl" ) )
+        val datos2 = datosCompletos( mapOf( "id" to "502", "titulo" to "Repetido", "id_idioma" to Idioma.GALEGO.codigoRexion ) )
         assertEquals( -1, db.insertar( "actividades", datos2 ) )
 
+    }
+
+    @Test
+    fun idiomaMinusculasRexeitado() {
+        val datos1 = datosCompletos( mapOf( "id" to "502", "titulo" to "Repetido", "id_idioma" to Idioma.GALEGO.codigoRexion.lowercase() ) )
+        assertEquals( -1, db.insertar( "actividades", datos1 ) )
     }
 
     @Test
@@ -406,7 +379,7 @@ class SQLITETest {
 
         db.insertar( "actividades", datos )
 
-        val resultados = db.buscarActividadesBuscables( "percusión", "data_modificado" )
+        val resultados = db.collerActividadesBuscables( "percusión", "data_modificado" )
 
         assertEquals( 2, resultados.size )
         assertTrue( resultados.any { it.titulo == "Obradoiro de percusión" } )
@@ -427,7 +400,7 @@ class SQLITETest {
 
         db.insertar( "actividades", datos )
 
-        val resultados = db.buscarActividadesBuscables( "percusión", "data_modificado", filtros = mapOf( "id_categoria" to Categoria.INTERIOR ) )
+        val resultados = db.collerActividadesBuscables( "percusión", "data_modificado", filtros = mapOf( "id_categoria" to Categoria.INTERIOR ) )
 
         assertEquals( 1, resultados.size )
         assertEquals( "Percusión corporal", resultados[ 0 ].titulo )
@@ -467,7 +440,7 @@ class SQLITETest {
 
         revisarHashElemento(
             "listarActividadesEditables",
-            "dbf53731330bafa5a77a4e29f277953894cf22f9039638bcc2dd44f4b24a8583"
+            "aa387263eb772a5ffee39f7151ac74f0d62c6be3d28ff7ef57a45ce8a187dc5a"
         )
 
         val datos = listOf(

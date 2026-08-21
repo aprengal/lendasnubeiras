@@ -24,9 +24,9 @@ import com.aprengal.lendasnubeiras.data.configuracion.api.MetodoApi
 import com.aprengal.lendasnubeiras.data.configuracion.api.RespostaXenerica
 import com.aprengal.lendasnubeiras.data.configuracion.api.RutaApi
 import com.aprengal.lendasnubeiras.data.configuracion.corrutinaResposta
-import com.aprengal.lendasnubeiras.data.usuarios.Permisos.podeCrear
-import com.aprengal.lendasnubeiras.data.usuarios.Permisos.podeEditarOutras
-import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.collerUsuarioActual
+import com.aprengal.lendasnubeiras.data.usuarios.PodeCrear
+import com.aprengal.lendasnubeiras.data.usuarios.PodeEditarOutras
+import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma.Companion.escollerIdioma
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.collerSesionActual
@@ -328,13 +328,13 @@ object DB {
 
     fun listarActividadesEditables(): List<Actividade> {
 
-        val usuarioActual = collerUsuarioActual()
+        val usuarioActual = usuarioActual()
 
-        require( podeCrear( usuarioActual ) ) { "Non se poden listar as actividades se non pode crealas" }
+        require( PodeCrear( usuarioActual ) ) { "Non se poden listar as actividades se non pode crealas" }
 
         val onde: MutableMap<String, Map<String, Any>> = mutableMapOf()
 
-        if ( !podeEditarOutras( usuarioActual ) ) {
+        if ( !PodeEditarOutras( usuarioActual ) ) {
             onde[ "id_autoria" ] = mapOf( "operador" to "=", "valor" to usuarioActual.id )
         }
 

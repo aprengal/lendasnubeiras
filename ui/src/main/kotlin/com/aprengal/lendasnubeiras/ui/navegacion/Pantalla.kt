@@ -1,56 +1,49 @@
 package com.aprengal.lendasnubeiras.ui.navegacion
 
-import com.aprengal.lendasnubeiras.data.usuarios.Permisos
-import com.aprengal.lendasnubeiras.data.usuarios.Usuario
+import com.aprengal.lendasnubeiras.data.usuarios.Permiso
+import com.aprengal.lendasnubeiras.data.usuarios.PodeAdministrar
+import com.aprengal.lendasnubeiras.data.usuarios.PodeCrear
+import com.aprengal.lendasnubeiras.data.usuarios.PodeEditar
+import com.aprengal.lendasnubeiras.data.usuarios.PodeIniciarSesion
+import com.aprengal.lendasnubeiras.data.usuarios.PodeLer
+import com.aprengal.lendasnubeiras.data.usuarios.PodeRexistrarse
 
-sealed class Pantalla( val tipo: TIPO, val enlaces: Boolean, val permiso: ( Usuario ) -> Boolean = { true } ) {
+sealed class Pantalla( val ruta: String, val tipo: TIPO, val enlaces: Boolean, val permiso: Permiso ) {
 
     enum class TIPO { SCAFFOLD, SOSUPERIOR, SEN_MENUS }
 
-    open val ruta: String = this::class.simpleName!!.lowercase()
-
     //Autenticación
-    object Apertura: Pantalla( TIPO.SEN_MENUS, false, Permisos::podeIniciarSesion )
-    object Rexistro: Pantalla( TIPO.SEN_MENUS, false, Permisos::podeIniciarSesion )
-    object IniciarSesion: Pantalla( TIPO.SEN_MENUS, false, Permisos::podeIniciarSesion )
+    object Apertura: Pantalla( "apertura", TIPO.SEN_MENUS, false, PodeIniciarSesion )
+    object IniciarSesion: Pantalla( "iniciar-sesion", TIPO.SEN_MENUS, false, PodeIniciarSesion )
+    object Rexistro: Pantalla( "rexistro", TIPO.SEN_MENUS, false, PodeRexistrarse )
 
     //Lectura
-    object Inicio: Pantalla( TIPO.SCAFFOLD, false, Permisos::podeLer )
-    object Axustes: Pantalla( TIPO.SOSUPERIOR, true, Permisos::podeLer )
-    object Actividades: Pantalla( TIPO.SOSUPERIOR, true, Permisos::podeLer )
+    object Inicio: Pantalla( "inicio", TIPO.SCAFFOLD, false, PodeLer )
+    object Axustes: Pantalla( "axustes", TIPO.SOSUPERIOR, true, PodeLer )
+    object Actividades: Pantalla( "actividades", TIPO.SOSUPERIOR, true, PodeLer )
+    object ActividadeDetalle: Pantalla( "actividade-detalle/{id}", TIPO.SOSUPERIOR, true, PodeLer )
 
-    object ActividadeDetalle: Pantalla( TIPO.SOSUPERIOR, true, Permisos::podeLer ) {
-        override val ruta: String = "${super.ruta}/{id}"
-    }
+    object Buscar : Pantalla( "buscar/{termo}", TIPO.SCAFFOLD, true, PodeLer )
 
-    /*object Detalle : Pantalla( TIPO.SCAFFOLD, true ) {
-        override val ruta: String = "${super.ruta}/{id}/{test}"
-    }*/
-
-    object Buscar : Pantalla( TIPO.SCAFFOLD, true, Permisos::podeLer ) {
-        override val ruta: String = "${super.ruta}/{termo}"
-    }
-
-    //object Mapa: Pantalla( TIPO.SCAFFOLD, true )
-    object Idioma: Pantalla( TIPO.SCAFFOLD, true )
-    object Animacions: Pantalla( TIPO.SCAFFOLD, true )
+    object Idioma: Pantalla( "idioma", TIPO.SCAFFOLD, true, PodeLer )
+    object Animacions: Pantalla( "animacions", TIPO.SCAFFOLD, true, PodeLer )
 
     //Creación
-    object ListarActividades: Pantalla( TIPO.SOSUPERIOR, false, Permisos::podeCrear )
-    object CrearActividade: Pantalla( TIPO.SOSUPERIOR, false, Permisos::podeCrear )
-    object ModificarActividade: Pantalla( TIPO.SOSUPERIOR, false, Permisos::podeEditar )
+    object ListarActividades: Pantalla( "listar-actividades", TIPO.SOSUPERIOR, false, PodeCrear )
+    object CrearActividade: Pantalla( "crear-actividade", TIPO.SOSUPERIOR, false, PodeCrear )
+    object ModificarActividade: Pantalla( "modificar-actividade", TIPO.SOSUPERIOR, false, PodeEditar )
 
     //Administración
-    object Administrar: Pantalla( TIPO.SOSUPERIOR, false, Permisos::podeAdministrar )
+    object Administrar: Pantalla( "administrar", TIPO.SOSUPERIOR, false, PodeAdministrar )
 
     fun crearRuta( vararg valores: Any ): String {
 
         var rutaModificable = ruta
 
         val aperturas = rutaModificable.count{ c -> c == '{' }
-        val cierres = rutaModificable.count { c -> c == '}' }
+        val peches = rutaModificable.count { c -> c == '}' }
 
-        check( aperturas == cierres ) { "Ruta mal formada: $ruta" }
+        check( aperturas == peches ) { "Ruta mal formada: $ruta" }
         check( valores.size == aperturas ) { "Número incorrecto de argumentos para a ruta: $ruta (${ valores.contentToString() })" }
 
         for ( valor in valores ) {

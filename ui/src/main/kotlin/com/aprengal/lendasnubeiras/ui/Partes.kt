@@ -17,7 +17,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -56,7 +55,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.aprengal.lendasnubeiras.data.localizacion.Localizacion.l10n
 import com.aprengal.lendasnubeiras.data.localizacion.Localizacion.l10nPlural
 import com.aprengal.lendasnubeiras.ui.reutilizables.Espazador
 

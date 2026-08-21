@@ -68,8 +68,8 @@ import com.aprengal.lendasnubeiras.ui.reutilizables.Logo
 import com.aprengal.lendasnubeiras.ui.reutilizables.comprobarPermisos
 import com.aprengal.lendasnubeiras.ui.tema.MirarAnimacions
 import com.aprengal.lendasnubeiras.ui.tema.ProbaActividade
-import com.aprengal.lendasnubeiras.data.usuarios.Permisos.podeCrear
-import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.collerUsuarioActual
+import com.aprengal.lendasnubeiras.data.usuarios.PodeCrear
+import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
 import com.aprengal.lendasnubeiras.ui.R
 import com.aprengal.lendasnubeiras.ui.pantallas.lector.PantallaActividade
 import com.aprengal.lendasnubeiras.ui.pantallas.lector.PantallaActividadeDetalle
@@ -93,7 +93,7 @@ fun PantallaBase( idioma: Idioma ) {
     val aviso = remember { SnackbarHostState() }
     val amosarSuperior = pantallaActual.tipo != Pantalla.TIPO.SEN_MENUS
     val amosarInferior = pantallaActual.tipo == Pantalla.TIPO.SCAFFOLD
-    val amosarAccion = podeCrear( collerUsuarioActual() ) && amosarInferior
+    val amosarAccion = PodeCrear( usuarioActual() ) && amosarInferior
 
     LaunchedEffect( idioma ) {
         aviso.currentSnackbarData?.dismiss()

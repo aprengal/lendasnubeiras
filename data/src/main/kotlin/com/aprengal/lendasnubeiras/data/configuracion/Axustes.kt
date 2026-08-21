@@ -9,19 +9,16 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.aprengal.lendasnubeiras.data.Variante
 import kotlinx.coroutines.flow.first
 import okio.IOException
 
-sealed class Opcion<T : Any>( val predeterminado: T ) {
+sealed class Opcion<T : Any>( val nome: String, val predeterminado: T ) {
 
-    val nome: String = this::class.simpleName!!.lowercase()
-
-    data object SesionUsuario: Opcion<String>( "" )
-    data object SesionAnonima: Opcion<Boolean>( false )
-    data object Tema: Opcion<String>( Variante.PREDETERMINADO.name )
-    data object Idioma: Opcion<String>( "" )
-    data object IdDispositivo: Opcion<String> ( "" )
+    data object SesionUsuario: Opcion<String>( "sesion-usuario", "" )
+    data object SesionAnonima: Opcion<Boolean>( "sesion-anonima",false )
+    data object Tema: Opcion<String>( "tema", "predeterminado" )
+    data object Idioma: Opcion<String>( "idioma", "" )
+    data object IdDispositivo: Opcion<String> ( "id-dispositivo", "" )
 
 }
 

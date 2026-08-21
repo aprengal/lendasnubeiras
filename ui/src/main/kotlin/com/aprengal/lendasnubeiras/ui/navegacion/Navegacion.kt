@@ -1,10 +1,10 @@
 package com.aprengal.lendasnubeiras.ui.navegacion
 
-import com.aprengal.lendasnubeiras.data.usuarios.Permisos.podeAdministrar
-import com.aprengal.lendasnubeiras.data.usuarios.Permisos.podeCrear
-import com.aprengal.lendasnubeiras.data.usuarios.Permisos.podeLer
-import com.aprengal.lendasnubeiras.data.usuarios.Permisos.podeRexistrarse
-import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.collerUsuarioActual
+import com.aprengal.lendasnubeiras.data.usuarios.PodeAdministrar
+import com.aprengal.lendasnubeiras.data.usuarios.PodeCrear
+import com.aprengal.lendasnubeiras.data.usuarios.PodeLer
+import com.aprengal.lendasnubeiras.data.usuarios.PodeRexistrarse
+import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
 
 object Navegacion {
 
@@ -50,13 +50,13 @@ object Navegacion {
 
     fun collerPantallas(): Pair<Pantalla, Set<Pantalla>> {
 
-        val usuario = collerUsuarioActual()
+        val usuario = usuarioActual()
 
         val lista: List<Pantalla> = when {
-            podeAdministrar( usuario ) -> pantallasAdmin
-            podeCrear( usuario ) -> pantallasCreacion
-            podeLer( usuario ) -> pantallasLectura
-            podeRexistrarse( usuario ) -> pantallasAutenticacion
+            PodeAdministrar( usuario ) -> pantallasAdmin
+            PodeCrear( usuario ) -> pantallasCreacion
+            PodeLer( usuario ) -> pantallasLectura
+            PodeRexistrarse( usuario ) -> pantallasAutenticacion
             else -> error( "Non se puido asignar a lista de pantallas para o rol ${ usuario.rol }" )
         }
 

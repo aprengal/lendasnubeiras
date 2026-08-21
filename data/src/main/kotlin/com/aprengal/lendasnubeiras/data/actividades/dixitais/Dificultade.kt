@@ -1,12 +1,10 @@
 package com.aprengal.lendasnubeiras.data.actividades.dixitais
 
-enum class Dificultade {
+enum class Dificultade( val nome: String ) {
 
-    FACIL,
-    MEDIA,
-    DIFICIL,
-    PESADELO;
-
-    val nome = name.lowercase()
+    FACIL( "facil" ),
+    MEDIA( "media" ),
+    DIFICIL( "dificil" ),
+    PESADELO( "pesadelo" );
 
 }

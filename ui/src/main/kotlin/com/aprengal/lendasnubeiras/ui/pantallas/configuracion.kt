@@ -1,15 +1,15 @@
 package com.aprengal.lendasnubeiras.ui.pantallas
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
-import com.aprengal.lendasnubeiras.data.Variante
+import com.aprengal.lendasnubeiras.ui.tema.Tema.Variante
 import com.aprengal.lendasnubeiras.data.localizacion.Localizacion.gardarIdioma
 import com.aprengal.lendasnubeiras.ui.tema.Tema
 import com.aprengal.lendasnubeiras.ui.tema.Tema.gardarTema
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
 import com.aprengal.lendasnubeiras.ui.reutilizables.BotonOpcion
 import com.aprengal.lendasnubeiras.ui.reutilizables.Espazador
-import com.aprengal.lendasnubeiras.data.usuarios.Permisos.podePecharSesion
-import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.collerUsuarioActual
+import com.aprengal.lendasnubeiras.data.usuarios.PodePecharSesion
+import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.pecharSesion
 import com.aprengal.lendasnubeiras.ui.reutilizables.LocalIdioma
 
@@ -43,7 +43,7 @@ fun PantallaAxustes() {
             accion = { novoTema -> gardarTema( novoTema ) }
         )
 
-        if ( podePecharSesion( collerUsuarioActual() ) ) {
+        if ( PodePecharSesion( usuarioActual() ) ) {
 
             Espazador()
 

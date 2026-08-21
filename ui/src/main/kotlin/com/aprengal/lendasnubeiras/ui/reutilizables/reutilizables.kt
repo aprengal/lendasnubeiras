@@ -40,7 +40,6 @@ import com.aprengal.lendasnubeiras.data.configuracion.haiLector
 import com.aprengal.lendasnubeiras.data.localizacion.Localizacion.l10n
 import com.aprengal.lendasnubeiras.data.localizacion.Localizacion.l10nPlural
 import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion.collerPantallas
-import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.collerUsuarioActual
 import com.aprengal.lendasnubeiras.ui.R
 import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -238,7 +237,7 @@ fun comprobarPermisos(): Boolean {
 
     val pantallaActual = LocalPantallaActual.current
 
-    if ( pantallaActual.permiso( collerUsuarioActual() ) ) return true
+    if ( pantallaActual.permiso() ) return true
 
     Log.wtf( "PERMISO", "Tratouse de realizar un acceso indebido" )
     val pantallaInicial = collerPantallas().first

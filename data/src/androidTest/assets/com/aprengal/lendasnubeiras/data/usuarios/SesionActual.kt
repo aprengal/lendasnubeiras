@@ -15,7 +15,6 @@ import com.aprengal.lendasnubeiras.data.configuracion.api.RutaApi
 import com.aprengal.lendasnubeiras.data.configuracion.api.SesionUsuario
 import com.aprengal.lendasnubeiras.data.configuracion.corrutina
 import com.aprengal.lendasnubeiras.data.configuracion.corrutinaResposta
-import com.aprengal.lendasnubeiras.data.usuarios.Permisos.podePecharSesion
 import com.aprengal.lendasnubeiras.data.usuarios.Rol.Companion.buscarRol
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,7 +30,7 @@ object SesionActual {
     val sesionAnonima: Boolean
         get() = collerOpcion( Opcion.SesionAnonima )
 
-    fun collerUsuarioActual(): Usuario {
+    fun usuarioActual(): Usuario {
         return usuario
     }
 
@@ -71,7 +70,7 @@ object SesionActual {
 
             var id = 1L
             var correo = ""
-            var rol = Rol.LECTOR
+            var rol = Rol.MONITOR
 
             val idDispositivo = collerOpcion( Opcion.IdDispositivo )
             val datos: SesionUsuario = procesarPeticion( MetodoApi.GET, RutaApi.VALIDARSESION, mapOf( "id" to idDispositivo ) )
@@ -121,7 +120,7 @@ object SesionActual {
 
     suspend fun pecharSesion(): Boolean {
 
-        require( podePecharSesion( usuario ) ) { "Só se pode pechar sesión se o usuario actual existe" }
+        require( PodePecharSesion( usuario ) ) { "Só se pode pechar sesión se o usuario actual existe" }
 
         val resposta = corrutinaResposta {
 

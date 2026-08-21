@@ -96,18 +96,6 @@ android {
         }
     }
 
-    sourceSets {
-        getByName( "androidTest" ) {
-            assets.directories.add(
-                layout.buildDirectory
-                    .dir( "generated/androidTest/assets" )
-                    .get()
-                    .asFile
-                    .absolutePath
-            )
-        }
-    }
-
 }
 
 dependencies {
@@ -135,5 +123,9 @@ dependencies {
     //módulos internos
     implementation( project( ":ui" ) )
     implementation( project( ":data" ) )
+
+    //Tests unitarios
+    testImplementation( libs.junit )
+    testImplementation( kotlin( "reflect" ) )
 
 }

@@ -2,20 +2,16 @@ package com.aprengal.lendasnubeiras
 
 import androidx.test.platform.app.InstrumentationRegistry
 import com.aprengal.lendasnubeiras.data.actividades.Categoria
-import com.aprengal.lendasnubeiras.data.actividades.Grupo
-import com.aprengal.lendasnubeiras.data.actividades.dixitais.Dificultade
 import com.aprengal.lendasnubeiras.data.configuracion.db.DB
 import com.aprengal.lendasnubeiras.data.configuracion.db.DB.collerActividade
-import com.aprengal.lendasnubeiras.data.configuracion.db.DB.collerClasificacion
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
-import com.aprengal.lendasnubeiras.data.usuarios.Permisos.podeCrear
-import com.aprengal.lendasnubeiras.data.usuarios.Permisos.podeEditarOutras
+import com.aprengal.lendasnubeiras.data.usuarios.PodeCrear
+import com.aprengal.lendasnubeiras.data.usuarios.PodeEditarOutras
 import com.aprengal.lendasnubeiras.data.usuarios.Rol
 import com.aprengal.lendasnubeiras.data.usuarios.Usuario
 
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
@@ -23,7 +19,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
-import java.time.Instant
 
 class SQLITEOperacionsBasicas {
 
@@ -418,11 +413,11 @@ class SQLITEOperacionsBasicas {
 
         val usuarioActual = collerUsuarioActualTest( id, rol )
 
-        require( podeCrear( usuarioActual ) ) { "Non se poden listar as actividades se non pode crealas" }
+        require( PodeCrear( usuarioActual ) ) { "Non se poden listar as actividades se non pode crealas" }
 
         val datos: MutableMap<String, Any> = mutableMapOf( "columnas" to setOf( "*" ) )
 
-        if ( !podeEditarOutras( usuarioActual ) ) {
+        if ( !PodeEditarOutras( usuarioActual ) ) {
             datos[ "onde" ] = mapOf( "id_autoria" to mapOf( "operador" to "=", "valor" to usuarioActual.id ) )
         }
 
@@ -440,7 +435,7 @@ class SQLITEOperacionsBasicas {
 
         revisarHashElemento(
             "listarActividadesEditables",
-            "aa387263eb772a5ffee39f7151ac74f0d62c6be3d28ff7ef57a45ce8a187dc5a"
+            "ccb1d69fe408ca633cf84197db42d14e8ca9d7b64e13770ebbb5b64ed97dc89a"
         )
 
         val datos = listOf(
@@ -457,7 +452,7 @@ class SQLITEOperacionsBasicas {
         // Pero neste caso o que se quere verificar é que cada rol ten os resultados esperados
         for( rol in Rol.entries ) {
 
-            if ( rol in setOf( Rol.NADA, Rol.LECTOR ) ) {
+            if ( rol in setOf( Rol.NADA, Rol.MONITOR ) ) {
 
                 assertThrows( IllegalArgumentException::class.java ) {
                     listarActividadesTest( 30L, rol )

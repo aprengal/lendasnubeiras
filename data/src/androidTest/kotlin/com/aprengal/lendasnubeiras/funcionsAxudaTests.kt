@@ -129,6 +129,6 @@ fun datosCompletosAny( overrides: Map<String, Any> = emptyMap() ): Map<String, A
 fun revisarHashElemento( nome: String, hashEsperado: String, identificador: String = "fun" ) {
 
     val hashActual = hashElemento( nome, identificador )
-    assertEquals( "$nome cambiou no código real: revisa e actualiza a copia do test. Esperábase: $hashEsperado", hashEsperado, hashActual )
+    assertEquals( "$nome cambiou no código real: revisa e actualiza a copia do test. Esperábase: $hashEsperado, pero atopouse $hashActual", hashEsperado, hashActual )
 
 }

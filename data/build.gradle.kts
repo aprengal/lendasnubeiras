@@ -106,5 +106,6 @@ dependencies {
     //Tests instrumentais
     androidTestImplementation( libs.androidx.runner )
     androidTestImplementation( libs.androidx.rules )
+    testImplementation( kotlin( "reflect" ) )
 
 }

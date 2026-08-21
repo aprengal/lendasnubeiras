@@ -18,7 +18,6 @@
 -dontwarn com.aprengal.lendasnubeiras.data.configuracion.db.DB
 -dontwarn com.aprengal.lendasnubeiras.data.localizacion.Idioma
 -dontwarn com.aprengal.lendasnubeiras.data.localizacion.Localizacion
--dontwarn com.aprengal.lendasnubeiras.data.usuarios.Permisos
 -dontwarn com.aprengal.lendasnubeiras.data.usuarios.Rol
 -dontwarn com.aprengal.lendasnubeiras.data.usuarios.SesionActual
 -dontwarn com.aprengal.lendasnubeiras.data.usuarios.Usuario

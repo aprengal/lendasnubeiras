@@ -10,16 +10,14 @@ data class Usuario(
 
 }
 
-enum class Rol {
+enum class Rol( val nome: String ) {
 
-    NADA,
-    MONITOR,
-    COLABORADOR, //vaise permitir a colaboración de persoas alleas a Cruz Vermella?
-    AUTOR,
-    EDITOR,
-    ADMIN;
-
-    private val nome = name.lowercase()
+    NADA( "nada" ),
+    MONITOR( "monitor" ),
+    COLABORADOR( "colaborador" ), //vaise permitir a colaboración de persoas alleas a Cruz Vermella?
+    AUTOR( "autor" ),
+    EDITOR( "editor" ),
+    ADMIN( "admin" );
 
     companion object {
 

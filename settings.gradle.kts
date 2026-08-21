@@ -1,5 +1,7 @@
 @file:Suppress( "UnstableApiUsage" )
 
+include( ":app" )
+
 pluginManagement {
     repositories {
         google {
@@ -29,4 +31,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Lendas Nubeiras"
-include(":app", ":ui", ":data" )
+include( ":ui", ":data" )

@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.aprengal.lendasnubeiras.data.configuracion.Axustes.collerOpcion
 import com.aprengal.lendasnubeiras.data.configuracion.Axustes.gardarOpcion
-import com.aprengal.lendasnubeiras.data.Variante
 import com.aprengal.lendasnubeiras.ui.tema.Tema.collerCoresTema
 import androidx.compose.material3.Typography
 import com.aprengal.lendasnubeiras.data.configuracion.Opcion
@@ -172,6 +171,19 @@ object Tema {
         outline = CorLogo
     )
 
+    enum class Variante( val nome: String ) {
+        CLARO( "claro" ),
+        ESCURO( "escuro" ),
+        PREDETERMINADO( "predeterminado" );
+
+        companion object {
+            fun buscar( clave: String ): Variante {
+                return entries.find { variante -> variante.nome == clave } ?: PREDETERMINADO
+            }
+        }
+
+    }
+
     // Valor inicial por defecto para que la app no pete al arrancar mientras lee el disco
     var temaActual by mutableStateOf( Variante.PREDETERMINADO )
         private set
@@ -191,7 +203,7 @@ object Tema {
     suspend fun gardarTema( novoTema: Variante ): Boolean {
 
         if ( temaActual == novoTema ) return true
-        if ( !gardarOpcion( Opcion.Tema, novoTema.name ) ) return false
+        if ( !gardarOpcion( Opcion.Tema, novoTema.nome ) ) return false
 
         temaActual = novoTema
         return true

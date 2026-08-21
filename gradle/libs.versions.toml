@@ -16,6 +16,7 @@ runner = "1.7.0"
 runtimeVersion = "1.12.0"
 
 foundation = "1.12.0"
+tracing = "1.2.0"
 uiText = "1.12.0"
 animation = "1.12.0"
 navigationCompose = "2.9.8"
@@ -27,6 +28,7 @@ androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", versi
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-rules = { module = "androidx.test:rules", version.ref = "rules" }
 androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
+androidx-tracing = { module = "androidx.tracing:tracing", version.ref = "tracing" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }

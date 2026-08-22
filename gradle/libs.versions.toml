@@ -2,6 +2,8 @@
 agp = "9.3.1"
 coreSplashscreen = "1.2.0"
 datastorePreferences = "1.2.1"
+icu4j = "78.3"
+json = "20260814"
 junit = "4.13.2"
 lifecycleRuntimeKtx = "2.11.0"
 activityCompose = "1.13.0"
@@ -29,6 +31,8 @@ androidx-datastore-preferences = { module = "androidx.datastore:datastore-prefer
 androidx-rules = { module = "androidx.test:rules", version.ref = "rules" }
 androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
 androidx-tracing = { module = "androidx.tracing:tracing", version.ref = "tracing" }
+icu4j = { module = "com.ibm.icu:icu4j", version.ref = "icu4j" }
+json = { module = "org.json:json", version.ref = "json" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }

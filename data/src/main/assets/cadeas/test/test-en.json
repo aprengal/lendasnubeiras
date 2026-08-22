@@ -1,29 +1,10 @@
 {
   "carla": "Carla's app DOES work",
   "natasha": "And karma gave it right back to her",
-  "aceptar": "Accept",
-  "cancelar": "Cancel",
-  "boton_cambio_idioma": "Change language",
-  "dialogo_cambio_idioma": "Select language",
-  "mensaxe_reiniciar_idioma": "The app will restart when you change the language",
-  "boton_cambio_tema": "Switch theme",
-  "dialogo_cambio_tema": "Select theme",
-  "tema_claro": "Light",
-  "tema_escuro": "Dark",
-  "tema_predeterminado": "System default",
-
-  "menu_inicio": "Home",
-  "menu_rexistro": "Register",
-  "menu_iniciarSesion": "Login",
-  "menu_perfil": "Profile",
-  "menu_idioma": "Dices",
-  "menu_animacions": "Animations",
 
   "mensaxes_novas": {
-    "s": "You have %d new message",
-    "pl": "You have %d new messages",
-    "0": "You have no new messages",
-    "100": "You have over a hundred new messages"
+    "one": "You have %d new message",
+    "other": "You have %d new messages"
   },
   "mensaxe_fallos": {
     "0": "You submitted your thesis on the aerodynamics of croquettes. Intergalactic honorary doctorate.",

@@ -1,5 +1,8 @@
 {
   "titulo_benvida": "Welcome",
-  "boton_iniciar_sesion": "Log in",
-  "boton_continuar_anonimo": "Continue as guest"
+  "titulo_acceso": "Login",
+  "titulo_rexistro": "Register",
+  "boton_acceso": "Log in",
+  "boton_anonimo": "Continue as guest",
+  "boton_rexistro": "Register"
 }

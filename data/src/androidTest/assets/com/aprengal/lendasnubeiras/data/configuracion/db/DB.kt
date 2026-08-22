@@ -249,7 +249,7 @@ object DB {
 
             if ( problemas.isNotEmpty() ) {
                 campos[ "erro" ] = problemas.toString()
-                procesarPeticion( MetodoApi.POST, RutaApi.REPORTARERRO, campos ) as RespostaXenerica
+                procesarPeticion( MetodoApi.POST, RutaApi.REPORTES, campos ) as RespostaXenerica
             }
 
             actividadesObsoletas.values.forEach { actividade -> eliminarActividade( actividade ) }

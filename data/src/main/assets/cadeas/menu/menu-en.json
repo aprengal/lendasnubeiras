@@ -1,1 +1,11 @@
-{}
+{
+
+  "menu_axustes": "Settings",
+  "menu_crear": "Crear",
+
+  "menu_inicio": "Home",
+  "menu_buscar": "Search",
+  "menu_actividades": "Actividades",
+  "menu_idioma": "Dices"
+
+}

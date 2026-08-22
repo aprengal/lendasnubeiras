@@ -20,19 +20,14 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.aprengal.lendasnubeiras.data.localizacion.Localizacion.l10n
+import com.aprengal.lendasnubeiras.data.localizacion.L10nSingular
 import com.aprengal.lendasnubeiras.ui.R
 
 
 //Por se hai un texto que apareza de golpe (mensaxes de erro en formularios)
 @Composable
-fun TextoAnunciable( clave: String, dominio: String, modifier: Modifier = Modifier ) {
-
-    Text(
-        text = l10n( clave, dominio ),
-        modifier = modifier.semantics { liveRegion = LiveRegionMode.Polite }
-    )
-
+fun TextoAnunciable( elemento: L10nSingular, modifier: Modifier = Modifier ) {
+    Text( text = elemento.texto(), modifier = modifier.semantics { liveRegion = LiveRegionMode.Polite } )
 }
 
 @Composable

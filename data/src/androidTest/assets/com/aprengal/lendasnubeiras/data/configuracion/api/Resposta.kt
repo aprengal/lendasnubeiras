@@ -24,16 +24,19 @@ class RespostaXenerica( datos: JSONObject ): RespostaApi( datos.optInt( "codigo"
 
 class DatosActividades( datos: JSONObject ): RespostaApi( datos.optInt( "codigo" ) ) {
 
-    val lista: List<Map<String, Any>>
+    val lista = collerActividades( datos )
 
-    init {
+    private fun collerActividades( datos: JSONObject ): List<Map<String, Any>> {
 
-        val actividades = datos.getJSONArray( "actividades" )
+        //TODO: se a lista está baleira ou non está especificada, habería que mandar un erro?
+        val actividades = datos.optJSONArray( "actividades" ) ?: return emptyList()
 
-        lista = ( 0 until actividades.length() ).map { i ->
+        val saida = ( 0 until actividades.length() ).map { i ->
             val obxecto = actividades.getJSONObject( i )
-            actividades.getJSONObject( i ).keys().asSequence().associateWith { clave -> obxecto.get( clave ) }
+            obxecto.keys().asSequence().associateWith { clave -> obxecto.get( clave ) }
         }
+
+        return saida
 
     }
 

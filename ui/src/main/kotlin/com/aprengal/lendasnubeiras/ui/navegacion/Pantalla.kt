@@ -14,14 +14,14 @@ sealed class Pantalla( val ruta: String, val tipo: TIPO, val enlaces: Boolean, v
 
     //Autenticación
     object Apertura: Pantalla( "apertura", TIPO.SEN_MENUS, false, PodeIniciarSesion )
-    object IniciarSesion: Pantalla( "iniciar-sesion", TIPO.SEN_MENUS, false, PodeIniciarSesion )
+    object IniciarSesion: Pantalla( "acceso", TIPO.SEN_MENUS, false, PodeIniciarSesion )
     object Rexistro: Pantalla( "rexistro", TIPO.SEN_MENUS, false, PodeRexistrarse )
 
     //Lectura
     object Inicio: Pantalla( "inicio", TIPO.SCAFFOLD, false, PodeLer )
     object Axustes: Pantalla( "axustes", TIPO.SOSUPERIOR, true, PodeLer )
     object Actividades: Pantalla( "actividades", TIPO.SOSUPERIOR, true, PodeLer )
-    object ActividadeDetalle: Pantalla( "actividade-detalle/{id}", TIPO.SOSUPERIOR, true, PodeLer )
+    object ActividadeDetalle: Pantalla( "actividade/detalle/{id}", TIPO.SOSUPERIOR, true, PodeLer )
 
     object Buscar : Pantalla( "buscar/{termo}", TIPO.SCAFFOLD, true, PodeLer )
 
@@ -29,9 +29,9 @@ sealed class Pantalla( val ruta: String, val tipo: TIPO, val enlaces: Boolean, v
     object Animacions: Pantalla( "animacions", TIPO.SCAFFOLD, true, PodeLer )
 
     //Creación
-    object ListarActividades: Pantalla( "listar-actividades", TIPO.SOSUPERIOR, false, PodeCrear )
-    object CrearActividade: Pantalla( "crear-actividade", TIPO.SOSUPERIOR, false, PodeCrear )
-    object ModificarActividade: Pantalla( "modificar-actividade", TIPO.SOSUPERIOR, false, PodeEditar )
+    object ListarActividades: Pantalla( "listar/actividades", TIPO.SOSUPERIOR, false, PodeCrear )
+    object CrearActividade: Pantalla( "crear/actividade", TIPO.SOSUPERIOR, false, PodeCrear )
+    object ModificarActividade: Pantalla( "modificar/actividade", TIPO.SOSUPERIOR, false, PodeEditar )
 
     //Administración
     object Administrar: Pantalla( "administrar", TIPO.SOSUPERIOR, false, PodeAdministrar )

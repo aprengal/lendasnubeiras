@@ -10,8 +10,6 @@
   "cambio_tema_claro": "Light",
   "cambio_tema_escuro": "Dark",
   "cambio_tema_predeterminado": "Default",
-  "peche_sesion_si": "Yes",
-  "peche_sesion_non": "No",
 
   "gardado_fallido_cambio_idioma": "Could not change the language",
   "gardado_fallido_cambio_tema": "Could not change the theme",

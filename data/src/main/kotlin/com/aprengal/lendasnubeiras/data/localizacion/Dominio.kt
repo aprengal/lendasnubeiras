@@ -1,25 +1,112 @@
 package com.aprengal.lendasnubeiras.data.localizacion
 
-// TODO: Hai que mirar se con R8 se cargan correctamente os dominios. Nese caso, habería que engadir os nomes á man
-sealed class Dominio {
-
-    open val clave: String = this::class.simpleName!!.lowercase()
-
-    object Autenticacion : Dominio()
-    object Base : Dominio()
-    object Menu : Dominio()
-    object Test : Dominio()
-
-    //Con ActividadeDetalle, só se podería obter a id porque é o unico campo inequívoco.
-    class Actividade( id: Long ) : Dominio() {
-        override val clave: String = "actividades/actividade-$id"
-    }
-
-}
-
 //Para tratar de descargar un dominio ao saír dun elemento composable
 /*DisposableEffect( clave ) {
     onDispose {
         descargarDominio( Dominio.Actividade( clave ) )
     }
 }*/
+
+sealed class Dominio( val nome: String ) {
+
+    object Base : Dominio( "base" )
+    object Autenticacion : Dominio( "autenticacion" )
+    object Menu : Dominio( "menu" )
+    object Test : Dominio( "test" )
+    object Opcions: Dominio( "opcions" )
+
+    //object Actividade : Dominio( "actividade" )
+
+    //object AxustesXogos: Dominio( "xogos/axustes" )
+    //object XogoDados: Dominio( "xogos/dados" )
+
+}
+
+private interface L10n {
+
+    val clave: String
+    val dominio: Dominio
+
+}
+
+enum class L10nSingular( override val clave: String, override val dominio: Dominio ): L10n {
+
+    // Base
+    NOME_APP( "nome_app", Dominio.Base ),
+    ACEPTAR( "aceptar", Dominio.Base ),
+    CANCELAR( "cancelar", Dominio.Base ),
+    SI( "si", Dominio.Base ),
+    NON( "non", Dominio.Base ),
+    REINTENTAR( "reintentar_accion", Dominio.Base ),
+
+    //Autenticacion
+    TITULO_BENVIDA( "titulo_benvida", Dominio.Autenticacion ),
+    TITULO_ACCESO( "titulo_acceso", Dominio.Autenticacion ),
+    TITULO_REXISTRO( "titulo_rexistro", Dominio.Autenticacion ),
+    BOTON_ACCESO( "boton_acceso", Dominio.Autenticacion ),
+    BOTON_REXISTRO( "boton_rexistro", Dominio.Autenticacion ),
+    BOTON_ANONIMO( "boton_anonimo", Dominio.Autenticacion ),
+
+    // Menu
+    MENU_AXUSTES( "menu_axustes", Dominio.Menu ),
+
+    MENU_CREAR( "menu_crear", Dominio.Menu ),
+
+    MENU_INICIO( "menu_inicio", Dominio.Menu ),
+    MENU_BUSCAR( "menu_buscar", Dominio.Menu ),
+    MENU_IDIOMA( "menu_idioma", Dominio.Menu ),
+    MENU_ACTIVIDADES( "menu_actividades", Dominio.Menu ),
+
+    //Opcions
+    DIALOGO_CAMBIO_IDIOMA( "dialogo_cambio_idioma", Dominio.Opcions ),
+    DIALOGO_CAMBIO_TEMA( "dialogo_cambio_tema", Dominio.Opcions ),
+    DIALOGO_PECHE_SESION( "dialogo_peche_sesion", Dominio.Opcions ),
+    BOTON_CAMBIO_IDIOMA( "boton_cambio_idioma", Dominio.Opcions ),
+    BOTON_CAMBIO_TEMA( "boton_cambio_tema", Dominio.Opcions ),
+    BOTON_PECHE_SESION( "boton_peche_sesion", Dominio.Opcions ),
+    CAMBIO_TEMA_CLARO( "cambio_tema_claro", Dominio.Opcions ),
+    CAMBIO_TEMA_ESCURO( "cambio_tema_escuro", Dominio.Opcions ),
+    CAMBIO_TEMA_PREDETERMINADO( "cambio_tema_predeterminado", Dominio.Opcions ),
+    PECHE_SESION_SI( "si", Dominio.Base ),
+    PECHE_SESION_NON( "non", Dominio.Base ),
+    GARDADO_FALLIDO_CAMBIO_IDIOMA( "gardado_fallido_cambio_idioma", Dominio.Opcions ),
+    GARDADO_FALLIDO_CAMBIO_TEMA( "gardado_fallido_cambio_tema", Dominio.Opcions ),
+    GARDADO_FALLIDO_PECHE_SESION( "gardado_fallido_peche_sesion", Dominio.Opcions ),
+
+    // Test
+    CARLA( "carla", Dominio.Test ),
+    NATASHA( "natasha", Dominio.Test );
+
+    // Actividade
+    //TITULO_ACTIVIDADE( "titulo", Dominio.Actividade ),
+    //DESCRIPCION_ACTIVIDADE( "descripcion" );
+
+    fun texto(): String = Localizacion.l10n( this )
+
+    companion object {
+
+        fun buscar( clave: String ): L10nSingular {
+            return entries.find { elemento -> elemento.clave == clave } ?: error( "Problema coa clave $clave" )
+        }
+
+    }
+
+}
+
+enum class L10nPlural( override val clave: String, override val dominio: Dominio ): L10n {
+
+    // Test
+    MENSAXES_NOVAS( "mensaxes_novas", Dominio.Test );
+
+    fun texto( num: Int ): String = Localizacion.l10nPlural( this, num )
+
+}
+
+enum class L10nVariante( override val clave: String, override val dominio: Dominio ): L10n {
+
+    // Test
+    MENSAXE_FALLOS( "mensaxe_fallos", Dominio.Test );
+
+    fun texto( num: Int ): String = Localizacion.l10nVariante( this, num )
+
+}

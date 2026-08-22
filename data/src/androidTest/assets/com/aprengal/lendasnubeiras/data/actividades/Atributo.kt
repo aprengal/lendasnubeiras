@@ -31,7 +31,6 @@ enum class Destinatario( override val clave: String ): Atributo {
     MAIORES( "maiores" ),
     MIXTO( "mixto" );
 
-
     companion object {
 
         fun escollerDestinatario( clave: String ): Destinatario {

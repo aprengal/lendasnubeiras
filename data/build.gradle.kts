@@ -1,3 +1,4 @@
+import com.android.build.gradle.internal.tasks.ProcessJavaResTask
 import java.util.Properties
 
 plugins {
@@ -14,16 +15,26 @@ val localProperties = Properties().apply {
 
 }
 
-val copiarArquivosMain = tasks.register<Sync>( "copiarArquivosTesteoAndroid" ) {
+val copiarArquivosAndroidTest = tasks.register<Sync>( "copiarArquivosTesteoAndroid" ) {
     description = "Shhh"
     from( "src/main/kotlin" )
     into( "src/androidTest/assets" )
 }
 
+val copiarTraducionsTest = tasks.register<Sync>( "copiarTraducionsTest" ) {
+    description = "Shhhh2"
+    from( "src/main/assets/cadeas" )
+    into( "src/test/resources/cadeas" )
+}
+
 tasks.configureEach {
     if ( name.contains( "AndroidTest" ) ) {
-        dependsOn( copiarArquivosMain )
+        dependsOn( copiarArquivosAndroidTest )
     }
+}
+
+tasks.withType<ProcessJavaResTask>().configureEach {
+    dependsOn( copiarTraducionsTest )
 }
 
 android {
@@ -102,10 +113,12 @@ dependencies {
 
     //Tests unitarios
     testImplementation( libs.junit )
+    testImplementation( kotlin( "reflect" ) )
+    testImplementation( libs.json )
+    testImplementation( libs.icu4j )
 
     //Tests instrumentais
     androidTestImplementation( libs.androidx.runner )
     androidTestImplementation( libs.androidx.rules )
-    testImplementation( kotlin( "reflect" ) )
 
 }

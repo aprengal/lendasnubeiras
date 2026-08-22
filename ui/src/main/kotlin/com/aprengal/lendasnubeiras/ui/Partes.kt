@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.ui.tema
+package com.aprengal.lendasnubeiras.ui
 
 
 import androidx.compose.animation.AnimatedVisibility
@@ -55,7 +55,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.aprengal.lendasnubeiras.data.localizacion.Localizacion.l10nPlural
+import com.aprengal.lendasnubeiras.data.localizacion.L10nVariante
 import com.aprengal.lendasnubeiras.ui.reutilizables.Espazador
 
 // Colores que quedaron fuera del ColorScheme (comentados en tu archivo
@@ -342,14 +342,9 @@ fun ProbaActividade() {
 
                 Text(
                     text = buildAnnotatedString {
-                        withStyle(
-                            SpanStyle(fontWeight = FontWeight.Bold)
-                        ) {
-                            append( "$acertos - " )
-                        }
-
-                        append( l10nPlural( "mensaxe_fallos", "test", i ) )
-
+                        withStyle( SpanStyle( fontWeight = FontWeight.Bold ) ) { append( acertos.toString() ) }
+                        append( " - " )
+                        append( L10nVariante.MENSAXE_FALLOS.texto( i ) )
                     },
                     style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding( bottom = 10.dp )
                 )

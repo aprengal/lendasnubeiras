@@ -8,9 +8,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.aprengal.lendasnubeiras.data.localizacion.Localizacion.l10n
-import com.aprengal.lendasnubeiras.data.localizacion.Localizacion.l10nPlural
-import com.aprengal.lendasnubeiras.ui.tema.PantallaBase
+import com.aprengal.lendasnubeiras.data.localizacion.L10nPlural
+import com.aprengal.lendasnubeiras.data.localizacion.L10nSingular
+import com.aprengal.lendasnubeiras.ui.PantallaBase
 
 @Composable
 fun PantallaBuscador( termo: String) {
@@ -37,47 +37,26 @@ fun PantallaActividade() {
 @Composable
 fun PantallaInicio() {
 
-    //var idiomaActual by remember { mutableStateOf(idiomaActual ) }
-    //val esGalego = idiomaActual.value.codigo == "gl"
-    //var mostrarDialogo by rememberSaveable { mutableStateOf(false) }
-    //val contexto = LocalContext.current
-
-    //val nuevoIdioma = if (esGalego) Idioma.CASTELAN else Idioma.GALEGO
-
     PantallaBase {
 
         item {
 
-
             Column {
 
-                Text(
-                    text = l10n( "carla", "test" )
-                )
+                Text( text = L10nSingular.CARLA.texto() )
 
-                Text(
-                    text = l10n( "natasha", "test" ),
-                    style = MaterialTheme.typography.headlineLarge
-                )
+                Text( text = L10nSingular.NATASHA.texto(), style = MaterialTheme.typography.headlineLarge )
 
-                Text(
-                    text = l10nPlural( "mensaxes_novas", "test", 1 )
-                )
+                Text( text = L10nPlural.MENSAXES_NOVAS.texto( 1 ) )
 
-                Text(
-                    text = l10nPlural( "mensaxes_novas", "test", 5 )
-                )
+                Text( text = L10nPlural.MENSAXES_NOVAS.texto( 5 ) )
 
-                Text(
-                    text = l10nPlural( "mensaxes_novas", "test", 0 )
-                )
+                Text( text = L10nPlural.MENSAXES_NOVAS.texto( 0 ) )
 
-                Text(
-                    text = l10nPlural( "mensaxes_novas", "test", 100 )
-                )
+                Text( text = L10nPlural.MENSAXES_NOVAS.texto( 100 ) )
 
                 HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 10.dp),
+                    modifier = Modifier.padding( vertical = 10.dp ),
                     color = MaterialTheme.colorScheme.primary
                 )
 

@@ -40,8 +40,8 @@ object Conexion {
         val datos = peticion( metodoApi, rutaApi, campos )
 
         val saida = when( rutaApi ) {
-            RutaApi.VALIDARSESION -> SesionUsuario( datos )
-            RutaApi.REXISTRO, RutaApi.INICIOSESION, RutaApi.REPORTARERRO -> RespostaXenerica( datos )
+            RutaApi.VALIDACION -> SesionUsuario( datos )
+            RutaApi.REXISTRO, RutaApi.ACCESO, RutaApi.REPORTES -> RespostaXenerica( datos )
             RutaApi.ACTUALIZAR -> DatosActividades( datos )
         }
 

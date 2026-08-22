@@ -1,6 +1,8 @@
 {
+  "nome_app": "Lendas Nubeiras",
   "si": "Si",
   "non": "Non",
+  "aceptar": "Aceptar",
+  "cancelar": "Cancelar",
   "reintentar_accion": "Reintentar"
-
 }

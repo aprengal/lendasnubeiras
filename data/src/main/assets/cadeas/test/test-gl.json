@@ -1,29 +1,10 @@
 {
   "carla": "A aplicación de Carla non funciona",
   "natasha": "Natasha marchou de festa :c",
-  "aceptar": "Aceptar",
-  "cancelar": "Cancelar",
-  "boton_cambio_idioma": "Cambiar idioma",
-  "dialogo_cambio_idioma": "Seleccionar idioma",
-  "mensaxe_reiniciar_idioma": "A aplicación reiniciarase ao cambiar o idioma",
-  "boton_cambio_tema": "Cambiar tema",
-  "dialogo_cambio_tema": "Seleccionar tema",
-  "tema_claro": "Claro",
-  "tema_escuro": "Escuro",
-  "tema_predeterminado": "Predeterminado",
-
-  "menu_inicio": "Inicio",
-  "menu_rexistro": "Rexistro",
-  "menu_iniciarSesion": "Iniciar sesión",
-  "menu_perfil": "Perfil",
-  "menu_idioma": "Dados",
-  "menu_animacions": "Animacións",
 
   "mensaxes_novas": {
-    "s": "Tes %d mensaxe nova",
-    "pl": "Tes %d mensaxes novas",
-    "0": "Non tes mensaxes novas",
-    "100": "Tes máis de cen mensaxes novas"
+    "one": "Tes %d mensaxe nova",
+    "other": "Tes %d mensaxes novas"
   },
   "mensaxe_fallos": {
     "0": "Entregaches a tese sobre a aerodinámica das croquetas. Doutoramento honoris causa intergaláctico.",

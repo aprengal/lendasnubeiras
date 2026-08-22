@@ -25,19 +25,19 @@ class TestPantallaNavegacion {
     fun comprobarRutaPantalla( pantalla: Pantalla ) {
 
         val esperado = when ( pantalla ) {
-            Pantalla.ActividadeDetalle -> "actividade-detalle/{id}"
+            Pantalla.ActividadeDetalle -> "actividade/detalle/{id}"
             Pantalla.Buscar -> "buscar/{termo}"
             Pantalla.Actividades -> "actividades"
             Pantalla.Administrar -> "administrar"
             Pantalla.Animacions -> "animacions"
             Pantalla.Apertura -> "apertura"
             Pantalla.Axustes -> "axustes"
-            Pantalla.CrearActividade -> "crear-actividade"
+            Pantalla.CrearActividade -> "crear/actividade"
             Pantalla.Idioma -> "idioma"
-            Pantalla.IniciarSesion -> "iniciar-sesion"
+            Pantalla.IniciarSesion -> "acceso"
             Pantalla.Inicio -> "inicio"
-            Pantalla.ListarActividades -> "listar-actividades"
-            Pantalla.ModificarActividade -> "modificar-actividade"
+            Pantalla.ListarActividades -> "listar/actividades"
+            Pantalla.ModificarActividade -> "modificar/actividade"
             Pantalla.Rexistro -> "rexistro"
         }
 

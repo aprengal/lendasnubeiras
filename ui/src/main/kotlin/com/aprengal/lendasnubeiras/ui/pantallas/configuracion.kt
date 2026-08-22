@@ -2,7 +2,7 @@ package com.aprengal.lendasnubeiras.ui.pantallas
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import com.aprengal.lendasnubeiras.ui.tema.Tema.Variante
-import com.aprengal.lendasnubeiras.data.localizacion.Localizacion.gardarIdioma
+import com.aprengal.lendasnubeiras.data.localizacion.Localizacion.cambiarIdioma
 import com.aprengal.lendasnubeiras.ui.tema.Tema
 import com.aprengal.lendasnubeiras.ui.tema.Tema.gardarTema
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
@@ -24,19 +24,17 @@ fun PantallaAxustes() {
 
         BotonOpcion(
             clave = "cambio_idioma",
-            dominio = "opcions",
             avisoDialogo = true,
             opcions = Idioma.entries.filter { idioma -> idioma != Idioma.NADA },
             valorInicial = LocalIdioma.current,
             nomeUI = { idioma -> idioma.nome },
-            accion = { novoIdioma -> gardarIdioma( novoIdioma ) }
+            accion = { novoIdioma -> cambiarIdioma( novoIdioma ) }
         )
 
         Espazador()
 
         BotonOpcion(
             clave = "cambio_tema",
-            dominio = "opcions",
             opcions = Variante.entries,
             valorInicial = Tema.temaActual,
             nomeUI = { variante -> variante.nome },
@@ -49,7 +47,6 @@ fun PantallaAxustes() {
 
             BotonOpcion(
                 clave = "peche_sesion",
-                dominio = "opcions",
                 opcions = listOf( "si", "non" ),
                 valorInicial = "si",
                 nomeUI = { texto -> texto },

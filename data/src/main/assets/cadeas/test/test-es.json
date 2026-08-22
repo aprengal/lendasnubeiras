@@ -1,29 +1,11 @@
 {
   "carla": "La aplicación de Carla SÍ funciona",
   "natasha": "Y el karma se lo devolvió",
-  "aceptar": "Aceptar",
-  "cancelar": "Cancelar",
-  "boton_cambio_idioma": "Cambiar idioma",
-  "dialogo_cambio_idioma": "Seleccionar idioma",
-  "mensaxe_reiniciar_idioma": "La aplicación se reiniciará al cambiar el idioma",
-  "boton_cambio_tema": "Cambiar tema",
-  "dialogo_cambio_tema": "Seleccionar tema",
-  "tema_claro": "Claro",
-  "tema_escuro": "Oscuro",
-  "tema_predeterminado": "Predeterminado",
-
-  "menu_inicio": "Inicio",
-  "menu_rexistro": "Registro",
-  "menu_iniciarSesion": "Iniciar sesión",
-  "menu_perfil": "Perfil",
-  "menu_idioma": "Dados",
-  "menu_animacions": "Animaciones",
 
   "mensaxes_novas": {
-    "s": "Tienes %d mensaje nuevo",
-    "pl": "Tienes %d mensajes nuevos",
-    "0": "No tienes mensajes nuevos",
-    "100": "Tienes más de cien mensajes nuevos"
+    "one": "Tienes %d mensaje nuevo",
+    "other": "Tienes %d mensajes nuevos",
+    "many": "Tienes %d de mensajes nuevos"
   },
   "mensaxe_fallos": {
     "0": "Has entregado la tesis sobre la aerodinámica de las croquetas. Doctorado honoris causa intergaláctico.",

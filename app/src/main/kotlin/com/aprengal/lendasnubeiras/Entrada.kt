@@ -5,11 +5,13 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.ui.graphics.toArgb
+import androidx.core.os.LocaleListCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.aprengal.lendasnubeiras.data.configuracion.db.DB
@@ -73,6 +75,19 @@ class Entrada : AppCompatActivity() {
 
             }
 
+        }
+
+    }
+
+    override fun onStop() {
+
+        super.onStop()
+
+        val idiomaAplicacion = LocaleListCompat.forLanguageTags( idioma.value.codigoRexion.replace( "_", "-" ) )
+        val idiomaOpcions = AppCompatDelegate.getApplicationLocales().get( 0 )
+
+        if ( idiomaAplicacion.get( 0 ) != idiomaOpcions ) {
+            AppCompatDelegate.setApplicationLocales( idiomaAplicacion )
         }
 
     }

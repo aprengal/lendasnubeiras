@@ -1,5 +1,8 @@
 {
+  "nome_app": "Lendas Nubeiras",
   "si": "Yes",
   "non": "No",
+  "aceptar": "Accept",
+  "cancelar": "Cancel",
   "reintentar_accion": "Retry"
 }

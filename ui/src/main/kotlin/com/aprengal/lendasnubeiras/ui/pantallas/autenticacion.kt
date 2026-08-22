@@ -35,17 +35,16 @@ import com.aprengal.lendasnubeiras.data.configuracion.Axustes.gardarOpcion
 import com.aprengal.lendasnubeiras.data.configuracion.Opcion
 import com.aprengal.lendasnubeiras.data.configuracion.api.RutaApi
 import com.aprengal.lendasnubeiras.data.configuracion.corrutina
+import com.aprengal.lendasnubeiras.data.localizacion.L10nSingular
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.crearSesionAnonima
-import com.aprengal.lendasnubeiras.data.localizacion.Localizacion.l10n
 import com.aprengal.lendasnubeiras.ui.navegacion.Pantalla
 import com.aprengal.lendasnubeiras.ui.reutilizables.Espazador
 import com.aprengal.lendasnubeiras.ui.reutilizables.LocalControlador
 import com.aprengal.lendasnubeiras.ui.reutilizables.Logo
 import java.util.UUID
 
-
 @Composable
-private fun PantallaAcceso( tituloPantalla: String, tituloBoton: String, amosarCheckbox: Boolean, botonPulsado: ( correo: String ) -> String ) {
+private fun PantallaAcceso( tituloPantalla: L10nSingular, tituloBoton: L10nSingular, amosarCheckbox: Boolean, botonPulsado: (correo: String ) -> String ) {
 
     var correo by rememberSaveable { mutableStateOf( "" ) }
     var aceptaTerminos by rememberSaveable { mutableStateOf( false ) }
@@ -68,7 +67,7 @@ private fun PantallaAcceso( tituloPantalla: String, tituloBoton: String, amosarC
 
         Espazador( 2 )
 
-        Text( l10n( tituloPantalla, "test" ) , style = MaterialTheme.typography.headlineLarge )
+        Text( tituloPantalla.texto(), style = MaterialTheme.typography.headlineLarge )
         Espazador()
 
         if ( texto != "" ) {
@@ -109,7 +108,7 @@ private fun PantallaAcceso( tituloPantalla: String, tituloBoton: String, amosarC
             enabled = podeContinuar,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text( l10n( tituloBoton, "test" ) )
+            Text( tituloBoton.texto() )
         }
 
     }
@@ -120,8 +119,8 @@ private fun PantallaAcceso( tituloPantalla: String, tituloBoton: String, amosarC
 fun PantallaRexistro() {
 
     PantallaAcceso(
-        tituloPantalla = "titulo_rexistro",
-        tituloBoton = "boton_rexistro",
+        tituloPantalla = L10nSingular.TITULO_REXISTRO,
+        tituloBoton = L10nSingular.BOTON_REXISTRO,
         amosarCheckbox = true,
         botonPulsado = { correo ->
             when {
@@ -135,11 +134,11 @@ fun PantallaRexistro() {
 }
 
 @Composable
-fun PantallaIniciarSesion() {
+fun PantallaAcceso() {
 
     PantallaAcceso(
-        tituloPantalla = "titulo_iniciar_sesion",
-        tituloBoton = "boton_iniciar_sesion",
+        tituloPantalla = L10nSingular.TITULO_ACCESO,
+        tituloBoton = L10nSingular.BOTON_ACCESO,
         amosarCheckbox = false,
         botonPulsado = { correo ->
             "Comprobando correo..." // aquí irá a lóxica real de login
@@ -207,17 +206,17 @@ fun PantallaApertura() {
         Logo( 90.dp )
         Espazador( 2 )
 
-        Text( l10n( "titulo_benvida", "autenticacion" ), style = MaterialTheme.typography.headlineLarge )
+        Text( L10nSingular.TITULO_BENVIDA.texto(), style = MaterialTheme.typography.headlineLarge )
         Espazador()
 
         Button( onClick = { controlador.navigate( Pantalla.IniciarSesion.ruta ) }, modifier = Modifier.fillMaxWidth() ) {
-            Text( l10n( "boton_iniciar_sesion", "autenticacion" ) )
+            Text( L10nSingular.BOTON_ACCESO.texto() )
         }
 
         Espazador()
 
         OutlinedButton( onClick = { crearSesionAnonima() }, modifier = Modifier.fillMaxWidth() ) {
-            Text( l10n( "boton_continuar_anonimo", "autenticacion" ) )
+            Text( L10nSingular.BOTON_ANONIMO.texto() )
         }
 
     }
@@ -226,7 +225,7 @@ fun PantallaApertura() {
 
 @Composable
 private fun PantallaAutenticacion(
-    tituloPantalla: String,
+    tituloPantalla: L10nSingular,
     amosarCheckbox: Boolean,
     amosarRexistrarse: Boolean,
     rutaApiSolicitar: RutaApi,
@@ -256,7 +255,7 @@ private fun PantallaAutenticacion(
         Logo( 90.dp )
         Espazador( 2 )
 
-        Text( l10n( tituloPantalla, "test" ), style = MaterialTheme.typography.headlineLarge )
+        Text( tituloPantalla.texto(), style = MaterialTheme.typography.headlineLarge )
         Espazador()
 
         if ( texto != "" ) {
@@ -356,12 +355,12 @@ private fun PantallaAutenticacion(
 }
 
 @Composable
-fun PantallaIniciarSesion( aoTerminarConExito: () -> Unit, aoIrARexistro: () -> Unit ) {
+fun PantallaAcceso( aoTerminarConExito: () -> Unit, aoIrARexistro: () -> Unit ) {
     PantallaAutenticacion(
-        tituloPantalla = "titulo_iniciar_sesion",
+        tituloPantalla = L10nSingular.TITULO_ACCESO,//"titulo_iniciar_sesion",
         amosarCheckbox = false,
         amosarRexistrarse = true,
-        rutaApiSolicitar = RutaApi.INICIOSESION,//"solicitarCodigoLogin.php",
+        rutaApiSolicitar = RutaApi.ACCESO,//"solicitarCodigoLogin.php",
         //rutaVerificar = "verificarCodigoLogin.php",
         aoTerminarConExito = aoTerminarConExito,
         aoIrARexistro = aoIrARexistro
@@ -372,10 +371,10 @@ fun PantallaIniciarSesion( aoTerminarConExito: () -> Unit, aoIrARexistro: () -> 
 fun PantallaRexistro( aoTerminarConExito: () -> Unit ) {
 
     PantallaAutenticacion(
-        tituloPantalla = "titulo_rexistro",
+        tituloPantalla = L10nSingular.TITULO_REXISTRO,//"titulo_rexistro",
         amosarCheckbox = true,
         amosarRexistrarse = false,
-        rutaApiSolicitar = RutaApi.INICIOSESION,
+        rutaApiSolicitar = RutaApi.ACCESO,
         //rutaVerificar = "verificarCodigoRexistro.php",
         aoTerminarConExito = aoTerminarConExito
     )

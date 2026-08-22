@@ -57,7 +57,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
-import com.aprengal.lendasnubeiras.data.localizacion.Localizacion.l10n
+import com.aprengal.lendasnubeiras.data.localizacion.L10nSingular
 import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion
 import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion.collerPantallas
 import com.aprengal.lendasnubeiras.ui.navegacion.Pantalla
@@ -66,8 +66,8 @@ import com.aprengal.lendasnubeiras.ui.reutilizables.LocalControlador
 import com.aprengal.lendasnubeiras.ui.reutilizables.LocalPantallaActual
 import com.aprengal.lendasnubeiras.ui.reutilizables.Logo
 import com.aprengal.lendasnubeiras.ui.reutilizables.comprobarPermisos
-import com.aprengal.lendasnubeiras.ui.tema.MirarAnimacions
-import com.aprengal.lendasnubeiras.ui.tema.ProbaActividade
+import com.aprengal.lendasnubeiras.ui.MirarAnimacions
+import com.aprengal.lendasnubeiras.ui.ProbaActividade
 import com.aprengal.lendasnubeiras.data.usuarios.PodeCrear
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
 import com.aprengal.lendasnubeiras.ui.R
@@ -272,7 +272,7 @@ private fun CollerContido( pantalla: Pantalla, entrada: NavBackStackEntry ) {
 
         //Autencicación
         Pantalla.Apertura -> PantallaApertura()
-        Pantalla.IniciarSesion -> PantallaIniciarSesion()
+        Pantalla.IniciarSesion -> PantallaAcceso()
         Pantalla.Rexistro -> PantallaRexistro()
 
         //Lector
@@ -323,7 +323,7 @@ private fun DebuxarIconaMenu( pantalla: Pantalla ) {
     }
 
     val fontFamily = FontFamily( Font( R.font.ubuntu_iconas_nerd, FontWeight.Bold ) )
-    val descricion = l10n( "menu_" + pantalla.ruta, "menu" )
+    val descricion = L10nSingular.buscar( "menu_" + pantalla.ruta.split( "/" ).first() )
 
     Text(
         text = icona.codigo,
@@ -332,7 +332,7 @@ private fun DebuxarIconaMenu( pantalla: Pantalla ) {
         fontSize = 20.sp,
         lineHeight = 1.sp,
         modifier = Modifier.semantics {
-            this.contentDescription = descricion
+            this.contentDescription = descricion.texto()
         }
     )
 

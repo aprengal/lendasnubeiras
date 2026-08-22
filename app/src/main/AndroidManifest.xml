@@ -10,7 +10,8 @@
         android:label="@string/nome_app"
         android:icon="@mipmap/datos_logo"
         android:theme="@style/TemaNubeiro"
-        tools:ignore="DataExtractionRules">
+        android:localeConfig="@xml/idiomas_config"
+        tools:ignore="DataExtractionRules" tools:targetApi="33">
         <profileable android:shell="true" />
 
         <provider

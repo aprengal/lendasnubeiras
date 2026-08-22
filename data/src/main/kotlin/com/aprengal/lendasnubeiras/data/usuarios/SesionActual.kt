@@ -73,7 +73,7 @@ object SesionActual {
             var rol = Rol.MONITOR
 
             val idDispositivo = collerOpcion( Opcion.IdDispositivo )
-            val datos: SesionUsuario = procesarPeticion( MetodoApi.GET, RutaApi.VALIDARSESION, mapOf( "id" to idDispositivo ) )
+            val datos: SesionUsuario = procesarPeticion( MetodoApi.GET, RutaApi.VALIDACION, mapOf( "id" to idDispositivo ) )
 
             if ( datos.exito ) { //Usuario atopado
 
@@ -136,7 +136,7 @@ object SesionActual {
 
             }
 
-            val resposta: RespostaXenerica = procesarPeticion( MetodoApi.DELETE, RutaApi.VALIDARSESION )
+            val resposta: RespostaXenerica = procesarPeticion( MetodoApi.DELETE, RutaApi.VALIDACION )
 
             if ( resposta.exito ) {
 

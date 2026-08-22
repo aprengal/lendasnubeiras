@@ -37,13 +37,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.aprengal.lendasnubeiras.data.configuracion.haiLector
-import com.aprengal.lendasnubeiras.data.localizacion.Localizacion.l10n
-import com.aprengal.lendasnubeiras.data.localizacion.Localizacion.l10nPlural
 import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion.collerPantallas
 import com.aprengal.lendasnubeiras.ui.R
 import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import com.aprengal.lendasnubeiras.data.configuracion.corrutina
+import com.aprengal.lendasnubeiras.data.localizacion.L10nPlural
+import com.aprengal.lendasnubeiras.data.localizacion.L10nSingular
 import com.aprengal.lendasnubeiras.ui.tema.Tema.escollerVarianteImaxe
 
 @Composable
@@ -59,7 +59,7 @@ fun Logo( tamano: Dp = 30.dp ) {
     Image(
         painter = painterResource( logo ),
         modifier = Modifier.size( tamano ),
-        contentDescription = l10n( "nome_app", "base" )
+        contentDescription = L10nSingular.NOME_APP.texto()
     )
 
 }
@@ -67,7 +67,6 @@ fun Logo( tamano: Dp = 30.dp ) {
 @Composable
 fun <T> BotonOpcion(
     clave: String,
-    dominio: String,
     avisoDialogo: Boolean = false,
     opcions: List<T>,
     valorInicial: T,
@@ -84,7 +83,7 @@ fun <T> BotonOpcion(
         modifier = Modifier
             .fillMaxWidth()
             .padding( top = 10.dp )
-    ) { Text( l10n( "boton_$clave", dominio ) ) }
+    ) { Text( L10nSingular.buscar( "boton_$clave" ).texto() ) }
 
     if ( amosarDialogo ) {
 
@@ -95,7 +94,6 @@ fun <T> BotonOpcion(
 
         DialogoSeleccion(
             clave = clave,
-            dominio = dominio,
             opcions = opcions,
             opcionActual = valorActual,
             nomeUI = nomeUI,
@@ -117,7 +115,8 @@ fun <T> BotonOpcion(
                             break
                         }
 
-                        val resultadoAviso = amosarAviso( aviso, "gardado_fallido_$clave", dominio, true )
+                        val claveL10n = L10nSingular.buscar( "gardado_fallido_$clave" )
+                        val resultadoAviso = amosarAviso( aviso, claveL10n, true )
 
                         if ( resultadoAviso != SnackbarResult.ActionPerformed ) {
                             procesando = false
@@ -136,22 +135,20 @@ fun <T> BotonOpcion(
 
 }
 
-suspend fun amosarAviso( aviso: SnackbarHostState, claveMensaxe: String, dominio: String, repetir: Boolean ): SnackbarResult {
+suspend fun amosarAviso( aviso: SnackbarHostState, claveMensaxe: L10nSingular, repetir: Boolean ): SnackbarResult {
 
     aviso.currentSnackbarData?.dismiss()
-    val mensaxe = l10n( claveMensaxe, dominio )
 
-    val reintentar = if ( repetir ) l10n( "reintentar_accion", "base" ) else null
+    val reintentar = if ( repetir ) L10nSingular.buscar( "reintentar_accion" ).texto() else null
     val duracion = if ( repetir ) SnackbarDuration.Long else SnackbarDuration.Short
 
-    return aviso.showSnackbar( mensaxe, reintentar, repetir, duracion )
+    return aviso.showSnackbar( claveMensaxe.texto(), reintentar, repetir, duracion )
 
 }
 
 @Composable
 fun <T> DialogoSeleccion(
     clave: String,
-    dominio: String,
     subtitulo: Boolean,
     opcions: List<T>,
     opcionActual: T,
@@ -165,7 +162,7 @@ fun <T> DialogoSeleccion(
     var seleccionado by rememberSaveable { mutableStateOf( opcionActual ) }
 
     AlertDialog(
-        title = { Text( l10n( "dialogo_$clave", dominio ) ) },
+        title = { Text( L10nSingular.buscar( "dialogo_$clave" ).texto() ) },
         text = {
 
             Column( Modifier.selectableGroup() ) {
@@ -173,7 +170,7 @@ fun <T> DialogoSeleccion(
                 if ( subtitulo ) {
 
                     Text(
-                        text = l10n( "subtitulo_$clave", dominio ),
+                        text = L10nSingular.buscar( "subtitulo_$clave" ).texto(),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.padding( bottom = 12.dp )
                     )
@@ -183,7 +180,7 @@ fun <T> DialogoSeleccion(
                 for ( opcion in opcions ) {
 
                     val textoUI = nomeUI( opcion )
-                    val texto = if ( traducirOpcions ) l10n( "${ clave }_${ textoUI }", dominio ) else textoUI
+                    val texto = if ( traducirOpcions ) L10nSingular.buscar( "${ clave }_${ textoUI }" ).texto() else textoUI
 
                     Row(
                         modifier = Modifier
@@ -209,13 +206,13 @@ fun <T> DialogoSeleccion(
         },
         confirmButton = {
             TextButton( enabled = !procesando, onClick = { aceptar( seleccionado ) } ) {
-                Text( l10n( "aceptar", "test" ) )
+                Text( L10nSingular.ACEPTAR.texto() )
             }
         },
         onDismissRequest = { if ( !procesando ) rexeitar() },
         dismissButton = {
             TextButton( enabled = !procesando, onClick = rexeitar ) {
-                Text( l10n( "cancelar", "test" ) )
+                Text( L10nSingular.CANCELAR.texto() )
             }
         }
     )
@@ -223,20 +220,19 @@ fun <T> DialogoSeleccion(
 }
 
 @Composable
-fun Texto( clave: String, dominio: String, modifier: Modifier = Modifier, estilo: TextStyle = LocalTextStyle.current ) {
-    Text( l10n( clave, dominio ), modifier, style = estilo )
+fun Texto( elemento: L10nSingular, modifier: Modifier = Modifier, estilo: TextStyle = LocalTextStyle.current ) {
+    Text( elemento.texto(), modifier, style = estilo )
 }
 
 @Composable
-fun TextoPlural( clave: String, dominio: String, cantidade: Int, modifier: Modifier = Modifier, estilo: TextStyle = LocalTextStyle.current ) {
-    Text( l10nPlural( clave, dominio, cantidade ), modifier, style = estilo )
+fun TextoPlural( elemento: L10nPlural, cantidade: Int, modifier: Modifier = Modifier, estilo: TextStyle = LocalTextStyle.current ) {
+    Text( elemento.texto( cantidade ), modifier, style = estilo )
 }
 
 @Composable
 fun comprobarPermisos(): Boolean {
 
     val pantallaActual = LocalPantallaActual.current
-
     if ( pantallaActual.permiso() ) return true
 
     Log.wtf( "PERMISO", "Tratouse de realizar un acceso indebido" )

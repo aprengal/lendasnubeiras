@@ -224,12 +224,13 @@ object Tema {
 
     fun escollerVarianteImaxe( temaEscuro: Boolean, claro: Int, escuro: Int ): Int {
 
-        return when ( temaActual ) {
+        val imaxe = when ( temaActual ) {
             Variante.CLARO -> claro
             Variante.ESCURO -> escuro
-            Variante.PREDETERMINADO ->
-                if ( temaEscuro ) escuro else claro
+            Variante.PREDETERMINADO -> if ( temaEscuro ) escuro else claro
         }
+
+        return imaxe
 
     }
 

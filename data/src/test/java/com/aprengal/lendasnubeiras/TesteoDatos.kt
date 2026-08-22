@@ -1,10 +1,17 @@
 package com.aprengal.lendasnubeiras
 
+import android.icu.text.PluralRules
 import com.aprengal.lendasnubeiras.data.configuracion.Opcion
+import com.aprengal.lendasnubeiras.data.localizacion.Dominio
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
+import com.aprengal.lendasnubeiras.data.localizacion.L10nPlural
+import com.aprengal.lendasnubeiras.data.localizacion.L10nSingular
 import com.aprengal.lendasnubeiras.data.usuarios.Rol
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 import org.junit.Test
+import java.util.Locale
 import kotlin.collections.component1
 import kotlin.collections.component2
 
@@ -34,7 +41,6 @@ class TesteoDatos {
             Opcion.SesionUsuario -> "sesion-usuario" to ""
             Opcion.SesionAnonima -> "sesion-anonima" to false
             Opcion.Tema -> "tema" to "predeterminado"
-            Opcion.Idioma -> "idioma" to ""
             Opcion.IdDispositivo -> "id-dispositivo" to ""
         }
 
@@ -75,8 +81,9 @@ class TesteoDatos {
         assertEquals( Rol.NADA, Rol.buscarRol( "" ) )
     }
 
-    //TODO: Faltan por revisar método Api, as rutas api (endpoint) e os dominios
+    //TODO: Faltan por revisar as rutas api (endpoint)
 
     //Só test. Tamén falta atributo: categoria, destinatario e estado. E dificultades
+
 
 }

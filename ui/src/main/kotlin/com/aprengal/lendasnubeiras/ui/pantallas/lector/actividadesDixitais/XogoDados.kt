@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aprengal.lendasnubeiras.data.actividades.dixitais.ActividadeDados
 import com.aprengal.lendasnubeiras.ui.R
-import com.aprengal.lendasnubeiras.ui.reutilizables.Espazador
+import com.aprengal.lendasnubeiras.ui.reutilizables.EspazadorAlto
 
 @Composable
 fun XogoDados() {
@@ -54,7 +54,7 @@ fun XogoDados() {
         verticalArrangement = Arrangement.spacedBy( 8.dp )
     ) {
 
-        item( span = { GridItemSpan( maxLineSpan ) } ) { Espazador() }
+        item( span = { GridItemSpan( maxLineSpan ) } ) { EspazadorAlto() }
 
         //Modificador de dados
         item( span = { GridItemSpan( maxLineSpan ) } ) {

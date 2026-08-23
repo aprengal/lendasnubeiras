@@ -50,14 +50,6 @@ android {
 
     buildTypes {
 
-        getByName( "debug" ) {
-            buildConfigField(
-                "String",
-                "API_URL",
-                "\"${localProperties.getProperty( "API_URL_DEBUG" )}\""
-            )
-        }
-
         getByName( "release" ) {
 
             isMinifyEnabled = true
@@ -69,12 +61,6 @@ android {
             )
 
             signingConfig = signingConfigs.getByName( "release" )
-
-            buildConfigField(
-                "String",
-                "API_URL",
-                "\"${localProperties.getProperty( "API_URL_RELEASE" )}\""
-            )
 
         }
 

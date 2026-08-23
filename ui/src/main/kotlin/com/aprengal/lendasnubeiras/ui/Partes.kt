@@ -1,30 +1,18 @@
 package com.aprengal.lendasnubeiras.ui
 
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.scaleIn
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.SpanStyle
@@ -32,31 +20,8 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.animation.animateColor
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDp
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.updateTransition
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.background
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.Switch
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import com.aprengal.lendasnubeiras.data.localizacion.L10nVariante
-import com.aprengal.lendasnubeiras.ui.reutilizables.Espazador
+import com.aprengal.lendasnubeiras.ui.reutilizables.EspazadorAlto
 
 // Colores que quedaron fuera del ColorScheme (comentados en tu archivo
 // de colores). Se importan/declaran aquí para usarlos directamente.
@@ -143,7 +108,7 @@ fun BotonGhost(
     }
 }
 
-@Composable
+/*@Composable
 fun MirarAnimacions() {
     Column(
         modifier = Modifier
@@ -290,7 +255,7 @@ fun ProbarSwitch() {
             }
         }
 
-        Espazador( 2 )
+        EspazadorAlto( 2 )
 
     }
 }
@@ -327,7 +292,7 @@ private fun CasillaDemo(
     ) {
         Text(texto, color = MaterialTheme.colorScheme.onSecondary)
     }
-}
+}*/
 
 @Composable
 fun ProbaActividade() {
@@ -363,7 +328,7 @@ fun PantallaBase( contido: LazyListScope.() -> Unit ) {
     LazyColumn( modifier = Modifier.fillMaxSize() ) {
 
         item {
-            Espazador()
+            EspazadorAlto()
         }
 
         contido()

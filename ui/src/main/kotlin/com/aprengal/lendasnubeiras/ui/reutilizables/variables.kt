@@ -1,9 +1,7 @@
 package com.aprengal.lendasnubeiras.ui.reutilizables
 
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.navigation.NavHostController
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
 import com.aprengal.lendasnubeiras.ui.navegacion.Pantalla
 
@@ -11,6 +9,4 @@ val LocalAviso = staticCompositionLocalOf<SnackbarHostState> { error( "Aviso non
 
 val LocalIdioma = staticCompositionLocalOf<Idioma> { error( "Idioma non proporcionado" ) }
 
-val LocalPantallaActual = staticCompositionLocalOf<Pantalla> { error( "Non se definiu ningunha pantalla" ) }
-
-val LocalControlador = compositionLocalOf<NavHostController> { error( "Non hai NavController" ) }
+val LocalPantalla = staticCompositionLocalOf<Pantalla> { error( "Pantalla non proporcionada" ) }

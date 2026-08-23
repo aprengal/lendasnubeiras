@@ -6,10 +6,13 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.os.LocaleListCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -20,7 +23,7 @@ import com.aprengal.lendasnubeiras.data.configuracion.Axustes
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
 import com.aprengal.lendasnubeiras.data.localizacion.Localizacion
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.collerSesionActual
-import com.aprengal.lendasnubeiras.ui.pantallas.PantallaBase
+import com.aprengal.lendasnubeiras.ui.navegacion.CargarNavegacion
 import com.aprengal.lendasnubeiras.ui.tema.Tema
 import com.aprengal.lendasnubeiras.ui.tema.TemaNubeiro
 import kotlinx.coroutines.flow.StateFlow
@@ -69,8 +72,8 @@ class Entrada : AppCompatActivity() {
                 val sesion by sesion.collectAsState()
                 val idiomaActual by idioma.collectAsState()
 
-                key( sesion ) {
-                    PantallaBase( idiomaActual )
+                Surface( modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background ) {
+                    key( sesion ) { CargarNavegacion( idiomaActual ) }
                 }
 
             }

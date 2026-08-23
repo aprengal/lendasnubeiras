@@ -15,36 +15,27 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.aprengal.lendasnubeiras.data.configuracion.Axustes.collerOpcion
-import com.aprengal.lendasnubeiras.data.configuracion.Axustes.gardarOpcion
-import com.aprengal.lendasnubeiras.data.configuracion.Opcion
-import com.aprengal.lendasnubeiras.data.configuracion.api.RutaApi
-import com.aprengal.lendasnubeiras.data.configuracion.corrutina
+import androidx.navigation.NavHostController
 import com.aprengal.lendasnubeiras.data.localizacion.L10nSingular
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.crearSesionAnonima
 import com.aprengal.lendasnubeiras.ui.navegacion.Pantalla
-import com.aprengal.lendasnubeiras.ui.reutilizables.Espazador
-import com.aprengal.lendasnubeiras.ui.reutilizables.LocalControlador
+import com.aprengal.lendasnubeiras.ui.reutilizables.EspazadorAlto
 import com.aprengal.lendasnubeiras.ui.reutilizables.Logo
-import java.util.UUID
 
 @Composable
-private fun PantallaAcceso( tituloPantalla: L10nSingular, tituloBoton: L10nSingular, amosarCheckbox: Boolean, botonPulsado: (correo: String ) -> String ) {
+private fun PantallaAcceso( controlador: NavHostController, tituloBoton: L10nSingular, amosarCheckbox: Boolean, botonPulsado: (correo: String ) -> String ) {
 
     var correo by rememberSaveable { mutableStateOf( "" ) }
     var aceptaTerminos by rememberSaveable { mutableStateOf( false ) }
@@ -65,14 +56,14 @@ private fun PantallaAcceso( tituloPantalla: L10nSingular, tituloBoton: L10nSingu
 
         Logo( 90.dp )
 
-        Espazador( 2 )
+        EspazadorAlto( 2 )
 
-        Text( tituloPantalla.texto(), style = MaterialTheme.typography.headlineLarge )
-        Espazador()
+        AmosarTitulo()
+        EspazadorAlto()
 
         if ( texto != "" ) {
             Text( texto )
-            Espazador()
+            EspazadorAlto()
         }
 
         OutlinedTextField(
@@ -84,7 +75,7 @@ private fun PantallaAcceso( tituloPantalla: L10nSingular, tituloBoton: L10nSingu
             modifier = Modifier.fillMaxWidth()
         )
 
-        Espazador()
+        EspazadorAlto()
 
         if ( amosarCheckbox ) {
 
@@ -99,7 +90,7 @@ private fun PantallaAcceso( tituloPantalla: L10nSingular, tituloBoton: L10nSingu
                 Text( "Acepto os termos e condicións" )
             }
 
-            Espazador()
+            EspazadorAlto()
 
         }
 
@@ -116,10 +107,10 @@ private fun PantallaAcceso( tituloPantalla: L10nSingular, tituloBoton: L10nSingu
 }
 
 @Composable
-fun PantallaRexistro() {
+fun PantallaRexistro( controlador: NavHostController ) {
 
     PantallaAcceso(
-        tituloPantalla = L10nSingular.TITULO_REXISTRO,
+        controlador = controlador,
         tituloBoton = L10nSingular.BOTON_REXISTRO,
         amosarCheckbox = true,
         botonPulsado = { correo ->
@@ -134,10 +125,10 @@ fun PantallaRexistro() {
 }
 
 @Composable
-fun PantallaAcceso() {
+fun PantallaAcceso( controlador: NavHostController ) {
 
     PantallaAcceso(
-        tituloPantalla = L10nSingular.TITULO_ACCESO,
+        controlador = controlador,
         tituloBoton = L10nSingular.BOTON_ACCESO,
         amosarCheckbox = false,
         botonPulsado = { correo ->
@@ -147,52 +138,8 @@ fun PantallaAcceso() {
 
 }
 
-fun crearIdDispositivo(): String {
-
-    var idDispositivo = collerOpcion( Opcion.IdDispositivo )
-    if ( idDispositivo.isNotBlank() ) return idDispositivo
-
-    idDispositivo = UUID.randomUUID().toString()
-    corrutina { gardarOpcion( Opcion.IdDispositivo, idDispositivo ) }
-
-    return idDispositivo
-
-}
-
-/*@Composable
-fun PantallaApertura() {
-
-    var apertura: String by rememberSaveable { mutableStateOf( "Esperando resposta..." ) }
-
-    LaunchedEffect( Unit ) { //ISto quitaríase. É un exemplo para
-
-        val resultado = Conexion.coller( "peido.php", emptyMap() )
-
-        //Isto vale para indicar que a operación foi exitosa
-        //if ( resultado.optBoolean( "exito" ) )
-
-        apertura = resultado.optString( "mensaxe", "Escachou o servidor" ).toString()
-
-    }
-
-    PantallaAcceso(
-        tituloPantalla = "titulo_benvida",
-        tituloBoton = apertura,
-        amosarCheckbox = false,
-        botonPulsado = { correo ->
-
-            if ( apertura.startsWith( "Esperando" ) ) "Meh" else "Chi"
-
-        }
-
-    )
-
-}*/
-
 @Composable
-fun PantallaApertura() {
-
-    val controlador = LocalControlador.current
+fun PantallaBenvida( controlador: NavHostController ) {
 
     Column(
         modifier = Modifier
@@ -204,16 +151,16 @@ fun PantallaApertura() {
     ) {
 
         Logo( 90.dp )
-        Espazador( 2 )
+        EspazadorAlto( 2 )
 
-        Text( L10nSingular.TITULO_BENVIDA.texto(), style = MaterialTheme.typography.headlineLarge )
-        Espazador()
+        AmosarTitulo()
+        EspazadorAlto()
 
-        Button( onClick = { controlador.navigate( Pantalla.IniciarSesion.ruta ) }, modifier = Modifier.fillMaxWidth() ) {
+        Button( onClick = { controlador.navigate( Pantalla.IniciarSesion ) }, modifier = Modifier.fillMaxWidth() ) {
             Text( L10nSingular.BOTON_ACCESO.texto() )
         }
 
-        Espazador()
+        EspazadorAlto()
 
         OutlinedButton( onClick = { crearSesionAnonima() }, modifier = Modifier.fillMaxWidth() ) {
             Text( L10nSingular.BOTON_ANONIMO.texto() )
@@ -223,9 +170,9 @@ fun PantallaApertura() {
 
 }
 
-@Composable
+/*@Composable
 private fun PantallaAutenticacion(
-    tituloPantalla: L10nSingular,
+    //tituloPantalla: L10nSingular,
     amosarCheckbox: Boolean,
     amosarRexistrarse: Boolean,
     rutaApiSolicitar: RutaApi,
@@ -253,14 +200,14 @@ private fun PantallaAutenticacion(
         verticalArrangement = Arrangement.Center
     ) {
         Logo( 90.dp )
-        Espazador( 2 )
+        EspazadorAlto( 2 )
 
-        Text( tituloPantalla.texto(), style = MaterialTheme.typography.headlineLarge )
-        Espazador()
+        AmosarTitulo()
+        EspazadorAlto()
 
         if ( texto != "" ) {
             Text( texto )
-            Espazador()
+            EspazadorAlto()
         }
 
         OutlinedTextField(
@@ -272,7 +219,7 @@ private fun PantallaAutenticacion(
             enabled = !codigoSolicitado && !enviando,
             modifier = Modifier.fillMaxWidth()
         )
-        Espazador()
+        EspazadorAlto()
 
         if ( !codigoSolicitado ) {
 
@@ -284,7 +231,7 @@ private fun PantallaAutenticacion(
                     Checkbox( checked = aceptaTerminos, onCheckedChange = { aceptaTerminos = it } )
                     Text( "Acepto os termos e condicións" )
                 }
-                Espazador()
+                EspazadorAlto()
             }
 
             /*Button(
@@ -309,7 +256,7 @@ private fun PantallaAutenticacion(
             }*/
 
             if ( amosarRexistrarse && aoIrARexistro != null ) {
-                Espazador()
+                EspazadorAlto()
                 TextButton( onClick = aoIrARexistro, modifier = Modifier.fillMaxWidth() ) {
                     Text( "Rexistrarse" )
                 }
@@ -326,7 +273,7 @@ private fun PantallaAutenticacion(
                 enabled = !enviando,
                 modifier = Modifier.fillMaxWidth()
             )
-            Espazador()
+            EspazadorAlto()
 
             /*Button(
                 onClick = {
@@ -352,31 +299,4 @@ private fun PantallaAutenticacion(
 
     }
 
-}
-
-@Composable
-fun PantallaAcceso( aoTerminarConExito: () -> Unit, aoIrARexistro: () -> Unit ) {
-    PantallaAutenticacion(
-        tituloPantalla = L10nSingular.TITULO_ACCESO,//"titulo_iniciar_sesion",
-        amosarCheckbox = false,
-        amosarRexistrarse = true,
-        rutaApiSolicitar = RutaApi.ACCESO,//"solicitarCodigoLogin.php",
-        //rutaVerificar = "verificarCodigoLogin.php",
-        aoTerminarConExito = aoTerminarConExito,
-        aoIrARexistro = aoIrARexistro
-    )
-}
-
-@Composable
-fun PantallaRexistro( aoTerminarConExito: () -> Unit ) {
-
-    PantallaAutenticacion(
-        tituloPantalla = L10nSingular.TITULO_REXISTRO,//"titulo_rexistro",
-        amosarCheckbox = true,
-        amosarRexistrarse = false,
-        rutaApiSolicitar = RutaApi.ACCESO,
-        //rutaVerificar = "verificarCodigoRexistro.php",
-        aoTerminarConExito = aoTerminarConExito
-    )
-
-}
+}*/

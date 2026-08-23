@@ -22,7 +22,6 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,9 +36,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.aprengal.lendasnubeiras.data.configuracion.haiLector
-import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion.collerPantallas
 import com.aprengal.lendasnubeiras.ui.R
-import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import com.aprengal.lendasnubeiras.data.configuracion.corrutina
 import com.aprengal.lendasnubeiras.data.localizacion.L10nPlural
@@ -47,8 +44,13 @@ import com.aprengal.lendasnubeiras.data.localizacion.L10nSingular
 import com.aprengal.lendasnubeiras.ui.tema.Tema.escollerVarianteImaxe
 
 @Composable
-fun Espazador( multiplicador: Int = 1 ) {
+fun EspazadorAlto(multiplicador: Int = 1 ) {
     Spacer( modifier = Modifier.height( 10.dp * multiplicador ) )
+}
+
+@Composable
+fun EspazadorAncho( multiplicador: Int = 1 ) {
+    Spacer( modifier = Modifier.width( 10.dp * multiplicador ) )
 }
 
 @Composable
@@ -180,7 +182,8 @@ fun <T> DialogoSeleccion(
                 for ( opcion in opcions ) {
 
                     val textoUI = nomeUI( opcion )
-                    val texto = if ( traducirOpcions ) L10nSingular.buscar( "${ clave }_${ textoUI }" ).texto() else textoUI
+                    val claveBuscable = if ( textoUI !in listOf( "si", "non" ) ) "${ clave }_${ textoUI }" else textoUI
+                    val texto = if ( traducirOpcions ) L10nSingular.buscar( claveBuscable).texto() else textoUI
 
                     Row(
                         modifier = Modifier
@@ -227,22 +230,4 @@ fun Texto( elemento: L10nSingular, modifier: Modifier = Modifier, estilo: TextSt
 @Composable
 fun TextoPlural( elemento: L10nPlural, cantidade: Int, modifier: Modifier = Modifier, estilo: TextStyle = LocalTextStyle.current ) {
     Text( elemento.texto( cantidade ), modifier, style = estilo )
-}
-
-@Composable
-fun comprobarPermisos(): Boolean {
-
-    val pantallaActual = LocalPantallaActual.current
-    if ( pantallaActual.permiso() ) return true
-
-    Log.wtf( "PERMISO", "Tratouse de realizar un acceso indebido" )
-    val pantallaInicial = collerPantallas().first
-    val controlador = LocalControlador.current
-
-    LaunchedEffect( Unit ) {
-        controlador.navigate( pantallaInicial.ruta ) { popUpTo( 0 ) }
-    }
-
-    return false
-
 }

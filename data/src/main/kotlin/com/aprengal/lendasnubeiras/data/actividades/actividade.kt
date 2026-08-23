@@ -2,7 +2,6 @@ package com.aprengal.lendasnubeiras.data.actividades
 
 import com.aprengal.lendasnubeiras.data.actividades.dixitais.Dificultade
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
-import java.time.Instant
 
 data class Actividade(
     val id: Long,

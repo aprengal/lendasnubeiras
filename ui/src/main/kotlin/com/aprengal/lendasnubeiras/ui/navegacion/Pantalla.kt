@@ -11,7 +11,7 @@ sealed interface Pantalla {
     data object Benvida : Pantalla
 
     @Serializable
-    data object IniciarSesion : Pantalla
+    data object Acceso : Pantalla
 
     @Serializable
     data object Rexistro : Pantalla

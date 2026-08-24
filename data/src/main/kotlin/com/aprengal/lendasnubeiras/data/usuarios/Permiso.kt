@@ -9,6 +9,12 @@ sealed class Permiso {
     abstract operator fun invoke( usuario: Usuario = usuarioActual() ): Boolean
 }
 
+object PodeAcceder : Permiso() {
+    override fun invoke( usuario: Usuario ): Boolean {
+        return true
+    }
+}
+
 object PodeIniciarSesion : Permiso() {
     override fun invoke( usuario: Usuario ): Boolean {
         return usuario.rol == Rol.NADA

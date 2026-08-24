@@ -34,6 +34,7 @@ import com.aprengal.lendasnubeiras.ui.pantallas.lector.actividadesDixitais.XogoD
 import com.aprengal.lendasnubeiras.ui.reutilizables.LocalAviso
 import com.aprengal.lendasnubeiras.ui.reutilizables.LocalIdioma
 import com.aprengal.lendasnubeiras.ui.reutilizables.LocalPantalla
+import com.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaApertura
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
@@ -88,7 +89,7 @@ private inline fun <reified T : Pantalla> NavGraphBuilder.pantalla(
             when ( tipo ) {
                 TipoNavegacion.COMPLETA -> EstruturaBase( controlador ) { contido( datos ) }
                 TipoNavegacion.SOSUPERIOR -> EstruturaSuperior { contido( datos ) }
-                TipoNavegacion.SEN_MENUS -> contido( datos )
+                TipoNavegacion.APERTURA -> EstruturaApertura( controlador ) { contido( datos ) }
             }
 
         }
@@ -108,24 +109,24 @@ fun CargarNavegacion( idioma: Idioma ) {
 
         NavHost( navController = controlador, startDestination = pantallaInicial ) {
 
+            pantalla<Pantalla.Axustes>( TipoNavegacion.SOSUPERIOR, controlador, enlace = "axustes" ) {
+                PantallaAxustes()
+            }
+
             if ( PodeRexistrarse() ) {
 
-                pantalla<Pantalla.Benvida>( TipoNavegacion.SEN_MENUS, controlador ) {
+                pantalla<Pantalla.Benvida>( TipoNavegacion.APERTURA, controlador ) {
                     PantallaBenvida( controlador )
                 }
 
-                pantalla<Pantalla.IniciarSesion>( TipoNavegacion.SEN_MENUS, controlador ) {
+                pantalla<Pantalla.Acceso>( TipoNavegacion.APERTURA, controlador ) {
                     PantallaAcceso( controlador )
                 }
 
-                pantalla<Pantalla.Rexistro>( TipoNavegacion.SEN_MENUS, controlador ) {
+                pantalla<Pantalla.Rexistro>( TipoNavegacion.APERTURA, controlador ) {
                     PantallaRexistro( controlador )
                 }
 
-            }
-
-            pantalla<Pantalla.Axustes>( TipoNavegacion.SOSUPERIOR, controlador, enlace = "axustes" ) {
-                PantallaAxustes()
             }
 
             if ( PodeLer() ) {
@@ -154,10 +155,6 @@ fun CargarNavegacion( idioma: Idioma ) {
                 pantalla<Pantalla.Idioma>( TipoNavegacion.COMPLETA, controlador, enlace = "idioma" ) {
                     XogoDados()
                 }
-
-                /*pantalla<Pantalla.Animacions>( TipoNavegacion.COMPLETA, controlador, enlace = "animacions" ) {
-                    MirarAnimacions()
-                }*/
 
             }
 

@@ -27,16 +27,28 @@ enum class L10nSingular( override val clave: String, override val dominio: Domin
     BOTON_ACCESO( "boton_acceso", Dominio.Autenticacion ),
     BOTON_REXISTRO( "boton_rexistro", Dominio.Autenticacion ),
     BOTON_ANONIMO( "boton_anonimo", Dominio.Autenticacion ),
+    CORREO_ELECTRONICO( "correo_electronico", Dominio.Autenticacion ),
+    COMPROBANDO_CORREO( "comprobando_correo", Dominio.Autenticacion ),
 
-    // Menu
-    MENU_AXUSTES( "menu_axustes", Dominio.Menu ),
+    CREAR_CONTA( "crear_conta", Dominio.Autenticacion ),
+    ENLACE_CREAR_CONTA( "enlace_crear_conta", Dominio.Autenticacion ),
+    VOLVER_ACCESO( "volver_acceso", Dominio.Autenticacion ),
 
-    MENU_CREAR( "menu_crear", Dominio.Menu ),
+    //Iconas
+    ICONA_AXUSTES( "axustes", Dominio.Icona ),
+    ICONA_ATRAS( "atras", Dominio.Icona ),
+    ICONA_CREAR( "crear", Dominio.Icona ),
 
-    MENU_INICIO( "menu_inicio", Dominio.Menu ),
-    MENU_BUSCAR( "menu_buscar", Dominio.Menu ),
-    MENU_IDIOMA( "menu_idioma", Dominio.Menu ),
-    MENU_ACTIVIDADES( "menu_actividades", Dominio.Menu ),
+    ICONA_INICIO( "inicio", Dominio.Icona ),
+    ICONA_BUSCAR( "buscar", Dominio.Icona ),
+    ICONA_IDIOMA( "idioma", Dominio.Icona ),
+    ICONA_ACTIVIDADES( "actividades", Dominio.Icona ),
+    ICONA_AMOSAR( "amosar", Dominio.Icona ),
+    ICONA_AGOCHAR( "agochar", Dominio.Icona ),
+
+    ICONA_VALIDO( "valido", Dominio.Icona ),
+    ICONA_INVALIDO( "invalido", Dominio.Icona ),
+    ICONA_CORREO( "correo", Dominio.Icona ),
 
     //Opcions
     DIALOGO_CAMBIO_IDIOMA( "dialogo_cambio_idioma", Dominio.Opcions ),

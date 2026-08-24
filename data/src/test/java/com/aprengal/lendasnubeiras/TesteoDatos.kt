@@ -1,17 +1,10 @@
 package com.aprengal.lendasnubeiras
 
-import android.icu.text.PluralRules
 import com.aprengal.lendasnubeiras.data.configuracion.Opcion
-import com.aprengal.lendasnubeiras.data.localizacion.Dominio
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
-import com.aprengal.lendasnubeiras.data.localizacion.L10nPlural
-import com.aprengal.lendasnubeiras.data.localizacion.L10nSingular
 import com.aprengal.lendasnubeiras.data.usuarios.Rol
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Assert.fail
 import org.junit.Test
-import java.util.Locale
 import kotlin.collections.component1
 import kotlin.collections.component2
 

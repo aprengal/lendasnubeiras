@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,13 +28,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aprengal.lendasnubeiras.data.actividades.dixitais.ActividadeDados
-import com.aprengal.lendasnubeiras.ui.R
+import com.aprengal.lendasnubeiras.ui.reutilizables.DebuxarIcona
 import com.aprengal.lendasnubeiras.ui.reutilizables.EspazadorAlto
 
 @Composable
@@ -44,6 +40,7 @@ fun XogoDados() {
     val tarefaDatos = ActividadeDados()
     var listaSeleccionados by rememberSaveable { mutableStateOf<List<String>>( emptyList() ) }
     var cantidadeDados by rememberSaveable { mutableIntStateOf( 3 ) }
+
     val todasIconas = remember { tarefaDatos.iconasActividades.toList() }
     var amosarLista by rememberSaveable { mutableStateOf( false ) }
 
@@ -98,7 +95,7 @@ fun XogoDados() {
         }
 
         if ( amosarLista ) {
-            items( todasIconas ) { icona -> ListarTodasIconas( icona ) }
+            items( todasIconas ) { ( _, icona ) -> ListarTodasIconas( icona ) }
         }
 
     }
@@ -112,13 +109,8 @@ private fun CasillaIcono( icona: String, modifier: Modifier = Modifier ) {
     val modificador = modifier.aspectRatio( 1f ).background( color = corExterna, shape = RoundedCornerShape( 8.dp ) )
 
     BoxWithConstraints( contentAlignment = Alignment.Center, modifier = modificador ) {
-
-        val fonte = FontFamily( Font( R.font.ubuntu_iconas_nerd, FontWeight.Bold ) )
-        val densidade = with( LocalDensity.current ) { ( maxWidth * 0.625f ).toSp() }
-        val corTexto = LocalContentColor.current
-
-        Text( text = icona, fontFamily = fonte, fontSize = densidade, color = corTexto )
-
+        val dimension = with( LocalDensity.current ) { ( maxWidth * 0.625f ).toSp() }
+        DebuxarIcona( icona, dimension = dimension )
     }
 
 }
@@ -126,14 +118,13 @@ private fun CasillaIcono( icona: String, modifier: Modifier = Modifier ) {
 @Composable
 private fun ListarTodasIconas( textoIcona: String ) {
 
-    val fonte = FontFamily( Font( R.font.ubuntu_iconas_nerd, FontWeight.Bold ) )
     val modificador = Modifier
         .aspectRatio( 1f )
         .border( 1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape( 8.dp ) )
         .padding( 8.dp )
 
     Column( modificador, Arrangement.Center, Alignment.CenterHorizontally ) {
-        Text( text = textoIcona, fontFamily = fonte, fontSize = 36.sp )
+        DebuxarIcona( textoIcona, dimension = 36.sp )
     }
 
 }

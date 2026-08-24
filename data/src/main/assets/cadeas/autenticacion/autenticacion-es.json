@@ -4,5 +4,13 @@
   "titulo_rexistro": "Registro",
   "boton_acceso": "Iniciar sesión",
   "boton_anonimo": "Entrar como invitado",
-  "boton_rexistro": "Registrarse"
+  "boton_rexistro": "Registrarse",
+
+  "correo_electronico": "Correo electrónico",
+  "comprobando_correo": "Comprobando correo",
+
+  "crear_conta": "¿No tienes cuenta? Regístrate",
+  "enlace_crear_conta": "Regístrate",
+  "volver_acceso": "Ya tengo cuenta"
+
 }

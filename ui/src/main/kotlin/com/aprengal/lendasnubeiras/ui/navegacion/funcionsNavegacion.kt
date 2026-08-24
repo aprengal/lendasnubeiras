@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavHostController
+import com.aprengal.lendasnubeiras.data.usuarios.PodeAcceder
 import com.aprengal.lendasnubeiras.data.usuarios.PodeAdministrar
 import com.aprengal.lendasnubeiras.data.usuarios.PodeCrear
 import com.aprengal.lendasnubeiras.data.usuarios.PodeEditar
@@ -28,14 +29,16 @@ private fun verificarAcceso( pantalla: KClass<out Pantalla> ): Boolean {
 
     val permiso = when ( pantalla ) {
 
+        //Calquera
+        Pantalla.Axustes::class -> PodeAcceder
+
         // Autenticación
         Pantalla.Benvida::class -> PodeIniciarSesion
-        Pantalla.IniciarSesion::class -> PodeIniciarSesion
+        Pantalla.Acceso::class -> PodeIniciarSesion
         Pantalla.Rexistro::class -> PodeRexistrarse
 
         // Lectura
         Pantalla.Inicio::class -> PodeLer
-        Pantalla.Axustes::class -> PodeLer
         Pantalla.Actividades::class -> PodeLer
         Pantalla.ActividadeDetalle::class -> PodeLer
         Pantalla.Buscar::class -> PodeLer

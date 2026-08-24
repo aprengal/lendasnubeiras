@@ -2,19 +2,13 @@ package com.aprengal.lendasnubeiras.ui
 
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -28,86 +22,11 @@ import com.aprengal.lendasnubeiras.ui.reutilizables.EspazadorAlto
 // Sustituye este import por el real de tu proyecto cuando los
 // descomentes en tu archivo de colores:
 
-private val CorGhost = Color( 0xFFB6F29A )
-
-/**
- * Botón principal — fondo = primary, texto = onPrimary.
- * Úsalo para LA acción más importante de la pantalla (una por pantalla,
- * idealmente).
- */
-@Composable
-fun BotonPrincipal(
-    texto: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    habilitado: Boolean = true
-) {
-    Button(
-        onClick = onClick,
-        enabled = habilitado,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary
-        ),
-        modifier = modifier.fillMaxWidth()
-    ) {
-        Text(texto)
-    }
-}
-
-/**
- * Botón secundario — borde y texto = outline (no "secondary": ese color
- * se reserva para logo/menús y no siempre tiene contraste suficiente
- * aquí, según lo comprobado).
- * Úsalo para acciones alternativas (cancelar, volver, otra opción válida).
- */
-@Composable
-fun BotonSecundario(
-    texto: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    habilitado: Boolean = true
-) {
-    OutlinedButton(
-        onClick = onClick,
-        enabled = habilitado,
-        colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = MaterialTheme.colorScheme.outline
-        ),
-        border = ButtonDefaults.outlinedButtonBorder(enabled = habilitado).copy(
-            brush = SolidColor(MaterialTheme.colorScheme.outline)
-        ),
-        modifier = modifier.fillMaxWidth()
-    ) {
-        Text(texto)
-    }
-}
-
 /**
  * Botón ghost — fondo CorGhost (verde), texto negro. Color fijo, igual
  * en ambos temas (no forma parte del ColorScheme, se aplica directo).
  * Úsalo para acciones de menor peso visual (omitir, opcional).
  */
-@Composable
-fun BotonGhost(
-    texto: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    habilitado: Boolean = true
-) {
-    Button(
-        onClick = onClick,
-        enabled = habilitado,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = CorGhost,
-            contentColor = Color.Black
-        ),
-        modifier = modifier.fillMaxWidth()
-    ) {
-        Text(texto)
-    }
-}
-
 /*@Composable
 fun MirarAnimacions() {
     Column(

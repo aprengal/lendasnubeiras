@@ -27,7 +27,7 @@ internal enum class TipoNavegacion(
         atrasSaida = slideOutHorizontally( tween() ) { ancho -> ancho }
     ),
 
-    SEN_MENUS(
+    APERTURA(
         entrada = slideInHorizontally( tween() ) { ancho -> ancho },
         saida = slideOutHorizontally( tween() ) { ancho -> -ancho },
         atrasEntrada = slideInHorizontally( tween() ) { ancho -> -ancho },

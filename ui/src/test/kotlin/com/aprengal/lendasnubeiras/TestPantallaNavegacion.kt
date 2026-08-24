@@ -1,10 +1,5 @@
 package com.aprengal.lendasnubeiras
 
-import com.aprengal.lendasnubeiras.ui.navegacion.Pantalla
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Test
-
 class TestPantallaNavegacion {
 
     //Novos tests: Mirar se o tipo de navegación é o esperado

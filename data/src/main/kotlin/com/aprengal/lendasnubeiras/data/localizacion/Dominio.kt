@@ -12,7 +12,7 @@ sealed class Dominio( val nome: String ) {
     object Base : Dominio( "base" )
     object Autenticacion : Dominio( "autenticacion" )
     object Titulos : Dominio( "titulos" )
-    object Menu : Dominio( "menu" )
+    object Icona : Dominio( "icona" )
     object Test : Dominio( "test" )
     object Opcions: Dominio( "opcions" )
 

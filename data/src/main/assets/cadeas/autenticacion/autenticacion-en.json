@@ -4,5 +4,13 @@
   "titulo_rexistro": "Register",
   "boton_acceso": "Log in",
   "boton_anonimo": "Continue as guest",
-  "boton_rexistro": "Register"
+  "boton_rexistro": "Register",
+
+  "correo_electronico": "Email",
+  "comprobando_correo": "Checking email",
+
+  "crear_conta": "Don't have an account? Sign up",
+  "enlace_crear_conta": "Sign up",
+  "volver_acceso": "I already have an account"
+
 }

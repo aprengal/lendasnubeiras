@@ -25,9 +25,10 @@ fun EstruturaSuperior( contido: @Composable () -> Unit ) {
 
     val modificador = Modifier.fillMaxWidth().height( 64.dp )
 
-    Column( modifier = Modifier.fillMaxSize().windowInsetsPadding( WindowInsets.systemBars ) ) {
+    Column( Modifier.fillMaxSize().windowInsetsPadding( WindowInsets.systemBars ) ) {
 
-        Row( modifier = modificador, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center ) {
+        //Igual isto se pode mover a unha nova función
+        Row( modificador, horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically ) {
             Logo()
             EspazadorAncho()
             AmosarTitulo()
@@ -35,7 +36,7 @@ fun EstruturaSuperior( contido: @Composable () -> Unit ) {
 
         HorizontalDivider( thickness = 1.dp, color = MaterialTheme.colorScheme.onSurface )
 
-        Column( Modifier.padding( start = 10.dp, end = 10.dp ) ) {
+        Column( Modifier.padding( 10.dp ) ) {
             contido()
         }
 

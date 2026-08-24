@@ -111,7 +111,7 @@ dependencies {
     implementation( project( ":data" ) )
 
     //Tests unitarios
-    testImplementation( libs.junit )
-    testImplementation( kotlin( "reflect" ) )
+    //testImplementation( libs.junit )
+    //testImplementation( kotlin( "reflect" ) )
 
 }

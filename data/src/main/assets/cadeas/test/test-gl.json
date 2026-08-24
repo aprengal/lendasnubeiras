@@ -3,8 +3,9 @@
   "natasha": "Natasha marchou de festa :c",
 
   "mensaxes_novas": {
-    "one": "Tes %d mensaxe nova",
-    "other": "Tes %d mensaxes novas"
+    "one": "Tes %s mensaxe nova",
+    "other": "Tes %s mensaxes novas",
+    "many": "Tes %s de mensaxes novas"
   },
   "mensaxe_fallos": {
     "0": "Entregaches a tese sobre a aerodinámica das croquetas. Doutoramento honoris causa intergaláctico.",

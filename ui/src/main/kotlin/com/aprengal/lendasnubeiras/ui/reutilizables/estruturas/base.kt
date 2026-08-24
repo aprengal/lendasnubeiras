@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -73,32 +72,16 @@ internal fun EstruturaBase( controlador: NavHostController, contido: @Composable
 @Composable
 private fun NavegacionSuperior( controlador: NavHostController ) {
 
-    val elementos = listOf( Pantalla.Axustes )
-    val modificador = Modifier.fillMaxWidth()
+    val modificadorFila = Modifier.fillMaxWidth()
         .windowInsetsPadding( WindowInsets.statusBars.only( WindowInsetsSides.Top ) )
         .height( 64.dp ).absolutePadding( left = 16.dp, right = 4.dp )
 
-    val entradaNavegacion by controlador.currentBackStackEntryAsState()
-    val dimension = with( LocalDensity.current ) { 30.dp.toSp() }
-
     Column {
 
-        Row( modifier = modificador, verticalAlignment = Alignment.CenterVertically ) {
-
+        Row( modifier = modificadorFila, verticalAlignment = Alignment.CenterVertically ) {
             Logo()
             Spacer( Modifier.weight( 1f ) )
-
-            for ( elemento in elementos ) {
-
-                val seleccionado = entradaNavegacion?.destination?.hierarchy?.any { pantalla -> pantalla.hasRoute( elemento::class ) } == true
-                val accion = { controlador.navigate( elemento ) { launchSingleTop = true } }
-
-                IconButton( enabled = !seleccionado, onClick = accion ) {
-                    DebuxarIconaMenu( elemento, dimension )
-                }
-
-            }
-
+            IconaAxustes( controlador )
         }
 
         HorizontalDivider( thickness = 1.dp, color = MaterialTheme.colorScheme.onSurface )

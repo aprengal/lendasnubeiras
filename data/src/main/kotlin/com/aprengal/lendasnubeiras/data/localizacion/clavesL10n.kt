@@ -89,7 +89,7 @@ enum class L10nPlural( override val clave: String, override val dominio: Dominio
     // Test
     MENSAXES_NOVAS( "mensaxes_novas", Dominio.Test );
 
-    fun texto( num: Int ): String = Localizacion.l10nPlural( this, num )
+    fun texto( num: Number ): String = Localizacion.l10nPlural( this, num )
 
 }
 

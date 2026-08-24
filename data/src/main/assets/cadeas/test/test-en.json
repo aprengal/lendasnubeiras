@@ -3,8 +3,8 @@
   "natasha": "And karma gave it right back to her",
 
   "mensaxes_novas": {
-    "one": "You have %d new message",
-    "other": "You have %d new messages"
+    "one": "You have %s new message",
+    "other": "You have %s new messages"
   },
   "mensaxe_fallos": {
     "0": "You submitted your thesis on the aerodynamics of croquettes. Intergalactic honorary doctorate.",

@@ -44,16 +44,12 @@ fun PantallaInicio() {
             Column {
 
                 Text( text = L10nSingular.CARLA.texto() )
-
                 Text( text = L10nSingular.NATASHA.texto(), style = MaterialTheme.typography.headlineLarge )
-
                 Text( text = L10nPlural.MENSAXES_NOVAS.texto( 1 ) )
-
                 Text( text = L10nPlural.MENSAXES_NOVAS.texto( 5 ) )
-
                 Text( text = L10nPlural.MENSAXES_NOVAS.texto( 0 ) )
-
                 Text( text = L10nPlural.MENSAXES_NOVAS.texto( 100 ) )
+                Text( text = L10nPlural.MENSAXES_NOVAS.texto( 1000000 ) )
 
                 HorizontalDivider(
                     modifier = Modifier.padding( vertical = 10.dp ),

@@ -23,6 +23,12 @@ class LocalizacionTest {
 
         val idiomas = Idioma.entries.filter { idioma -> idioma != Idioma.NADA }
 
+        //Hai categorías de plurais que non engade Android
+        val categoriasExtras = mapOf(
+            Idioma.GALEGO to listOf( "many" ),
+            Idioma.CASTELAN to listOf( "many" )
+        )
+
         for ( dominio in dominios ) {
 
             val carpeta = "cadeas/${ dominio.nome }"
@@ -59,7 +65,7 @@ class LocalizacionTest {
                 }
 
                 val locale = Locale.forLanguageTag( idioma.codigo.replace( "_", "-" ) )
-                val categoriasEsperadas = PluralRules.forLocale( locale ).keywords.toSet()
+                val categoriasEsperadas = ( PluralRules.forLocale( locale ).keywords + categoriasExtras[ idioma ].orEmpty() ).toSet()
 
                 for ( clave in plurais ) {
 

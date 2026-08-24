@@ -150,7 +150,8 @@ private val PaletaClara = lightColorScheme(
     surfaceContainer = FondoEscuro.copy( alpha = 0.3f ).compositeOver( FondoClaro ),
     error = CorErro,
     onError = TextoClaro,
-    outline = FondoEscuro
+    outline = FondoEscuro,
+    outlineVariant = FondoEscuro.copy( alpha = 0.85f ).compositeOver( FondoClaro )
 )
 
 private val PaletaEscura = darkColorScheme(
@@ -167,10 +168,11 @@ private val PaletaEscura = darkColorScheme(
     surfaceContainer = FondoClaro.copy( alpha = 0.6f ).compositeOver( FondoEscuro ),
     error = CorErro,
     onError = TextoClaro,
-    outline = CorLogo
+    outline = CorLogo,
+    outlineVariant = FondoClaro.copy( alpha = 0.85f ).compositeOver( FondoEscuro )
 )
 
-internal enum class Variante( val nome: String ) {
+enum class Variante( val nome: String ) {
     CLARO( "claro" ),
     ESCURO( "escuro" ),
     PREDETERMINADO( "predeterminado" );

@@ -16,7 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.aprengal.lendasnubeiras.ui.pantallas.AmosarTitulo
+import com.aprengal.lendasnubeiras.ui.navegacion.AmosarTitulo
 import com.aprengal.lendasnubeiras.ui.reutilizables.EspazadorAncho
 import com.aprengal.lendasnubeiras.ui.reutilizables.Logo
 

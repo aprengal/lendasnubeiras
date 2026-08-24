@@ -1,9 +1,11 @@
 package com.aprengal.lendasnubeiras.ui.navegacion
 
 import android.util.Log
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavHostController
+import com.aprengal.lendasnubeiras.data.localizacion.L10nSingular
 import com.aprengal.lendasnubeiras.data.usuarios.PodeAcceder
 import com.aprengal.lendasnubeiras.data.usuarios.PodeAdministrar
 import com.aprengal.lendasnubeiras.data.usuarios.PodeCrear
@@ -11,6 +13,8 @@ import com.aprengal.lendasnubeiras.data.usuarios.PodeEditar
 import com.aprengal.lendasnubeiras.data.usuarios.PodeIniciarSesion
 import com.aprengal.lendasnubeiras.data.usuarios.PodeLer
 import com.aprengal.lendasnubeiras.data.usuarios.PodeRexistrarse
+import com.aprengal.lendasnubeiras.ui.reutilizables.LocalPantalla
+import com.aprengal.lendasnubeiras.ui.reutilizables.Texto
 import kotlin.reflect.KClass
 
 fun collerPantallaInicial(): Pantalla {
@@ -74,5 +78,27 @@ fun comprobarAcceso( controlador: NavHostController, pantalla: KClass<out Pantal
     }
 
     return false
+
+}
+
+@Composable
+fun AmosarTitulo() {
+
+    val titulo = when ( LocalPantalla.current ) {
+        //Pantalla.Actividades -> TODO()
+        Pantalla.Axustes -> L10nSingular.TITULO_AXUSTES
+        Pantalla.Benvida -> L10nSingular.TITULO_BENVIDA
+        //is Pantalla.Buscar -> TODO()
+        //Pantalla.CrearActividade -> TODO()
+        //Pantalla.Idioma -> TODO()
+        Pantalla.Acceso -> L10nSingular.TITULO_ACCESO
+        //Pantalla.Inicio -> TODO()
+        //Pantalla.ListarActividades -> TODO()
+        //Pantalla.ModificarActividade -> TODO()
+        Pantalla.Rexistro -> L10nSingular.TITULO_REXISTRO
+        else -> error( "A pantalla ${ LocalPantalla.current::class.simpleName } non ten título asignado" )
+    }
+
+    Texto( titulo, estilo = MaterialTheme.typography.headlineLarge  )
 
 }

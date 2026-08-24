@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.FileNotFoundException
+import java.text.NumberFormat
 import java.util.Locale
 
 //TODO: Test unitario para verificar que todas as cadeas están definidas.
@@ -29,7 +30,9 @@ object Localizacion {
 
     private val _idiomaActual = MutableStateFlow( Idioma.NADA )
 
-    private var regrasPlurais: PluralRules? = null
+    private var pluraisCardinais: PluralRules? = null
+
+    private var pluraisOrdinarios: PluralRules? = null
 
     private var dominiosRecordados: MutableSet<Dominio> = mutableSetOf()
 
@@ -71,7 +74,8 @@ object Localizacion {
 
         traducions.clear()
         traducionsPlurais.clear()
-        regrasPlurais = null
+        pluraisCardinais = null
+        pluraisOrdinarios = null
 
         return true
 
@@ -203,14 +207,16 @@ object Localizacion {
         return traducions[ elemento.dominio ]?.get( elemento ) ?: _idiomaActual.value.pendente
     }
 
-    internal fun l10nPlural( elemento: L10nPlural, num: Int ): String {
+    internal fun l10nPlural( elemento: L10nPlural, num: Number, cardinal: Boolean = true ): String {
 
         cargarDominio( elemento.dominio )
         val listaPlurais = traducionsPlurais[ elemento.dominio ]?.get( elemento ) ?: return _idiomaActual.value.pendente
 
-        val clavePlural = categoriaPlurais( num )
+        val local = Locale.forLanguageTag( _idiomaActual.value.codigoRexion.replace( '_', '-' ) )
+        val clavePlural = categoriaPlurais( num.toDouble(), local, cardinal )
+        val numero = NumberFormat.getNumberInstance( local ).format( num )
 
-        return listaPlurais[ clavePlural ]?.let { clave -> String.format( clave, num ) } ?: _idiomaActual.value.pendente
+        return listaPlurais[ clavePlural ]?.let { clave -> String.format( clave, numero ) } ?: _idiomaActual.value.pendente
 
     }
 
@@ -219,21 +225,46 @@ object Localizacion {
         cargarDominio( elemento.dominio )
         val listaPlurais = traducionsVariantes[ elemento.dominio ]?.get( elemento ) ?: return _idiomaActual.value.pendente
 
-        val claveVariante = num.toString() //Alternativas con números fixos
+        val local = Locale.forLanguageTag( _idiomaActual.value.codigoRexion.replace( '_', '-' ) )
+        val claveVariante = num.toString()
+        val numero = NumberFormat.getIntegerInstance( local ).format( num )
 
-        return listaPlurais[ claveVariante ]?.let { clave -> String.format( clave, num ) } ?: _idiomaActual.value.pendente
+        return listaPlurais[ claveVariante ]?.let { clave -> String.format( clave, numero ) } ?: _idiomaActual.value.pendente
 
     }
 
-    private fun categoriaPlurais( num: Int ): String {
+    private fun categoriaPlurais( num: Double, local: Locale, cardinal: Boolean ): String {
 
-        regrasPlurais?.let { elemento -> return elemento.select( num.toDouble() ) }
+        if ( cardinal ) {
+            return categoriaCardinal( num, local )
+        }
+        
+        pluraisOrdinarios?.let { elemento -> return elemento.select( num ) }
+        val regras = PluralRules.forLocale( local, PluralRules.PluralType.ORDINAL )
+        pluraisOrdinarios = regras
 
-        val local = Locale.forLanguageTag( _idiomaActual.value.codigoRexion.replace( '_', '-' ) )
-        val regras = PluralRules.forLocale( local )
-        regrasPlurais = regras
+        return regras.select( num )
 
-        return regras.select( num.toDouble() )
+    }
+
+    private fun categoriaCardinal( num: Double, local: Locale ): String {
+
+        //Se houbese regras concretas diferentes, habería que cambiar a un when
+        if ( _idiomaActual.value in listOf( Idioma.GALEGO, Idioma.CASTELAN ) ) {
+
+            if ( num == 1.0 ) return "one"
+
+            if ( num % 1_000_000.0 == 0.0 && num % 1.0 == 0.0 ) {
+                return "many"
+            }
+
+        }
+
+        pluraisCardinais?.let { elemento -> return elemento.select( num ) }
+        val regras = PluralRules.forLocale( local, PluralRules.PluralType.CARDINAL )
+        pluraisCardinais = regras
+
+        return regras.select( num )
 
     }
 

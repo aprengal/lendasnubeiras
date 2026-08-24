@@ -3,9 +3,9 @@
   "natasha": "Y el karma se lo devolvió",
 
   "mensaxes_novas": {
-    "one": "Tienes %d mensaje nuevo",
-    "other": "Tienes %d mensajes nuevos",
-    "many": "Tienes %d de mensajes nuevos"
+    "one": "Tienes %s mensaje nuevo",
+    "other": "Tienes %s mensajes nuevos",
+    "many": "Tienes %s de mensajes nuevos"
   },
   "mensaxe_fallos": {
     "0": "Has entregado la tesis sobre la aerodinámica de las croquetas. Doctorado honoris causa intergaláctico.",

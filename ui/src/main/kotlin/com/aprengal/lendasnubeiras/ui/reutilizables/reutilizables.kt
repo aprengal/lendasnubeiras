@@ -22,20 +22,13 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.aprengal.lendasnubeiras.data.configuracion.haiLector
 import com.aprengal.lendasnubeiras.ui.R
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ButtonDefaults
@@ -56,7 +49,6 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
-import com.aprengal.lendasnubeiras.data.configuracion.corrutina
 import com.aprengal.lendasnubeiras.data.localizacion.L10nPlural
 import com.aprengal.lendasnubeiras.data.localizacion.L10nSingular
 import com.aprengal.lendasnubeiras.ui.navegacion.Pantalla
@@ -86,69 +78,46 @@ fun Logo( medida: Dp = 30.dp ) {
 }
 
 @Composable
-fun <T> BotonOpcion(
-    clave: String,
-    avisoDialogo: Boolean = false,
-    opcions: List<T>,
-    valorInicial: T,
-    nomeUI: (T) -> String,
-    accion: suspend ( T ) -> Boolean
+fun AlertaDialogo( titulo: L10nSingular, contido: @Composable () -> Unit, rexeitar: () -> Unit,
+    confirmacion: @Composable () -> Unit, cancelacion: @Composable () -> Unit
 ) {
 
-    var amosarDialogo by rememberSaveable { mutableStateOf( false ) }
-    var valorActual by rememberSaveable { mutableStateOf( valorInicial ) }
-    val traducirOpcions = clave != "cambio_idioma"
+    AlertDialog( title = { Texto( titulo ) }, text = { contido() }, dismissButton = cancelacion,
+        confirmButton = confirmacion, onDismissRequest = rexeitar
+    )
 
-    val textoBoton = L10nSingular.buscar( "boton_$clave" )
-    val modificadorBoton = Modifier.fillMaxWidth().padding( top = 10.dp )
+}
 
-    BotonPrincipal( textoBoton, { amosarDialogo = true }, modificadorBoton )
+@Composable
+fun <T> OpcionsDialogo(
+    clave: String, opcions: List<T>, seleccionado: T,
+    nomeUI: ( T ) -> String, traducirOpcions: Boolean,
+    procesando: Boolean, seleccionar: ( T ) -> Unit
+) {
 
-    if ( amosarDialogo ) {
+    Column( Modifier.selectableGroup() ) {
 
-        val aviso = LocalAviso.current
-        val contexto = LocalContext.current
-        val haiLector = remember { contexto.haiLector() }
-        var procesando by rememberSaveable { mutableStateOf( false ) }
+        for ( opcion in opcions ) {
 
-        DialogoSeleccion(
-            clave = clave,
-            opcions = opcions,
-            opcionActual = valorActual,
-            nomeUI = nomeUI,
-            traducirOpcions = traducirOpcions,
-            subtitulo = haiLector && avisoDialogo,
-            procesando = procesando,
-            aceptar = { novoValor -> procesando = true
+            val textoUI = nomeUI( opcion )
+            val claveBuscable = if ( textoUI !in listOf( "si", "non" ) ) "${ clave }_${ textoUI }" else textoUI
+            val texto = if ( traducirOpcions ) L10nSingular.buscar( claveBuscable).texto() else textoUI
 
-                corrutina {
+            val modificador = Modifier
+                .fillMaxWidth()
+                .selectable(
+                    selected = seleccionado == opcion, enabled = !procesando,
+                    onClick = { seleccionar( opcion ) }, role = Role.RadioButton
+                )
+                .padding( vertical = 8.dp )
 
-                    while ( true ) {
+            Row( modifier = modificador, verticalAlignment = Alignment.CenterVertically ) {
+                RadioButton( selected = seleccionado == opcion, enabled = !procesando, onClick = null )
+                Spacer( Modifier.width( 12.dp ) )
+                Text( texto )
+            }
 
-                        val resultado = accion( novoValor )
-                        amosarDialogo = false
-
-                        if ( resultado ) {
-                            valorActual = novoValor
-                            procesando = false
-                            break
-                        }
-
-                        val claveL10n = L10nSingular.buscar( "gardado_fallido_$clave" )
-                        val resultadoAviso = amosarAviso( aviso, claveL10n, true )
-
-                        if ( resultadoAviso != SnackbarResult.ActionPerformed ) {
-                            procesando = false
-                            break
-                        }
-
-                    }
-
-                }
-
-            },
-            rexeitar = { amosarDialogo = false }
-        )
+        }
 
     }
 
@@ -166,78 +135,6 @@ suspend fun amosarAviso( aviso: SnackbarHostState, claveMensaxe: L10nSingular, r
 }
 
 @Composable
-fun <T> DialogoSeleccion(
-    clave: String,
-    subtitulo: Boolean,
-    opcions: List<T>,
-    opcionActual: T,
-    nomeUI: (T) -> String,
-    traducirOpcions: Boolean,
-    procesando: Boolean,
-    aceptar: (T) -> Unit,
-    rexeitar: () -> Unit
-) {
-
-    var seleccionado by rememberSaveable { mutableStateOf( opcionActual ) }
-
-    AlertDialog(
-        title = { Text( L10nSingular.buscar( "dialogo_$clave" ).texto() ) },
-        text = {
-
-            Column( Modifier.selectableGroup() ) {
-
-                if ( subtitulo ) {
-
-                    /** isto non está localizado. Igual con usar [Texto] vale */
-                    Text(
-                        text = L10nSingular.buscar( "subtitulo_$clave" ).texto(),
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding( bottom = 12.dp )
-                    )
-
-                }
-
-                for ( opcion in opcions ) {
-
-                    val textoUI = nomeUI( opcion )
-                    val claveBuscable = if ( textoUI !in listOf( "si", "non" ) ) "${ clave }_${ textoUI }" else textoUI
-                    val texto = if ( traducirOpcions ) L10nSingular.buscar( claveBuscable).texto() else textoUI
-
-                    val modificador = Modifier
-                        .fillMaxWidth()
-                        .selectable(
-                            selected = seleccionado == opcion, enabled = !procesando,
-                            onClick = { seleccionado = opcion }, role = Role.RadioButton
-                        )
-                        .padding( vertical = 8.dp )
-
-                    Row( modifier = modificador, verticalAlignment = Alignment.CenterVertically ) {
-                        RadioButton( selected = seleccionado == opcion, enabled = !procesando, onClick = null )
-                        Spacer( Modifier.width( 12.dp ) )
-                        Text( texto )
-                    }
-
-                }
-
-            }
-
-        },
-        confirmButton = {
-            TextButton( enabled = !procesando, onClick = { aceptar( seleccionado ) } ) {
-                Text( L10nSingular.ACEPTAR.texto() )
-            }
-        },
-        onDismissRequest = { if ( !procesando ) rexeitar() },
-        dismissButton = {
-            TextButton( enabled = !procesando, onClick = rexeitar ) {
-                Text( L10nSingular.CANCELAR.texto() )
-            }
-        }
-    )
-
-}
-
-@Composable
 fun Texto( elemento: L10nSingular, modifier: Modifier = Modifier, estilo: TextStyle = LocalTextStyle.current ) {
     Text( elemento.texto(), modifier, style = estilo )
 }
@@ -248,31 +145,38 @@ fun TextoPlural( elemento: L10nPlural, cantidade: Int, modifier: Modifier = Modi
 }
 
 @Composable
-fun BotonPrincipal( elemento: L10nSingular, onClick: () -> Unit, modifier: Modifier = Modifier, habilitado: Boolean = true ) {
-    Button( onClick = onClick, modifier = modifier, enabled = habilitado ) {
+fun BotonPrincipal( elemento: L10nSingular, accion: () -> Unit, modifier: Modifier = Modifier, habilitado: Boolean = true ) {
+    Button( onClick = accion, modifier = modifier, enabled = habilitado ) {
         Texto( elemento )
     }
 }
 
 @Composable
-fun BotonSecundario( elemento: L10nSingular, onClick: () -> Unit, modifier: Modifier = Modifier, habilitado: Boolean = true ) {
-    OutlinedButton( onClick = onClick, enabled = habilitado, modifier = modifier ) {
+fun BotonSecundario( elemento: L10nSingular, accion: () -> Unit, modifier: Modifier = Modifier, habilitado: Boolean = true ) {
+    OutlinedButton( onClick = accion, enabled = habilitado, modifier = modifier ) {
         Texto( elemento )
     }
 }
 
 @Composable
-fun BotonTerciario( elemento: L10nSingular, onClick: () -> Unit, modifier: Modifier = Modifier, habilitado: Boolean = true ) {
+fun BotonTerciario( elemento: L10nSingular, accion: () -> Unit, modifier: Modifier = Modifier, habilitado: Boolean = true ) {
 
     val cores = ButtonDefaults.buttonColors(
         containerColor = MaterialTheme.colorScheme.tertiary,
         contentColor = MaterialTheme.colorScheme.onTertiary
     )
 
-    Button( onClick = onClick, enabled = habilitado, colors = cores, modifier = modifier ) {
+    Button( onClick = accion, enabled = habilitado, colors = cores, modifier = modifier ) {
         Texto( elemento )
     }
 
+}
+
+@Composable
+fun BotonAuxiliar( elemento: L10nSingular, accion: () -> Unit, activado: Boolean ) {
+    TextButton( enabled = activado, onClick = accion ) {
+        Texto( elemento )
+    }
 }
 
 @Composable

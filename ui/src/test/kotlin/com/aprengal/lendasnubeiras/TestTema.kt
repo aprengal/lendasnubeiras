@@ -1,6 +1,6 @@
 package com.aprengal.lendasnubeiras
 
-import com.aprengal.lendasnubeiras.ui.tema.Tema.Variante
+import com.aprengal.lendasnubeiras.ui.tema.Variante
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 

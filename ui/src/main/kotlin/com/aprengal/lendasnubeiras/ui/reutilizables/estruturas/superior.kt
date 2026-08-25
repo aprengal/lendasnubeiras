@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,7 +33,7 @@ fun EstruturaSuperior( contido: @Composable () -> Unit ) {
             AmosarTitulo()
         }
 
-        HorizontalDivider( thickness = 1.dp, color = MaterialTheme.colorScheme.onSurface )
+        HorizontalDivider()
 
         Column( Modifier.padding( 10.dp ) ) {
             contido()

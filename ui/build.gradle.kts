@@ -56,6 +56,8 @@ dependencies {
     //Previsualización
     implementation( libs.androidx.compose.ui.tooling.preview )
 
+    debugImplementation( libs.androidx.compose.ui.tooling )
+
     //Tests unitarios
     testImplementation( libs.junit )
     testImplementation( kotlin( "reflect" ) )

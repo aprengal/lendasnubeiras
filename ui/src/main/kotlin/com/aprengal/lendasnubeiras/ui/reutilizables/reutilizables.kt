@@ -1,6 +1,7 @@
 package com.aprengal.lendasnubeiras.ui.reutilizables
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.aprengal.lendasnubeiras.ui.R
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -78,12 +80,16 @@ fun Logo( medida: Dp = 30.dp ) {
 }
 
 @Composable
-fun AlertaDialogo( titulo: L10nSingular, contido: @Composable () -> Unit, rexeitar: () -> Unit,
-    confirmacion: @Composable () -> Unit, cancelacion: @Composable () -> Unit
+fun AlertaDialogo( titulo: L10nSingular, contido: @Composable () -> Unit,
+    rexeitado: () -> Unit, cancelado: ( () -> Unit ), confirmado: ( () -> Unit )? = null
 ) {
 
-    AlertDialog( title = { Texto( titulo ) }, text = { contido() }, dismissButton = cancelacion,
-        confirmButton = confirmacion, onDismissRequest = rexeitar
+    AlertDialog(
+        title = { Texto( titulo ) },
+        text = { contido() },
+        dismissButton = { BotonAuxiliar( L10nSingular.CANCELAR, cancelado ) },
+        confirmButton = { confirmado?.let { accion -> BotonPrincipal(L10nSingular.ACEPTAR, accion ) } },
+        onDismissRequest = rexeitado
     )
 
 }
@@ -92,7 +98,7 @@ fun AlertaDialogo( titulo: L10nSingular, contido: @Composable () -> Unit, rexeit
 fun <T> OpcionsDialogo(
     clave: String, opcions: List<T>, seleccionado: T,
     nomeUI: ( T ) -> String, traducirOpcions: Boolean,
-    procesando: Boolean, seleccionar: ( T ) -> Unit
+    seleccionar: ( T ) -> Unit
 ) {
 
     Column( Modifier.selectableGroup() ) {
@@ -106,13 +112,13 @@ fun <T> OpcionsDialogo(
             val modificador = Modifier
                 .fillMaxWidth()
                 .selectable(
-                    selected = seleccionado == opcion, enabled = !procesando,
+                    selected = seleccionado == opcion,
                     onClick = { seleccionar( opcion ) }, role = Role.RadioButton
                 )
                 .padding( vertical = 8.dp )
 
             Row( modifier = modificador, verticalAlignment = Alignment.CenterVertically ) {
-                RadioButton( selected = seleccionado == opcion, enabled = !procesando, onClick = null )
+                RadioButton( selected = seleccionado == opcion, onClick = null )
                 Spacer( Modifier.width( 12.dp ) )
                 Text( texto )
             }
@@ -158,6 +164,7 @@ fun BotonSecundario( elemento: L10nSingular, accion: () -> Unit, modifier: Modif
     }
 }
 
+//A cor terciaria chama demasiado a atención e molesta coa paleta escollida
 @Composable
 fun BotonTerciario( elemento: L10nSingular, accion: () -> Unit, modifier: Modifier = Modifier, habilitado: Boolean = true ) {
 
@@ -173,7 +180,7 @@ fun BotonTerciario( elemento: L10nSingular, accion: () -> Unit, modifier: Modifi
 }
 
 @Composable
-fun BotonAuxiliar( elemento: L10nSingular, accion: () -> Unit, activado: Boolean ) {
+fun BotonAuxiliar( elemento: L10nSingular, accion: () -> Unit, activado: Boolean = true ) {
     TextButton( enabled = activado, onClick = accion ) {
         Texto( elemento )
     }
@@ -192,17 +199,17 @@ internal fun DebuxarIconaMenu( pantalla: Pantalla, dimension: TextUnit ) {
         else -> error( "A pantalla ${ pantalla::class.simpleName } non ten icona asignada" )
     }
 
-    DebuxarIcona( icona.codigo, icona.descricion.texto(), dimension = dimension )
+    DebuxarIcona( icona.codigo, icona.descricion, dimension = dimension )
 
 }
 
 private val fonteIconas = FontFamily( Font( R.font.ubuntu_iconas_nerd, FontWeight.Bold ) )
 
 @Composable
-fun DebuxarIcona( contido: String, descricion: String? = null, dimension: TextUnit ) {
+fun DebuxarIcona( contido: String, descricion: L10nSingular? = null, dimension: TextUnit ) {
 
     val cor = LocalContentColor.current
-    val modificador = descricion?.let { Modifier.semantics { contentDescription = descricion } } ?: Modifier.clearAndSetSemantics { }
+    val modificador = descricion?.let { Modifier.semantics { contentDescription = descricion.texto() } } ?: Modifier.clearAndSetSemantics { }
 
     Text( text = contido, modifier = modificador, fontSize = dimension, fontFamily = fonteIconas, color = cor, lineHeight = 1.sp )
 
@@ -245,5 +252,20 @@ fun TextoEnlazado( elemento: L10nSingular, enlaces: Map<L10nSingular, () -> Unit
     }
 
     Text( saida, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center )
+
+}
+
+@Composable
+fun ElementoLista( accion: () -> Unit, titulo: L10nSingular, textoUI: String?,
+    icona: Icona?, contidoExtra: @Composable ( () -> Unit )? = null
+) {
+
+    ListItem(
+        modifier = Modifier.clickable( onClick = accion ),
+        headlineContent = { Texto( titulo ) },
+        supportingContent = { textoUI?.let { Text( textoUI ) } },
+        leadingContent = { icona?.let{ DebuxarIcona( icona.codigo, icona.descricion, 20.sp ) } },
+        trailingContent = contidoExtra
+    )
 
 }

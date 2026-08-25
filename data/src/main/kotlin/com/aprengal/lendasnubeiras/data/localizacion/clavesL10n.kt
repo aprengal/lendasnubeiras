@@ -41,8 +41,12 @@ enum class L10nSingular( override val clave: String, override val dominio: Domin
 
     ICONA_INICIO( "inicio", Dominio.Icona ),
     ICONA_BUSCAR( "buscar", Dominio.Icona ),
-    ICONA_IDIOMA( "idioma", Dominio.Icona ),
     ICONA_ACTIVIDADES( "actividades", Dominio.Icona ),
+
+    ICONA_IDIOMA( "idioma", Dominio.Icona ),
+    ICONA_TEMA_CLARO( "tema_claro", Dominio.Icona ),
+    ICONA_TEMA_ESCURO( "tema_escuro", Dominio.Icona ),
+
     ICONA_AMOSAR( "amosar", Dominio.Icona ),
     ICONA_AGOCHAR( "agochar", Dominio.Icona ),
 

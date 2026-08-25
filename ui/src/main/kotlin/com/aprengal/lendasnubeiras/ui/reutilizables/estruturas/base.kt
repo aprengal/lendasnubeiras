@@ -84,7 +84,7 @@ private fun NavegacionSuperior( controlador: NavHostController ) {
             IconaAxustes( controlador )
         }
 
-        HorizontalDivider( thickness = 1.dp, color = MaterialTheme.colorScheme.onSurface )
+        HorizontalDivider()
 
     }
 

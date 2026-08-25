@@ -68,6 +68,32 @@ private val Tipografias = Typography(
         lineHeight = 34.sp,
         letterSpacing = ( -0.0415625 ).em
     ),
+
+    // Títulos de secciones principales y componentes importantes
+    titleLarge = TextStyle(
+        fontFamily = ExpletusSans,
+        fontWeight = FontWeight.Bold,
+        fontSize = 22.sp,
+        lineHeight = 28.sp,
+        letterSpacing = ( -0.0415625 ).em
+    ),
+    // Títulos de componentes
+    titleMedium = TextStyle(
+        fontFamily = ExpletusSans,
+        fontWeight = FontWeight.Bold,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+        letterSpacing = ( -0.0415625 ).em
+    ),
+    // Títulos pequeños y secundarios
+    titleSmall = TextStyle(
+        fontFamily = ExpletusSans,
+        fontWeight = FontWeight.Bold,
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
+        letterSpacing = ( -0.0415625 ).em
+    ),
+
     // Parágrafo (corpo de texto normal)
     bodyLarge = TextStyle(
         fontFamily = Ubuntu,
@@ -75,10 +101,10 @@ private val Tipografias = Typography(
         fontSize = 18.sp,
         lineHeight = 26.sp
     ),
-    // Parágrafo negriña
+    // Parágrafo (antes tiña negriña, pero aplicarase no propio compoñente)
     bodyMedium = TextStyle(
         fontFamily = Ubuntu,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.Normal,
         fontSize = 18.sp,
         lineHeight = 26.sp
     ),
@@ -89,12 +115,27 @@ private val Tipografias = Typography(
         fontSize = 12.sp,
         lineHeight = 16.sp
     ),
+
     // Texto de botóns / etiquetas
     labelLarge = TextStyle(
         fontFamily = Ubuntu,
         fontWeight = FontWeight.Bold,
         fontSize = 16.sp,
         lineHeight = 22.sp
+    ),
+    // Etiquetas de controles compactos, tabs y chips
+    labelMedium = TextStyle(
+        fontFamily = Ubuntu,
+        fontWeight = FontWeight.Bold,
+        fontSize = 12.sp,
+        lineHeight = 16.sp
+    ),
+    // Etiquetas auxiliares y de tamaño reducido
+    labelSmall = TextStyle(
+        fontFamily = Ubuntu,
+        fontWeight = FontWeight.Bold,
+        fontSize = 11.sp,
+        lineHeight = 16.sp
     )
 )
 
@@ -145,13 +186,15 @@ private val PaletaClara = lightColorScheme(
     onTertiary = TextoEscuro,
     background = FondoClaro,
     onBackground = TextoEscuro,
-    surface = FondoClaro,
+    surface = FondoEscuro.copy( alpha = 0.08f ).compositeOver(FondoClaro),
     onSurface = TextoEscuro,
-    surfaceContainer = FondoEscuro.copy( alpha = 0.3f ).compositeOver( FondoClaro ),
+    surfaceVariant = FondoClaro,
+    onSurfaceVariant = FondoEscuro.copy( alpha = 0.7f) ,
+    surfaceContainer = FondoEscuro.copy( alpha = 0.6f ).compositeOver( FondoClaro ),
     error = CorErro,
     onError = TextoClaro,
     outline = FondoEscuro,
-    outlineVariant = FondoEscuro.copy( alpha = 0.85f ).compositeOver( FondoClaro )
+    outlineVariant = TextoEscuro//FondoEscuro.copy( alpha = 0.85f ).compositeOver( FondoClaro )
 )
 
 private val PaletaEscura = darkColorScheme(
@@ -163,13 +206,15 @@ private val PaletaEscura = darkColorScheme(
     onTertiary = TextoEscuro,
     background = FondoEscuro,
     onBackground = TextoClaro,
-    surface = FondoEscuro,
+    surface = FondoClaro.copy( alpha = 0.08f ).compositeOver(FondoEscuro),
     onSurface = TextoClaro,
+    surfaceVariant = FondoEscuro,
+    onSurfaceVariant = TextoClaro.copy( alpha = 0.7f ),
     surfaceContainer = FondoClaro.copy( alpha = 0.6f ).compositeOver( FondoEscuro ),
     error = CorErro,
     onError = TextoClaro,
     outline = CorLogo,
-    outlineVariant = FondoClaro.copy( alpha = 0.85f ).compositeOver( FondoEscuro )
+    outlineVariant = TextoClaro//FondoClaro.copy( alpha = 0.85f ).compositeOver( FondoEscuro )
 )
 
 enum class Variante( val nome: String ) {
@@ -214,7 +259,7 @@ object Tema {
 
 }
 
-fun escollerVarianteImaxe( temaEscuro: Boolean, claro: Int, escuro: Int ): Int {
+fun <T> escollerVarianteImaxe( temaEscuro: Boolean, claro: T, escuro: T ): T {
 
     val imaxe = when ( temaActual ) {
         Variante.CLARO -> claro

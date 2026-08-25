@@ -2,7 +2,6 @@ package com.aprengal.lendasnubeiras.ui.reutilizables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,12 +31,15 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.aprengal.lendasnubeiras.ui.R
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
@@ -80,46 +82,38 @@ fun Logo( medida: Dp = 30.dp ) {
 }
 
 @Composable
-fun AlertaDialogo( titulo: L10nSingular, contido: @Composable () -> Unit,
+fun AlertaDialogo( titulo: L10nSingular, contido: @Composable ( () -> Unit)? = null,
     rexeitado: () -> Unit, cancelado: ( () -> Unit ), confirmado: ( () -> Unit )? = null
 ) {
 
     AlertDialog(
-        title = { Texto( titulo ) },
-        text = { contido() },
+        title = { Text( titulo.texto(), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center ) },
+        text = { contido?.let { contido() } },
         dismissButton = { BotonAuxiliar( L10nSingular.CANCELAR, cancelado ) },
-        confirmButton = { confirmado?.let { accion -> BotonPrincipal(L10nSingular.ACEPTAR, accion ) } },
+        confirmButton = { confirmado?.let { BotonPrincipal( L10nSingular.ACEPTAR, confirmado ) } },
         onDismissRequest = rexeitado
     )
 
 }
 
 @Composable
-fun <T> OpcionsDialogo(
-    clave: String, opcions: List<T>, seleccionado: T,
-    nomeUI: ( T ) -> String, traducirOpcions: Boolean,
-    seleccionar: ( T ) -> Unit
-) {
+fun <T> ListaOpcions( clave: String, opcions: List<T>, escollido: T, obterNome: ( T ) -> String, localizar: Boolean, escoller: ( T ) -> Unit ) {
 
-    Column( Modifier.selectableGroup() ) {
+    LazyColumn( Modifier.selectableGroup() ) {
 
-        for ( opcion in opcions ) {
+        items( opcions ) { opcion ->
 
-            val textoUI = nomeUI( opcion )
-            val claveBuscable = if ( textoUI !in listOf( "si", "non" ) ) "${ clave }_${ textoUI }" else textoUI
-            val texto = if ( traducirOpcions ) L10nSingular.buscar( claveBuscable).texto() else textoUI
+            val textoUI = obterNome( opcion )
+            val texto = if ( localizar ) L10nSingular.buscar( "${ clave }_${ textoUI }" ).texto() else textoUI
 
             val modificador = Modifier
                 .fillMaxWidth()
-                .selectable(
-                    selected = seleccionado == opcion,
-                    onClick = { seleccionar( opcion ) }, role = Role.RadioButton
-                )
+                .selectable( selected = escollido == opcion, onClick = { escoller( opcion ) }, role = Role.RadioButton )
                 .padding( vertical = 8.dp )
 
             Row( modifier = modificador, verticalAlignment = Alignment.CenterVertically ) {
-                RadioButton( selected = seleccionado == opcion, onClick = null )
-                Spacer( Modifier.width( 12.dp ) )
+                RadioButton( selected = escollido == opcion, onClick = null )
+                EspazadorAncho()
                 Text( texto )
             }
 
@@ -145,8 +139,14 @@ fun Texto( elemento: L10nSingular, modifier: Modifier = Modifier, estilo: TextSt
     Text( elemento.texto(), modifier, style = estilo )
 }
 
+//Por se hai un texto que apareza de golpe (mensaxes de erro en formularios)
 @Composable
-fun TextoPlural( elemento: L10nPlural, cantidade: Int, modifier: Modifier = Modifier, estilo: TextStyle = LocalTextStyle.current ) {
+fun TextoAnunciable( elemento: L10nSingular, modifier: Modifier = Modifier ) {
+    Text( text = elemento.texto(), modifier = modifier.semantics { liveRegion = LiveRegionMode.Polite } )
+}
+
+@Composable
+fun TextoPlural( elemento: L10nPlural, cantidade: Number, modifier: Modifier = Modifier, estilo: TextStyle = LocalTextStyle.current ) {
     Text( elemento.texto( cantidade ), modifier, style = estilo )
 }
 
@@ -162,21 +162,6 @@ fun BotonSecundario( elemento: L10nSingular, accion: () -> Unit, modifier: Modif
     OutlinedButton( onClick = accion, enabled = habilitado, modifier = modifier ) {
         Texto( elemento )
     }
-}
-
-//A cor terciaria chama demasiado a atención e molesta coa paleta escollida
-@Composable
-fun BotonTerciario( elemento: L10nSingular, accion: () -> Unit, modifier: Modifier = Modifier, habilitado: Boolean = true ) {
-
-    val cores = ButtonDefaults.buttonColors(
-        containerColor = MaterialTheme.colorScheme.tertiary,
-        contentColor = MaterialTheme.colorScheme.onTertiary
-    )
-
-    Button( onClick = accion, enabled = habilitado, colors = cores, modifier = modifier ) {
-        Texto( elemento )
-    }
-
 }
 
 @Composable
@@ -235,7 +220,7 @@ fun TextoEnlazado( elemento: L10nSingular, enlaces: Map<L10nSingular, () -> Unit
 
         var posicion = 0
 
-        for ( ( enlace, inicio ) in posicions ) {
+        posicions.forEach { ( enlace, inicio ) ->
 
             val enlaceDestacado = LinkAnnotation.Clickable( tag = enlace.texto(), linkInteractionListener = { enlaces[ enlace ]?.invoke() } )
             append( texto.substring( posicion, inicio ) )
@@ -256,14 +241,14 @@ fun TextoEnlazado( elemento: L10nSingular, enlaces: Map<L10nSingular, () -> Unit
 }
 
 @Composable
-fun ElementoLista( accion: () -> Unit, titulo: L10nSingular, textoUI: String?,
-    icona: Icona?, contidoExtra: @Composable ( () -> Unit )? = null
+fun ElementoLista( accion: () -> Unit, titulo: L10nSingular, icona: Icona?,
+    contido: @Composable ( () -> Unit ), contidoExtra: @Composable ( () -> Unit )? = null
 ) {
 
     ListItem(
         modifier = Modifier.clickable( onClick = accion ),
         headlineContent = { Texto( titulo ) },
-        supportingContent = { textoUI?.let { Text( textoUI ) } },
+        supportingContent = { contido() },
         leadingContent = { icona?.let{ DebuxarIcona( icona.codigo, icona.descricion, 20.sp ) } },
         trailingContent = contidoExtra
     )

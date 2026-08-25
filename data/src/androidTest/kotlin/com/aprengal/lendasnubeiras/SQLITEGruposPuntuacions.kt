@@ -41,14 +41,14 @@ class SQLITEGruposPuntuacions {
     @Before
     fun limparAntes() {
         db.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "!=", "valor" to 0 ) ) )
-        val ondeLimpeza = mapOf( "estado" to mapOf( "operador" to "IN", "valores" to listOf( -3, -2, -1, 3 ) ) )
+        val ondeLimpeza = mapOf( "estado" to mapOf( "operador" to "IN", "valores" to setOf( -3, -2, -1, 3 ) ) )
         db.eliminar( "actividades", ondeLimpeza )
     }
 
     @After
     fun limparDespois() {
         db.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "!=", "valor" to 0 ) ) )
-        val ondeLimpeza = mapOf( "estado" to mapOf( "operador" to "IN", "valores" to listOf( -3, -2, -1, 3 ) ) )
+        val ondeLimpeza = mapOf( "estado" to mapOf( "operador" to "IN", "valores" to setOf( -3, -2, -1, 3 ) ) )
         db.eliminar( "actividades", ondeLimpeza )
     }
 
@@ -104,7 +104,7 @@ class SQLITEGruposPuntuacions {
 
         assertEquals( -1, db.actualizarGrupo( grupo2, mapOf( "nome" to "equipo i" ) ) )
 
-        db.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "IN", "valores" to listOf( idGrupo1, idGrupo2 ) ) ) )
+        db.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "IN", "valores" to setOf( idGrupo1, idGrupo2 ) ) ) )
 
     }
 
@@ -247,7 +247,7 @@ class SQLITEGruposPuntuacions {
         assertNotEquals( -1L, idXogador1 )
         assertNotEquals( -1L, idXogador2 )
 
-        db.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "IN", "valores" to listOf( idGrupo1, idGrupo2 ) ) ) )
+        db.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "IN", "valores" to setOf( idGrupo1, idGrupo2 ) ) ) )
 
     }
 
@@ -702,7 +702,7 @@ class SQLITEGruposPuntuacions {
         assertTrue( grupos.any { it.id == idGrupo1 && it.nome == "Equipo U" } )
         assertTrue( grupos.any { it.id == idGrupo2 && it.nome == "Equipo V" } )
 
-        db.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "IN", "valores" to listOf( idGrupo1, idGrupo2 ) ) ) )
+        db.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "IN", "valores" to setOf( idGrupo1, idGrupo2 ) ) ) )
 
     }
 
@@ -728,7 +728,7 @@ class SQLITEGruposPuntuacions {
         assertEquals( 1, xogadoresGrupo2.size )
         assertEquals( "Noa", xogadoresGrupo2[ 0 ].nome )
 
-        db.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "IN", "valores" to listOf( idGrupo1, idGrupo2 ) ) ) )
+        db.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "IN", "valores" to setOf( idGrupo1, idGrupo2 ) ) ) )
 
     }
 
@@ -751,7 +751,7 @@ class SQLITEGruposPuntuacions {
         assertTrue( resultado.any { it.titulo == "Filtro B" } )
         assertTrue( resultado.none { it.titulo == "Filtro C" } )
 
-        db.actualizar( "actividades", mapOf( "estado" to 3 ), mapOf( "id" to mapOf( "operador" to "IN", "valores" to listOf( id1, id2, id3 ) ) ) )
+        db.actualizar( "actividades", mapOf( "estado" to 3 ), mapOf( "id" to mapOf( "operador" to "IN", "valores" to setOf( id1, id2, id3 ) ) ) )
 
     }
 
@@ -769,7 +769,7 @@ class SQLITEGruposPuntuacions {
         assertTrue( resultado.any { it.titulo == "Sen Filtro A" } )
         assertTrue( resultado.any { it.titulo == "Sen Filtro B" } )
 
-        db.actualizar( "actividades", mapOf( "estado" to 3 ), mapOf( "id" to mapOf( "operador" to "IN", "valores" to listOf( id1, id2 ) ) ) )
+        db.actualizar( "actividades", mapOf( "estado" to 3 ), mapOf( "id" to mapOf( "operador" to "IN", "valores" to setOf( id1, id2 ) ) ) )
 
     }
 

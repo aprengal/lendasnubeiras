@@ -66,7 +66,7 @@ enum class L10nSingular( override val clave: String, override val dominio: Domin
     CAMBIO_TEMA_PREDETERMINADO( "cambio_tema_predeterminado", Dominio.Opcions ),
     GARDADO_FALLIDO_CAMBIO_IDIOMA( "gardado_fallido_cambio_idioma", Dominio.Opcions ),
     GARDADO_FALLIDO_CAMBIO_TEMA( "gardado_fallido_cambio_tema", Dominio.Opcions ),
-    GARDADO_FALLIDO_PECHE_SESION( "gardado_fallido_peche_sesion", Dominio.Opcions ),
+    PECHE_SESION_FALLIDO( "peche_sesion_fallido", Dominio.Opcions ),
 
     // Test
     CARLA( "carla", Dominio.Test ),

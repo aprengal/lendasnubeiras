@@ -18,7 +18,6 @@ import com.aprengal.lendasnubeiras.data.usuarios.PodeAdministrar
 import com.aprengal.lendasnubeiras.data.usuarios.PodeCrear
 import com.aprengal.lendasnubeiras.data.usuarios.PodeLer
 import com.aprengal.lendasnubeiras.data.usuarios.PodeRexistrarse
-import com.aprengal.lendasnubeiras.ui.ProbaActividade
 import com.aprengal.lendasnubeiras.ui.pantallas.NovaActividade
 import com.aprengal.lendasnubeiras.ui.pantallas.PantallaAcceso
 import com.aprengal.lendasnubeiras.ui.pantallas.PantallaAxustes
@@ -177,7 +176,7 @@ fun CargarNavegacion( idioma: Idioma ) {
             if ( PodeAdministrar() ) {
 
                 pantalla<Pantalla.Administrar>( TipoNavegacion.SOSUPERIOR, controlador ) {
-                    ProbaActividade()
+                    //ProbaActividade()
                 }
 
             }

@@ -13,6 +13,6 @@
 
   "gardado_fallido_cambio_idioma": "No se ha podido cambiar el idioma",
   "gardado_fallido_cambio_tema": "No se ha podido cambiar el tema",
-  "gardado_fallido_peche_sesion": "No se ha podido cerrar sesión"
+  "peche_sesion_fallido": "No se ha podido cerrar sesión"
 
 }

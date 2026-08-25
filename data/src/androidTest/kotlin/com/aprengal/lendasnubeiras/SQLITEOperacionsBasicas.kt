@@ -43,13 +43,13 @@ class SQLITEOperacionsBasicas {
 
     @Before
     fun limparAntes() {
-        val ondeLimpeza = mapOf( "estado" to mapOf( "operador" to "IN", "valores" to listOf( -3, -2, -1, 3 ) ) )
+        val ondeLimpeza = mapOf( "estado" to mapOf( "operador" to "IN", "valores" to setOf( -3, -2, -1, 3 ) ) )
         db.eliminar( "actividades", ondeLimpeza )
     }
 
     @After
     fun limparDespois() {
-        val ondeLimpeza = mapOf( "estado" to mapOf( "operador" to "IN", "valores" to listOf( -3, -2, -1, 3 ) ) )
+        val ondeLimpeza = mapOf( "estado" to mapOf( "operador" to "IN", "valores" to setOf( -3, -2, -1, 3 ) ) )
         db.eliminar( "actividades", ondeLimpeza )
     }
 
@@ -381,7 +381,7 @@ class SQLITEOperacionsBasicas {
         assertTrue( resultados.any { it.titulo == "Introdución á percusión africana" } )
         assertTrue( resultados.none { it.titulo == "Taller de pintura" } )
 
-        db.actualizar( "actividades", mapOf( "estado" to 3 ), mapOf( "id" to mapOf( "operador" to "IN", "valores" to listOf( 801L, 802L, 803L ) ) ) )
+        db.actualizar( "actividades", mapOf( "estado" to 3 ), mapOf( "id" to mapOf( "operador" to "IN", "valores" to setOf( 801L, 802L, 803L ) ) ) )
 
     }
 
@@ -400,7 +400,7 @@ class SQLITEOperacionsBasicas {
         assertEquals( 1, resultados.size )
         assertEquals( "Percusión corporal", resultados[ 0 ].titulo )
 
-        db.actualizar( "actividades", mapOf( "estado" to 3 ), mapOf( "id" to mapOf( "operador" to "IN", "valores" to listOf( 804L, 805L ) ) ) )
+        db.actualizar( "actividades", mapOf( "estado" to 3 ), mapOf( "id" to mapOf( "operador" to "IN", "valores" to setOf( 804L, 805L ) ) ) )
 
     }
 

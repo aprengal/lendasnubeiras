@@ -537,7 +537,7 @@ private class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, n
         val columnas = datos[ "columnas" ] as? Set<String> ?: error( "Faltan as columnas" )
 
         @Suppress( "UNCHECKED_CAST" )
-        val joins = datos["joins"] as? List<Map<String, String>> ?: emptyList()
+        val joins = datos[ "joins" ] as? List<Map<String, String>> ?: emptyList()
 
         @Suppress( "UNCHECKED_CAST" )
         val onde: Map<String, Map<String, Any>> = datos[ "onde" ] as? Map<String, Map<String, Any>> ?: emptyMap()
@@ -654,7 +654,7 @@ private class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, n
                 "IN" -> {
 
                     @Suppress( "UNCHECKED_CAST" )
-                    val datosValores = info[ "valores" ] as? List<Any> ?: error( "IN require a clave 'valores'" )
+                    val datosValores = info[ "valores" ] as? Set<Any> ?: error( "IN require a clave 'valores'" )
                     require( datosValores.isNotEmpty() ) { "IN require polo menos un valor" }
 
                     val reemprazos = mutableListOf<String>()
@@ -664,19 +664,24 @@ private class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, n
                         reemprazos.add( "?" )
                     }
 
-                    partes += "$columna IN ( ${ reemprazos.joinToString(", ") } )"
+                    partes += "$columna IN ( ${ reemprazos.joinToString( ", " ) } )"
 
                 }
 
                 "BETWEEN" -> {
 
                     @Suppress( "UNCHECKED_CAST" )
-                    val datosValores = info[ "valores" ] as? List<Any> ?: error( "BETWEEN require a clave 'valores'" )
+                    val datosValores = info[ "valores" ] as? Set<Any> ?: error( "BETWEEN require a clave 'valores'" )
                     require( datosValores.size == 2 ) { "BETWEEN require exactamente dous valores" }
 
-                    valores += procesarValor( datosValores[ 0 ] )
-                    valores += procesarValor( datosValores[ 1 ] )
+                    val valoresLista = datosValores.toList()
+                    val valor1 = procesarValor( valoresLista[ 0 ] )
+                    val valor2 = procesarValor (valoresLista[ 1 ] )
 
+                    require( valor1 < valor2 ) { "BETWEEN require que o primeiro valor sexa menor que o segundo" }
+
+                    valores += valor1
+                    valores += valor2
                     partes += "$columna BETWEEN ? AND ?"
 
                 }

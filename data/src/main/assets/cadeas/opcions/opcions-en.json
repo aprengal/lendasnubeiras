@@ -13,6 +13,6 @@
 
   "gardado_fallido_cambio_idioma": "Could not change the language",
   "gardado_fallido_cambio_tema": "Could not change the theme",
-  "gardado_fallido_peche_sesion": "Could not log out"
+  "peche_sesion_fallido": "Could not log out"
 
 }

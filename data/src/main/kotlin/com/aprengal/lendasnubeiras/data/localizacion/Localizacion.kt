@@ -15,6 +15,7 @@ import org.json.JSONObject
 import java.io.FileNotFoundException
 import java.text.NumberFormat
 import java.util.Locale
+import kotlin.math.abs
 
 //TODO: Test unitario para verificar que todas as cadeas están definidas.
 //Neste test non se miraría o valor real e para iso habería facer unha revisión manual
@@ -213,7 +214,7 @@ object Localizacion {
         val listaPlurais = traducionsPlurais[ elemento.dominio ]?.get( elemento ) ?: return _idiomaActual.value.pendente
 
         val local = Locale.forLanguageTag( _idiomaActual.value.codigoRexion.replace( '_', '-' ) )
-        val clavePlural = categoriaPlurais( num.toDouble(), local, cardinal )
+        val clavePlural = categoriaPlurais( abs( num.toDouble() ), local, cardinal )
         val numero = NumberFormat.getNumberInstance( local ).format( num )
 
         return listaPlurais[ clavePlural ]?.let { clave -> String.format( clave, numero ) } ?: _idiomaActual.value.pendente
@@ -247,24 +248,24 @@ object Localizacion {
 
     }
 
-    private fun categoriaCardinal( num: Double, local: Locale ): String {
+    private fun categoriaCardinal( numAbs: Double, local: Locale ): String {
 
         //Se houbese regras concretas diferentes, habería que cambiar a un when
         if ( _idiomaActual.value in listOf( Idioma.GALEGO, Idioma.CASTELAN ) ) {
 
-            if ( num == 1.0 ) return "one"
+            if ( numAbs == 1.0 ) return "one"
 
-            if ( num % 1_000_000.0 == 0.0 && num % 1.0 == 0.0 ) {
+            if ( numAbs != 0.0 && numAbs % 1_000_000.0 == 0.0 ) {
                 return "many"
             }
 
         }
 
-        pluraisCardinais?.let { elemento -> return elemento.select( num ) }
+        pluraisCardinais?.let { elemento -> return elemento.select( numAbs ) }
         val regras = PluralRules.forLocale( local, PluralRules.PluralType.CARDINAL )
         pluraisCardinais = regras
 
-        return regras.select( num )
+        return regras.select( numAbs )
 
     }
 

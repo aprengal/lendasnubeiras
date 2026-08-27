@@ -27,6 +27,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.aprengal.lendasnubeiras.ui.navegacion.AmosarTitulo
 import com.aprengal.lendasnubeiras.ui.navegacion.Pantalla
+import com.aprengal.lendasnubeiras.ui.reutilizables.ColocarAviso
 import com.aprengal.lendasnubeiras.ui.reutilizables.DebuxarIconaMenu
 import com.aprengal.lendasnubeiras.ui.reutilizables.EspazadorAlto
 import com.aprengal.lendasnubeiras.ui.reutilizables.Logo
@@ -51,6 +52,8 @@ fun EstruturaApertura( controlador: NavHostController, contido: @Composable () -
             EspazadorAlto()
             contido()
         }
+
+        ColocarAviso()
 
     }
 

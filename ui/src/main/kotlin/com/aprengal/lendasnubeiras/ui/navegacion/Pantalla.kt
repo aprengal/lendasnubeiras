@@ -36,9 +36,6 @@ sealed interface Pantalla {
     @Serializable
     data object Idioma : Pantalla
 
-    //@Serializable
-    //data object Animacions : Pantalla
-
     //Creación
 
     @Serializable

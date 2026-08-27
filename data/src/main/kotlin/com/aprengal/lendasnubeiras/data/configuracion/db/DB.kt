@@ -214,7 +214,7 @@ object DB {
 
             val ondeLocal = mapOf( "id" to mapOf( "operador" to ">=", "valor" to 0 ) )
 
-            val actividadesLocais = collerActividades( ondeLocal ).associateBy { it.id }
+            val actividadesLocais = collerActividades( ondeLocal ).associateBy { elemento -> elemento.id }
             val actividadesObsoletas = actividadesLocais.toMutableMap()
 
             actividadesServidor.lista.forEach { actServidor ->

@@ -1,11 +1,16 @@
 package com.aprengal.lendasnubeiras
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -52,7 +57,8 @@ class Entrada : AppCompatActivity() {
 
     }
 
-    override fun onCreate( savedInstanceState: Bundle?) {
+    @SuppressLint( "UnusedContentLambdaTargetStateParameter" )
+    override fun onCreate(savedInstanceState: Bundle?) {
 
         installSplashScreen()
         enableEdgeToEdge()
@@ -73,7 +79,9 @@ class Entrada : AppCompatActivity() {
                 val idiomaActual by idioma.collectAsState()
 
                 Surface( modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background ) {
-                    key( sesion ) { CargarNavegacion( idiomaActual ) }
+                    AnimatedContent( targetState = sesion, transitionSpec = { fadeIn() togetherWith fadeOut() } ) {
+                        CargarNavegacion( idiomaActual )
+                    }
                 }
 
             }

@@ -24,7 +24,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
@@ -39,20 +38,16 @@ import com.aprengal.lendasnubeiras.ui.reutilizables.LocalIdioma
 import com.aprengal.lendasnubeiras.ui.reutilizables.Logo
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.ui.Alignment
 import com.aprengal.lendasnubeiras.ui.navegacion.Pantalla
 import com.aprengal.lendasnubeiras.ui.reutilizables.DebuxarIconaMenu
+import com.aprengal.lendasnubeiras.ui.reutilizables.LocalAviso
 
 @Composable
 internal fun EstruturaBase( controlador: NavHostController, contido: @Composable () -> Unit ) {
 
-    val aviso = remember { SnackbarHostState() }
+    val aviso = LocalAviso.current
     val amosarAccion = PodeCrear( usuarioActual() )
-
-    LaunchedEffect( LocalIdioma.current ) {
-        aviso.currentSnackbarData?.dismiss()
-    }
 
     Scaffold(
         topBar = { NavegacionSuperior( controlador) },

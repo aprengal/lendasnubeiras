@@ -50,7 +50,7 @@ fun PantallaAxustes() {
             ContidoOpcion(
                 clave = "cambio_idioma",
                 icona = Icona.IDIOMA,
-                avisoDialogo = true,
+                descricionExtra = true,
                 opcions = Idioma.entries.filter { idioma -> idioma != Idioma.NADA },
                 valorInicial = LocalIdioma.current,
                 nomeUI = { idioma -> idioma.nome },
@@ -78,6 +78,7 @@ fun PantallaAxustes() {
 
             Card {
 
+                //Valorar se aquí se pode empregar unha alerta para confirmar o peche de sesión
                 Column( modifier = modificador, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center ) {
                     Texto( L10nSingular.BOTON_PECHE_SESION )
                 }
@@ -92,7 +93,7 @@ fun PantallaAxustes() {
 
 @Composable
 fun <T> ContidoOpcion(
-    clave: String, icona: Icona? = null, avisoDialogo: Boolean = false, opcions: List<T>,
+    clave: String, icona: Icona? = null, descricionExtra: Boolean = false, opcions: List<T>,
     valorInicial: T, nomeUI: (T) -> String, accion: suspend ( T ) -> Boolean
 ) {
 
@@ -105,7 +106,7 @@ fun <T> ContidoOpcion(
 
         Column {
             Text( textoUI )
-            if ( haiLector && avisoDialogo ) { Texto( L10nSingular.buscar( "subtitulo_$clave" ) ) }
+            if ( haiLector && descricionExtra ) { Texto( L10nSingular.buscar( "subtitulo_$clave" ) ) }
         }
 
     }
@@ -119,7 +120,7 @@ fun <T> ContidoOpcion(
         var escollido by rememberSaveable { mutableStateOf( valorActual ) }
         val claveLoc = L10nSingular.buscar( "gardado_fallido_$clave" )
 
-        val aceptado: () -> Unit = {
+        val confirmado: () -> Unit = {
 
             amosarDialogo = false
 
@@ -135,7 +136,7 @@ fun <T> ContidoOpcion(
             ListaOpcions( clave, opcions, escollido, nomeUI, localizar ) { novoValor -> escollido = novoValor }
         }
 
-        AlertaDialogo( titulo, contido, aceptado, { amosarDialogo = false }, { amosarDialogo = false } )
+        AlertaDialogo( titulo, { amosarDialogo = false }, contido = contido, confirmado = confirmado )
 
     }
 
@@ -154,16 +155,27 @@ suspend fun executarAccion( accion: suspend () -> Boolean, erro: suspend () -> S
 @Composable
 private fun intentoPecheSesion(): () -> Unit {
 
+    var amosarDialogo by rememberSaveable { mutableStateOf( false ) }
     val aviso = LocalAviso.current
 
-    val accion = {
-        corrutina {
-            val clave = L10nSingular.PECHE_SESION_FALLIDO
-            val erro = amosarAviso( aviso, clave, true )
-            executarAccion( { pecharSesion() }, { erro } )
+    if ( amosarDialogo ) {
+
+        val accion = {
+
+            amosarDialogo = false
+
+            corrutina {
+                val clave = L10nSingular.PECHE_SESION_FALLIDO
+                val erro: suspend () -> SnackbarResult = { amosarAviso( aviso, clave, true ) }
+                executarAccion( { pecharSesion() }, erro )
+            }
+
         }
+
+        AlertaDialogo( L10nSingular.DIALOGO_PECHE_SESION, { amosarDialogo = false }, confirmado = accion )
+
     }
 
-    return accion
+    return { amosarDialogo = true }
 
 }

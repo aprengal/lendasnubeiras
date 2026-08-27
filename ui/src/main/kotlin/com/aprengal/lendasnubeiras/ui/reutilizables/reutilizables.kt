@@ -31,11 +31,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.aprengal.lendasnubeiras.ui.R
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -82,16 +84,17 @@ fun Logo( medida: Dp = 30.dp ) {
 }
 
 @Composable
-fun AlertaDialogo( titulo: L10nSingular, contido: @Composable ( () -> Unit)? = null,
-    rexeitado: () -> Unit, cancelado: ( () -> Unit ), confirmado: ( () -> Unit )? = null
+fun AlertaDialogo( titulo: L10nSingular, cancelado: () -> Unit, descartado: () -> Unit = cancelado,
+    contido: @Composable ( () -> Unit )? = null, confirmado: ( () -> Unit )? = null, icona: Icona? = null,
 ) {
 
     AlertDialog(
+        icon = { icona?.let { DebuxarIcona( icona.codigo, icona.descricion, dimension = 50.sp ) } },
         title = { Text( titulo.texto(), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center ) },
         text = { contido?.let { contido() } },
+        onDismissRequest = descartado,
         dismissButton = { BotonAuxiliar( L10nSingular.CANCELAR, cancelado ) },
-        confirmButton = { confirmado?.let { BotonPrincipal( L10nSingular.ACEPTAR, confirmado ) } },
-        onDismissRequest = rexeitado
+        confirmButton = { confirmado?.let { BotonPrincipal( L10nSingular.ACEPTAR, confirmado ) } }
     )
 
 }
@@ -127,7 +130,7 @@ suspend fun amosarAviso( aviso: SnackbarHostState, claveMensaxe: L10nSingular, r
 
     aviso.currentSnackbarData?.dismiss()
 
-    val reintentar = if ( repetir ) L10nSingular.buscar( "reintentar_accion" ).texto() else null
+    val reintentar = if ( repetir ) L10nSingular.REINTENTAR.texto() else null
     val duracion = if ( repetir ) SnackbarDuration.Long else SnackbarDuration.Short
 
     return aviso.showSnackbar( claveMensaxe.texto(), reintentar, repetir, duracion )
@@ -253,4 +256,9 @@ fun ElementoLista( accion: () -> Unit, titulo: L10nSingular, icona: Icona?,
         trailingContent = contidoExtra
     )
 
+}
+
+@Composable
+fun BoxScope.ColocarAviso() {
+    SnackbarHost( LocalAviso.current, Modifier.align( Alignment.BottomCenter ) )
 }

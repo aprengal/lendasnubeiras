@@ -47,7 +47,6 @@ private fun verificarAcceso( pantalla: KClass<out Pantalla> ): Boolean {
         Pantalla.ActividadeDetalle::class -> PodeLer
         Pantalla.Buscar::class -> PodeLer
         Pantalla.Idioma::class -> PodeLer
-        //Pantalla.Animacions::class -> PodeLer
 
         // Creación
         Pantalla.ListarActividades::class -> PodeCrear

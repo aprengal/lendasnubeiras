@@ -163,9 +163,7 @@ private val TextoClaro = Color( 0xFFFFFFFF )
 
 private val CorLogo = Color( 0xFF3BFFFF )
 
-private val CorErro = Color( 0xFFC62828 )
-
-private val CorGhost = Color( 0xFFB6F29A )
+//private val CorErro = Color( 0xFFC62828 )
 
 /*
 
@@ -182,18 +180,17 @@ private val PaletaClara = lightColorScheme(
     onPrimary = TextoClaro,
     secondary = CorLogo,
     onSecondary = TextoEscuro,
-    tertiary = CorGhost,
-    onTertiary = TextoEscuro,
     background = FondoClaro,
     onBackground = TextoEscuro,
-    surface = FondoEscuro.copy( alpha = 0.08f ).compositeOver(FondoClaro),
+    surface = FondoEscuro.copy( alpha = 0.04f ).compositeOver( FondoClaro ),
     onSurface = TextoEscuro,
     surfaceVariant = FondoClaro,
-    onSurfaceVariant = FondoEscuro.copy( alpha = 0.7f) ,
+    onSurfaceVariant = FondoEscuro.copy( alpha = 0.7f ),
     surfaceContainer = FondoEscuro.copy( alpha = 0.6f ).compositeOver( FondoClaro ),
-    surfaceContainerHighest = FondoEscuro.copy( alpha = 0.08f ).compositeOver(FondoClaro),
-    error = CorErro,
-    onError = TextoClaro,
+    surfaceContainerHigh = FondoClaro,
+    surfaceContainerHighest = FondoEscuro.copy( alpha = 0.04f ).compositeOver(FondoClaro ),
+    //error = CorErro,
+    //onError = TextoClaro,
     outline = FondoEscuro,
     outlineVariant = TextoEscuro//FondoEscuro.copy( alpha = 0.85f ).compositeOver( FondoClaro )
 )
@@ -203,19 +200,18 @@ private val PaletaEscura = darkColorScheme(
     onPrimary = TextoEscuro,
     secondary = CorLogo,
     onSecondary = TextoEscuro,
-    tertiary = CorGhost,
-    onTertiary = TextoEscuro,
     background = FondoEscuro,
     onBackground = TextoClaro,
-    surface = FondoClaro.copy( alpha = 0.08f ).compositeOver(FondoEscuro),
+    surface = FondoClaro.copy( alpha = 0.04f ).compositeOver( FondoEscuro ),
     onSurface = TextoClaro,
     surfaceVariant = FondoEscuro,
     onSurfaceVariant = TextoClaro.copy( alpha = 0.7f ),
     surfaceContainer = FondoClaro.copy( alpha = 0.6f ).compositeOver( FondoEscuro ),
-    surfaceContainerHighest = FondoClaro.copy( alpha = 0.08f ).compositeOver( FondoEscuro ),
-    error = CorErro,
-    onError = TextoClaro,
-    outline = CorLogo,
+    surfaceContainerHigh = FondoEscuro,
+    surfaceContainerHighest = FondoClaro.copy( alpha = 0.04f ).compositeOver( FondoEscuro ),
+    //error = CorErro,
+    //onError = TextoClaro,
+    outline = FondoClaro,
     outlineVariant = TextoClaro//FondoClaro.copy( alpha = 0.85f ).compositeOver( FondoEscuro )
 )
 

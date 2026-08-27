@@ -1,10 +1,15 @@
 package com.aprengal.lendasnubeiras.ui.navegacion
 
 import android.os.Bundle
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -34,6 +39,7 @@ import com.aprengal.lendasnubeiras.ui.reutilizables.LocalAviso
 import com.aprengal.lendasnubeiras.ui.reutilizables.LocalIdioma
 import com.aprengal.lendasnubeiras.ui.reutilizables.LocalPantalla
 import com.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaApertura
+import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
@@ -59,24 +65,48 @@ private val validadorID = object : NavType<Int>( isNullableAllowed = false ) {
 
 }
 
+private val tiposPorClase = mutableMapOf<KClass<out Pantalla>, TipoNavegacion>()
+
+private fun NavBackStackEntry.tipo(): TipoNavegacion {
+    return tiposPorClase.entries.first { ( clase, _ ) -> destination.hasRoute( clase ) }.value
+}
+
+private fun haiTransicion( orixe: TipoNavegacion, destino: TipoNavegacion ): Boolean {
+    return orixe != TipoNavegacion.COMPLETA || destino != TipoNavegacion.COMPLETA
+}
+
 private inline fun <reified T : Pantalla> NavGraphBuilder.pantalla(
-    tipo: TipoNavegacion,
-    controlador: NavHostController,
-    enlace: String? = null,
-    tipoMapa: Map<KType, NavType<*>> = emptyMap(),
-    noinline contido: @Composable ( T ) -> Unit
+    tipo: TipoNavegacion, controlador: NavHostController, enlace: String? = null,
+    tipoMapa: Map<KType, NavType<*>> = emptyMap(), noinline contido: @Composable ( T ) -> Unit
 ) {
 
     val dominio = "nubeiras"
     val enlaces = enlace?.let { ruta -> listOf( navDeepLink { uriPattern = "$dominio://$ruta" } ) } ?: emptyList()
+    tiposPorClase.putIfAbsent( T::class, tipo )
 
     composable<T>(
         typeMap = tipoMapa,
         deepLinks = enlaces,
-        enterTransition = { tipo.entrada },
-        exitTransition = { tipo.saida },
-        popEnterTransition = { tipo.atrasEntrada },
-        popExitTransition = { tipo.atrasSaida }
+        enterTransition = {
+            val orixe = initialState.tipo()
+            val destino = targetState.tipo()
+            if ( haiTransicion( orixe, destino ) ) destino.entrada else EnterTransition.None
+        },
+        exitTransition = {
+            val orixe = initialState.tipo()
+            val destino = targetState.tipo()
+            if ( haiTransicion( orixe, destino ) ) orixe.saida else ExitTransition.None
+        },
+        popEnterTransition = {
+            val orixe = initialState.tipo()
+            val destino = targetState.tipo()
+            if ( haiTransicion( orixe, destino ) ) destino.atrasEntrada else EnterTransition.None
+        },
+        popExitTransition = {
+            val orixe = initialState.tipo()
+            val destino = targetState.tipo()
+            if ( haiTransicion( orixe, destino ) ) orixe.atrasSaida else ExitTransition.None
+        }
     ) { entrada ->
 
         if ( !comprobarAcceso( controlador, T::class ) ) return@composable
@@ -103,6 +133,10 @@ fun CargarNavegacion( idioma: Idioma ) {
     val controlador = rememberNavController()
     val pantallaInicial = collerPantallaInicial()
     val aviso = remember { SnackbarHostState() }
+
+    LaunchedEffect( idioma ) {
+        aviso.currentSnackbarData?.dismiss()
+    }
 
     CompositionLocalProvider( LocalIdioma provides idioma, LocalAviso provides aviso ) {
 
@@ -176,7 +210,7 @@ fun CargarNavegacion( idioma: Idioma ) {
             if ( PodeAdministrar() ) {
 
                 pantalla<Pantalla.Administrar>( TipoNavegacion.SOSUPERIOR, controlador ) {
-                    //ProbaActividade()
+                    TODO()
                 }
 
             }

@@ -30,6 +30,7 @@ import com.aprengal.lendasnubeiras.data.usuarios.PodePecharSesion
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.pecharSesion
 import com.aprengal.lendasnubeiras.ui.reutilizables.AlertaDialogo
+import com.aprengal.lendasnubeiras.ui.reutilizables.DatosListaOpcions
 import com.aprengal.lendasnubeiras.ui.reutilizables.ElementoLista
 import com.aprengal.lendasnubeiras.ui.reutilizables.Icona
 import com.aprengal.lendasnubeiras.ui.reutilizables.ListaOpcions
@@ -40,6 +41,33 @@ import com.aprengal.lendasnubeiras.ui.reutilizables.amosarAviso
 import com.aprengal.lendasnubeiras.ui.tema.Variante
 import com.aprengal.lendasnubeiras.ui.tema.escollerVarianteImaxe
 
+private enum class TipoOpcion { ALERTA, INTERRUPTOR }
+
+private data class DatosOpcion<T>(
+    val clave: String, val tipo: TipoOpcion, val icona: Icona?, val descricionExtra: Boolean = false,
+    val opcions: List<T>? = null, val valorInicial: T, val nomeUI: ( T ) -> String, val accion: suspend ( T ) -> Boolean
+) {
+
+    val tituloOpcion = L10nSingular.buscar( "boton_${ clave }" )
+
+    val tituloAlerta = L10nSingular.buscar( "dialogo_${ clave }" ) //Igual se pode mover
+    val gardadoFallido = L10nSingular.buscar( "gardado_fallido_${ clave }" )
+    val localizar = clave != "cambio_idioma"
+
+    fun descricion( valor: T ): String {
+
+        val descricion = if ( localizar ) {
+            L10nSingular.buscar( "${ clave }_${ nomeUI( valor ) }" ).texto()
+        } else {
+            nomeUI( valor )
+        }
+
+        return descricion
+
+    }
+
+}
+
 @Composable
 fun PantallaAxustes() {
 
@@ -47,8 +75,9 @@ fun PantallaAxustes() {
 
         Card {
 
-            ContidoOpcion(
+            val datosIdioma = DatosOpcion(
                 clave = "cambio_idioma",
+                tipo = TipoOpcion.ALERTA,
                 icona = Icona.IDIOMA,
                 descricionExtra = true,
                 opcions = Idioma.entries.filter { idioma -> idioma != Idioma.NADA },
@@ -57,16 +86,20 @@ fun PantallaAxustes() {
                 accion = { novoIdioma -> cambiarIdioma( novoIdioma ) }
             )
 
+            ContidoOpcion( datosIdioma )
             HorizontalDivider()
 
-            ContidoOpcion(
+            val datosTema = DatosOpcion(
                 clave = "cambio_tema",
+                tipo = TipoOpcion.ALERTA,
                 icona = escollerVarianteImaxe( isSystemInDarkTheme(), Icona.TEMA_CLARO, Icona.TEMA_ESCURO ),
                 opcions = Variante.entries,
                 valorInicial = Tema.temaActual,
                 nomeUI = { variante -> variante.nome },
                 accion = { novoTema -> gardarTema( novoTema ) }
             )
+
+            ContidoOpcion( datosTema )
 
         }
 
@@ -92,53 +125,66 @@ fun PantallaAxustes() {
 }
 
 @Composable
-fun <T> ContidoOpcion(
-    clave: String, icona: Icona? = null, descricionExtra: Boolean = false, opcions: List<T>,
-    valorInicial: T, nomeUI: (T) -> String, accion: suspend ( T ) -> Boolean
-) {
+private fun <T> ContidoOpcion( datos: DatosOpcion<T> ) {
 
-    var amosarDialogo by rememberSaveable { mutableStateOf( false ) }
-    var valorActual by rememberSaveable { mutableStateOf( valorInicial ) }
+    var activo by rememberSaveable { mutableStateOf( false ) }
+    var valorActual by rememberSaveable { mutableStateOf( datos.valorInicial ) }
     val haiLector = LocalContext.current.haiLector()
-    val tituloOpcion = L10nSingular.buscar( "boton_$clave" )
-    val textoUI = if ( clave == "cambio_idioma" ) nomeUI( valorActual ) else L10nSingular.buscar( "${ clave }_${ nomeUI( valorActual ) }" ).texto()
+    val textoUI = datos.descricion( valorActual )
+
     val contido = @Composable {
 
         Column {
             Text( textoUI )
-            if ( haiLector && descricionExtra ) { Texto( L10nSingular.buscar( "subtitulo_$clave" ) ) }
+            if ( haiLector && datos.descricionExtra ) { Texto( L10nSingular.buscar( "subtitulo_${ datos.clave }" ) ) }
         }
 
     }
 
-    ElementoLista( { amosarDialogo = true }, tituloOpcion, icona, contido )
+    when( datos.tipo ) {
 
-    if ( amosarDialogo ) {
+        TipoOpcion.INTERRUPTOR -> { ElementoLista( { activo = !activo }, datos.tituloOpcion, datos.icona, contido ) }
 
-        val localizar = clave != "cambio_idioma"
-        val aviso = LocalAviso.current
-        var escollido by rememberSaveable { mutableStateOf( valorActual ) }
-        val claveLoc = L10nSingular.buscar( "gardado_fallido_$clave" )
+        TipoOpcion.ALERTA -> {
 
-        val confirmado: () -> Unit = {
+            ElementoLista( { activo = true }, datos.tituloOpcion, datos.icona, contido )
 
-            amosarDialogo = false
-
-            corrutina {
-                val erro: suspend () -> SnackbarResult = { amosarAviso( aviso, claveLoc, true ) }
-                if ( executarAccion( { accion( escollido ) }, erro ) ) { valorActual = escollido }
+            if ( activo ) {
+                DebuxarAlerta( datos, { estado -> activo = estado }, valorActual, { novoValor -> valorActual = novoValor } )
             }
 
         }
 
-        val titulo = L10nSingular.buscar( "dialogo_$clave" )
-        val contido = @Composable {
-            ListaOpcions( clave, opcions, escollido, nomeUI, localizar ) { novoValor -> escollido = novoValor }
+    }
+
+}
+
+@Composable
+private fun <T> DebuxarAlerta( datos: DatosOpcion<T>, amosar: ( Boolean ) -> Unit, actual: T, seleccionar: ( T ) -> Unit ) {
+
+    require( datos.opcions != null && datos.opcions.size > 1 ) { "Unha alerta con opcións debe existir e ter 2 ou máis elementos" }
+
+    val aviso = LocalAviso.current
+    var escollido by rememberSaveable { mutableStateOf( actual ) }
+
+    val confirmado: () -> Unit = {
+
+        amosar( false )
+
+        corrutina {
+            val erro: suspend () -> SnackbarResult = { amosarAviso( aviso, datos.gardadoFallido, true ) }
+            if ( executarAccion( { datos.accion( escollido ) }, erro ) ) { seleccionar( escollido ) }
         }
 
-        AlertaDialogo( titulo, { amosarDialogo = false }, contido = contido, confirmado = confirmado )
-
     }
+
+    val datosLista = DatosListaOpcions( datos.clave, datos.opcions, escollido, datos.nomeUI, datos.localizar ) {
+        novoValor -> escollido = novoValor
+    }
+
+    val contido = @Composable { ListaOpcions( datosLista ) }
+
+    AlertaDialogo( datos.tituloAlerta, { amosar( false ) }, contido = contido, confirmado = confirmado )
 
 }
 
@@ -153,7 +199,7 @@ suspend fun executarAccion( accion: suspend () -> Boolean, erro: suspend () -> S
 }
 
 @Composable
-private fun intentoPecheSesion(): () -> Unit {
+fun intentoPecheSesion(): () -> Unit {
 
     var amosarDialogo by rememberSaveable { mutableStateOf( false ) }
     val aviso = LocalAviso.current

@@ -1,5 +1,6 @@
 package com.aprengal.lendasnubeiras.ui.reutilizables.estruturas
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,7 +14,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FloatingActionButton
@@ -22,7 +23,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -34,12 +34,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.aprengal.lendasnubeiras.data.usuarios.PodeCrear
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
-import com.aprengal.lendasnubeiras.ui.reutilizables.LocalIdioma
 import com.aprengal.lendasnubeiras.ui.reutilizables.Logo
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.ui.Alignment
-import com.aprengal.lendasnubeiras.ui.navegacion.Pantalla
+import androidx.compose.ui.graphics.Color
+import com.aprengal.lendasnubeiras.ui.navegacion.Ruta
 import com.aprengal.lendasnubeiras.ui.reutilizables.DebuxarIconaMenu
 import com.aprengal.lendasnubeiras.ui.reutilizables.LocalAviso
 
@@ -68,7 +68,7 @@ internal fun EstruturaBase( controlador: NavHostController, contido: @Composable
 private fun NavegacionSuperior( controlador: NavHostController ) {
 
     val modificadorFila = Modifier.fillMaxWidth()
-        .windowInsetsPadding( WindowInsets.statusBars.only( WindowInsetsSides.Top ) )
+        .windowInsetsPadding( WindowInsets.systemBars.only( WindowInsetsSides.Top + WindowInsetsSides.Horizontal ) )
         .height( 64.dp ).absolutePadding( left = 16.dp, right = 4.dp )
 
     Column {
@@ -93,10 +93,10 @@ private fun NavegacionInferior( controlador: NavHostController ) {
     val alturaTotal = 64.dp + with( densidade ) { insetInferior.toDp() }
 
     val elementos = listOf(
-        Pantalla.Inicio,
-        Pantalla.Buscar( "" ),
-        Pantalla.Idioma,
-        Pantalla.Actividades
+        Ruta.Inicio,
+        Ruta.Buscar( "" ),
+        Ruta.Idioma,
+        Ruta.Actividades
     )
 
     val entradaNavegacion by controlador.currentBackStackEntryAsState()
@@ -120,13 +120,13 @@ private fun NavegacionInferior( controlador: NavHostController ) {
 @Composable
 private fun BotonCrearActividade( controlador: NavHostController ) {
 
-    val pantalla = Pantalla.CrearActividade
-    val accion = { controlador.navigate( pantalla ) }
+    val ruta = Ruta.CrearActividade
+    val accion = { controlador.navigate( ruta ) }
     val fondo = MaterialTheme.colorScheme.secondary
     val cor = MaterialTheme.colorScheme.onSecondary
 
     FloatingActionButton( onClick = accion, containerColor = fondo, contentColor = cor, shape = CircleShape ) {
-        DebuxarIconaMenu( pantalla, 20.sp )
+        DebuxarIconaMenu( ruta, 20.sp )
     }
 
 }

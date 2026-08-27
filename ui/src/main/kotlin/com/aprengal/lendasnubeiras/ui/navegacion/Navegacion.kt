@@ -1,222 +1,88 @@
 package com.aprengal.lendasnubeiras.ui.navegacion
 
-import android.os.Bundle
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navDeepLink
-import androidx.navigation.toRoute
-import com.aprengal.lendasnubeiras.data.localizacion.Idioma
-import com.aprengal.lendasnubeiras.data.usuarios.PodeAdministrar
-import com.aprengal.lendasnubeiras.data.usuarios.PodeCrear
-import com.aprengal.lendasnubeiras.data.usuarios.PodeLer
-import com.aprengal.lendasnubeiras.data.usuarios.PodeRexistrarse
-import com.aprengal.lendasnubeiras.ui.pantallas.NovaActividade
-import com.aprengal.lendasnubeiras.ui.pantallas.PantallaAcceso
-import com.aprengal.lendasnubeiras.ui.pantallas.PantallaAxustes
-import com.aprengal.lendasnubeiras.ui.pantallas.PantallaBenvida
-import com.aprengal.lendasnubeiras.ui.pantallas.PantallaRexistro
-import com.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaBase
-import com.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaSuperior
-import com.aprengal.lendasnubeiras.ui.pantallas.lector.PantallaActividade
-import com.aprengal.lendasnubeiras.ui.pantallas.lector.PantallaActividadeDetalle
-import com.aprengal.lendasnubeiras.ui.pantallas.lector.PantallaBuscador
-import com.aprengal.lendasnubeiras.ui.pantallas.lector.PantallaInicio
-import com.aprengal.lendasnubeiras.ui.pantallas.lector.actividadesDixitais.XogoDados
-import com.aprengal.lendasnubeiras.ui.reutilizables.LocalAviso
-import com.aprengal.lendasnubeiras.ui.reutilizables.LocalIdioma
-import com.aprengal.lendasnubeiras.ui.reutilizables.LocalPantalla
-import com.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaApertura
-import kotlin.reflect.KClass
-import kotlin.reflect.KType
-import kotlin.reflect.typeOf
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import com.aprengal.lendasnubeiras.data.localizacion.L10nSingular
+import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion.TipoPantalla.APERTURA
+import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion.TipoPantalla.COMPLETA
+import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion.TipoPantalla.SOSUPERIOR
+import com.aprengal.lendasnubeiras.ui.reutilizables.Icona
 
-private val validadorID = object : NavType<Int>( isNullableAllowed = false ) {
+internal object Navegacion {
 
-    private val ID_INVALIDO = -1
+    internal enum class TipoPantalla(
+        val entrada: EnterTransition, val saida: ExitTransition,
+        val atrasEntrada: EnterTransition, val atrasSaida: ExitTransition
+    ) {
 
-    override fun get( bundle: Bundle, key: String ): Int {
-        return bundle.getInt( key, ID_INVALIDO )
-    }
+        COMPLETA(
+            entrada = fadeIn( tween() ),
+            saida = fadeOut( tween() ),
+            atrasEntrada = fadeIn( tween() ),
+            atrasSaida = fadeOut( tween() )
+        ),
 
-    override fun put( bundle: Bundle, key: String, value: Int ) {
-        bundle.putInt( key, value )
-    }
+        SOSUPERIOR(
+            entrada = slideInHorizontally( tween() ) { ancho -> ancho },
+            saida = slideOutHorizontally( tween() ) { ancho -> -ancho },
+            atrasEntrada = slideInHorizontally( tween() ) { ancho -> -ancho },
+            atrasSaida = slideOutHorizontally( tween() ) { ancho -> ancho }
+        ),
 
-    override fun parseValue( value: String ): Int {
-        return value.toIntOrNull() ?: ID_INVALIDO
-    }
-
-    override fun serializeAsValue( value: Int ): String {
-        return value.toString()
-    }
-
-}
-
-private val tiposPorClase = mutableMapOf<KClass<out Pantalla>, TipoNavegacion>()
-
-private fun NavBackStackEntry.tipo(): TipoNavegacion {
-    return tiposPorClase.entries.first { ( clase, _ ) -> destination.hasRoute( clase ) }.value
-}
-
-private fun haiTransicion( orixe: TipoNavegacion, destino: TipoNavegacion ): Boolean {
-    return orixe != TipoNavegacion.COMPLETA || destino != TipoNavegacion.COMPLETA
-}
-
-private inline fun <reified T : Pantalla> NavGraphBuilder.pantalla(
-    tipo: TipoNavegacion, controlador: NavHostController, enlace: String? = null,
-    tipoMapa: Map<KType, NavType<*>> = emptyMap(), noinline contido: @Composable ( T ) -> Unit
-) {
-
-    val dominio = "nubeiras"
-    val enlaces = enlace?.let { ruta -> listOf( navDeepLink { uriPattern = "$dominio://$ruta" } ) } ?: emptyList()
-    tiposPorClase.putIfAbsent( T::class, tipo )
-
-    composable<T>(
-        typeMap = tipoMapa,
-        deepLinks = enlaces,
-        enterTransition = {
-            val orixe = initialState.tipo()
-            val destino = targetState.tipo()
-            if ( haiTransicion( orixe, destino ) ) destino.entrada else EnterTransition.None
-        },
-        exitTransition = {
-            val orixe = initialState.tipo()
-            val destino = targetState.tipo()
-            if ( haiTransicion( orixe, destino ) ) orixe.saida else ExitTransition.None
-        },
-        popEnterTransition = {
-            val orixe = initialState.tipo()
-            val destino = targetState.tipo()
-            if ( haiTransicion( orixe, destino ) ) destino.atrasEntrada else EnterTransition.None
-        },
-        popExitTransition = {
-            val orixe = initialState.tipo()
-            val destino = targetState.tipo()
-            if ( haiTransicion( orixe, destino ) ) orixe.atrasSaida else ExitTransition.None
-        }
-    ) { entrada ->
-
-        if ( !comprobarAcceso( controlador, T::class ) ) return@composable
-
-        val datos = entrada.toRoute<T>()
-
-        CompositionLocalProvider( LocalPantalla provides datos ) {
-
-            when ( tipo ) {
-                TipoNavegacion.COMPLETA -> EstruturaBase( controlador ) { contido( datos ) }
-                TipoNavegacion.SOSUPERIOR -> EstruturaSuperior { contido( datos ) }
-                TipoNavegacion.APERTURA -> EstruturaApertura( controlador ) { contido( datos ) }
-            }
-
-        }
+        APERTURA(
+            entrada = slideInHorizontally( tween() ) { ancho -> ancho },
+            saida = slideOutHorizontally( tween() ) { ancho -> -ancho },
+            atrasEntrada = slideInHorizontally( tween() ) { ancho -> -ancho },
+            atrasSaida = slideOutHorizontally( tween() ) { ancho -> ancho }
+        )
 
     }
 
-}
-
-@Composable
-fun CargarNavegacion( idioma: Idioma ) {
-
-    val controlador = rememberNavController()
-    val pantallaInicial = collerPantallaInicial()
-    val aviso = remember { SnackbarHostState() }
-
-    LaunchedEffect( idioma ) {
-        aviso.currentSnackbarData?.dismiss()
+    internal fun haiTransicion(orixe: TipoPantalla, destino: TipoPantalla ): Boolean {
+        return orixe != COMPLETA || destino != COMPLETA
     }
 
-    CompositionLocalProvider( LocalIdioma provides idioma, LocalAviso provides aviso ) {
+    internal data class DatosPantalla(
+        val tipo: TipoPantalla, val enlace: String? = null,
+        val titulo: L10nSingular? = null, val icona: Icona? = null
+    )
 
-        NavHost( navController = controlador, startDestination = pantallaInicial ) {
+    internal val datosRutas = mapOf(
 
-            pantalla<Pantalla.Axustes>( TipoNavegacion.SOSUPERIOR, controlador, enlace = "axustes" ) {
-                PantallaAxustes()
-            }
+        //Común
+        Ruta.Axustes::class to DatosPantalla( SOSUPERIOR, "axustes", titulo = L10nSingular.TITULO_AXUSTES, icona = Icona.AXUSTES ),
 
-            if ( PodeRexistrarse() ) {
+        //Apertura
+        Ruta.Benvida::class to DatosPantalla( APERTURA, titulo = L10nSingular.TITULO_BENVIDA ),
+        Ruta.Acceso::class to DatosPantalla( APERTURA, titulo = L10nSingular.TITULO_ACCESO ),
+        Ruta.Rexistro::class to DatosPantalla( APERTURA, titulo = L10nSingular.TITULO_REXISTRO ),
 
-                pantalla<Pantalla.Benvida>( TipoNavegacion.APERTURA, controlador ) {
-                    PantallaBenvida( controlador )
-                }
+        //Lectura
+        Ruta.Actividades::class to DatosPantalla( SOSUPERIOR, "actividades", icona = Icona.INVALIDO ),
+        Ruta.ActividadeDetalle::class to DatosPantalla(
+            SOSUPERIOR,
+            "actividade/detalle/{id}"
+        ),
 
-                pantalla<Pantalla.Acceso>( TipoNavegacion.APERTURA, controlador ) {
-                    PantallaAcceso( controlador )
-                }
+        Ruta.Buscar::class to DatosPantalla( COMPLETA, "buscar/{termo}", icona = Icona.BUSCAR ),
 
-                pantalla<Pantalla.Rexistro>( TipoNavegacion.APERTURA, controlador ) {
-                    PantallaRexistro( controlador )
-                }
+        Ruta.Inicio::class to DatosPantalla( COMPLETA, icona = Icona.INICIO ),
+        Ruta.Idioma::class to DatosPantalla( COMPLETA, "idioma", icona = Icona.IDIOMA ),
 
-            }
+        //Crear
+        Ruta.ListarActividades::class to DatosPantalla( SOSUPERIOR ),
+        Ruta.CrearActividade::class to DatosPantalla( SOSUPERIOR, icona = Icona.ENGADIR ),
+        Ruta.ModificarActividade::class to DatosPantalla( SOSUPERIOR ),
 
-            if ( PodeLer() ) {
+        //Administrar
+        Ruta.Administrar::class to DatosPantalla( SOSUPERIOR )
 
-                pantalla<Pantalla.Actividades>( TipoNavegacion.SOSUPERIOR, controlador, enlace = "actividades" ) {
-                    PantallaActividade()
-                }
+    )
 
-                pantalla<Pantalla.ActividadeDetalle>(
-                    TipoNavegacion.SOSUPERIOR,
-                    controlador,
-                    enlace = "actividade/detalle/{id}",
-                    tipoMapa = mapOf( typeOf<Int>() to validadorID )
-                ) { datos ->
-                    PantallaActividadeDetalle( datos.id.toLong() )
-                }
-
-                pantalla<Pantalla.Inicio>( TipoNavegacion.COMPLETA, controlador ) {
-                    PantallaInicio()
-                }
-
-                pantalla<Pantalla.Buscar>( TipoNavegacion.COMPLETA, controlador, enlace = "buscar/{termo}" ) { datos ->
-                    PantallaBuscador( datos.termo )
-                }
-
-                pantalla<Pantalla.Idioma>( TipoNavegacion.COMPLETA, controlador, enlace = "idioma" ) {
-                    XogoDados()
-                }
-
-            }
-
-            if ( PodeCrear() ) {
-
-                pantalla<Pantalla.ListarActividades>( TipoNavegacion.SOSUPERIOR, controlador ) {
-                    TODO()
-                }
-
-                pantalla<Pantalla.CrearActividade>( TipoNavegacion.SOSUPERIOR, controlador ) {
-                    NovaActividade()
-                }
-
-                pantalla<Pantalla.ModificarActividade>( TipoNavegacion.SOSUPERIOR, controlador ) {
-                    TODO()
-                }
-
-            }
-
-            if ( PodeAdministrar() ) {
-
-                pantalla<Pantalla.Administrar>( TipoNavegacion.SOSUPERIOR, controlador ) {
-                    TODO()
-                }
-
-            }
-
-        }
-
-    }
 
 }

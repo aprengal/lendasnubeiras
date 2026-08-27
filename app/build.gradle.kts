@@ -109,6 +109,7 @@ dependencies {
     //módulos internos
     implementation( project( ":ui" ) )
     implementation( project( ":data" ) )
+    implementation(libs.navigation.compose)
 
     //Tests unitarios
     //testImplementation( libs.junit )

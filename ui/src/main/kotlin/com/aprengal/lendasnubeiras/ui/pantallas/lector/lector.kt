@@ -23,7 +23,7 @@ fun PantallaBuscador( termo: String) {
 @Composable
 fun PantallaActividadeDetalle( id: Long ) {
 
-    Text( "DEtalle de $id" )
+    Text( "Detalle de $id" )
 
 }
 

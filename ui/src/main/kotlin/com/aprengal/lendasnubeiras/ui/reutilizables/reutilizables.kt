@@ -31,13 +31,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.aprengal.lendasnubeiras.ui.R
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -55,9 +53,11 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
+import com.aprengal.lendasnubeiras.data.configuracion.db.DB.collerActividade
 import com.aprengal.lendasnubeiras.data.localizacion.L10nPlural
 import com.aprengal.lendasnubeiras.data.localizacion.L10nSingular
-import com.aprengal.lendasnubeiras.ui.navegacion.Pantalla
+import com.aprengal.lendasnubeiras.ui.navegacion.Ruta
+import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion.datosRutas
 import com.aprengal.lendasnubeiras.ui.tema.escollerVarianteImaxe
 
 @Composable
@@ -100,22 +100,22 @@ fun AlertaDialogo( titulo: L10nSingular, cancelado: () -> Unit, descartado: () -
 }
 
 @Composable
-fun <T> ListaOpcions( clave: String, opcions: List<T>, escollido: T, obterNome: ( T ) -> String, localizar: Boolean, escoller: ( T ) -> Unit ) {
+fun <T> ListaOpcions( datos: DatosListaOpcions<T> ) {
 
     LazyColumn( Modifier.selectableGroup() ) {
 
-        items( opcions ) { opcion ->
+        items( datos.opcions ) { opcion ->
 
-            val textoUI = obterNome( opcion )
-            val texto = if ( localizar ) L10nSingular.buscar( "${ clave }_${ textoUI }" ).texto() else textoUI
+            val textoUI = datos.obterNome( opcion )
+            val texto = if ( datos.localizar ) L10nSingular.buscar( "${ datos.clave }_${ textoUI }" ).texto() else textoUI
 
             val modificador = Modifier
                 .fillMaxWidth()
-                .selectable( selected = escollido == opcion, onClick = { escoller( opcion ) }, role = Role.RadioButton )
+                .selectable( selected = datos.escollido == opcion, onClick = { datos.escoller( opcion ) }, role = Role.RadioButton )
                 .padding( vertical = 8.dp )
 
             Row( modifier = modificador, verticalAlignment = Alignment.CenterVertically ) {
-                RadioButton( selected = escollido == opcion, onClick = null )
+                RadioButton( selected = datos.escollido == opcion, onClick = null )
                 EspazadorAncho()
                 Text( texto )
             }
@@ -169,26 +169,9 @@ fun BotonSecundario( elemento: L10nSingular, accion: () -> Unit, modifier: Modif
 
 @Composable
 fun BotonAuxiliar( elemento: L10nSingular, accion: () -> Unit, activado: Boolean = true ) {
-    TextButton( enabled = activado, onClick = accion ) {
-        Texto( elemento )
+    TextButton(enabled = activado, onClick = accion) {
+        Texto(elemento)
     }
-}
-
-@Composable
-internal fun DebuxarIconaMenu( pantalla: Pantalla, dimension: TextUnit ) {
-
-    val icona = when ( pantalla ) {
-        Pantalla.Inicio -> Icona.INICIO
-        is Pantalla.Buscar -> Icona.BUSCAR
-        Pantalla.Idioma -> Icona.IDIOMA
-        Pantalla.Axustes -> Icona.AXUSTES
-        Pantalla.CrearActividade -> Icona.ENGADIR
-        Pantalla.Actividades -> Icona.IDIOMA
-        else -> error( "A pantalla ${ pantalla::class.simpleName } non ten icona asignada" )
-    }
-
-    DebuxarIcona( icona.codigo, icona.descricion, dimension = dimension )
-
 }
 
 private val fonteIconas = FontFamily( Font( R.font.ubuntu_iconas_nerd, FontWeight.Bold ) )
@@ -259,6 +242,29 @@ fun ElementoLista( accion: () -> Unit, titulo: L10nSingular, icona: Icona?,
 }
 
 @Composable
-fun BoxScope.ColocarAviso() {
-    SnackbarHost( LocalAviso.current, Modifier.align( Alignment.BottomCenter ) )
+fun AmosarTitulo() {
+
+    val ruta = LocalRuta.current
+    val datos = datosRutas[ ruta::class ]!!
+
+    val titulo = when ( ruta ) {
+        is Ruta.ActividadeDetalle -> collerActividade( ruta.id )?.titulo
+        else -> datos.titulo!!.texto()
+    }
+
+    requireNotNull( titulo ) { "A ruta ${ ruta::class.simpleName } non ten título asignado" }
+
+    Text( titulo, style = MaterialTheme.typography.headlineLarge )
+
+}
+
+@Composable
+internal fun DebuxarIconaMenu( ruta: Ruta, dimension: TextUnit ) {
+
+    val claseRuta = ruta::class
+    val icona = datosRutas[ claseRuta ]!!.icona
+    requireNotNull( icona ) { "A ruta ${ ruta::class.simpleName } non ten icona asignada" }
+
+    DebuxarIcona( icona.codigo, icona.descricion, dimension = dimension )
+
 }

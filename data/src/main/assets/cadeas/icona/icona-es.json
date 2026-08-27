@@ -14,6 +14,9 @@
   "amosar": "Mostrar elemento",
   "agochar": "Ocultar elemento",
   "valido": "Elemento válido",
-  "invalido": "Elemento inválido"
+  "invalido": "Elemento inválido",
+
+  "tema_claro": "Tema claro",
+  "tema_escuro": "Tema oscuro"
 
 }

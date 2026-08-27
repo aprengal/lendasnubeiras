@@ -18,7 +18,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavHostController
 import com.aprengal.lendasnubeiras.data.localizacion.L10nSingular
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.crearSesionAnonima
-import com.aprengal.lendasnubeiras.ui.navegacion.Pantalla
+import com.aprengal.lendasnubeiras.ui.navegacion.Ruta
 import com.aprengal.lendasnubeiras.ui.reutilizables.BotonPrincipal
 import com.aprengal.lendasnubeiras.ui.reutilizables.BotonSecundario
 import com.aprengal.lendasnubeiras.ui.reutilizables.EspazadorAlto
@@ -29,7 +29,7 @@ import com.aprengal.lendasnubeiras.ui.reutilizables.TextoEnlazado
 fun PantallaBenvida( controlador: NavHostController ) {
 
     val textoAcceso = L10nSingular.BOTON_ACCESO
-    val accionAcceso = { controlador.navigate( Pantalla.Acceso ) }
+    val accionAcceso = { controlador.navigate( Ruta.Acceso ) }
     val textoAnonimo = L10nSingular.BOTON_ANONIMO
     val accionAnonimo = { crearSesionAnonima() }
 
@@ -59,7 +59,7 @@ fun PantallaAcceso( controlador: NavHostController ) {
     }
 
     val textoRexistro = L10nSingular.CREAR_CONTA
-    val enlace = mapOf( L10nSingular.ENLACE_CREAR_CONTA to { controlador.navigate( Pantalla.Rexistro ) } )
+    val enlace = mapOf( L10nSingular.ENLACE_CREAR_CONTA to { controlador.navigate( Ruta.Rexistro ) } )
 
     Column {
 

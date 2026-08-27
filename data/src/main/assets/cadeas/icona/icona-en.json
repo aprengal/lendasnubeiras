@@ -14,6 +14,9 @@
   "amosar": "Show element",
   "agochar": "Hide element",
   "valido": "Valid element",
-  "invalido": "Invalid element"
+  "invalido": "Invalid element",
+
+  "tema_claro": "Light theme",
+  "tema_escuro": "Dark theme"
 
 }

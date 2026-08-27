@@ -2,6 +2,7 @@ package com.aprengal.lendasnubeiras
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -16,12 +17,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.os.LocaleListCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.aprengal.lendasnubeiras.data.configuracion.db.DB
 import com.aprengal.lendasnubeiras.data.configuracion.api.Conexion
 import com.aprengal.lendasnubeiras.data.configuracion.Axustes
@@ -44,6 +46,8 @@ class Entrada : AppCompatActivity() {
 
     private lateinit var idioma: StateFlow<Idioma>
     private lateinit var sesion: StateFlow<String>
+
+    private lateinit var controlador: NavHostController
 
     private fun arrancarConfiguracion( contexto: Context ) {
 
@@ -80,7 +84,8 @@ class Entrada : AppCompatActivity() {
 
                 Surface( modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background ) {
                     AnimatedContent( targetState = sesion, transitionSpec = { fadeIn() togetherWith fadeOut() } ) {
-                        CargarNavegacion( idiomaActual )
+                        controlador = rememberNavController()
+                        CargarNavegacion( idiomaActual, controlador )
                     }
                 }
 
@@ -88,6 +93,11 @@ class Entrada : AppCompatActivity() {
 
         }
 
+    }
+
+    override fun onNewIntent( intent: Intent) {
+        super.onNewIntent( intent )
+        controlador.handleDeepLink( intent )
     }
 
     override fun onStop() {

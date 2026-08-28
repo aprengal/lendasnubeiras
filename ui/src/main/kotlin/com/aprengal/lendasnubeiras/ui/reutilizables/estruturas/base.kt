@@ -1,6 +1,5 @@
 package com.aprengal.lendasnubeiras.ui.reutilizables.estruturas
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -38,10 +37,14 @@ import com.aprengal.lendasnubeiras.ui.reutilizables.Logo
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Color
 import com.aprengal.lendasnubeiras.ui.navegacion.Ruta
 import com.aprengal.lendasnubeiras.ui.reutilizables.DebuxarIconaMenu
 import com.aprengal.lendasnubeiras.ui.reutilizables.LocalAviso
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.navigation.NavDestination
 
 @Composable
 internal fun EstruturaBase( controlador: NavHostController, contido: @Composable () -> Unit ) {
@@ -85,6 +88,10 @@ private fun NavegacionSuperior( controlador: NavHostController ) {
 
 }
 
+private fun rutaSeleccionada( destino: NavDestination?, elementos: List<Ruta> ) : Ruta? {
+    return elementos.firstOrNull { elemento -> destino?.hierarchy?.any { pantalla -> pantalla.hasRoute( elemento::class ) } == true }
+}
+
 @Composable
 private fun NavegacionInferior( controlador: NavHostController ) {
 
@@ -99,13 +106,20 @@ private fun NavegacionInferior( controlador: NavHostController ) {
         Ruta.Actividades
     )
 
-    val entradaNavegacion by controlador.currentBackStackEntryAsState()
+    val entradaActual by controlador.currentBackStackEntryAsState()
+    var ultimaValida by remember {
+        mutableStateOf( rutaSeleccionada( controlador.currentBackStackEntry?.destination, elementos ) ?: elementos.first() )
+    }
+
+    LaunchedEffect( entradaActual ) {
+        rutaSeleccionada( entradaActual?.destination, elementos )?.let { ruta -> ultimaValida = ruta }
+    }
 
     NavigationBar( modifier = Modifier.heightIn( max = alturaTotal ) ) {
 
         for ( elemento in elementos ) {
 
-            val seleccionado = entradaNavegacion ?.destination?.hierarchy?.any { pantalla -> pantalla.hasRoute( elemento::class ) } == true
+            val seleccionado = elemento == ultimaValida
             val accion = { controlador.navigate( elemento ) { launchSingleTop = true } }
             val icona: @Composable () -> Unit = { DebuxarIconaMenu( elemento, 20.sp ) }
 

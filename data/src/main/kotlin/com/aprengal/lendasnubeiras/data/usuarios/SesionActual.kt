@@ -30,12 +30,19 @@ object SesionActual {
     val sesionAnonima: Boolean
         get() = collerOpcion( Opcion.SesionAnonima )
 
+    fun arrancar() {
+
+        if ( _idSesion.value.isNotBlank() ) return
+
+        validarSesion()
+
+    }
+
     fun usuarioActual(): Usuario {
         return usuario
     }
 
     fun collerSesionActual() : StateFlow<String> {
-        if ( _idSesion.value.isBlank() ) validarSesion()
         return _idSesion.asStateFlow()
     }
 

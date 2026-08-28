@@ -1,18 +1,14 @@
 package com.aprengal.lendasnubeiras.ui.reutilizables.estruturas
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -57,13 +53,11 @@ fun IconaAxustes( controlador: NavHostController ) {
     val elemento = Ruta.Axustes
     val entradaNavegacion by controlador.currentBackStackEntryAsState()
     val dimension = with( LocalDensity.current ) { 30.dp.toSp() }
-    val interacion = remember { MutableInteractionSource() }
 
     val seleccionado = entradaNavegacion?.destination?.hierarchy?.any { ruta -> ruta.hasRoute( elemento::class ) } == true
     val accion = { controlador.navigate( elemento ) { launchSingleTop = true } }
-    val modIcona = Modifier.size( 48.dp ).clickable( interacion, null, !seleccionado, onClick = accion )
 
-    Box( modIcona, Alignment.Center ) {
+    IconButton( onClick = accion, enabled = !seleccionado ) {
         DebuxarIconaMenu( elemento, dimension )
     }
 

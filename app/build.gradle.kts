@@ -90,6 +90,7 @@ dependencies {
     implementation( platform(libs.androidx.compose.bom ) )
     implementation( libs.androidx.compose.material3 )
     implementation( libs.androidx.activity.compose )
+    implementation( libs.androidx.navigation.compose )
 
     //Para actualizar o idioma en Android para lectores de pantalla
     implementation( libs.androidx.appcompat )
@@ -109,7 +110,6 @@ dependencies {
     //módulos internos
     implementation( project( ":ui" ) )
     implementation( project( ":data" ) )
-    implementation(libs.navigation.compose)
 
     //Tests unitarios
     //testImplementation( libs.junit )

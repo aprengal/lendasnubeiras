@@ -21,21 +21,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.os.LocaleListCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.aprengal.lendasnubeiras.data.configuracion.db.DB
 import com.aprengal.lendasnubeiras.data.configuracion.api.Conexion
 import com.aprengal.lendasnubeiras.data.configuracion.Axustes
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
 import com.aprengal.lendasnubeiras.data.localizacion.Localizacion
+import com.aprengal.lendasnubeiras.data.usuarios.SesionActual
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.collerSesionActual
 import com.aprengal.lendasnubeiras.ui.navegacion.CargarNavegacion
 import com.aprengal.lendasnubeiras.ui.tema.Tema
 import com.aprengal.lendasnubeiras.ui.tema.TemaNubeiro
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 
 class Entrada : AppCompatActivity() {
 
@@ -45,7 +44,6 @@ class Entrada : AppCompatActivity() {
     }
 
     private lateinit var idioma: StateFlow<Idioma>
-    private lateinit var sesion: StateFlow<String>
 
     private lateinit var controlador: NavHostController
 
@@ -57,6 +55,7 @@ class Entrada : AppCompatActivity() {
             DB.arrancar( contexto )
             idioma = Localizacion.arrancar( contexto )
             Tema.arrancar()
+            SesionActual.arrancar()
         }
 
     }
@@ -68,10 +67,6 @@ class Entrada : AppCompatActivity() {
         enableEdgeToEdge()
         super.onCreate( savedInstanceState )
 
-        lifecycleScope.launch {
-            sesion = collerSesionActual()
-        }
-
         setContent {
 
             TemaNubeiro {
@@ -79,7 +74,7 @@ class Entrada : AppCompatActivity() {
                 @Suppress( "DEPRECATION" )
                 window.navigationBarColor = MaterialTheme.colorScheme.surfaceContainer.toArgb()
 
-                val sesion by sesion.collectAsState()
+                val sesion by collerSesionActual().collectAsState()
                 val idiomaActual by idioma.collectAsState()
 
                 Surface( modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background ) {

@@ -48,9 +48,8 @@ private data class DatosOpcion<T>(
     val opcions: List<T>? = null, val valorInicial: T, val nomeUI: ( T ) -> String, val accion: suspend ( T ) -> Boolean
 ) {
 
-    val tituloOpcion = L10nSingular.buscar( "boton_${ clave }" )
+    val titulo = L10nSingular.buscar( "boton_${ clave }" )
 
-    val tituloAlerta = L10nSingular.buscar( "dialogo_${ clave }" ) //Igual se pode mover
     val gardadoFallido = L10nSingular.buscar( "gardado_fallido_${ clave }" )
     val localizar = clave != "cambio_idioma"
 
@@ -143,11 +142,11 @@ private fun <T> ContidoOpcion( datos: DatosOpcion<T> ) {
 
     when( datos.tipo ) {
 
-        TipoOpcion.INTERRUPTOR -> { ElementoLista( { activo = !activo }, datos.tituloOpcion, datos.icona, contido ) }
+        TipoOpcion.INTERRUPTOR -> { ElementoLista( { activo = !activo }, datos.titulo, datos.icona, contido ) }
 
         TipoOpcion.ALERTA -> {
 
-            ElementoLista( { activo = true }, datos.tituloOpcion, datos.icona, contido )
+            ElementoLista( { activo = true }, datos.titulo, datos.icona, contido )
 
             if ( activo ) {
                 DebuxarAlerta( datos, { estado -> activo = estado }, valorActual, { novoValor -> valorActual = novoValor } )
@@ -182,9 +181,10 @@ private fun <T> DebuxarAlerta( datos: DatosOpcion<T>, amosar: ( Boolean ) -> Uni
         novoValor -> escollido = novoValor
     }
 
+    val titulo = L10nSingular.buscar( "dialogo_${ datos.clave }" )
     val contido = @Composable { ListaOpcions( datosLista ) }
 
-    AlertaDialogo( datos.tituloAlerta, { amosar( false ) }, contido = contido, confirmado = confirmado )
+    AlertaDialogo( titulo, { amosar( false ) }, contido = contido, confirmado = confirmado )
 
 }
 

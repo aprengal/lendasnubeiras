@@ -49,18 +49,16 @@ dependencies {
     implementation( libs.androidx.compose.material3 )
     implementation( libs.androidx.compose.runtime )
     implementation( libs.androidx.compose.animation )
-    //implementation( libs.androidx.navigation.compose )
 
     //Navegación 3
     implementation( libs.androidx.navigation3.ui )
     implementation( libs.androidx.lifecycle.viewmodel.navigation3 )
 
-
+    //Serialización
     implementation( libs.kotlinx.serialization.json )
 
     //Previsualización
     implementation( libs.androidx.compose.ui.tooling.preview )
-
     debugImplementation( libs.androidx.compose.ui.tooling )
 
     //Tests unitarios

@@ -11,6 +11,7 @@
         android:icon="@mipmap/datos_logo"
         android:theme="@style/TemaNubeiro"
         android:localeConfig="@xml/idiomas_config"
+        android:enableOnBackInvokedCallback="false"
         tools:ignore="DataExtractionRules" tools:targetApi="33">
         <profileable android:shell="true" />
 

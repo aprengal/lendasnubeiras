@@ -1,14 +1,13 @@
 package com.aprengal.lendasnubeiras.ui.pantallas.lector
 
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.aprengal.lendasnubeiras.data.localizacion.L10nPlural
@@ -42,9 +41,7 @@ fun PantallaActividade() {
 @Composable
 fun PantallaInicio() {
 
-    val scrollState = rememberSaveable(saver = ScrollState.Saver) {
-        ScrollState(0)
-    }
+    val scrollState = rememberScrollState()
     val modificadorCol = Modifier.fillMaxSize().verticalScroll( scrollState )
 
     Column( modificadorCol ) {
@@ -59,10 +56,9 @@ fun PantallaInicio() {
 
         HorizontalDivider( modifier = Modifier.padding( top = 10.dp ) )
 
-        repeat( 15 ) { indice ->
+        repeat( 30 ) { indice ->
             EspazadorAlto( 2 )
-            Texto( L10nSingular.CARLA )
-            TextoPlural( L10nPlural.MENSAXES_NOVAS, indice )
+            TextoPlural( L10nPlural.MENSAXES_NOVAS, indice + 1 )
             HorizontalDivider( modifier = Modifier.padding( top = 10.dp ) )
         }
 

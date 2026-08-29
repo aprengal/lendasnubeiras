@@ -1,9 +1,10 @@
 package com.aprengal.lendasnubeiras.ui.navegacion
 
+import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed interface Ruta {
+sealed interface Ruta: NavKey {
 
     //Autenticación
 

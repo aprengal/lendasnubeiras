@@ -15,12 +15,12 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.os.LocaleListCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle as escoitarEstado
 import com.aprengal.lendasnubeiras.data.configuracion.db.DB
 import com.aprengal.lendasnubeiras.data.configuracion.api.Conexion
 import com.aprengal.lendasnubeiras.data.configuracion.Axustes
@@ -28,13 +28,18 @@ import com.aprengal.lendasnubeiras.data.localizacion.Idioma
 import com.aprengal.lendasnubeiras.data.localizacion.Localizacion
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.collerSesionActual
-import com.aprengal.lendasnubeiras.ui.navegacion.CargarNavegacion
 import com.aprengal.lendasnubeiras.ui.tema.Tema
 import com.aprengal.lendasnubeiras.ui.tema.TemaNubeiro
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.rememberNavBackStack
+import com.aprengal.lendasnubeiras.data.usuarios.PodeLer
+import com.aprengal.lendasnubeiras.data.usuarios.PodeRexistrarse
+import com.aprengal.lendasnubeiras.ui.navegacion.Enlaces
+import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion.CargarNavegacion
+import com.aprengal.lendasnubeiras.ui.navegacion.Ruta
 
 class Entrada : AppCompatActivity() {
 
@@ -44,8 +49,7 @@ class Entrada : AppCompatActivity() {
     }
 
     private lateinit var idioma: StateFlow<Idioma>
-
-    private lateinit var controlador: NavHostController
+    private lateinit var navegacion: NavBackStack<NavKey>
 
     private fun arrancarConfiguracion( contexto: Context ) {
 
@@ -57,6 +61,18 @@ class Entrada : AppCompatActivity() {
             Tema.arrancar()
             SesionActual.arrancar()
         }
+
+    }
+
+    private fun rutaInicial(): Ruta {
+
+        val ruta = when {
+            PodeLer() -> Ruta.Inicio
+            PodeRexistrarse() -> Ruta.Benvida
+            else -> error( "Non se puido determinar a ruta inicial" )
+        }
+
+        return ruta
 
     }
 
@@ -74,13 +90,13 @@ class Entrada : AppCompatActivity() {
                 @Suppress( "DEPRECATION" )
                 window.navigationBarColor = MaterialTheme.colorScheme.surfaceContainer.toArgb()
 
-                val sesion by collerSesionActual().collectAsState()
-                val idiomaActual by idioma.collectAsState()
+                val sesion by collerSesionActual().escoitarEstado()
+                val idiomaActual by idioma.escoitarEstado()
 
                 Surface( modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background ) {
                     AnimatedContent( targetState = sesion, transitionSpec = { fadeIn() togetherWith fadeOut() } ) {
-                        controlador = rememberNavController()
-                        CargarNavegacion( idiomaActual, controlador )
+                        navegacion = rememberNavBackStack( rutaInicial() )
+                        CargarNavegacion( idiomaActual, navegacion )
                     }
                 }
 
@@ -90,9 +106,9 @@ class Entrada : AppCompatActivity() {
 
     }
 
-    override fun onNewIntent( intent: Intent) {
+    override fun onNewIntent( intent: Intent ) {
         super.onNewIntent( intent )
-        controlador.handleDeepLink( intent )
+        Enlaces( intent ).confirmar()?.let { enlace -> navegacion.add( enlace ) }
     }
 
     override fun onStop() {

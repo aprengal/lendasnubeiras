@@ -1,11 +1,11 @@
 package com.aprengal.lendasnubeiras
 
 import com.aprengal.lendasnubeiras.ui.navegacion.Ruta
-import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion.datosRutas
+import com.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.datosRutas
 import junit.framework.TestCase.assertTrue
 import org.junit.Test
 
-class TestRutaNavegacion {
+class TestRutas {
 
     @Test
     fun todasRutasUsadas() {

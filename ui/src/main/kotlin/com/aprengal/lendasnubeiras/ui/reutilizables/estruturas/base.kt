@@ -22,41 +22,34 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import com.aprengal.lendasnubeiras.data.usuarios.PodeCrear
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
 import com.aprengal.lendasnubeiras.ui.reutilizables.Logo
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.ui.Alignment
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
 import com.aprengal.lendasnubeiras.ui.navegacion.Ruta
 import com.aprengal.lendasnubeiras.ui.reutilizables.DebuxarIconaMenu
 import com.aprengal.lendasnubeiras.ui.reutilizables.LocalAviso
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.navigation.NavDestination
+import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion.comprobarRutaActiva
 
 @Composable
-internal fun EstruturaBase( controlador: NavHostController, contido: @Composable () -> Unit ) {
+internal fun EstruturaBase( navegacion: NavBackStack<NavKey>, contido: @Composable () -> Unit ) {
 
     val aviso = LocalAviso.current
     val amosarAccion = PodeCrear( usuarioActual() )
 
     Scaffold(
-        topBar = { NavegacionSuperior( controlador) },
-        bottomBar = { NavegacionInferior( controlador ) },
+        topBar = { NavegacionSuperior( navegacion ) },
+        bottomBar = { NavegacionInferior( navegacion ) },
         snackbarHost = { SnackbarHost( aviso ) },
-        floatingActionButton = { if ( amosarAccion ) BotonCrearActividade( controlador ) }
+        floatingActionButton = { if ( amosarAccion ) BotonCrearActividade( navegacion ) }
     ) { recheoInterno ->
 
         Column( modifier = Modifier.fillMaxSize().padding( recheoInterno ).padding( 10.dp ) ) {
@@ -68,7 +61,7 @@ internal fun EstruturaBase( controlador: NavHostController, contido: @Composable
 }
 
 @Composable
-private fun NavegacionSuperior( controlador: NavHostController ) {
+private fun NavegacionSuperior( navegacion: NavBackStack<NavKey> ) {
 
     val modificadorFila = Modifier.fillMaxWidth()
         .windowInsetsPadding( WindowInsets.systemBars.only( WindowInsetsSides.Top + WindowInsetsSides.Horizontal ) )
@@ -79,7 +72,7 @@ private fun NavegacionSuperior( controlador: NavHostController ) {
         Row( modifier = modificadorFila, verticalAlignment = Alignment.CenterVertically ) {
             Logo()
             Spacer( Modifier.weight( 1f ) )
-            IconaAxustes( controlador )
+            IconaAxustes( navegacion )
         }
 
         HorizontalDivider()
@@ -88,12 +81,8 @@ private fun NavegacionSuperior( controlador: NavHostController ) {
 
 }
 
-private fun rutaSeleccionada( destino: NavDestination?, elementos: List<Ruta> ) : Ruta? {
-    return elementos.firstOrNull { elemento -> destino?.hierarchy?.any { pantalla -> pantalla.hasRoute( elemento::class ) } == true }
-}
-
 @Composable
-private fun NavegacionInferior( controlador: NavHostController ) {
+private fun NavegacionInferior( navegacion: NavBackStack<NavKey> ) {
 
     val densidade = LocalDensity.current
     val insetInferior = WindowInsets.navigationBars.getBottom( densidade )
@@ -106,21 +95,12 @@ private fun NavegacionInferior( controlador: NavHostController ) {
         Ruta.Actividades
     )
 
-    val entradaActual by controlador.currentBackStackEntryAsState()
-    var ultimaValida by remember {
-        mutableStateOf( rutaSeleccionada( controlador.currentBackStackEntry?.destination, elementos ) ?: elementos.first() )
-    }
-
-    LaunchedEffect( entradaActual ) {
-        rutaSeleccionada( entradaActual?.destination, elementos )?.let { ruta -> ultimaValida = ruta }
-    }
-
     NavigationBar( modifier = Modifier.heightIn( max = alturaTotal ) ) {
 
         for ( elemento in elementos ) {
 
-            val seleccionado = elemento == ultimaValida
-            val accion = { controlador.navigate( elemento ) { launchSingleTop = true } }
+            val seleccionado = navegacion.comprobarRutaActiva( elemento::class )
+            val accion = { navegacion.add( elemento ); Unit }
             val icona: @Composable () -> Unit = { DebuxarIconaMenu( elemento, 20.sp ) }
 
             NavigationBarItem( seleccionado, accion, icona, enabled = !seleccionado )
@@ -132,10 +112,10 @@ private fun NavegacionInferior( controlador: NavHostController ) {
 }
 
 @Composable
-private fun BotonCrearActividade( controlador: NavHostController ) {
+private fun BotonCrearActividade( navegacion: NavBackStack<NavKey> ) {
 
     val ruta = Ruta.CrearActividade
-    val accion = { controlador.navigate( ruta ) }
+    val accion = { navegacion.add( ruta ); Unit }
     val fondo = MaterialTheme.colorScheme.secondary
     val cor = MaterialTheme.colorScheme.onSecondary
 

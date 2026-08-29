@@ -11,6 +11,7 @@ activityCompose = "1.13.0"
 kotlin = "2.4.10"
 composeBom = "2026.08.00"
 foundationLayout = "1.12.0"
+lifecycleViewmodelNavigation3 = "2.12.0-alpha02"
 material = "1.14.0"
 okhttp = "5.5.0"
 appcompat = "1.8.0"
@@ -21,14 +22,16 @@ runtimeVersion = "1.12.0"
 foundation = "1.12.0"
 uiText = "1.12.0"
 animation = "1.12.0"
-navigationCompose = "2.10.0"
 startup = "1.2.0"
 uiUnit = "1.12.0"
+navigation3Ui = "1.2.0-beta01"
+navigation3Runtime = "1.2.0-beta01"
 
 [libraries]
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewmodelNavigation3" }
 androidx-rules = { module = "androidx.test:rules", version.ref = "rules" }
 androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
 icu4j = { module = "com.ibm.icu:icu4j", version.ref = "icu4j" }
@@ -50,9 +53,10 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 androidx-compose-ui-text = { group = "androidx.compose.ui", name = "ui-text", version.ref = "uiText" }
 androidx-compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "animation" }
-androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 androidx-startup-runtime = { group = "androidx.startup", name = "startup-runtime", version.ref = "startup" }
 androidx-compose-ui-unit = { group = "androidx.compose.ui", name = "ui-unit", version.ref = "uiUnit" }
+androidx-navigation3-ui = { group = "androidx.navigation3", name = "navigation3-ui", version.ref = "navigation3Ui" }
+androidx-navigation3-runtime = { group = "androidx.navigation3", name = "navigation3-runtime", version.ref = "navigation3Runtime" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

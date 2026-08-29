@@ -8,15 +8,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
+import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion.comprobarRutaActiva
 import com.aprengal.lendasnubeiras.ui.navegacion.Ruta
 import com.aprengal.lendasnubeiras.ui.reutilizables.AmosarTitulo
 import com.aprengal.lendasnubeiras.ui.reutilizables.DebuxarIconaMenu
@@ -24,7 +22,7 @@ import com.aprengal.lendasnubeiras.ui.reutilizables.EspazadorAlto
 import com.aprengal.lendasnubeiras.ui.reutilizables.Logo
 
 @Composable
-fun EstruturaApertura( controlador: NavHostController, contido: @Composable () -> Unit ) {
+fun EstruturaApertura( navegacion: NavBackStack<NavKey>, contido: @Composable () -> Unit ) {
 
     val modFila = Modifier.height( 64.dp ).absolutePadding( left = 16.dp, right = 4.dp )
     val modCol = Modifier.padding( horizontal = 24.dp, vertical = 16.dp )
@@ -32,7 +30,7 @@ fun EstruturaApertura( controlador: NavHostController, contido: @Composable () -
     ColocarExtras {
 
         Row( modifier = modFila.align( Alignment.TopEnd ), verticalAlignment = Alignment.CenterVertically ) {
-            IconaAxustes( controlador )
+            IconaAxustes( navegacion )
         }
 
         Column( modCol.align( Alignment.Center ), Arrangement.Center, Alignment.CenterHorizontally ) {
@@ -48,14 +46,12 @@ fun EstruturaApertura( controlador: NavHostController, contido: @Composable () -
 }
 
 @Composable
-fun IconaAxustes( controlador: NavHostController ) {
+fun IconaAxustes( navegacion: NavBackStack<NavKey> ) {
 
     val elemento = Ruta.Axustes
-    val entradaNavegacion by controlador.currentBackStackEntryAsState()
     val dimension = with( LocalDensity.current ) { 30.dp.toSp() }
-
-    val seleccionado = entradaNavegacion?.destination?.hierarchy?.any { ruta -> ruta.hasRoute( elemento::class ) } == true
-    val accion = { controlador.navigate( elemento ) { launchSingleTop = true } }
+    val seleccionado = navegacion.comprobarRutaActiva( elemento::class )
+    val accion = { navegacion.add( elemento ); Unit }
 
     IconButton( onClick = accion, enabled = !seleccionado ) {
         DebuxarIconaMenu( elemento, dimension )

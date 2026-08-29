@@ -57,7 +57,7 @@ import com.aprengal.lendasnubeiras.data.configuracion.db.DB.collerActividade
 import com.aprengal.lendasnubeiras.data.localizacion.L10nPlural
 import com.aprengal.lendasnubeiras.data.localizacion.L10nSingular
 import com.aprengal.lendasnubeiras.ui.navegacion.Ruta
-import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion.datosRutas
+import com.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.datosRutas
 import com.aprengal.lendasnubeiras.ui.tema.escollerVarianteImaxe
 
 @Composable

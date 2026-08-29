@@ -90,10 +90,12 @@ dependencies {
     implementation( platform(libs.androidx.compose.bom ) )
     implementation( libs.androidx.compose.material3 )
     implementation( libs.androidx.activity.compose )
-    implementation( libs.androidx.navigation.compose )
 
     //Para actualizar o idioma en Android para lectores de pantalla
     implementation( libs.androidx.appcompat )
+
+    //Navegación 3
+    implementation(libs.androidx.navigation3.runtime)
 
     //Exclusión da dependencia anterior para impedir que cargue emojis
     implementation( libs.androidx.startup.runtime )

@@ -1,0 +1,95 @@
+package com.aprengal.lendasnubeiras.ui.navegacion
+
+import android.util.Log
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
+import com.aprengal.lendasnubeiras.data.configuracion.db.DB.collerActividade
+import com.aprengal.lendasnubeiras.data.usuarios.PodeAcceder
+import com.aprengal.lendasnubeiras.data.usuarios.PodeAdministrar
+import com.aprengal.lendasnubeiras.data.usuarios.PodeCrear
+import com.aprengal.lendasnubeiras.data.usuarios.PodeEditar
+import com.aprengal.lendasnubeiras.data.usuarios.PodeIniciarSesion
+import com.aprengal.lendasnubeiras.data.usuarios.PodeLer
+import com.aprengal.lendasnubeiras.data.usuarios.PodeRexistrarse
+import kotlin.reflect.KClass
+
+internal class ControlAcceso( val navegacion: NavBackStack<NavKey> ) {
+
+    private fun verificarAcceso( ruta: KClass<out Ruta> ): Boolean {
+
+        val permiso = when ( ruta ) {
+
+            //Calquera
+            Ruta.Axustes::class -> PodeAcceder
+
+            // Autenticación
+            Ruta.Benvida::class -> PodeIniciarSesion
+            Ruta.Acceso::class -> PodeIniciarSesion
+            Ruta.Rexistro::class -> PodeRexistrarse
+
+            // Lectura
+            Ruta.Inicio::class -> PodeLer
+            Ruta.Actividades::class -> PodeLer
+            Ruta.ActividadeDetalle::class -> PodeLer
+            Ruta.Buscar::class -> PodeLer
+            Ruta.Idioma::class -> PodeLer
+
+            // Creación
+            Ruta.ListarActividades::class -> PodeCrear
+            Ruta.CrearActividade::class -> PodeCrear
+            Ruta.ModificarActividade::class -> PodeEditar
+
+            // Administración
+            Ruta.Administrar::class -> PodeAdministrar
+
+            else -> error( "A ruta ${ ruta.simpleName } non ten permiso asignado" )
+
+        }
+
+        return permiso()
+
+    }
+
+    @Composable
+    internal fun comprobarAcceso( ruta: KClass<out Ruta> ): Boolean {
+
+        if ( verificarAcceso( ruta ) ) return true
+
+        Log.wtf( "PERMISO", "Tratouse de realizar un acceso indebido" )
+        LaunchedEffect( Unit ) { navegacion.subList( 1, navegacion.size ).clear() }
+
+        return false
+
+    }
+
+    @Composable
+    internal fun verificarRuta( ruta: Ruta ): Boolean {
+
+        val redirixir = when ( ruta ) {
+            is Ruta.ActividadeDetalle -> if ( collerActividade( ruta.id ) == null ) Ruta.Actividades else null
+            else -> null
+        }
+
+        if ( redirixir != null ) {
+
+            LaunchedEffect( redirixir ) {
+
+                navegacion.removeLastOrNull()
+
+                if ( navegacion.lastOrNull() != redirixir ) {
+                    navegacion.add( redirixir )
+                }
+
+            }
+
+            return false
+
+        }
+
+        return true
+
+    }
+
+}

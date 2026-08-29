@@ -1,14 +1,19 @@
 package com.aprengal.lendasnubeiras.ui.pantallas.lector
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.aprengal.lendasnubeiras.data.localizacion.L10nPlural
 import com.aprengal.lendasnubeiras.data.localizacion.L10nSingular
+import com.aprengal.lendasnubeiras.ui.reutilizables.EspazadorAlto
 import com.aprengal.lendasnubeiras.ui.reutilizables.Texto
 import com.aprengal.lendasnubeiras.ui.reutilizables.TextoPlural
 
@@ -37,8 +42,12 @@ fun PantallaActividade() {
 @Composable
 fun PantallaInicio() {
 
+    val scrollState = rememberSaveable(saver = ScrollState.Saver) {
+        ScrollState(0)
+    }
+    val modificadorCol = Modifier.fillMaxSize().verticalScroll( scrollState )
 
-    Column {
+    Column( modificadorCol ) {
 
         Texto( L10nSingular.CARLA )
         Texto( L10nSingular.NATASHA )
@@ -49,6 +58,13 @@ fun PantallaInicio() {
         TextoPlural( L10nPlural.MENSAXES_NOVAS, 10000000 )
 
         HorizontalDivider( modifier = Modifier.padding( top = 10.dp ) )
+
+        repeat( 15 ) { indice ->
+            EspazadorAlto( 2 )
+            Texto( L10nSingular.CARLA )
+            TextoPlural( L10nPlural.MENSAXES_NOVAS, indice )
+            HorizontalDivider( modifier = Modifier.padding( top = 10.dp ) )
+        }
 
     }
 

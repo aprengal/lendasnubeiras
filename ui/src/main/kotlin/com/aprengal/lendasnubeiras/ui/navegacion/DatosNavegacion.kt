@@ -1,82 +1,125 @@
 package com.aprengal.lendasnubeiras.ui.navegacion
 
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavMetadataKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.metadata
 import com.aprengal.lendasnubeiras.data.localizacion.L10nSingular
+import com.aprengal.lendasnubeiras.data.usuarios.PodeAdministrar
+import com.aprengal.lendasnubeiras.data.usuarios.PodeCrear
+import com.aprengal.lendasnubeiras.data.usuarios.PodeLer
+import com.aprengal.lendasnubeiras.data.usuarios.PodeRexistrarse
 import com.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.APERTURA
 import com.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.COMPLETA
 import com.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.SOSUPERIOR
-import com.aprengal.lendasnubeiras.ui.reutilizables.Icona
+import com.aprengal.lendasnubeiras.ui.pantallas.NovaActividade
+import com.aprengal.lendasnubeiras.ui.pantallas.PantallaAcceso
+import com.aprengal.lendasnubeiras.ui.pantallas.PantallaAxustes
+import com.aprengal.lendasnubeiras.ui.pantallas.PantallaBenvida
+import com.aprengal.lendasnubeiras.ui.pantallas.PantallaRexistro
+import com.aprengal.lendasnubeiras.ui.pantallas.lector.PantallaActividade
+import com.aprengal.lendasnubeiras.ui.pantallas.lector.PantallaActividadeDetalle
+import com.aprengal.lendasnubeiras.ui.pantallas.lector.PantallaBuscador
+import com.aprengal.lendasnubeiras.ui.pantallas.lector.PantallaInicio
+import com.aprengal.lendasnubeiras.ui.pantallas.lector.actividadesDixitais.XogoDados
+import com.aprengal.lendasnubeiras.ui.reutilizables.LocalNavegacion
+import com.aprengal.lendasnubeiras.ui.reutilizables.LocalRuta
+import com.aprengal.lendasnubeiras.ui.reutilizables.LocalTitulo
+import com.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaApertura
+import com.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaBase
+import com.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaSuperior
 
-internal object DatosNavegacion {
+internal class DatosNavegacion( val navegacion: Navegacion ) {
 
+    enum class TipoPantalla { COMPLETA, SOSUPERIOR, APERTURA }
+
+    data class DatosPantalla( val tipo: TipoPantalla, val titulo: L10nSingular? = null )
     object Tipo : NavMetadataKey<TipoPantalla>
 
-    enum class TipoPantalla( private val transicion: Transicion ) {
-        COMPLETA( Transicion.DISOLVER ),
-        SOSUPERIOR( Transicion.DESLIZAR ),
-        APERTURA( Transicion.DESLIZAR );
+    val entradas = entryProvider {
 
-        val entrada get() = transicion.entrada
-        val saida get() = transicion.saida
-        val atrasEntrada get() = transicion.atrasEntrada
-        val atrasSaida get() = transicion.atrasSaida
+        val axustes = DatosPantalla( SOSUPERIOR, L10nSingular.TITULO_AXUSTES )
+        ruta<Ruta.Axustes>( axustes ) { PantallaAxustes() }
+
+        if ( PodeRexistrarse() ) {
+
+            val benvida = DatosPantalla( APERTURA, L10nSingular.TITULO_BENVIDA )
+            val acceso = DatosPantalla( APERTURA, L10nSingular.TITULO_ACCESO )
+            val rexistro = DatosPantalla( APERTURA, L10nSingular.TITULO_REXISTRO )
+
+            ruta<Ruta.Benvida>( benvida ) { PantallaBenvida( navegacion ) }
+            ruta<Ruta.Acceso>( acceso ) { PantallaAcceso( navegacion ) }
+            ruta<Ruta.Rexistro>( rexistro ) { PantallaRexistro( navegacion ) }
+
+        }
+
+        if ( PodeLer() ) {
+
+            val actividades = DatosPantalla( SOSUPERIOR, L10nSingular.SI )
+            val inicio = DatosPantalla( COMPLETA )
+            val idioma = DatosPantalla( COMPLETA )
+
+            ruta<Ruta.Actividades>( actividades ) { PantallaActividade() }
+            ruta<Ruta.Inicio>( inicio ) { PantallaInicio() }
+            ruta<Ruta.Idioma>( idioma ) { XogoDados() }
+
+            //Con argumentos
+
+            val actividadeDetalle = DatosPantalla( SOSUPERIOR )
+            val buscar = DatosPantalla( COMPLETA )
+
+            ruta<Ruta.ActividadeDetalle>( actividadeDetalle) { datos -> PantallaActividadeDetalle( datos.id ) }
+            ruta<Ruta.Buscar>( buscar ) { datos -> PantallaBuscador( datos.termo ) }
+
+        }
+
+        if ( PodeCrear() ) {
+
+            val listar = DatosPantalla( SOSUPERIOR )
+            val crear = DatosPantalla( SOSUPERIOR )
+            val modificar = DatosPantalla( SOSUPERIOR )
+
+            ruta<Ruta.ListarActividades>( listar ) { TODO() }
+            ruta<Ruta.CrearActividade>( crear ) { NovaActividade() }
+            ruta<Ruta.ModificarActividade>( modificar ) { TODO() }
+
+        }
+
+        if ( PodeAdministrar() ) {
+            val administrar = DatosPantalla( SOSUPERIOR )
+            ruta<Ruta.Administrar>( administrar ) { TODO() }
+        }
 
     }
 
-    private enum class Transicion( val entrada: EnterTransition, val saida: ExitTransition,
-        val atrasEntrada: EnterTransition, val atrasSaida: ExitTransition
-    ) {
+    inline fun <reified T : Ruta> EntryProviderScope<Ruta>.ruta( datos: DatosPantalla, noinline contido: @Composable ( T ) -> Unit ) {
 
-        DISOLVER(
-            entrada = fadeIn( tween() ),
-            saida = fadeOut( tween() ),
-            atrasEntrada = fadeIn( tween() ),
-            atrasSaida = fadeOut( tween() )
-        ),
+        val tipo = metadata { put( Tipo, datos.tipo ) }
 
-        DESLIZAR(
-            entrada = slideInHorizontally( tween() ) { ancho -> ancho },
-            saida = slideOutHorizontally( tween() ) { ancho -> -ancho },
-            atrasEntrada = slideInHorizontally( tween() ) { ancho -> -ancho },
-            atrasSaida = slideOutHorizontally( tween() ) { ancho -> ancho }
-        )
+        entry<T>( metadata = tipo ) { ruta ->
+
+            val navegacion = LocalNavegacion.current
+            val control = ControlAcceso( navegacion )
+
+            if ( !control.comprobarAcceso( T::class ) ) return@entry
+            if ( !control.verificarRuta( ruta  ) ) return@entry
+
+            val titulo = datos.titulo
+
+            CompositionLocalProvider( LocalRuta provides ruta, LocalTitulo provides titulo ) {
+
+                when ( datos.tipo ) {
+                    COMPLETA -> EstruturaBase( navegacion ) { contido( ruta ) }
+                    SOSUPERIOR -> EstruturaSuperior { contido( ruta ) }
+                    APERTURA -> EstruturaApertura( navegacion ) { contido( ruta ) }
+                }
+
+            }
+
+        }
 
     }
-
-    data class DatosPantalla( val tipo: TipoPantalla, val titulo: L10nSingular? = null, val icona: Icona? = null )
-
-    val datosRutas = mapOf(
-
-        //Común
-        Ruta.Axustes::class to DatosPantalla( SOSUPERIOR, L10nSingular.TITULO_AXUSTES, Icona.AXUSTES ),
-
-        //Apertura
-        Ruta.Benvida::class to DatosPantalla( APERTURA, L10nSingular.TITULO_BENVIDA ),
-        Ruta.Acceso::class to DatosPantalla( APERTURA, L10nSingular.TITULO_ACCESO ),
-        Ruta.Rexistro::class to DatosPantalla( APERTURA, L10nSingular.TITULO_REXISTRO ),
-
-        //Lectura
-        Ruta.Actividades::class to DatosPantalla( SOSUPERIOR, L10nSingular.SI, icona = Icona.INVALIDO ),
-        Ruta.ActividadeDetalle::class to DatosPantalla( SOSUPERIOR ),
-        Ruta.Buscar::class to DatosPantalla( COMPLETA, icona = Icona.BUSCAR ),
-        Ruta.Inicio::class to DatosPantalla( COMPLETA, icona = Icona.INICIO ),
-        Ruta.Idioma::class to DatosPantalla( COMPLETA, icona = Icona.IDIOMA ),
-
-        //Crear
-        Ruta.ListarActividades::class to DatosPantalla( SOSUPERIOR ),
-        Ruta.CrearActividade::class to DatosPantalla( SOSUPERIOR, icona = Icona.ENGADIR ),
-        Ruta.ModificarActividade::class to DatosPantalla( SOSUPERIOR ),
-
-        //Administrar
-        Ruta.Administrar::class to DatosPantalla( SOSUPERIOR )
-
-    )
 
 }

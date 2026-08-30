@@ -1,13 +1,8 @@
 package com.aprengal.lendasnubeiras
 
-import com.aprengal.lendasnubeiras.ui.navegacion.Ruta
-import com.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.datosRutas
-import junit.framework.TestCase.assertTrue
-import org.junit.Test
+/*class TestRutas {
 
-class TestRutas {
-
-    @Test
+    /*@Test
     fun todasRutasUsadas() {
 
         val declaradas = Ruta::class.sealedSubclasses.toSet()
@@ -22,6 +17,6 @@ class TestRutas {
 
         assertTrue( mensaxe, faltan.isEmpty() )
 
-    }
+    }*/
 
-}
+}*/

@@ -1,76 +1,103 @@
 package com.aprengal.lendasnubeiras.ui.navegacion
 
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.togetherWith
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
 import androidx.navigation3.runtime.NavBackStack
-import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.runtime.get
-import androidx.navigation3.scene.Scene
 import androidx.navigation3.ui.NavDisplay
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
-import com.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.Tipo
-import com.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla
-import com.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.COMPLETA
+import com.aprengal.lendasnubeiras.data.usuarios.PodeLer
+import com.aprengal.lendasnubeiras.data.usuarios.PodeRexistrarse
 import com.aprengal.lendasnubeiras.ui.reutilizables.LocalAviso
 import com.aprengal.lendasnubeiras.ui.reutilizables.LocalIdioma
 import com.aprengal.lendasnubeiras.ui.reutilizables.LocalNavegacion
 import kotlin.reflect.KClass
 
-object Navegacion {
+class Navegacion ( private val traza: NavBackStack<Ruta>, seleccionada: KClass<out Ruta>? = null ) {
 
-    @Composable
-    fun CargarNavegacion( idioma: Idioma, navegacion: NavBackStack<NavKey> ) {
+    val lista: List<Ruta> get() = traza
 
-        val aviso = remember { SnackbarHostState() }
+    var ultimaMenu: KClass<out Ruta>? = seleccionada
+        private set
 
-        LaunchedEffect( idioma ) {
-            aviso.currentSnackbarData?.dismiss()
-        }
+    fun engadir( elemento: Ruta ) {
 
-        CompositionLocalProvider( LocalIdioma provides idioma, LocalNavegacion provides navegacion, LocalAviso provides aviso ) {
-            NavDisplay( navegacion, transitionSpec = avance(), popTransitionSpec = retroceso(), entryProvider = ListaNavegacion( navegacion ).entradas )
-        }
-
-    }
-
-    private fun haiTransicion( orixe: TipoPantalla, destino: TipoPantalla ): Boolean {
-        return orixe != COMPLETA || destino != COMPLETA
-    }
-
-    fun NavBackStack<NavKey>.comprobarRutaActiva( claseRuta: KClass<out Ruta> ): Boolean {
-        return lastOrNull()?.let { clase -> clase::class == claseRuta } == true
-    }
-
-    private fun avance(): AnimatedContentTransitionScope<Scene<NavKey>>.() -> ContentTransform = {
-
-        val orixe = initialState.entries.last().metadata[ Tipo ]!!
-        val destino = targetState.entries.last().metadata[ Tipo ]!!
-
-        if ( haiTransicion( orixe, destino ) ) {
-            destino.entrada togetherWith orixe.saida
-        } else {
-            EnterTransition.None togetherWith ExitTransition.None
+        if ( traza.lastOrNull() != elemento ) {
+            traza.add( elemento )
         }
 
     }
 
-    private fun retroceso(): AnimatedContentTransitionScope<Scene<NavKey>>.() -> ContentTransform = {
+    fun seleccionarInferior( elemento: Ruta ) {
+        ultimaMenu = elemento::class
+        engadir( elemento )
+    }
 
-        val orixe = initialState.entries.last().metadata[ Tipo ]!!
-        val destino = targetState.entries.last().metadata[ Tipo ]!!
+    fun quitarUltimo() {
+        traza.removeLastOrNull()
+    }
 
-        if ( haiTransicion( orixe, destino ) ) {
-            destino.atrasEntrada togetherWith orixe.atrasSaida
-        } else {
-            EnterTransition.None togetherWith ExitTransition.None
+    fun rutaActiva( claseRuta: KClass<out Ruta> ): Boolean {
+        return traza.lastOrNull()?.let { ruta -> ruta::class == claseRuta } == true
+    }
+
+    fun reiniciar() {
+        traza.subList( 1, traza.size ).clear()
+    }
+
+    fun redirixir( redirixir: Ruta ) {
+        quitarUltimo()
+        engadir( redirixir )
+    }
+
+    companion object {
+
+        fun rutaInicial(): Ruta {
+
+            val ruta = when {
+                PodeLer() -> Ruta.Inicio
+                PodeRexistrarse() -> Ruta.Benvida
+                else -> error( "Non se puido determinar a ruta inicial" )
+            }
+
+            return ruta
+
+        }
+
+        fun gardarNavegacion( traza: NavBackStack<Ruta> ): Saver<Navegacion, String> {
+
+            val gardado = Saver<Navegacion, String>(
+                save = { navegacion -> navegacion.ultimaMenu?.java?.name },
+                restore = { className ->
+                    @Suppress( "UNCHECKED_CAST" )
+                    val ruta = className.let { nome -> Class.forName( nome ).kotlin as KClass<out Ruta> }
+                    Navegacion( traza, ruta )
+                }
+            )
+
+            return gardado
+
+        }
+
+        @Composable
+        fun RexistrarNavegacion( idioma: Idioma, navegacion: Navegacion ) {
+
+            val aviso = remember { SnackbarHostState() }
+
+            LaunchedEffect( idioma ) {
+                aviso.currentSnackbarData?.dismiss()
+            }
+
+            val entradas = DatosNavegacion( navegacion ).entradas
+            val transicions = Transicions()
+
+            CompositionLocalProvider( LocalIdioma provides idioma, LocalNavegacion provides navegacion, LocalAviso provides aviso ) {
+                NavDisplay( navegacion.lista, transitionSpec = transicions.avance(), popTransitionSpec = transicions.retroceso(), entryProvider = entradas )
+            }
+
         }
 
     }

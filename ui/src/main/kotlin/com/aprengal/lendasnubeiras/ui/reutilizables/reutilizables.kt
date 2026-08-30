@@ -57,7 +57,6 @@ import com.aprengal.lendasnubeiras.data.configuracion.db.DB.collerActividade
 import com.aprengal.lendasnubeiras.data.localizacion.L10nPlural
 import com.aprengal.lendasnubeiras.data.localizacion.L10nSingular
 import com.aprengal.lendasnubeiras.ui.navegacion.Ruta
-import com.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.datosRutas
 import com.aprengal.lendasnubeiras.ui.tema.escollerVarianteImaxe
 
 @Composable
@@ -245,11 +244,10 @@ fun ElementoLista( accion: () -> Unit, titulo: L10nSingular, icona: Icona?,
 fun AmosarTitulo() {
 
     val ruta = LocalRuta.current
-    val datos = datosRutas[ ruta::class ]!!
 
     val titulo = when ( ruta ) {
         is Ruta.ActividadeDetalle -> collerActividade( ruta.id )?.titulo
-        else -> datos.titulo!!.texto()
+        else -> LocalTitulo.current!!.texto()
     }
 
     requireNotNull( titulo ) { "A ruta ${ ruta::class.simpleName } non ten título asignado" }
@@ -258,11 +256,19 @@ fun AmosarTitulo() {
 
 }
 
+private val iconas = mapOf(
+    Ruta.Axustes::class to Icona.AXUSTES,
+    Ruta.Actividades::class to Icona.INVALIDO,
+    Ruta.Inicio::class to Icona.INICIO,
+    Ruta.Idioma::class to Icona.IDIOMA,
+    Ruta.Buscar::class to Icona.BUSCAR,
+    Ruta.CrearActividade::class to Icona.ENGADIR
+)
+
 @Composable
 internal fun DebuxarIconaMenu( ruta: Ruta, dimension: TextUnit ) {
 
-    val claseRuta = ruta::class
-    val icona = datosRutas[ claseRuta ]!!.icona
+    val icona = iconas[ ruta::class ]
     requireNotNull( icona ) { "A ruta ${ ruta::class.simpleName } non ten icona asignada" }
 
     DebuxarIcona( icona.codigo, icona.descricion, dimension = dimension )

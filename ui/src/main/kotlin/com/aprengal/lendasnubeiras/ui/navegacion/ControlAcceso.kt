@@ -3,8 +3,6 @@ package com.aprengal.lendasnubeiras.ui.navegacion
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.navigation3.runtime.NavBackStack
-import androidx.navigation3.runtime.NavKey
 import com.aprengal.lendasnubeiras.data.configuracion.db.DB.collerActividade
 import com.aprengal.lendasnubeiras.data.usuarios.PodeAcceder
 import com.aprengal.lendasnubeiras.data.usuarios.PodeAdministrar
@@ -15,8 +13,10 @@ import com.aprengal.lendasnubeiras.data.usuarios.PodeLer
 import com.aprengal.lendasnubeiras.data.usuarios.PodeRexistrarse
 import kotlin.reflect.KClass
 
-internal class ControlAcceso( val navegacion: NavBackStack<NavKey> ) {
+internal class ControlAcceso( val navegacion: Navegacion ) {
 
+    //Hai que mirar se isto ao final acaba duplicando comportamento en ListaNavegacion
+    //Non se pode navegar á ruta que nunca se rexistrou
     private fun verificarAcceso( ruta: KClass<out Ruta> ): Boolean {
 
         val permiso = when ( ruta ) {
@@ -58,7 +58,7 @@ internal class ControlAcceso( val navegacion: NavBackStack<NavKey> ) {
         if ( verificarAcceso( ruta ) ) return true
 
         Log.wtf( "PERMISO", "Tratouse de realizar un acceso indebido" )
-        LaunchedEffect( Unit ) { navegacion.subList( 1, navegacion.size ).clear() }
+        LaunchedEffect( Unit ) { navegacion.reiniciar() }
 
         return false
 
@@ -73,19 +73,8 @@ internal class ControlAcceso( val navegacion: NavBackStack<NavKey> ) {
         }
 
         if ( redirixir != null ) {
-
-            LaunchedEffect( redirixir ) {
-
-                navegacion.removeLastOrNull()
-
-                if ( navegacion.lastOrNull() != redirixir ) {
-                    navegacion.add( redirixir )
-                }
-
-            }
-
+            LaunchedEffect( redirixir ) { navegacion.redirixir( redirixir ) }
             return false
-
         }
 
         return true

@@ -21,6 +21,9 @@ class Enlaces( intento: Intent ) {
         ValidadorEnlace( Enlace( "$dominio://idioma" ), serializer<Ruta.Idioma>() )
     )
 
+    //TODO: En lugar de engadir unha soa entrada, igual se podería engadir unha lista de rutas no seu lugar
+    //Aínda que aquí habería que valorar os casos nos que unha persoa non aceptase os ToS ou algo parecido
+    //para entrar a unha sección específica, pero isto pode facerse ou habería que axustar este comportamento?
     fun confirmar(): Ruta? {
         return enlaces.firstNotNullOfOrNull { matcher -> matcher.match( peticion )?.key }
     }

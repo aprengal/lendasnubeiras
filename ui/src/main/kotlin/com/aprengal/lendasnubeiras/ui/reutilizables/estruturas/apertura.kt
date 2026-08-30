@@ -12,9 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import androidx.navigation3.runtime.NavBackStack
-import androidx.navigation3.runtime.NavKey
-import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion.comprobarRutaActiva
+import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion
 import com.aprengal.lendasnubeiras.ui.navegacion.Ruta
 import com.aprengal.lendasnubeiras.ui.reutilizables.AmosarTitulo
 import com.aprengal.lendasnubeiras.ui.reutilizables.DebuxarIconaMenu
@@ -22,7 +20,7 @@ import com.aprengal.lendasnubeiras.ui.reutilizables.EspazadorAlto
 import com.aprengal.lendasnubeiras.ui.reutilizables.Logo
 
 @Composable
-fun EstruturaApertura( navegacion: NavBackStack<NavKey>, contido: @Composable () -> Unit ) {
+fun EstruturaApertura( navegacion: Navegacion, contido: @Composable () -> Unit ) {
 
     val modFila = Modifier.height( 64.dp ).absolutePadding( left = 16.dp, right = 4.dp )
     val modCol = Modifier.padding( horizontal = 24.dp, vertical = 16.dp )
@@ -46,14 +44,13 @@ fun EstruturaApertura( navegacion: NavBackStack<NavKey>, contido: @Composable ()
 }
 
 @Composable
-fun IconaAxustes( navegacion: NavBackStack<NavKey> ) {
+fun IconaAxustes( navegacion: Navegacion ) {
 
     val elemento = Ruta.Axustes
     val dimension = with( LocalDensity.current ) { 30.dp.toSp() }
-    val seleccionado = navegacion.comprobarRutaActiva( elemento::class )
-    val accion = { navegacion.add( elemento ); Unit }
+    val accion = { navegacion.engadir( elemento ) }
 
-    IconButton( onClick = accion, enabled = !seleccionado ) {
+    IconButton( accion ) {
         DebuxarIconaMenu( elemento, dimension )
     }
 

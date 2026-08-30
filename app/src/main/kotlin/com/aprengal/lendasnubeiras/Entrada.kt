@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.os.LocaleListCompat
@@ -33,12 +34,12 @@ import com.aprengal.lendasnubeiras.ui.tema.TemaNubeiro
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 import androidx.navigation3.runtime.NavBackStack
-import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberNavBackStack
-import com.aprengal.lendasnubeiras.data.usuarios.PodeLer
-import com.aprengal.lendasnubeiras.data.usuarios.PodeRexistrarse
 import com.aprengal.lendasnubeiras.ui.navegacion.Enlaces
-import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion.CargarNavegacion
+import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion
+import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion.Companion.RexistrarNavegacion
+import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion.Companion.gardarNavegacion
+import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion.Companion.rutaInicial
 import com.aprengal.lendasnubeiras.ui.navegacion.Ruta
 
 class Entrada : AppCompatActivity() {
@@ -49,7 +50,7 @@ class Entrada : AppCompatActivity() {
     }
 
     private lateinit var idioma: StateFlow<Idioma>
-    private lateinit var navegacion: NavBackStack<NavKey>
+    private lateinit var navegacion: Navegacion
 
     private fun arrancarConfiguracion( contexto: Context ) {
 
@@ -61,18 +62,6 @@ class Entrada : AppCompatActivity() {
             Tema.arrancar()
             SesionActual.arrancar()
         }
-
-    }
-
-    private fun rutaInicial(): Ruta {
-
-        val ruta = when {
-            PodeLer() -> Ruta.Inicio
-            PodeRexistrarse() -> Ruta.Benvida
-            else -> error( "Non se puido determinar a ruta inicial" )
-        }
-
-        return ruta
 
     }
 
@@ -94,10 +83,17 @@ class Entrada : AppCompatActivity() {
                 val idiomaActual by idioma.escoitarEstado()
 
                 Surface( modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background ) {
+
                     AnimatedContent( targetState = sesion, transitionSpec = { fadeIn() togetherWith fadeOut() } ) {
-                        navegacion = rememberNavBackStack( rutaInicial() )
-                        CargarNavegacion( idiomaActual, navegacion )
+
+                        @Suppress( "UNCHECKED_CAST" )
+                        val traza = rememberNavBackStack( rutaInicial() ) as NavBackStack<Ruta>
+                        navegacion = rememberSaveable( saver = gardarNavegacion( traza ) ) { Navegacion( traza ) }
+
+                        RexistrarNavegacion( idiomaActual, navegacion )
+
                     }
+
                 }
 
             }
@@ -108,7 +104,7 @@ class Entrada : AppCompatActivity() {
 
     override fun onNewIntent( intent: Intent ) {
         super.onNewIntent( intent )
-        Enlaces( intent ).confirmar()?.let { enlace -> navegacion.add( enlace ) }
+        Enlaces( intent ).confirmar()?.let { enlace -> navegacion.engadir( enlace ) }
     }
 
     override fun onStop() {

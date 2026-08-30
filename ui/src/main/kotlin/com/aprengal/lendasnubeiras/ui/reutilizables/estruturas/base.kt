@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
@@ -32,15 +31,13 @@ import com.aprengal.lendasnubeiras.ui.reutilizables.Logo
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.ui.Alignment
-import androidx.navigation3.runtime.NavBackStack
-import androidx.navigation3.runtime.NavKey
+import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion
 import com.aprengal.lendasnubeiras.ui.navegacion.Ruta
 import com.aprengal.lendasnubeiras.ui.reutilizables.DebuxarIconaMenu
 import com.aprengal.lendasnubeiras.ui.reutilizables.LocalAviso
-import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion.comprobarRutaActiva
 
 @Composable
-internal fun EstruturaBase( navegacion: NavBackStack<NavKey>, contido: @Composable () -> Unit ) {
+internal fun EstruturaBase( navegacion: Navegacion, contido: @Composable () -> Unit ) {
 
     val aviso = LocalAviso.current
     val amosarAccion = PodeCrear( usuarioActual() )
@@ -61,7 +58,7 @@ internal fun EstruturaBase( navegacion: NavBackStack<NavKey>, contido: @Composab
 }
 
 @Composable
-private fun NavegacionSuperior( navegacion: NavBackStack<NavKey> ) {
+private fun NavegacionSuperior( navegacion: Navegacion ) {
 
     val modificadorFila = Modifier.fillMaxWidth()
         .windowInsetsPadding( WindowInsets.systemBars.only( WindowInsetsSides.Top + WindowInsetsSides.Horizontal ) )
@@ -82,7 +79,7 @@ private fun NavegacionSuperior( navegacion: NavBackStack<NavKey> ) {
 }
 
 @Composable
-private fun NavegacionInferior( navegacion: NavBackStack<NavKey> ) {
+private fun NavegacionInferior( navegacion: Navegacion ) {
 
     val densidade = LocalDensity.current
     val insetInferior = WindowInsets.navigationBars.getBottom( densidade )
@@ -99,11 +96,11 @@ private fun NavegacionInferior( navegacion: NavBackStack<NavKey> ) {
 
         for ( elemento in elementos ) {
 
-            val seleccionado = navegacion.comprobarRutaActiva( elemento::class )
-            val accion = { navegacion.add( elemento ); Unit }
+            val seleccionado = navegacion.rutaActiva( elemento::class ) || navegacion.ultimaMenu == elemento::class
+            val accion = { navegacion.seleccionarInferior( elemento ) }
             val icona: @Composable () -> Unit = { DebuxarIconaMenu( elemento, 20.sp ) }
 
-            NavigationBarItem( seleccionado, accion, icona, enabled = !seleccionado )
+            NavigationBarItem( seleccionado, accion, icona )
 
         }
 
@@ -112,14 +109,14 @@ private fun NavegacionInferior( navegacion: NavBackStack<NavKey> ) {
 }
 
 @Composable
-private fun BotonCrearActividade( navegacion: NavBackStack<NavKey> ) {
+private fun BotonCrearActividade( navegacion: Navegacion ) {
 
     val ruta = Ruta.CrearActividade
-    val accion = { navegacion.add( ruta ); Unit }
-    val fondo = MaterialTheme.colorScheme.secondary
-    val cor = MaterialTheme.colorScheme.onSecondary
+    val accion = { navegacion.engadir( ruta ) }
+    //val fondo = MaterialTheme.colorScheme.secondary
+    //val cor = MaterialTheme.colorScheme.onSecondary
 
-    FloatingActionButton( onClick = accion, containerColor = fondo, contentColor = cor, shape = CircleShape ) {
+    FloatingActionButton( onClick = accion, /*containerColor = fondo, contentColor = cor,*/ shape = CircleShape ) {
         DebuxarIconaMenu( ruta, 20.sp )
     }
 

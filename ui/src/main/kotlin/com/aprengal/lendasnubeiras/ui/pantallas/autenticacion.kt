@@ -15,10 +15,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.navigation3.runtime.NavBackStack
-import androidx.navigation3.runtime.NavKey
 import com.aprengal.lendasnubeiras.data.localizacion.L10nSingular
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.crearSesionAnonima
+import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion
 import com.aprengal.lendasnubeiras.ui.navegacion.Ruta
 import com.aprengal.lendasnubeiras.ui.reutilizables.BotonPrincipal
 import com.aprengal.lendasnubeiras.ui.reutilizables.BotonSecundario
@@ -27,10 +26,10 @@ import com.aprengal.lendasnubeiras.ui.reutilizables.Texto
 import com.aprengal.lendasnubeiras.ui.reutilizables.TextoEnlazado
 
 @Composable
-fun PantallaBenvida( navegacion: NavBackStack<NavKey> ) {
+fun PantallaBenvida( navegacion: Navegacion ) {
 
     val textoAcceso = L10nSingular.BOTON_ACCESO
-    val accionAcceso = { navegacion.add( Ruta.Acceso ); Unit }
+    val accionAcceso = { navegacion.engadir( Ruta.Acceso ) }
     val textoAnonimo = L10nSingular.BOTON_ANONIMO
     val accionAnonimo = { crearSesionAnonima() }
 
@@ -43,7 +42,7 @@ fun PantallaBenvida( navegacion: NavBackStack<NavKey> ) {
 }
 
 @Composable
-fun PantallaAcceso( navegacion: NavBackStack<NavKey> ) {
+fun PantallaAcceso( navegacion: Navegacion ) {
 
     val correo = rememberTextFieldState()
 
@@ -60,7 +59,7 @@ fun PantallaAcceso( navegacion: NavBackStack<NavKey> ) {
     }
 
     val textoRexistro = L10nSingular.CREAR_CONTA
-    val enlace = mapOf( L10nSingular.ENLACE_CREAR_CONTA to { navegacion.add( Ruta.Rexistro ); Unit } )
+    val enlace = mapOf( L10nSingular.ENLACE_CREAR_CONTA to { navegacion.engadir( Ruta.Rexistro ) } )
 
     Column {
 
@@ -88,12 +87,12 @@ fun PantallaAcceso( navegacion: NavBackStack<NavKey> ) {
 }
 
 @Composable
-fun PantallaRexistro( navegacion: NavBackStack<NavKey> ) {
+fun PantallaRexistro( navegacion: Navegacion ) {
 
     Text( "Cando é a recuperación?" )
 
     val atras = L10nSingular.VOLVER_ACCESO
-    val enlace = mapOf( L10nSingular.VOLVER_ACCESO to { navegacion.removeLastOrNull(); Unit } )
+    val enlace = mapOf( L10nSingular.VOLVER_ACCESO to { navegacion.quitarUltimo() } )
 
     TextoEnlazado( atras, enlace )
 

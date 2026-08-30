@@ -69,7 +69,7 @@ private val Tipografias = Typography(
         letterSpacing = ( -0.0415625 ).em
     ),
 
-    // Títulos de secciones principales y componentes importantes
+    // Títulos de secciones principais e compoñentes importantes
     titleLarge = TextStyle(
         fontFamily = ExpletusSans,
         fontWeight = FontWeight.Bold,
@@ -85,7 +85,7 @@ private val Tipografias = Typography(
         lineHeight = 24.sp,
         letterSpacing = ( -0.0415625 ).em
     ),
-    // Títulos pequeños y secundarios
+    // Títulos pequenos e secundarios
     titleSmall = TextStyle(
         fontFamily = ExpletusSans,
         fontWeight = FontWeight.Bold,
@@ -123,14 +123,14 @@ private val Tipografias = Typography(
         fontSize = 16.sp,
         lineHeight = 22.sp
     ),
-    // Etiquetas de controles compactos, tabs y chips
+    // Etiquetas de controis compactos, tabs e chips
     labelMedium = TextStyle(
         fontFamily = Ubuntu,
         fontWeight = FontWeight.Bold,
         fontSize = 12.sp,
         lineHeight = 16.sp
     ),
-    // Etiquetas auxiliares y de tamaño reducido
+    // Etiquetas auxiliares e de tamaño reducido
     labelSmall = TextStyle(
         fontFamily = Ubuntu,
         fontWeight = FontWeight.Bold,
@@ -161,7 +161,7 @@ private val TextoEscuro = Color( 0xFF000000 )
 private val FondoClaro = Color( 0xFFF4F3F4 )//Color( 0xFFCCCCCC )
 private val TextoClaro = Color( 0xFFFFFFFF )
 
-private val CorLogo = Color( 0xFF3BFFFF )
+//private val CorLogo = Color( 0xFF3BFFFF )
 
 //private val CorErro = Color( 0xFFC62828 )
 
@@ -176,43 +176,83 @@ private val CorExito = Color( 0xFF2E7D32 )
 // ============================================================
 
 private val PaletaClara = lightColorScheme(
-    primary = FondoEscuro,
-    onPrimary = TextoClaro,
-    secondary = CorLogo,
-    onSecondary = TextoEscuro,
+
+    // Capa 0: fondo general de la app (Surface raíz, Scaffold)
     background = FondoClaro,
     onBackground = TextoEscuro,
-    surface = FondoEscuro.copy( alpha = 0.04f ).compositeOver( FondoClaro ),
+
+    // Capa 1: elementos elevados
+    // ListItem, OutlinedCard
+    surface = FondoEscuro.copy( alpha = 0.1f ).compositeOver( FondoClaro ),
+    // texto sobre surface
     onSurface = TextoEscuro,
+    // OutlinedTextField fondo
     surfaceVariant = FondoClaro,
-    onSurfaceVariant = FondoEscuro.copy( alpha = 0.7f ),
-    surfaceContainer = FondoEscuro.copy( alpha = 0.6f ).compositeOver( FondoClaro ),
-    surfaceContainerHigh = FondoClaro,
-    surfaceContainerHighest = FondoEscuro.copy( alpha = 0.04f ).compositeOver(FondoClaro ),
-    //error = CorErro,
-    //onError = TextoClaro,
+    // ListItem leading/supporting, borde TextField, item no seleccionado del BottomBar
+    onSurfaceVariant = TextoEscuro,
+    // NavigationBar (BottomBar) fondo
+    surfaceContainer = FondoEscuro.copy( alpha = 0.1f ).compositeOver( FondoClaro ),
+    // AlertDialog fondo
+    surfaceContainerHigh = FondoEscuro.copy( alpha = 0.08f ).compositeOver( FondoClaro ),
+    // Card fondo
+    surfaceContainerHighest = FondoEscuro.copy( alpha = 0.1f ).compositeOver( FondoClaro ),
+
+    // Capa 2: contraste fuerte
+    // Button relleno fondo
+    primary = FondoEscuro,
+    // texto/icono del Button
+    onPrimary = TextoClaro,
+    // FAB fondo
+    primaryContainer = FondoEscuro,
+    // icono/texto del FAB
+    onPrimaryContainer = TextoClaro,
+    // indicador (píldora) del item seleccionado en BottomBar
+    secondaryContainer = FondoEscuro,
+    // icono/texto del item seleccionado en BottomBar
+    onSecondaryContainer = TextoClaro,
+
+    // bordes (OutlinedButton, OutlinedTextField)
     outline = FondoEscuro,
-    outlineVariant = TextoEscuro//FondoEscuro.copy( alpha = 0.85f ).compositeOver( FondoClaro )
+    // Divider, líneas separadoras
+    outlineVariant = TextoEscuro
+
 )
 
 private val PaletaEscura = darkColorScheme(
-    primary = FondoClaro,
-    onPrimary = TextoEscuro,
-    secondary = CorLogo,
-    onSecondary = TextoEscuro,
+
+    // Capa 0
     background = FondoEscuro,
     onBackground = TextoClaro,
-    surface = FondoClaro.copy( alpha = 0.04f ).compositeOver( FondoEscuro ),
+
+    // Capa 1
+    // ListItem, OutlinedCard
+    surface = FondoClaro.copy( alpha = 0.1f ).compositeOver( FondoEscuro ),
     onSurface = TextoClaro,
+    // OutlinedTextField fondo
     surfaceVariant = FondoEscuro,
-    onSurfaceVariant = TextoClaro.copy( alpha = 0.7f ),
-    surfaceContainer = FondoClaro.copy( alpha = 0.6f ).compositeOver( FondoEscuro ),
-    surfaceContainerHigh = FondoEscuro,
-    surfaceContainerHighest = FondoClaro.copy( alpha = 0.04f ).compositeOver( FondoEscuro ),
-    //error = CorErro,
-    //onError = TextoClaro,
+    // ListItem leading/supporting, borde TextField, item no seleccionado del BottomBar
+    onSurfaceVariant = TextoClaro,
+    // NavigationBar (BottomBar) fondo
+    surfaceContainer = FondoClaro.copy( alpha = 0.1f ).compositeOver( FondoEscuro ),
+    // AlertDialog fondo
+    surfaceContainerHigh = FondoClaro.copy( alpha = 0.08f ).compositeOver( FondoEscuro ),
+    // Card
+    surfaceContainerHighest = FondoClaro.copy( alpha = 0.1f ).compositeOver( FondoEscuro ),
+
+    // Capa 2
+    // Button relleno fondo
+    primary = FondoClaro,
+    onPrimary = TextoEscuro,
+    // FAB fondo
+    primaryContainer = FondoClaro,
+    onPrimaryContainer = TextoEscuro,
+    // indicador seleccionado BottomBar
+    secondaryContainer = FondoClaro,
+    onSecondaryContainer = TextoEscuro,
+
     outline = FondoClaro,
-    outlineVariant = TextoClaro//FondoClaro.copy( alpha = 0.85f ).compositeOver( FondoEscuro )
+    outlineVariant = TextoClaro
+
 )
 
 enum class Variante( val nome: String ) {

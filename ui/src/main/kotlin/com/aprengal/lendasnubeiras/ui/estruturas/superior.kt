@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.ui.reutilizables.estruturas
+package com.aprengal.lendasnubeiras.ui.estruturas
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

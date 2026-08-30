@@ -27,11 +27,11 @@ import com.aprengal.lendasnubeiras.ui.pantallas.lector.actividadesDixitais.XogoD
 import com.aprengal.lendasnubeiras.ui.reutilizables.LocalNavegacion
 import com.aprengal.lendasnubeiras.ui.reutilizables.LocalRuta
 import com.aprengal.lendasnubeiras.ui.reutilizables.LocalTitulo
-import com.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaApertura
-import com.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaBase
-import com.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaSuperior
+import com.aprengal.lendasnubeiras.ui.estruturas.EstruturaApertura
+import com.aprengal.lendasnubeiras.ui.estruturas.EstruturaBase
+import com.aprengal.lendasnubeiras.ui.estruturas.EstruturaSuperior
 
-internal class DatosNavegacion( val navegacion: Navegacion ) {
+internal class DatosNavegacion {
 
     enum class TipoPantalla { COMPLETA, SOSUPERIOR, APERTURA }
 
@@ -49,9 +49,9 @@ internal class DatosNavegacion( val navegacion: Navegacion ) {
             val acceso = DatosPantalla( APERTURA, L10nSingular.TITULO_ACCESO )
             val rexistro = DatosPantalla( APERTURA, L10nSingular.TITULO_REXISTRO )
 
-            ruta<Ruta.Benvida>( benvida ) { PantallaBenvida( navegacion ) }
-            ruta<Ruta.Acceso>( acceso ) { PantallaAcceso( navegacion ) }
-            ruta<Ruta.Rexistro>( rexistro ) { PantallaRexistro( navegacion ) }
+            ruta<Ruta.Benvida>( benvida ) { PantallaBenvida() }
+            ruta<Ruta.Acceso>( acceso ) { PantallaAcceso() }
+            ruta<Ruta.Rexistro>( rexistro ) { PantallaRexistro() }
 
         }
 

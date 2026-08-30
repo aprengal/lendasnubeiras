@@ -22,12 +22,14 @@ import com.aprengal.lendasnubeiras.ui.navegacion.Ruta
 import com.aprengal.lendasnubeiras.ui.reutilizables.BotonPrincipal
 import com.aprengal.lendasnubeiras.ui.reutilizables.BotonSecundario
 import com.aprengal.lendasnubeiras.ui.reutilizables.EspazadorAlto
+import com.aprengal.lendasnubeiras.ui.reutilizables.LocalNavegacion
 import com.aprengal.lendasnubeiras.ui.reutilizables.Texto
 import com.aprengal.lendasnubeiras.ui.reutilizables.TextoEnlazado
 
 @Composable
-fun PantallaBenvida( navegacion: Navegacion ) {
+fun PantallaBenvida() {
 
+    val navegacion = LocalNavegacion.current
     val textoAcceso = L10nSingular.BOTON_ACCESO
     val accionAcceso = { navegacion.engadir( Ruta.Acceso ) }
     val textoAnonimo = L10nSingular.BOTON_ANONIMO
@@ -42,8 +44,9 @@ fun PantallaBenvida( navegacion: Navegacion ) {
 }
 
 @Composable
-fun PantallaAcceso( navegacion: Navegacion ) {
+fun PantallaAcceso() {
 
+    val navegacion = LocalNavegacion.current
     val correo = rememberTextFieldState()
 
     var mensaxe by rememberSaveable { mutableStateOf<L10nSingular?>( null ) }
@@ -87,7 +90,9 @@ fun PantallaAcceso( navegacion: Navegacion ) {
 }
 
 @Composable
-fun PantallaRexistro( navegacion: Navegacion ) {
+fun PantallaRexistro() {
+
+    val navegacion = LocalNavegacion.current
 
     Text( "Cando é a recuperación?" )
 

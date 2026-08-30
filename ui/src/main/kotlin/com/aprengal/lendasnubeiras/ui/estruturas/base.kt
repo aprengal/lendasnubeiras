@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.ui.reutilizables.estruturas
+package com.aprengal.lendasnubeiras.ui.estruturas
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -113,10 +113,8 @@ private fun BotonCrearActividade( navegacion: Navegacion ) {
 
     val ruta = Ruta.CrearActividade
     val accion = { navegacion.engadir( ruta ) }
-    //val fondo = MaterialTheme.colorScheme.secondary
-    //val cor = MaterialTheme.colorScheme.onSecondary
 
-    FloatingActionButton( onClick = accion, /*containerColor = fondo, contentColor = cor,*/ shape = CircleShape ) {
+    FloatingActionButton( onClick = accion, shape = CircleShape ) {
         DebuxarIconaMenu( ruta, 20.sp )
     }
 

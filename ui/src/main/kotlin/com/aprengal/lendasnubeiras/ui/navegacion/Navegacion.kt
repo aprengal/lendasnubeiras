@@ -91,7 +91,7 @@ class Navegacion ( private val traza: NavBackStack<Ruta>, seleccionada: KClass<o
                 aviso.currentSnackbarData?.dismiss()
             }
 
-            val entradas = DatosNavegacion( navegacion ).entradas
+            val entradas = DatosNavegacion().entradas
             val transicions = Transicions()
 
             CompositionLocalProvider( LocalIdioma provides idioma, LocalNavegacion provides navegacion, LocalAviso provides aviso ) {

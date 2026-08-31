@@ -146,7 +146,7 @@ private val Tipografias = Typography(
 private val Bordos = Shapes(
     extraSmall = RoundedCornerShape( 4.dp ),
     small = RoundedCornerShape( 6.dp ),
-    medium = RoundedCornerShape( 8.dp ),   // botóns principal/secundario
+    medium = RoundedCornerShape( 8.dp ),   // botóns colPrincipal/secundario
     large = RoundedCornerShape( 12.dp ),
     extraLarge = RoundedCornerShape( 50.dp )
 )

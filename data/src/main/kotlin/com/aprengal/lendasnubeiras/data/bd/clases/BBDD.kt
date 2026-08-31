@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.data.bd
+package com.aprengal.lendasnubeiras.data.bd.clases
 
 import android.content.ContentValues
 import android.content.Context
@@ -9,13 +9,16 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import androidx.core.database.sqlite.transaction
 import com.aprengal.lendasnubeiras.data.actividades.datos.atributos.Atributo
+import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.CombinacionSQL
+import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
+import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.SelectSQL
 import com.aprengal.lendasnubeiras.data.bd.taboas.Taboa
 import com.aprengal.lendasnubeiras.data.bd.taboas.TaboaBase
 import com.aprengal.lendasnubeiras.data.bd.taboas.TaboaLectura
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
 import kotlin.collections.iterator
 
-internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, null, DB_VERSION ) {
+internal class BBDD( contexto: Context) : SQLiteOpenHelper( contexto, DB_NOME, null, DB_VERSION ) {
 
     private enum class Modo { LECTURA, ESCRITURA }
 
@@ -23,7 +26,7 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
 
     // Estrutura
     companion object {
-        const val DB_NOME = "lendas_nubeiras.db"
+        const val DB_NOME = "lendas_nubeiras.bd"
         const val DB_VERSION = 1
     }
 
@@ -31,7 +34,7 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
         EstruturaDB().crear( db )
     }
 
-    override fun onUpgrade( db: SQLiteDatabase, oldVersion: Int, newVersion: Int ) {
+    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int ) {
         EstruturaDB().actualizar( db, oldVersion, newVersion )
     }
 
@@ -40,7 +43,7 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
         db.setForeignKeyConstraintsEnabled( true )
     }
 
-    private fun verificarTaboa( taboa: Taboa, modo: Modo = Modo.ESCRITURA ) {
+    private fun verificarTaboa(taboa: Taboa, modo: Modo = Modo.ESCRITURA ) {
 
         val permitidas = taboasPermitidas.toMutableSet()
         if ( modo == Modo.LECTURA ) permitidas.addAll( TaboaLectura.entries.toSet() )
@@ -79,11 +82,11 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
 
     }
 
-    fun insertar( taboa: Taboa, listaValores: Map<String, Any> ): Long {
+    fun insertar(taboa: Taboa, listaValores: Map<String, Any> ): Long {
         return insertar( taboa, listOf( listaValores ) )[ 0 ]
     }
 
-    fun insertar( taboa: Taboa, listaValores: List<Map<String, Any>> ): List<Long> {
+    fun insertar(taboa: Taboa, listaValores: List<Map<String, Any>> ): List<Long> {
 
         require( listaValores.isNotEmpty() ) { "Non se pode insertar unha lista baleira" }
         verificarTaboa( taboa )
@@ -102,7 +105,7 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
 
             return ids
 
-        } catch ( e: SQLiteException ) {
+        } catch ( e: SQLiteException) {
             Log.e( "BBDD", "Fallou unha inserción", e )
         }
 
@@ -110,49 +113,31 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
 
     }
 
-    fun seleccionar( taboa: Taboa, datos: Map<String, Any> ): List<Map<String, Any>> {
+    fun seleccionar(taboa: Taboa, datos: SelectSQL): List<Map<String, Any>> {
 
         verificarTaboa( taboa, Modo.LECTURA )
+        require( datos.columnas.isNotEmpty() ) { "Deben indicarse as columnas nunha consulta select" }
 
-        val distinto = datos[ "distinto" ] as? Boolean ?: false
-        val alias = datos[ "alias" ] as? String ?: ""
-
-        @Suppress( "UNCHECKED_CAST" )
-        val columnas = datos[ "columnas" ] as? Set<String> ?: error( "Faltan as columnas" )
-
-        @Suppress( "UNCHECKED_CAST" )
-        val joins = datos[ "joins" ] as? List<Map<String, Any>> ?: emptyList()
-
-        @Suppress( "UNCHECKED_CAST" )
-        val onde: Map<String, Map<String, Any>> = datos[ "onde" ] as? Map<String, Map<String, Any>> ?: emptyMap()
-
-        val ( condicions, argumentos ) = if ( onde.isEmpty() ) "" to emptyArray() else establecerCondicions( onde )
-
-        @Suppress( "UNCHECKED_CAST" )
-        val ordenar = datos[ "ordenar" ] as? Map<String, String> ?: emptyMap()
-
-        @Suppress( "UNCHECKED_CAST" )
-        val limite = datos[ "limit" ] as? List<Int> ?: emptyList<Any>()
+        val ( condicions, argumentos ) = if ( datos.onde.isEmpty() ) "" to emptyArray() else establecerCondicions( datos.onde )
 
         val consulta = buildString {
 
-            if ( distinto ) append( "SELECT DISTINCT " ) else append( "SELECT " )
+            if ( datos.distinto ) append( "SELECT DISTINCT " ) else append( "SELECT " )
 
-            append( "${ columnas.joinToString( ", " ) } FROM $taboa" )
+            append( "${ datos.columnas.joinToString( ", " ) } FROM ${ taboa.nome }" )
 
-            if ( alias.isNotEmpty() ) append( " AS $alias" )
-            if ( joins.isNotEmpty() ) append( combinarTaboas( alias, joins ) )
+            if ( datos.alias.isNotEmpty() ) append( " AS ${ datos.alias }" )
+            if ( datos.combinacions.isNotEmpty() ) append( combinarTaboas( datos.alias, datos.combinacions ) )
             if ( condicions.isNotEmpty() ) append( " WHERE $condicions" )
 
-            if ( ordenar.isNotEmpty() ) {
-                require( ordenar.all { elemento -> elemento.value in setOf( "ASC", "DESC" ) } ) { "A orde indicada non é correcta" }
+            if ( datos.ordenar.isNotEmpty() ) {
                 append( " ORDER BY " )
-                append( ordenar.entries.joinToString( ", " ) { ( columna, orde ) ->  "$columna $orde" } )
+                append( datos.ordenar.entries.joinToString( ", " ) { ( columna, orde ) ->  "$columna ${ orde.nome }" } )
             }
 
-            if ( limite.isNotEmpty() ) {
-                require( limite.size <= 2 ) { "Só se poden poñer 2 valores como máximo no apartado LIMIT" }
-                append( " LIMIT ${ limite.joinToString( ", " ) }" )
+            if ( datos.limite.isNotEmpty() ) {
+                require( datos.limite.size <= 2 ) { "Só se poden poñer 2 valores como máximo no apartado LIMIT" }
+                append( " LIMIT ${ datos.limite.joinToString( ", " ) }" )
             }
 
         }
@@ -162,7 +147,7 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
             val resultados = readableDatabase.rawQuery( consulta, argumentos )
             return procesarResultados( resultados )
 
-        } catch ( e: SQLiteException ) {
+        } catch ( e: SQLiteException) {
             Log.e( "BBDD", "Fallou unha busca para realizar resultados", e )
         }
 
@@ -203,7 +188,7 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
 
     }
 
-    fun actualizar( taboa: Taboa, valores: Map<String, Any>, onde: Map<String, Map<String, Any>> ): Int {
+    fun actualizar(taboa: Taboa, valores: Map<String, Any>, onde: Map<String, Condicion> ): Int {
 
         verificarTaboa( taboa )
 
@@ -214,7 +199,7 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
 
             return writableDatabase.update( taboa.nome, datos, condicions, argumentos )
 
-        } catch ( e: SQLiteException ) {
+        } catch ( e: SQLiteException) {
             Log.e( "BBDD", "Fallou unha consulta de actualización", e )
         }
 
@@ -222,7 +207,7 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
 
     }
 
-    fun eliminar( taboa: Taboa, onde: Map<String, Map<String, Any>> ): Int {
+    fun eliminar(taboa: Taboa, onde: Map<String, Condicion> ): Int {
 
         verificarTaboa( taboa )
 
@@ -231,7 +216,7 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
             val ( condicions, argumentos ) = establecerCondicions( onde )
             return writableDatabase.delete( taboa.nome, condicions, argumentos )
 
-        } catch ( e: SQLiteException ) {
+        } catch ( e: SQLiteException) {
             Log.e( "BBDD", "Fallou unha consulta de borrado", e )
         }
 
@@ -239,30 +224,28 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
 
     }
 
-    private fun establecerCondicions( datos: Map<String, Map<String, Any>> ): Pair<String, Array<String>> {
+    private fun establecerCondicions( datos: Map<String, Condicion> ): Pair<String, Array<String>> {
 
         val partes = mutableListOf<String>()
         val valores = mutableListOf<String>()
 
-        for ( ( columna, info ) in datos ) {
+        for ( ( columna, condicion ) in datos ) {
 
-            val operador = info[ "operador" ] ?: error( "A condición en $columna non ten operador" )
+            when ( condicion ) {
 
-            when ( operador ) {
+                is Condicion.Simple -> {
 
-                "=", "!=", "<", "<=", ">", ">=", "MATCH", "LIKE", "NOT LIKE" -> {
-
-                    val valor = info[ "valor" ] ?: error( "O operador $operador require a clave 'valor'" )
+                    val valor = condicion.valor
+                    val operador = condicion.operador.simbolo
 
                     partes += "$columna $operador ?"
                     valores += procesarValor( valor )
 
                 }
 
-                "IN" -> {
+                is Condicion.En -> {
 
-                    @Suppress( "UNCHECKED_CAST" )
-                    val datosValores = info[ "valores" ] as? Set<Any> ?: error( "IN require a clave 'valores'" )
+                    val datosValores = condicion.valores
                     require( datosValores.isNotEmpty() ) { "IN require polo menos un valor" }
 
                     val reemprazos = mutableListOf<String>()
@@ -276,15 +259,10 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
 
                 }
 
-                "BETWEEN" -> {
+                is Condicion.Entre -> {
 
-                    @Suppress( "UNCHECKED_CAST" )
-                    val datosValores = info[ "valores" ] as? Set<Any> ?: error( "BETWEEN require a clave 'valores'" )
-                    require( datosValores.size == 2 ) { "BETWEEN require exactamente dous valores" }
-
-                    val valoresLista = datosValores.toList()
-                    val valor1 = procesarValor( valoresLista[ 0 ] )
-                    val valor2 = procesarValor (valoresLista[ 1 ] )
+                    val valor1 = procesarValor( condicion.minimo )
+                    val valor2 = procesarValor ( condicion.maximo )
 
                     require( valor1 < valor2 ) { "BETWEEN require que o primeiro valor sexa menor que o segundo" }
 
@@ -293,8 +271,6 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
                     partes += "$columna BETWEEN ? AND ?"
 
                 }
-
-                else -> error( "Operador non soportado: $operador" )
 
             }
 
@@ -306,34 +282,25 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
 
     }
 
-    private fun combinarTaboas( aliasPrincipal: String, datosCombinacion: List<Map<String, Any>> ): String {
+    private fun combinarTaboas( aliasPrincipal: String, datos: List<CombinacionSQL> ): String {
 
-        val tiposAdmitidos = setOf( "INNER", "LEFT", "RIGHT", "CROSS" )
+        val combinacions = buildString {
 
-        val consultaCombinacion = buildString {
+            datos.forEach { info ->
 
-            datosCombinacion.forEach { join ->
+                verificarTaboa( info.taboaCombinacion, Modo.LECTURA )
 
-                val tipoCombinacion = join[ "tipo" ] as? String ?: error( "Falta o tipo de JOIN" )
-                val colPrincipal = join[ "principal" ] as? String ?: error( "Falta a columna principal" )
-                val expresionColSecundaria = join[ "secundaria" ] as? String ?: error( "Falta a columna secundaria" )
+                val principal = "$aliasPrincipal.${ info.colPrincipal }"
+                val secundaria = "${ info.aliasSecundario }.${ info.colSecundaria }"
+                val condicion = if ( info.colPrincipal != info.colSecundaria ) " ON $principal = $secundaria" else " USING ( ${ info.colPrincipal } )"
 
-                require( tipoCombinacion in tiposAdmitidos ) { "Tipo de JOIN non admitido: $tipoCombinacion" }
-                require( expresionColSecundaria.contains( "." ) ) { "Unha join require un alias" }
-
-                val ( aliasSecundario, colSecundaria ) = expresionColSecundaria.split( ".", limit = 2 )
-
-                val taboaSecundaria = join[ "taboa-join" ] as? Taboa ?: error( "Nunha join hai que indicar a táboa secundaria" )
-                verificarTaboa( taboaSecundaria, Modo.LECTURA )
-                val condicionCombinacion = if ( colPrincipal != colSecundaria ) " ON $aliasPrincipal.$colPrincipal = $expresionColSecundaria" else " USING ( $colPrincipal )"
-
-                append( " $tipoCombinacion JOIN $taboaSecundaria AS ${ aliasSecundario }$condicionCombinacion" )
+                append( " ${ info.tipo.nome } JOIN ${ info.taboaCombinacion.nome } AS ${ info.aliasSecundario }$condicion" )
 
             }
 
         }
 
-        return consultaCombinacion
+        return combinacions
 
     }
 

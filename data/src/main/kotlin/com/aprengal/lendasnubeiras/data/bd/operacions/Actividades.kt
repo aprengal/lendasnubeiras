@@ -6,9 +6,15 @@ import com.aprengal.lendasnubeiras.data.actividades.datos.atributos.Atributo
 import com.aprengal.lendasnubeiras.data.actividades.datos.atributos.Categoria.Companion.escollerCategoria
 import com.aprengal.lendasnubeiras.data.actividades.datos.atributos.Destinatario.Companion.escollerDestinatario
 import com.aprengal.lendasnubeiras.data.actividades.datos.atributos.Estado.Companion.escollerEstado
-import com.aprengal.lendasnubeiras.data.bd.BD.buscarElemento
-import com.aprengal.lendasnubeiras.data.bd.BD.buscarElementos
-import com.aprengal.lendasnubeiras.data.bd.BD.db
+import com.aprengal.lendasnubeiras.data.bd.clases.BD.TipoCombinacion
+import com.aprengal.lendasnubeiras.data.bd.clases.BD.OperadorSimple
+import com.aprengal.lendasnubeiras.data.bd.clases.BD.Orde
+import com.aprengal.lendasnubeiras.data.bd.clases.BD.buscarElemento
+import com.aprengal.lendasnubeiras.data.bd.clases.BD.buscarElementos
+import com.aprengal.lendasnubeiras.data.bd.clases.BD.bd
+import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.CombinacionSQL
+import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
+import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.SelectSQL
 import com.aprengal.lendasnubeiras.data.bd.taboas.TaboaBase
 import com.aprengal.lendasnubeiras.data.bd.taboas.TaboaLectura
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
@@ -19,48 +25,41 @@ import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
 
 object Actividades {
 
-    fun collerActividadesBuscables( termo: String, colOrdenable: String, dirOrdenable: String = "DESC", filtros: Map<String, Any> = emptyMap() ): List<ActividadeBuscable> {
+    fun collerActividadesBuscables( termo: String, colOrdenable: String, dirOrdenable: Orde = Orde.DESC, filtros: Map<String, Any> = emptyMap() ): List<ActividadeBuscable> {
 
-        val onde = mutableMapOf<String, Map<String, Any>>()
-        onde[ "buscador_actividades" ] = mapOf( "operador" to "MATCH",  "valor" to termo )
+        val onde = mutableMapOf<String, Condicion>()
+        onde[ "buscador_actividades" ] = Condicion.Simple( termo, OperadorSimple.MATCH )
 
         for ( ( campo, valor ) in filtros ) {
             require( valor is Atributo || valor is Idioma ) { "Tipo non soportado: ${ valor::class }" }
-            onde[ "a.$campo" ] = mapOf( "operador" to "=", "valor" to valor )
+            onde[ "a.$campo" ] = Condicion.Simple( valor )
         }
 
         val columnas = setOf( "a.id", "a.titulo", "a.descricion", "a.id_categoria", "a.id_destinatario", "a.id_idioma", "a.estado" )
+        val datosCombinacion = listOf( CombinacionSQL( TipoCombinacion.INNER, "id", "f", "docid", TaboaLectura.BUSCADOR_ACTIVIDADES ) )
+        val ordenar = mapOf( colOrdenable to dirOrdenable )
+        val datos = SelectSQL( columnas, alias = "a", combinacions = datosCombinacion, onde = onde, ordenar = ordenar )
 
-        val datosJoin = listOf(
-            mapOf( "tipo" to "INNER", "principal" to "id",
-            "secundaria" to "f.docid", "taboa-join" to TaboaLectura.BUSCADOR_ACTIVIDADES
-        ) )
-
-        val datos = mapOf( "columnas" to columnas, "alias" to "a",
-            "joins" to datosJoin, "onde" to onde,
-            "ordenar" to mapOf( colOrdenable to dirOrdenable )
-        )
-
-        val resultados = db.seleccionar( TaboaBase.ACTIVIDADES, datos )
+        val resultados = bd.seleccionar( TaboaBase.ACTIVIDADES, datos )
 
         return resultados.map { actividade -> crearActividadeBuscable( actividade ) }
 
     }
 
     fun collerActividade( id: Long ): Actividade? {
-        return buscarActividade( mapOf( "id" to mapOf( "operador" to "=", "valor" to id ) ) )
+        return buscarActividade( mapOf( "id" to Condicion.Simple( id ) ) )
     }
 
     fun collerActividade( titulo: String, idioma: Idioma ): Actividade? {
-        val onde = mapOf( "titulo" to mapOf( "operador" to "=", "valor" to titulo ), "id_idioma" to mapOf( "operador" to "=", "valor" to idioma ) )
+        val onde = mapOf( "titulo" to Condicion.Simple(titulo ), "id_idioma" to Condicion.Simple( idioma ) )
         return buscarActividade( onde )
     }
 
-    fun collerActividades( onde: Map<String, Map<String, Any>> = mapOf() ): List<Actividade> {
+    fun collerActividades( onde: Map<String, Condicion> = mapOf() ): List<Actividade> {
         return buscarElementos( TaboaBase.ACTIVIDADES, onde ) { actividade -> crearActividade( actividade ) }
     }
 
-    private fun buscarActividade( onde: Map<String, Map<String, Any>> ): Actividade? {
+    private fun buscarActividade( onde: Map<String, Condicion> ): Actividade? {
         return buscarElemento( TaboaBase.ACTIVIDADES, onde ) { actividade -> crearActividade( actividade ) }
     }
 
@@ -70,10 +69,10 @@ object Actividades {
 
         require( PodeCrear( usuarioActual ) ) { "Non se poden listar as actividades se non pode crealas" }
 
-        val onde: MutableMap<String, Map<String, Any>> = mutableMapOf()
+        val onde: MutableMap<String, Condicion> = mutableMapOf()
 
         if ( !PodeEditarOutras( usuarioActual ) ) {
-            onde[ "id_autoria" ] = mapOf( "operador" to "=", "valor" to usuarioActual.id )
+            onde[ "id_autoria" ] = Condicion.Simple( usuarioActual.id )
         }
 
         return buscarElementos( TaboaBase.ACTIVIDADES, onde ) { actividade -> crearActividade( actividade ) }

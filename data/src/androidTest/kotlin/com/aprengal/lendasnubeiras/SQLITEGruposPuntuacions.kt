@@ -3,8 +3,12 @@ package com.aprengal.lendasnubeiras
 import androidx.test.platform.app.InstrumentationRegistry
 import com.aprengal.lendasnubeiras.data.actividades.dixitais.elementos.Grupo
 import com.aprengal.lendasnubeiras.data.actividades.dixitais.elementos.Dificultade
-import com.aprengal.lendasnubeiras.data.bd.BBDD
-import com.aprengal.lendasnubeiras.data.bd.BD
+import com.aprengal.lendasnubeiras.data.bd.clases.BBDD
+import com.aprengal.lendasnubeiras.data.bd.clases.BD
+import com.aprengal.lendasnubeiras.data.bd.clases.BD.eliminarPuntuacionActividade
+import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
+import com.aprengal.lendasnubeiras.data.bd.clases.BD.OperadorSimple
+import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.SelectSQL
 import com.aprengal.lendasnubeiras.data.bd.operacions.Actividades.collerActividade
 import com.aprengal.lendasnubeiras.data.bd.operacions.Actividades.collerActividades
 import com.aprengal.lendasnubeiras.data.bd.operacions.Grupos.actualizarGrupo
@@ -22,6 +26,7 @@ import com.aprengal.lendasnubeiras.data.bd.operacions.Xogadores.collerXogador
 import com.aprengal.lendasnubeiras.data.bd.operacions.Xogadores.collerXogadores
 import com.aprengal.lendasnubeiras.data.bd.operacions.Xogadores.eliminarXogador
 import com.aprengal.lendasnubeiras.data.bd.operacions.Xogadores.insertarXogador
+import com.aprengal.lendasnubeiras.data.bd.taboas.TaboaBase
 
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -44,48 +49,42 @@ class SQLITEGruposPuntuacions {
         @JvmStatic
         @BeforeClass
         fun preparar() {
-
-            try {
-                val contexto = InstrumentationRegistry.getInstrumentation().targetContext
-                db.arrancar( contexto )
-                bd = db.db
-            } catch ( _: IllegalArgumentException ) {
-
-            }
-
+            val contexto = InstrumentationRegistry.getInstrumentation().targetContext
+            db.arrancar( contexto )
+            bd = db.bd
         }
 
     }
 
     @Before
     fun limparAntes() {
-        bd.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "!=", "valor" to 0 ) ) )
-        val ondeLimpeza = mapOf( "estado" to mapOf( "operador" to "IN", "valores" to setOf( -3, -2, -1, 3 ) ) )
-        bd.eliminar( "actividades", ondeLimpeza )
+        bd.eliminar( TaboaBase.GRUPOS, mapOf( "id" to Condicion.Simple( 0, OperadorSimple.DISTINTO ) ) )
+        val ondeLimpeza = mapOf( "estado" to Condicion.En( setOf( -3, -2, -1, 3 ) ) )
+        bd.eliminar( TaboaBase.ACTIVIDADES, ondeLimpeza )
     }
 
     @After
     fun limparDespois() {
-        bd.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "!=", "valor" to 0 ) ) )
-        val ondeLimpeza = mapOf( "estado" to mapOf( "operador" to "IN", "valores" to setOf( -3, -2, -1, 3 ) ) )
-        bd.eliminar( "actividades", ondeLimpeza )
+        bd.eliminar( TaboaBase.GRUPOS, mapOf( "id" to Condicion.Simple( 0, OperadorSimple.DISTINTO ) ) )
+        val ondeLimpeza = mapOf( "estado" to Condicion.En( setOf( -3, -2, -1, 3 ) ) )
+        bd.eliminar( TaboaBase.ACTIVIDADES, ondeLimpeza )
     }
 
     @Test
     fun grupoIdDuplicadaRexeitado() {
 
-        val id = bd.insertar( "grupos", mapOf( "id" to 9500L, "nome" to "Grupo Clave Primeira" ) )
+        val id = bd.insertar( TaboaBase.GRUPOS, mapOf( "id" to 9500L, "nome" to "Grupo Clave Primeira" ) )
         assertNotEquals( -1L, id )
 
-        assertEquals( -1L, bd.insertar( "grupos", mapOf( "id" to 9500L, "nome" to "Grupo Clave Segunda" ) ) )
+        assertEquals( -1L, bd.insertar( TaboaBase.GRUPOS, mapOf( "id" to 9500L, "nome" to "Grupo Clave Segunda" ) ) )
 
-        bd.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "=", "valor" to 9500L ) ) )
+        bd.eliminar( TaboaBase.GRUPOS, mapOf( "id" to Condicion.Simple( 9500L ) ) )
 
     }
 
     @Test
     fun grupoIdNegativoRexeitado() {
-        assertEquals( -1L, bd.insertar( "grupos", mapOf( "id" to -5L, "nome" to "Grupo Id Negativo" ) ) )
+        assertEquals( -1L, bd.insertar( TaboaBase.GRUPOS, mapOf( "id" to -5L, "nome" to "Grupo Id Negativo" ) ) )
     }
 
     @Test
@@ -97,14 +96,14 @@ class SQLITEGruposPuntuacions {
     fun grupoNomeLimiteMinimoAceptado() {
         val id = insertarGrupo( "a" )
         assertNotEquals( -1L, id )
-        bd.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "=", "valor" to id ) ) )
+        bd.eliminar( TaboaBase.GRUPOS, mapOf( "id" to Condicion.Simple( id ) ) )
     }
 
     @Test
     fun grupoNomeLimiteMaximoAceptado() {
         val id = insertarGrupo( "a".repeat( 100 ) )
         assertNotEquals( -1L, id )
-        bd.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "=", "valor" to id ) ) )
+        bd.eliminar( TaboaBase.GRUPOS, mapOf( "id" to Condicion.Simple( id ) ) )
     }
 
     @Test
@@ -123,7 +122,7 @@ class SQLITEGruposPuntuacions {
 
         assertEquals( -1, actualizarGrupo( grupo2, mapOf( "nome" to "equipo i" ) ) )
 
-        bd.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "IN", "valores" to setOf( idGrupo1, idGrupo2 ) ) ) )
+        bd.eliminar( TaboaBase.GRUPOS, mapOf( "id" to Condicion.En( setOf( idGrupo1, idGrupo2 ) ) ) )
 
     }
 
@@ -136,7 +135,7 @@ class SQLITEGruposPuntuacions {
         assertEquals( 1, actualizarGrupo( grupo, mapOf( "nome" to "Equipo K Renomeado" ) ) )
         assertEquals( "Equipo K Renomeado", collerGrupo( idGrupo )!!.nome )
 
-        bd.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "=", "valor" to idGrupo ) ) )
+        bd.eliminar( TaboaBase.GRUPOS, mapOf( "id" to Condicion.Simple( idGrupo ) ) )
 
     }
 
@@ -144,7 +143,7 @@ class SQLITEGruposPuntuacions {
     fun eliminarGrupo() { //Efecto cascada con xogador e puntuacións
 
         val idActividade = 900L
-        bd.insertar( "actividades", datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Cascade" ) ) )
+        bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Cascade" ) ) )
         val actividade = collerActividade( idActividade )!!
 
         val idGrupo = insertarGrupo( "Equipo B" )
@@ -156,10 +155,10 @@ class SQLITEGruposPuntuacions {
         eliminarGrupo( grupo )
         assertNull( collerXogador( idXogador ) )
 
-        val onde = mapOf( "columnas" to setOf( "*" ), "onde" to mapOf( "xogador_id" to mapOf( "operador" to "=", "valor" to idXogador ) ) )
-        assertTrue( bd.seleccionar( "puntuacions", onde ).isEmpty() )
+        val onde = SelectSQL( columnas = setOf( "*" ), onde = mapOf( "xogador_id" to Condicion.Simple( idXogador ) ) )
+        assertTrue( bd.seleccionar( TaboaBase.PUNTUACIONS, onde ).isEmpty() )
 
-        bd.actualizar( "actividades", mapOf( "estado" to 3 ), mapOf( "id" to mapOf( "operador" to "=", "valor" to idActividade ) ) )
+        bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
 
     }
 
@@ -169,12 +168,12 @@ class SQLITEGruposPuntuacions {
         val idGrupo = insertarGrupo( "Equipo Clave Xogador" )
         val grupo = collerGrupo( idGrupo )!!
 
-        val id = bd.insertar( "xogadores", mapOf( "id" to 9600L, "nome" to "Primeiro", "grupo_id" to grupo.id ) )
+        val id = bd.insertar( TaboaBase.XOGADORES, mapOf( "id" to 9600L, "nome" to "Primeiro", "grupo_id" to grupo.id ) )
         assertNotEquals( -1L, id )
 
-        assertEquals( -1L, bd.insertar( "xogadores", mapOf( "id" to 9600L, "nome" to "Segundo", "grupo_id" to grupo.id ) ) )
+        assertEquals( -1L, bd.insertar( TaboaBase.XOGADORES, mapOf( "id" to 9600L, "nome" to "Segundo", "grupo_id" to grupo.id ) ) )
 
-        bd.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "=", "valor" to idGrupo ) ) )
+        bd.eliminar( TaboaBase.GRUPOS, mapOf( "id" to Condicion.Simple( idGrupo ) ) )
 
     }
 
@@ -184,15 +183,15 @@ class SQLITEGruposPuntuacions {
         val idGrupo = insertarGrupo( "Equipo Check X" )
         val grupo = collerGrupo( idGrupo )!!
 
-        assertEquals( -1L, bd.insertar( "xogadores", mapOf( "id" to -7L, "nome" to "Proba", "grupo_id" to grupo.id ) ) )
+        assertEquals( -1L, bd.insertar( TaboaBase.XOGADORES, mapOf( "id" to -7L, "nome" to "Proba", "grupo_id" to grupo.id ) ) )
 
-        bd.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "=", "valor" to idGrupo ) ) )
+        bd.eliminar( TaboaBase.GRUPOS, mapOf( "id" to Condicion.Simple( idGrupo ) ) )
 
     }
 
     @Test
     fun xogadorGrupoIdNegativoRexeitado() {
-        assertEquals( -1L, bd.insertar( "xogadores", mapOf( "nome" to "Proba", "grupo_id" to -8L ) ) )
+        assertEquals( -1L, bd.insertar( TaboaBase.XOGADORES, mapOf( "nome" to "Proba", "grupo_id" to -8L ) ) )
     }
 
     @Test
@@ -203,7 +202,7 @@ class SQLITEGruposPuntuacions {
 
         assertEquals( -1L, insertarXogador( "", grupo ) )
 
-        bd.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "=", "valor" to idGrupo ) ) )
+        bd.eliminar( TaboaBase.GRUPOS, mapOf( "id" to Condicion.Simple( idGrupo ) ) )
 
     }
 
@@ -215,7 +214,7 @@ class SQLITEGruposPuntuacions {
 
         assertEquals( -1L, insertarXogador( "a".repeat( 101 ), grupo ) )
 
-        bd.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "=", "valor" to idGrupo ) ) )
+        bd.eliminar( TaboaBase.GRUPOS, mapOf( "id" to Condicion.Simple( idGrupo ) ) )
 
     }
 
@@ -228,7 +227,7 @@ class SQLITEGruposPuntuacions {
         assertNotEquals( -1L, insertarXogador( "a", grupo ) )
         assertNotEquals( -1L, insertarXogador( "a".repeat( 100 ), grupo ) )
 
-        bd.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "=", "valor" to idGrupo ) ) )
+        bd.eliminar( TaboaBase.GRUPOS, mapOf( "id" to Condicion.Simple( idGrupo ) ) )
 
     }
 
@@ -248,7 +247,7 @@ class SQLITEGruposPuntuacions {
 
         assertEquals( -1L, insertarXogador( "marta", grupo ) )
 
-        bd.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "=", "valor" to idGrupo ) ) )
+        bd.eliminar( TaboaBase.GRUPOS, mapOf( "id" to Condicion.Simple( idGrupo ) ) )
 
     }
 
@@ -266,7 +265,7 @@ class SQLITEGruposPuntuacions {
         assertNotEquals( -1L, idXogador1 )
         assertNotEquals( -1L, idXogador2 )
 
-        bd.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "IN", "valores" to setOf( idGrupo1, idGrupo2 ) ) ) )
+        bd.eliminar( TaboaBase.GRUPOS, mapOf( "id" to Condicion.En( setOf( idGrupo1, idGrupo2 ) ) ) )
 
     }
 
@@ -280,7 +279,7 @@ class SQLITEGruposPuntuacions {
 
         assertEquals( -1, actualizarXogador( xogador, mapOf( "grupo_id" to 9999L ) ) )
 
-        bd.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "=", "valor" to idGrupo ) ) )
+        bd.eliminar( TaboaBase.GRUPOS, mapOf( "id" to Condicion.Simple( idGrupo ) ) )
 
     }
 
@@ -295,7 +294,7 @@ class SQLITEGruposPuntuacions {
         assertEquals( 1, actualizarXogador( xogador, mapOf( "nome" to "Xela Renomeada" ) ) )
         assertEquals( "Xela Renomeada", collerXogador( idXogador )!!.nome )
 
-        bd.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "=", "valor" to idGrupo ) ) )
+        bd.eliminar( TaboaBase.GRUPOS, mapOf( "id" to Condicion.Simple( idGrupo ) ) )
 
     }
 
@@ -311,7 +310,7 @@ class SQLITEGruposPuntuacions {
 
         assertEquals( -1, actualizarXogador( xogador2, mapOf( "nome" to "noa" ) ) )
 
-        bd.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "=", "valor" to idGrupo ) ) )
+        bd.eliminar( TaboaBase.GRUPOS, mapOf( "id" to Condicion.Simple( idGrupo ) ) )
 
     }
 
@@ -319,7 +318,7 @@ class SQLITEGruposPuntuacions {
     fun eliminarXogador() {
 
         val idActividade = 901L
-        bd.insertar( "actividades", datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Cascade Xogador" ) ) )
+        bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Cascade Xogador" ) ) )
         val actividade = collerActividade( idActividade )!!
 
         val idGrupo = insertarGrupo( "Equipo C" )
@@ -330,11 +329,11 @@ class SQLITEGruposPuntuacions {
         insertarPuntuacion( actividade, Dificultade.FACIL, xogador, 50L )
         eliminarXogador( xogador )
 
-        val onde = mapOf( "columnas" to setOf( "*" ), "onde" to mapOf( "xogador_id" to mapOf( "operador" to "=", "valor" to idXogador ) ) )
-        assertTrue( bd.seleccionar( "puntuacions", onde ).isEmpty() )
+        val onde = SelectSQL( columnas = setOf( "*" ), onde = mapOf( "xogador_id" to Condicion.Simple( idXogador ) ) )
+        assertTrue( bd.seleccionar( TaboaBase.PUNTUACIONS, onde ).isEmpty() )
 
         eliminarGrupo( grupo )
-        bd.actualizar( "actividades", mapOf( "estado" to 3 ), mapOf( "id" to mapOf( "operador" to "=", "valor" to idActividade ) ) )
+        bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
 
     }
 
@@ -342,7 +341,7 @@ class SQLITEGruposPuntuacions {
     fun inserirPuntuacionClaveDuplicada() {
 
         val idActividade = 902L
-        bd.insertar( "actividades", datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Clave Duplicada" ) ) )
+        bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Clave Duplicada" ) ) )
         val actividade = collerActividade( idActividade )!!
 
         val idGrupo = insertarGrupo( "Equipo D" )
@@ -355,7 +354,7 @@ class SQLITEGruposPuntuacions {
         assertEquals( -1L, insertarPuntuacion( actividade, Dificultade.FACIL, xogador, 20L ) )
 
         eliminarGrupo( grupo )
-        bd.actualizar( "actividades", mapOf( "estado" to 3 ), mapOf( "id" to mapOf( "operador" to "=", "valor" to idActividade ) ) )
+        bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
 
     }
 
@@ -364,7 +363,7 @@ class SQLITEGruposPuntuacions {
         assertEquals(
             -1L,
             bd.insertar(
-                "puntuacions",
+                TaboaBase.PUNTUACIONS,
                 mapOf( "actividade_id" to -9L, "dificultade" to Dificultade.FACIL.nome, "xogador_id" to 1L, "puntos" to 10L, "unix_rexistro" to 1000L )
             )
         )
@@ -374,17 +373,17 @@ class SQLITEGruposPuntuacions {
     fun puntuacionXogadorIdNegativoRexeitado() {
 
         val idActividade = 918L
-        bd.insertar( "actividades", datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Check Puntuacion Xogador" ) ) )
+        bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Check Puntuacion Xogador" ) ) )
 
         assertEquals(
             -1L,
             bd.insertar(
-                "puntuacions",
+                TaboaBase.PUNTUACIONS,
                 mapOf( "actividade_id" to idActividade, "dificultade" to Dificultade.FACIL.nome, "xogador_id" to -6L, "puntos" to 10L, "unix_rexistro" to 1000L )
             )
         )
 
-        bd.actualizar( "actividades", mapOf( "estado" to 3 ), mapOf( "id" to mapOf( "operador" to "=", "valor" to idActividade ) ) )
+        bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
 
     }
 
@@ -392,7 +391,7 @@ class SQLITEGruposPuntuacions {
     fun puntuacionPuntosNegativoRexeitado() {
 
         val idActividade = 919L
-        bd.insertar( "actividades", datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Check Puntos" ) ) )
+        bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Check Puntos" ) ) )
 
         val idGrupo = insertarGrupo( "Equipo Check Puntos" )
         val grupo = collerGrupo( idGrupo )!!
@@ -401,13 +400,13 @@ class SQLITEGruposPuntuacions {
         assertEquals(
             -1L,
             bd.insertar(
-                "puntuacions",
+                TaboaBase.PUNTUACIONS,
                 mapOf( "actividade_id" to idActividade, "dificultade" to Dificultade.FACIL.nome, "xogador_id" to idXogador, "puntos" to -12L, "unix_rexistro" to 1000L )
             )
         )
 
-        bd.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "=", "valor" to idGrupo ) ) )
-        bd.actualizar( "actividades", mapOf( "estado" to 3 ), mapOf( "id" to mapOf( "operador" to "=", "valor" to idActividade ) ) )
+        bd.eliminar( TaboaBase.GRUPOS, mapOf( "id" to Condicion.Simple( idGrupo ) ) )
+        bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
 
     }
 
@@ -415,7 +414,7 @@ class SQLITEGruposPuntuacions {
     fun puntuacionUnixRexistroNegativoRexeitado() {
 
         val idActividade = 920L
-        bd.insertar( "actividades", datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Check Unix" ) ) )
+        bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Check Unix" ) ) )
 
         val idGrupo = insertarGrupo( "Equipo Check Unix" )
         val grupo = collerGrupo( idGrupo )!!
@@ -424,13 +423,13 @@ class SQLITEGruposPuntuacions {
         assertEquals(
             -1L,
             bd.insertar(
-                "puntuacions",
+                TaboaBase.PUNTUACIONS,
                 mapOf( "actividade_id" to idActividade, "dificultade" to Dificultade.FACIL.nome, "xogador_id" to idXogador, "puntos" to 10L, "unix_rexistro" to -15L )
             )
         )
 
-        bd.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "=", "valor" to idGrupo ) ) )
-        bd.actualizar( "actividades", mapOf( "estado" to 3 ), mapOf( "id" to mapOf( "operador" to "=", "valor" to idActividade ) ) )
+        bd.eliminar( TaboaBase.GRUPOS, mapOf( "id" to Condicion.Simple( idGrupo ) ) )
+        bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
 
     }
 
@@ -438,7 +437,7 @@ class SQLITEGruposPuntuacions {
     fun insertarPuntuacionConTimestampActual() {
 
         val idActividade = 917L
-        bd.insertar( "actividades", datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Insertar Puntuacion Real" ) ) )
+        bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Insertar Puntuacion Real" ) ) )
         val actividade = collerActividade( idActividade )!!
 
         val idGrupo = insertarGrupo( "Equipo Y" )
@@ -452,16 +451,16 @@ class SQLITEGruposPuntuacions {
 
         assertNotEquals( -1L, idPuntuacion )
 
-        val onde = mapOf(
-            "columnas" to setOf( "*" ),
-            "onde" to mapOf(
-                "actividade_id" to mapOf( "operador" to "=", "valor" to idActividade ),
-                "dificultade" to mapOf( "operador" to "=", "valor" to Dificultade.FACIL.nome ),
-                "xogador_id" to mapOf( "operador" to "=", "valor" to idXogador )
+        val onde = SelectSQL(
+            columnas = setOf( "*" ),
+            onde = mapOf(
+                "actividade_id" to Condicion.Simple( idActividade ),
+                "dificultade" to Condicion.Simple( Dificultade.FACIL.nome ),
+                "xogador_id" to Condicion.Simple( idXogador )
             )
         )
 
-        val resultado = bd.seleccionar( "puntuacions", onde )
+        val resultado = bd.seleccionar( TaboaBase.PUNTUACIONS, onde )
 
         assertEquals( 1, resultado.size )
         assertEquals( 200L, resultado[ 0 ][ "puntos" ] )
@@ -469,8 +468,8 @@ class SQLITEGruposPuntuacions {
         val unixRexistro = resultado[ 0 ][ "unix_rexistro" ] as Long
         assertTrue( unixRexistro in antes..despois )
 
-        bd.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "=", "valor" to idGrupo ) ) )
-        bd.actualizar( "actividades", mapOf( "estado" to 3 ), mapOf( "id" to mapOf( "operador" to "=", "valor" to idActividade ) ) )
+        bd.eliminar( TaboaBase.GRUPOS, mapOf( "id" to Condicion.Simple( idGrupo ) ) )
+        bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
 
     }
 
@@ -478,7 +477,7 @@ class SQLITEGruposPuntuacions {
     fun actualizarPuntuacionInferior() {
 
         val idActividade = 903L
-        bd.insertar( "actividades", datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Puntuacion Inferior" ) ) )
+        bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Puntuacion Inferior" ) ) )
         val actividade = collerActividade( idActividade )!!
 
         val idGrupo = insertarGrupo( "Equipo E" )
@@ -491,7 +490,7 @@ class SQLITEGruposPuntuacions {
         assertEquals( 0, actualizarPuntuacion( actividade, Dificultade.FACIL, xogador, 50L ) )
 
         eliminarGrupo( grupo )
-        bd.actualizar( "actividades", mapOf( "estado" to 3 ), mapOf( "id" to mapOf( "operador" to "=", "valor" to idActividade ) ) )
+        bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
 
     }
 
@@ -499,7 +498,7 @@ class SQLITEGruposPuntuacions {
     fun actualizarPuntuacionIgual() {
 
         val idActividade = 904L
-        bd.insertar( "actividades", datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Puntuacion Igual" ) ) )
+        bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Puntuacion Igual" ) ) )
         val actividade = collerActividade( idActividade )!!
 
         val idGrupo = insertarGrupo( "Equipo F" )
@@ -512,7 +511,7 @@ class SQLITEGruposPuntuacions {
         assertEquals( 0, actualizarPuntuacion( actividade, Dificultade.FACIL, xogador, 100L ) )
 
         eliminarGrupo( grupo )
-        bd.actualizar( "actividades", mapOf( "estado" to 3 ), mapOf( "id" to mapOf( "operador" to "=", "valor" to idActividade ) ) )
+        bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
 
     }
 
@@ -520,7 +519,7 @@ class SQLITEGruposPuntuacions {
     fun actualizarPuntuacionSuperior() {
 
         val idActividade = 905L
-        bd.insertar( "actividades", datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Puntuacion Superior" ) ) )
+        bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Puntuacion Superior" ) ) )
         val actividade = collerActividade( idActividade )!!
 
         val idGrupo = insertarGrupo( "Equipo G" )
@@ -533,7 +532,7 @@ class SQLITEGruposPuntuacions {
         assertEquals( 1, actualizarPuntuacion( actividade, Dificultade.FACIL, xogador, 150L ) )
 
         eliminarGrupo( grupo )
-        bd.actualizar( "actividades", mapOf( "estado" to 3 ), mapOf( "id" to mapOf( "operador" to "=", "valor" to idActividade ) ) )
+        bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
 
     }
 
@@ -541,7 +540,7 @@ class SQLITEGruposPuntuacions {
     fun proteccionActualizarPuntuacion() {
 
         val idActividade = 906L
-        bd.insertar( "actividades", datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Trigger Proteccion" ) ) )
+        bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Trigger Proteccion" ) ) )
         val actividade = collerActividade( idActividade )!!
 
         val idGrupo = insertarGrupo( "Equipo H" )
@@ -552,15 +551,15 @@ class SQLITEGruposPuntuacions {
         insertarPuntuacion( actividade, Dificultade.FACIL, xogador, 100L )
 
         val onde = mapOf(
-            "actividade_id" to mapOf( "operador" to "=", "valor" to actividade.id ),
-            "dificultade" to mapOf( "operador" to "=", "valor" to Dificultade.FACIL.name ),
-            "xogador_id" to mapOf( "operador" to "=", "valor" to xogador.id )
+            "actividade_id" to Condicion.Simple( actividade.id ),
+            "dificultade" to Condicion.Simple( Dificultade.FACIL.name ),
+            "xogador_id" to Condicion.Simple( xogador.id )
         )
 
-        assertEquals( -1, bd.actualizar( "puntuacions", mapOf( "puntos" to 100L ), onde ) )
+        assertEquals( -1, bd.actualizar( TaboaBase.PUNTUACIONS, mapOf( "puntos" to 100L ), onde ) )
 
         eliminarGrupo( grupo )
-        bd.actualizar( "actividades", mapOf( "estado" to 3 ), mapOf( "id" to mapOf( "operador" to "=", "valor" to idActividade ) ) )
+        bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
 
     }
 
@@ -568,7 +567,7 @@ class SQLITEGruposPuntuacions {
     fun eliminarPuntuacionExistente() {
 
         val idActividade = 907L
-        bd.insertar( "actividades", datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Eliminar Puntuacion" ) ) )
+        bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Eliminar Puntuacion" ) ) )
         val actividade = collerActividade( idActividade )!!
 
         val idGrupo = insertarGrupo( "Equipo N" )
@@ -580,11 +579,11 @@ class SQLITEGruposPuntuacions {
 
         assertEquals( 1, eliminarPuntuacion( actividade, Dificultade.FACIL, xogador ) )
 
-        val onde = mapOf( "columnas" to setOf( "*" ), "onde" to mapOf( "xogador_id" to mapOf( "operador" to "=", "valor" to idXogador ) ) )
-        assertTrue( bd.seleccionar( "puntuacions", onde ).isEmpty() )
+        val onde = SelectSQL( columnas = setOf( "*" ), onde = mapOf( "xogador_id" to Condicion.Simple( idXogador ) ) )
+        assertTrue( bd.seleccionar( TaboaBase.PUNTUACIONS, onde ).isEmpty() )
 
-        bd.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "=", "valor" to idGrupo ) ) )
-        bd.actualizar( "actividades", mapOf( "estado" to 3 ), mapOf( "id" to mapOf( "operador" to "=", "valor" to idActividade ) ) )
+        bd.eliminar( TaboaBase.GRUPOS, mapOf( "id" to Condicion.Simple( idGrupo ) ) )
+        bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
 
     }
 
@@ -592,7 +591,7 @@ class SQLITEGruposPuntuacions {
     fun collerClasificacionOrdenada() {
 
         val idActividade = 908L
-        bd.insertar( "actividades", datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Clasificacion Proba" ) ) )
+        bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Clasificacion Proba" ) ) )
         val actividade = collerActividade( idActividade )!!
 
         val idGrupo = insertarGrupo( "Equipo S" )
@@ -616,23 +615,23 @@ class SQLITEGruposPuntuacions {
             "puntos" to 100L,
             "unix_rexistro" to 1000L
         )
-        
-        bd.insertar( "puntuacions", puntuacion )
+
+        bd.insertar( TaboaBase.PUNTUACIONS, puntuacion )
 
         puntuacion[ "xogador_id" ] = xogador2.id
         puntuacion[ "puntos" ] = 150L
         puntuacion[ "unix_rexistro" ] = 2000L
-        bd.insertar( "puntuacions", puntuacion )
+        bd.insertar( TaboaBase.PUNTUACIONS, puntuacion )
 
         puntuacion[ "dificultade" ] = Dificultade.MEDIA.nome
         puntuacion[ "xogador_id" ] = xogador4.id
-        bd.insertar( "puntuacions", puntuacion )
+        bd.insertar( TaboaBase.PUNTUACIONS, puntuacion )
 
         puntuacion[ "dificultade" ] = Dificultade.FACIL.nome
         puntuacion[ "xogador_id" ] = xogador3.id
         puntuacion[ "puntos" ] = 100L
         puntuacion[ "unix_rexistro" ] = 500L
-        bd.insertar( "puntuacions", puntuacion )
+        bd.insertar( TaboaBase.PUNTUACIONS, puntuacion )
 
         val clasificacion = collerClasificacion( actividade, Dificultade.FACIL )
 
@@ -650,8 +649,8 @@ class SQLITEGruposPuntuacions {
         assertEquals( 100L, clasificacion.listaPuntuacions[ "Breogan" ]!![ "puntos" ] )
         assertEquals( 1000L, clasificacion.listaPuntuacions[ "Breogan" ]!![ "unix_rexistro" ] )
 
-        bd.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "=", "valor" to idGrupo ) ) )
-        bd.actualizar( "actividades", mapOf( "estado" to 3 ), mapOf( "id" to mapOf( "operador" to "=", "valor" to idActividade ) ) )
+        bd.eliminar( TaboaBase.GRUPOS, mapOf( "id" to Condicion.Simple( idGrupo ) ) )
+        bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
 
     }
 
@@ -659,7 +658,7 @@ class SQLITEGruposPuntuacions {
     fun collerClasificacionBaleira() {
 
         val idActividade = 909L
-        bd.insertar( "actividades", datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Clasificacion Baleira" ) ) )
+        bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Clasificacion Baleira" ) ) )
         val actividade = collerActividade( idActividade )!!
 
         val clasificacion = collerClasificacion( actividade, Dificultade.FACIL )
@@ -667,7 +666,7 @@ class SQLITEGruposPuntuacions {
         assertEquals( "Clasificacion Baleira", clasificacion.tituloActividade )
         assertTrue( clasificacion.listaPuntuacions.isEmpty() )
 
-        bd.actualizar( "actividades", mapOf( "estado" to 3 ), mapOf( "id" to mapOf( "operador" to "=", "valor" to idActividade ) ) )
+        bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
 
     }
 
@@ -675,7 +674,7 @@ class SQLITEGruposPuntuacions {
     fun eliminarActividadePuntuacions() {
 
         val idActividade = 910L
-        bd.insertar( "actividades", datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Eliminar Actividade" ) ) )
+        bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Eliminar Actividade" ) ) )
         val actividade = collerActividade( idActividade )!!
 
         val idGrupo = insertarGrupo( "Equipo T" )
@@ -685,15 +684,15 @@ class SQLITEGruposPuntuacions {
 
         insertarPuntuacion( actividade, Dificultade.FACIL, xogador, 100L )
 
-        val filasEliminadas = bd.eliminarActividade( actividade )
+        val filasEliminadas = eliminarPuntuacionActividade( actividade )
 
         assertEquals( 1, filasEliminadas )
         assertNull( collerActividade( idActividade ) )
 
-        val onde = mapOf( "columnas" to setOf( "*" ), "onde" to mapOf( "actividade_id" to mapOf( "operador" to "=", "valor" to idActividade ) ) )
-        assertTrue( bd.seleccionar( "puntuacions", onde ).isEmpty() )
+        val onde = SelectSQL( columnas = setOf( "*" ), onde = mapOf( "actividade_id" to Condicion.Simple( idActividade ) ) )
+        assertTrue( bd.seleccionar( TaboaBase.PUNTUACIONS, onde ).isEmpty() )
 
-        bd.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "=", "valor" to idGrupo ) ) )
+        bd.eliminar( TaboaBase.GRUPOS, mapOf( "id" to Condicion.Simple( idGrupo ) ) )
 
     }
 
@@ -701,10 +700,10 @@ class SQLITEGruposPuntuacions {
     fun eliminarActividadeSenPuntuacions() {
 
         val idActividade = 911L
-        bd.insertar( "actividades", datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Sen Puntuacions" ) ) )
+        bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to idActividade.toString(), "titulo" to "Sen Puntuacions" ) ) )
         val actividade = collerActividade( idActividade )!!
 
-        val filasEliminadas = bd.eliminarActividade( actividade )
+        val filasEliminadas = eliminarPuntuacionActividade( actividade )
 
         assertEquals( 1, filasEliminadas )
         assertNull( collerActividade( idActividade ) )
@@ -722,7 +721,7 @@ class SQLITEGruposPuntuacions {
         assertTrue( grupos.any { it.id == idGrupo1 && it.nome == "Equipo U" } )
         assertTrue( grupos.any { it.id == idGrupo2 && it.nome == "Equipo V" } )
 
-        bd.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "IN", "valores" to setOf( idGrupo1, idGrupo2 ) ) ) )
+        bd.eliminar( TaboaBase.GRUPOS, mapOf( "id" to Condicion.En( setOf( idGrupo1, idGrupo2 ) ) ) )
 
     }
 
@@ -748,7 +747,7 @@ class SQLITEGruposPuntuacions {
         assertEquals( 1, xogadoresGrupo2.size )
         assertEquals( "Noa", xogadoresGrupo2[ 0 ].nome )
 
-        bd.eliminar( "grupos", mapOf( "id" to mapOf( "operador" to "IN", "valores" to setOf( idGrupo1, idGrupo2 ) ) ) )
+        bd.eliminar( TaboaBase.GRUPOS, mapOf( "id" to Condicion.En( setOf( idGrupo1, idGrupo2 ) ) ) )
 
     }
 
@@ -759,11 +758,11 @@ class SQLITEGruposPuntuacions {
         val id2 = 913L
         val id3 = 914L
 
-        bd.insertar( "actividades", datosCompletos( mapOf( "id" to id1.toString(), "titulo" to "Filtro A", "id_autoria" to "40" ) ) )
-        bd.insertar( "actividades", datosCompletos( mapOf( "id" to id2.toString(), "titulo" to "Filtro B", "id_autoria" to "40" ) ) )
-        bd.insertar( "actividades", datosCompletos( mapOf( "id" to id3.toString(), "titulo" to "Filtro C", "id_autoria" to "41" ) ) )
+        bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to id1.toString(), "titulo" to "Filtro A", "id_autoria" to "40" ) ) )
+        bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to id2.toString(), "titulo" to "Filtro B", "id_autoria" to "40" ) ) )
+        bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to id3.toString(), "titulo" to "Filtro C", "id_autoria" to "41" ) ) )
 
-        val onde = mapOf( "id_autoria" to mapOf( "operador" to "=", "valor" to 40L ) )
+        val onde = mapOf( "id_autoria" to Condicion.Simple( 40L ) )
         val resultado = collerActividades( onde )
 
         assertEquals( 2, resultado.size )
@@ -771,7 +770,7 @@ class SQLITEGruposPuntuacions {
         assertTrue( resultado.any { it.titulo == "Filtro B" } )
         assertTrue( resultado.none { it.titulo == "Filtro C" } )
 
-        bd.actualizar( "actividades", mapOf( "estado" to 3 ), mapOf( "id" to mapOf( "operador" to "IN", "valores" to setOf( id1, id2, id3 ) ) ) )
+        bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.En( setOf( id1, id2, id3 ) ) ) )
 
     }
 
@@ -781,15 +780,15 @@ class SQLITEGruposPuntuacions {
         val id1 = 915L
         val id2 = 916L
 
-        bd.insertar( "actividades", datosCompletos( mapOf( "id" to id1.toString(), "titulo" to "Sen Filtro A" ) ) )
-        bd.insertar( "actividades", datosCompletos( mapOf( "id" to id2.toString(), "titulo" to "Sen Filtro B" ) ) )
+        bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to id1.toString(), "titulo" to "Sen Filtro A" ) ) )
+        bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to id2.toString(), "titulo" to "Sen Filtro B" ) ) )
 
         val resultado = collerActividades()
 
         assertTrue( resultado.any { it.titulo == "Sen Filtro A" } )
         assertTrue( resultado.any { it.titulo == "Sen Filtro B" } )
 
-        bd.actualizar( "actividades", mapOf( "estado" to 3 ), mapOf( "id" to mapOf( "operador" to "IN", "valores" to setOf( id1, id2 ) ) ) )
+        bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.En( setOf( id1, id2 ) ) ) )
 
     }
 

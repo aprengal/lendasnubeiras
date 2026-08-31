@@ -3,7 +3,7 @@ package com.aprengal.lendasnubeiras.ui.navegacion
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import com.aprengal.lendasnubeiras.data.bd.BD.collerActividade
+import com.aprengal.lendasnubeiras.data.bd.operacions.Actividades.collerActividade
 import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeAcceder
 import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeAdministrar
 import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeCrear

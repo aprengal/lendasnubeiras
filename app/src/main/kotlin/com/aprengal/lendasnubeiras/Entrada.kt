@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.core.os.LocaleListCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle as escoitarEstado
-import com.aprengal.lendasnubeiras.data.bd.BD
+import com.aprengal.lendasnubeiras.data.bd.clases.BD
 import com.aprengal.lendasnubeiras.data.api.ConexionApi
 import com.aprengal.lendasnubeiras.data.axustes.Axustes
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma

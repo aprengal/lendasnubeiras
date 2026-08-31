@@ -2,8 +2,14 @@ package com.aprengal.lendasnubeiras
 
 import androidx.test.platform.app.InstrumentationRegistry
 import com.aprengal.lendasnubeiras.data.actividades.datos.atributos.Categoria
-import com.aprengal.lendasnubeiras.data.bd.BD
-import com.aprengal.lendasnubeiras.data.bd.BD.collerActividade
+import com.aprengal.lendasnubeiras.data.bd.clases.BBDD
+import com.aprengal.lendasnubeiras.data.bd.clases.BD
+import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
+import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.SelectSQL
+import com.aprengal.lendasnubeiras.data.bd.operacions.Actividades.collerActividade
+import com.aprengal.lendasnubeiras.data.bd.operacions.Actividades.collerActividadesBuscables
+import com.aprengal.lendasnubeiras.data.bd.taboas.TaboaBase
+import com.aprengal.lendasnubeiras.data.bd.taboas.TaboaLectura
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
 import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeCrear
 import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeEditarOutras
@@ -24,40 +30,36 @@ class SQLITEOperacionsBasicas {
 
     companion object {
 
+        private lateinit var bd: BBDD
         private val db: BD = BD
 
         @JvmStatic
         @BeforeClass
         fun preparar() {
-
-            try {
-                val contexto = InstrumentationRegistry.getInstrumentation().targetContext
-                db.arrancar( contexto )
-            } catch ( _: IllegalArgumentException ) {
-
-            }
-
+            val contexto = InstrumentationRegistry.getInstrumentation().targetContext
+            db.arrancar( contexto )
+            bd = db.bd
         }
 
     }
 
     @Before
     fun limparAntes() {
-        val ondeLimpeza = mapOf( "estado" to mapOf( "operador" to "IN", "valores" to setOf( -3, -2, -1, 3 ) ) )
-        db.eliminar( "actividades", ondeLimpeza )
+        val ondeLimpeza = mapOf( "estado" to Condicion.En( setOf( -3, -2, -1, 3 ) ) )
+        bd.eliminar( TaboaBase.ACTIVIDADES, ondeLimpeza )
     }
 
     @After
     fun limparDespois() {
-        val ondeLimpeza = mapOf( "estado" to mapOf( "operador" to "IN", "valores" to setOf( -3, -2, -1, 3 ) ) )
-        db.eliminar( "actividades", ondeLimpeza )
+        val ondeLimpeza = mapOf( "estado" to Condicion.En( setOf( -3, -2, -1, 3 ) ) )
+        bd.eliminar( TaboaBase.ACTIVIDADES, ondeLimpeza )
     }
 
     @Test
     fun inserirActividade() {
 
         val datos = datosCompletos( mapOf( "id" to "101", "titulo" to "Actividade de proba" ) )
-        val id = db.insertar( "actividades", datos )
+        val id = bd.insertar( TaboaBase.ACTIVIDADES, datos )
 
         assertTrue( id > 0 )
 
@@ -77,13 +79,13 @@ class SQLITEOperacionsBasicas {
             datosCompletosAny( mapOf( "id" to 3L, "titulo" to "Actividade 3" ) )
         )
 
-        val ids = db.insertar( "actividades", datos )
+        val ids = bd.insertar( TaboaBase.ACTIVIDADES, datos )
 
         assertEquals( 3, ids.size )
         assertTrue( ids.all { it > 0 } )
 
-        val consulta = mapOf( "columnas" to setOf( "*" ) )
-        val resultados = db.seleccionar( "actividades", consulta )
+        val consulta = SelectSQL( columnas = setOf( "*" ) )
+        val resultados = bd.seleccionar( TaboaBase.ACTIVIDADES, consulta )
 
         assertEquals( 3, resultados.size )
 
@@ -93,11 +95,11 @@ class SQLITEOperacionsBasicas {
     fun actualizarActividade() {
 
         val datos = datosCompletos( mapOf( "id" to "102", "titulo" to "Título inicial" ) )
-        val id = db.insertar( "actividades", datos )
+        val id = bd.insertar( TaboaBase.ACTIVIDADES, datos )
 
         val cambios = mapOf( "titulo" to "Título cambiado" )
-        val onde = mapOf( "id" to mapOf( "operador" to "=", "valor" to id ) )
-        val actualizadas = db.actualizar( "actividades", cambios, onde )
+        val onde = mapOf( "id" to Condicion.Simple( id ) )
+        val actualizadas = bd.actualizar( TaboaBase.ACTIVIDADES, cambios, onde )
 
         assertEquals( 1, actualizadas )
         assertEquals( "Título cambiado", collerActividade( id )!!.titulo )
@@ -109,10 +111,10 @@ class SQLITEOperacionsBasicas {
     fun eliminarActividade() {
 
         val datos = datosCompletos( mapOf( "id" to "103", "titulo" to "Temporal", "estado" to "-1" ) )
-        val id = db.insertar( "actividades", datos )
+        val id = bd.insertar( TaboaBase.ACTIVIDADES, datos )
 
-        val onde = mapOf( "id" to mapOf( "operador" to "=", "valor" to id ) )
-        val eliminadas = db.eliminar( "actividades", onde )
+        val onde = mapOf( "id" to Condicion.Simple( id ) )
+        val eliminadas = bd.eliminar( TaboaBase.ACTIVIDADES, onde )
 
         assertEquals( 1, eliminadas )
         assertNull( collerActividade( id ) )
@@ -128,14 +130,14 @@ class SQLITEOperacionsBasicas {
 
             val id = 800L + estado.toInt()
             val datos = datosCompletos( mapOf( "id" to id.toString(), "estado" to estado ) )
-            db.insertar( "actividades", datos )
+            bd.insertar( TaboaBase.ACTIVIDADES, datos )
 
-            val onde = mapOf( "id" to mapOf( "operador" to "=", "valor" to id ) )
-            assertEquals( -1, db.eliminar( "actividades", onde ) )
+            val onde = mapOf( "id" to Condicion.Simple( id ) )
+            assertEquals( -1, bd.eliminar( TaboaBase.ACTIVIDADES, onde ) )
 
             //Para que poida eliminarse
-            db.actualizar( "actividades", mapOf( "estado" to 3 ), onde )
-            db.eliminar( "actividades", onde )
+            bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 3 ), onde )
+            bd.eliminar( TaboaBase.ACTIVIDADES, onde )
 
         }
 
@@ -143,7 +145,7 @@ class SQLITEOperacionsBasicas {
 
     @Test
     fun idNegativaAceptada() {
-        assertNotEquals( -1, db.insertar( "actividades", datosCompletos( mapOf( "id" to "-200" ) ) ) )
+        assertNotEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to "-200" ) ) ) )
     }
 
     //Non se pode facer o test de comprobar que non se admiten valores nulos porque xa non se admiten estes valores
@@ -153,10 +155,10 @@ class SQLITEOperacionsBasicas {
     fun idDuplicadaRexeitada() {
 
         val datos1 = datosCompletos( mapOf( "id" to "500", "titulo" to "Primeira" ) )
-        db.insertar( "actividades", datos1 )
+        bd.insertar( TaboaBase.ACTIVIDADES, datos1 )
 
         val datos2 = datosCompletos( mapOf( "id" to "500", "titulo" to "Segunda" ) )
-        assertEquals( -1, db.insertar( "actividades", datos2 ) )
+        assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES, datos2 ) )
 
     }
 
@@ -164,62 +166,62 @@ class SQLITEOperacionsBasicas {
     fun tituloIdiomaDuplicadoRexeitado() {
 
         val datos1 = datosCompletos( mapOf( "id" to "501", "titulo" to "Repetido", "id_idioma" to Idioma.GALEGO.codigoRexion ) )
-        assertEquals( 501, db.insertar( "actividades", datos1 ) )
+        assertEquals( 501, bd.insertar( TaboaBase.ACTIVIDADES, datos1 ) )
 
         val datos2 = datosCompletos( mapOf( "id" to "502", "titulo" to "Repetido", "id_idioma" to Idioma.GALEGO.codigoRexion ) )
-        assertEquals( -1, db.insertar( "actividades", datos2 ) )
+        assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES, datos2 ) )
 
     }
 
     @Test
     fun idiomaMinusculasRexeitado() {
         val datos1 = datosCompletos( mapOf( "id" to "502", "titulo" to "Repetido", "id_idioma" to Idioma.GALEGO.codigoRexion.lowercase() ) )
-        assertEquals( -1, db.insertar( "actividades", datos1 ) )
+        assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES, datos1 ) )
     }
 
     @Test
     fun estadoForaDeRangoRexeitado() {
-        assertEquals( -1, db.insertar( "actividades", datosCompletos( mapOf( "id" to "503", "estado" to "4" ) ) ) )
-        assertEquals( -1, db.insertar( "actividades", datosCompletos( mapOf( "id" to "504", "estado" to "-4" ) ) ) )
+        assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to "503", "estado" to "4" ) ) ) )
+        assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to "504", "estado" to "-4" ) ) ) )
     }
 
     @Test
     fun duracionForaDeRangoRexeitado() {
-        assertEquals( -1, db.insertar( "actividades", datosCompletos( mapOf( "id" to "505", "duracion" to "0" ) ) ) )
-        assertEquals( -1, db.insertar( "actividades", datosCompletos( mapOf( "id" to "506", "duracion" to "181" ) ) ) )
+        assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to "505", "duracion" to "0" ) ) ) )
+        assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to "506", "duracion" to "181" ) ) ) )
     }
 
     @Test
     fun descricionRexeitada() {
-        assertEquals( -1, db.insertar( "actividades", datosCompletos( mapOf( "id" to "507", "descricion" to "curta" ) ) ) )
-        assertEquals( -1, db.insertar( "actividades", datosCompletos( mapOf( "id" to "508", "descricion" to "a".repeat( 1001 ) ) ) ) )
+        assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to "507", "descricion" to "curta" ) ) ) )
+        assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to "508", "descricion" to "a".repeat( 1001 ) ) ) ) )
     }
 
     @Test
     fun obxectivoRexeitado() {
-        assertEquals( -1, db.insertar( "actividades", datosCompletos( mapOf( "id" to "509", "obxectivo" to "curto" ) ) ) )
-        assertEquals( -1, db.insertar( "actividades", datosCompletos( mapOf( "id" to "510", "obxectivo" to "a".repeat( 201 ) ) ) ) )
+        assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to "509", "obxectivo" to "curto" ) ) ) )
+        assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to "510", "obxectivo" to "a".repeat( 201 ) ) ) ) )
     }
 
     @Test
     fun materiaisRexeitados() {
-        assertEquals( -1, db.insertar( "actividades", datosCompletos( mapOf( "id" to "511", "materiais" to "curto" ) ) ) )
-        assertEquals( -1, db.insertar( "actividades", datosCompletos( mapOf( "id" to "512", "materiais" to "a".repeat( 201 ) ) ) ) )
+        assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to "511", "materiais" to "curto" ) ) ) )
+        assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to "512", "materiais" to "a".repeat( 201 ) ) ) ) )
     }
 
     @Test
     fun actualizarIdExistente() {
 
         val datos1 = datosCompletos( mapOf( "id" to "600", "titulo" to "Primeira", "estado" to "-1" ) )
-        db.insertar( "actividades", datos1 )
+        bd.insertar( TaboaBase.ACTIVIDADES, datos1 )
 
         val datos2 = datosCompletos( mapOf( "id" to "601", "titulo" to "Segunda", "estado" to "-1" ) )
-        db.insertar( "actividades", datos2 )
+        bd.insertar( TaboaBase.ACTIVIDADES, datos2 )
 
         val cambios = mapOf( "id" to 600L )
-        val onde = mapOf( "id" to mapOf( "operador" to "=", "valor" to 601L ) )
+        val onde = mapOf( "id" to Condicion.Simple( 601L ) )
 
-        assertEquals( -1, db.actualizar( "actividades", cambios, onde ) )
+        assertEquals( -1, bd.actualizar( TaboaBase.ACTIVIDADES, cambios, onde ) )
 
     }
 
@@ -227,15 +229,15 @@ class SQLITEOperacionsBasicas {
     fun actualizarIdActividadeEnviada() {
 
         val datos = datosCompletos( mapOf( "id" to "602", "titulo" to "Xa enviada", "estado" to "0" ) )
-        db.insertar( "actividades", datos )
+        bd.insertar( TaboaBase.ACTIVIDADES, datos )
 
         val cambios = mapOf( "id" to 999L )
-        val onde = mapOf( "id" to mapOf( "operador" to "=", "valor" to 602L ) )
+        val onde = mapOf( "id" to Condicion.Simple( 602L ) )
 
-        assertEquals( -1, db.actualizar( "actividades", cambios, onde ) )
+        assertEquals( -1, bd.actualizar( TaboaBase.ACTIVIDADES, cambios, onde ) )
 
         //Actualización de estado para que sexa borrado ou iso crea conflitos noutros tests
-        db.actualizar( "actividades", mapOf( "estado" to 3 ), onde )
+        bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 3 ), onde )
 
     }
 
@@ -243,12 +245,12 @@ class SQLITEOperacionsBasicas {
     fun actualizarIdActividadeNonEnviada() {
 
         val datos = datosCompletos( mapOf( "id" to "603", "titulo" to "Non enviada", "estado" to "-1" ) )
-        db.insertar( "actividades", datos )
+        bd.insertar( TaboaBase.ACTIVIDADES, datos )
 
         val cambios = mapOf( "id" to 604L )
-        val onde = mapOf( "id" to mapOf( "operador" to "=", "valor" to 603L ) )
+        val onde = mapOf( "id" to Condicion.Simple( 603L ) )
 
-        val actualizadas = db.actualizar( "actividades", cambios, onde )
+        val actualizadas = bd.actualizar( TaboaBase.ACTIVIDADES, cambios, onde )
 
         assertEquals( 1, actualizadas )
 
@@ -259,11 +261,11 @@ class SQLITEOperacionsBasicas {
 
         val id = 700L
         val datos = datosCompletos( mapOf( "id" to id.toString(), "titulo" to "Busca Proba", "estado" to "2" ) )
-        db.insertar( "actividades", datos )
+        bd.insertar( TaboaBase.ACTIVIDADES, datos )
 
-        val onde = mapOf( "docid" to mapOf( "operador" to "=", "valor" to id ) )
-        val consulta = mapOf( "columnas" to setOf( "*" ), "onde" to onde )
-        val resultado = db.seleccionar( "buscador_actividades", consulta )
+        val onde = mapOf( "docid" to Condicion.Simple( id ) )
+        val consulta = SelectSQL( columnas = setOf( "*" ), onde = onde )
+        val resultado = bd.seleccionar( TaboaLectura.BUSCADOR_ACTIVIDADES, consulta )
 
         assertEquals( 1, resultado.size )
         assertEquals( "Busca Proba", resultado[ 0 ][ "titulo" ] )
@@ -275,14 +277,14 @@ class SQLITEOperacionsBasicas {
 
         val id = 701L
         val datos = datosCompletos( mapOf( "id" to id.toString(), "titulo" to "Título orixinal", "estado" to "2" ) )
-        db.insertar( "actividades", datos )
+        bd.insertar( TaboaBase.ACTIVIDADES, datos )
 
         val cambios = mapOf( "titulo" to "Título actualizado" )
-        val onde = mapOf( "id" to mapOf( "operador" to "=", "valor" to id ) )
-        db.actualizar( "actividades", cambios, onde )
+        val onde = mapOf( "id" to Condicion.Simple( id ) )
+        bd.actualizar( TaboaBase.ACTIVIDADES, cambios, onde )
 
-        val consulta = mapOf( "columnas" to setOf( "titulo" ), "onde" to mapOf( "docid" to mapOf( "operador" to "=", "valor" to id ) ) )
-        val resultado = db.seleccionar( "buscador_actividades", consulta )
+        val consulta = SelectSQL( columnas = setOf( "titulo" ), onde = mapOf( "docid" to Condicion.Simple( id ) ) )
+        val resultado = bd.seleccionar( TaboaLectura.BUSCADOR_ACTIVIDADES, consulta )
 
         assertEquals( "Título actualizado", resultado[ 0 ][ "titulo" ] )
 
@@ -293,13 +295,13 @@ class SQLITEOperacionsBasicas {
 
         val id = 702L
         val datos = datosCompletos( mapOf( "id" to id.toString(), "estado" to "-1" ) )
-        db.insertar( "actividades", datos )
+        bd.insertar( TaboaBase.ACTIVIDADES, datos )
 
-        val onde = mapOf( "id" to mapOf( "operador" to "=", "valor" to id ) )
-        db.eliminar( "actividades", onde )
+        val onde = mapOf( "id" to Condicion.Simple( id ) )
+        bd.eliminar( TaboaBase.ACTIVIDADES, onde )
 
-        val consulta = mapOf( "columnas" to setOf( "*" ), "onde" to mapOf( "docid" to mapOf( "operador" to "=", "valor" to id ) ) )
-        val resultado = db.seleccionar( "buscador_actividades", consulta )
+        val consulta = SelectSQL( columnas = setOf( "*" ), onde = mapOf( "docid" to Condicion.Simple( id ) ) )
+        val resultado = bd.seleccionar( TaboaLectura.BUSCADOR_ACTIVIDADES, consulta )
 
         assertTrue( resultado.isEmpty() )
 
@@ -310,17 +312,17 @@ class SQLITEOperacionsBasicas {
 
         val id = 703L
         val datos = datosCompletos( mapOf( "id" to id.toString(), "estado" to "0" ) )
-        db.insertar( "actividades", datos )
+        bd.insertar( TaboaBase.ACTIVIDADES, datos )
 
-        val onde = mapOf( "docid" to mapOf( "operador" to "=", "valor" to id ) )
-        val consulta = mapOf( "columnas" to setOf( "*" ), "onde" to onde )
-        val resultado = db.seleccionar( "buscador_actividades", consulta )
+        val onde = mapOf( "docid" to Condicion.Simple( id ) )
+        val consulta = SelectSQL( columnas = setOf( "*" ), onde = onde )
+        val resultado = bd.seleccionar( TaboaLectura.BUSCADOR_ACTIVIDADES, consulta )
 
         assertTrue( resultado.isEmpty() )
 
         // Axuste a estado 3 para permitir o borrado en limpar()
-        val ondeActividade = mapOf( "id" to mapOf( "operador" to "=", "valor" to id ) )
-        db.actualizar( "actividades", mapOf( "estado" to 3 ), ondeActividade )
+        val ondeActividade = mapOf( "id" to Condicion.Simple( id ) )
+        bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 3 ), ondeActividade )
 
     }
 
@@ -329,19 +331,19 @@ class SQLITEOperacionsBasicas {
 
         val id = 704L
         val datos = datosCompletos( mapOf( "id" to id.toString(), "estado" to "0", "titulo" to "Pendente" ) )
-        db.insertar( "actividades", datos )
+        bd.insertar( TaboaBase.ACTIVIDADES, datos )
 
-        val onde = mapOf( "id" to mapOf( "operador" to "=", "valor" to id ) )
-        db.actualizar( "actividades", mapOf( "estado" to 2 ), onde )
+        val onde = mapOf( "id" to Condicion.Simple( id ) )
+        bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 2 ), onde )
 
-        val ondeBuscador = mapOf( "docid" to mapOf( "operador" to "=", "valor" to id ) )
-        val consulta = mapOf( "columnas" to setOf( "*" ), "onde" to ondeBuscador )
-        val resultado = db.seleccionar( "buscador_actividades", consulta )
+        val ondeBuscador = mapOf( "docid" to Condicion.Simple( id ) )
+        val consulta = SelectSQL( columnas = setOf( "*" ), onde = ondeBuscador )
+        val resultado = bd.seleccionar( TaboaLectura.BUSCADOR_ACTIVIDADES, consulta )
 
         assertEquals( 1, resultado.size )
 
         // Axuste a estado 3 para permitir o borrado en limpar()
-        db.actualizar( "actividades", mapOf( "estado" to 3 ), onde )
+        bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 3 ), onde )
 
     }
 
@@ -350,14 +352,14 @@ class SQLITEOperacionsBasicas {
 
         val id = 705L
         val datos = datosCompletos( mapOf( "id" to id.toString(), "estado" to "2", "titulo" to "Para retirar" ) )
-        db.insertar( "actividades", datos )
+        bd.insertar( TaboaBase.ACTIVIDADES, datos )
 
-        val onde = mapOf( "id" to mapOf( "operador" to "=", "valor" to id ) )
-        db.actualizar( "actividades", mapOf( "estado" to 3 ), onde )
+        val onde = mapOf( "id" to Condicion.Simple( id ) )
+        bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 3 ), onde )
 
-        val ondeBuscador = mapOf( "docid" to mapOf( "operador" to "=", "valor" to id ) )
-        val consulta = mapOf( "columnas" to setOf( "*" ), "onde" to ondeBuscador )
-        val resultado = db.seleccionar( "buscador_actividades", consulta )
+        val ondeBuscador = mapOf( "docid" to Condicion.Simple( id ) )
+        val consulta = SelectSQL( columnas = setOf( "*" ), onde = ondeBuscador )
+        val resultado = bd.seleccionar( TaboaLectura.BUSCADOR_ACTIVIDADES, consulta )
 
         assertTrue( resultado.isEmpty() )
 
@@ -372,16 +374,16 @@ class SQLITEOperacionsBasicas {
             datosCompletosAny( mapOf( "id" to 803L, "titulo" to "Taller de pintura", "descricion" to "Técnicas básicas de acuarela", "id_categoria" to "arte", "estado" to 2 ) )
         )
 
-        db.insertar( "actividades", datos )
+        bd.insertar( TaboaBase.ACTIVIDADES, datos )
 
-        val resultados = db.collerActividadesBuscables( "percusión", "data_modificado" )
+        val resultados = collerActividadesBuscables( "percusión", "data_modificado" )
 
         assertEquals( 2, resultados.size )
         assertTrue( resultados.any { it.titulo == "Obradoiro de percusión" } )
         assertTrue( resultados.any { it.titulo == "Introdución á percusión africana" } )
         assertTrue( resultados.none { it.titulo == "Taller de pintura" } )
 
-        db.actualizar( "actividades", mapOf( "estado" to 3 ), mapOf( "id" to mapOf( "operador" to "IN", "valores" to setOf( 801L, 802L, 803L ) ) ) )
+        bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.En( setOf( 801L, 802L, 803L ) ) ) )
 
     }
 
@@ -393,14 +395,14 @@ class SQLITEOperacionsBasicas {
             datosCompletosAny( mapOf( "id" to 805L, "titulo" to "Percusión en obradoiro de baile", "descricion" to "Percusión aplicada ao movemento", "id_categoria" to Categoria.OUTROS, "estado" to 2 ) )
         )
 
-        db.insertar( "actividades", datos )
+        bd.insertar( TaboaBase.ACTIVIDADES, datos )
 
-        val resultados = db.collerActividadesBuscables( "percusión", "data_modificado", filtros = mapOf( "id_categoria" to Categoria.INTERIOR ) )
+        val resultados = collerActividadesBuscables( "percusión", "data_modificado", filtros = mapOf( "id_categoria" to Categoria.INTERIOR ) )
 
         assertEquals( 1, resultados.size )
         assertEquals( "Percusión corporal", resultados[ 0 ].titulo )
 
-        db.actualizar( "actividades", mapOf( "estado" to 3 ), mapOf( "id" to mapOf( "operador" to "IN", "valores" to setOf( 804L, 805L ) ) ) )
+        bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.En( setOf( 804L, 805L ) ) ) )
 
     }
 
@@ -409,19 +411,21 @@ class SQLITEOperacionsBasicas {
         return Usuario( id = id, correo = "test@test.com", rol )
     }
 
-    fun listarActividadesTest( id: Long, rol: Rol): List<Map<String, Any>> {
+    fun listarActividadesTest( id: Long, rol: Rol ): List<Map<String, Any>> {
 
         val usuarioActual = collerUsuarioActualTest( id, rol )
 
         require( PodeCrear( usuarioActual ) ) { "Non se poden listar as actividades se non pode crealas" }
 
-        val datos: MutableMap<String, Any> = mutableMapOf( "columnas" to setOf( "*" ) )
-
-        if ( !PodeEditarOutras( usuarioActual ) ) {
-            datos[ "onde" ] = mapOf( "id_autoria" to mapOf( "operador" to "=", "valor" to usuarioActual.id ) )
+        val onde = if ( !PodeEditarOutras( usuarioActual ) ) {
+            mapOf( "id_autoria" to Condicion.Simple( usuarioActual.id ) )
+        } else {
+            emptyMap()
         }
 
-        val resultados = db.seleccionar( "actividades", datos )
+        val datos = SelectSQL( columnas = setOf( "*" ), onde = onde )
+
+        val resultados = bd.seleccionar( TaboaBase.ACTIVIDADES, datos )
         val saida = mutableListOf<Map<String, Any>>()
 
         resultados.forEach { actividade -> saida.add( actividade ) }
@@ -435,7 +439,7 @@ class SQLITEOperacionsBasicas {
 
         revisarHashElemento(
             "listarActividadesEditables",
-            "ccb1d69fe408ca633cf84197db42d14e8ca9d7b64e13770ebbb5b64ed97dc89a"
+            "a1ea82fe3f8ad29975cfd7e7d2fa72c237947320e845564986325b97fa16dbe3"
         )
 
         val datos = listOf(
@@ -446,11 +450,11 @@ class SQLITEOperacionsBasicas {
             datosCompletosAny( mapOf( "id" to 5L, "id_autoria" to 50L, "titulo" to "Actividade E" ) ),
         )
 
-        db.insertar( "actividades", datos )
+        bd.insertar( TaboaBase.ACTIVIDADES, datos )
 
         // O ideal é comparar con permisos, non con roles directamente
         // Pero neste caso o que se quere verificar é que cada rol ten os resultados esperados
-        for( rol in Rol.entries ) {
+        for ( rol in Rol.entries ) {
 
             if ( rol in setOf( Rol.NADA, Rol.MONITOR ) ) {
 

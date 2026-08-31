@@ -4,7 +4,13 @@ import com.aprengal.lendasnubeiras.data.actividades.datos.Actividade
 import com.aprengal.lendasnubeiras.data.actividades.dixitais.elementos.Clasificacion
 import com.aprengal.lendasnubeiras.data.actividades.dixitais.elementos.Dificultade
 import com.aprengal.lendasnubeiras.data.actividades.dixitais.elementos.Xogador
-import com.aprengal.lendasnubeiras.data.bd.BD.db
+import com.aprengal.lendasnubeiras.data.bd.clases.BD.bd
+import com.aprengal.lendasnubeiras.data.bd.clases.BD.OperadorSimple
+import com.aprengal.lendasnubeiras.data.bd.clases.BD.Orde
+import com.aprengal.lendasnubeiras.data.bd.clases.BD.TipoCombinacion
+import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.CombinacionSQL
+import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
+import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.SelectSQL
 import com.aprengal.lendasnubeiras.data.bd.taboas.TaboaBase
 import java.time.Instant
 
@@ -16,7 +22,7 @@ object Puntuacions {
             "xogador_id" to xogador.id, "puntos" to puntos, "unix_rexistro" to Instant.now().epochSecond
         )
 
-        return db.insertar( TaboaBase.PUNTUACIONS, onde )
+        return bd.insertar( TaboaBase.PUNTUACIONS, onde )
 
     }
 
@@ -24,56 +30,45 @@ object Puntuacions {
     fun actualizarPuntuacion( actividade: Actividade, dificultade: Dificultade, xogador: Xogador, puntos: Long ): Int {
 
         val onde = mapOf(
-            "actividade_id" to mapOf( "operador" to "=", "valor" to actividade.id ),
-            "dificultade" to mapOf( "operador" to "=", "valor" to dificultade.nome ),
-            "xogador_id" to mapOf( "operador" to "=", "valor" to xogador.id ),
-            "puntos" to mapOf( "operador" to "<", "valor" to puntos )
+            "actividade_id" to Condicion.Simple( actividade.id ),
+            "dificultade" to Condicion.Simple( dificultade.nome ),
+            "xogador_id" to Condicion.Simple( xogador.id ),
+            "puntos" to Condicion.Simple( puntos, OperadorSimple.MENOR )
         )
 
-        return db.actualizar(
-            TaboaBase.PUNTUACIONS,
-            mapOf( "puntos" to puntos, "unix_rexistro" to Instant.now().epochSecond ),
-            onde
-        )
+        return bd.actualizar( TaboaBase.PUNTUACIONS, mapOf( "puntos" to puntos, "unix_rexistro" to Instant.now().epochSecond ), onde )
 
     }
 
     fun eliminarPuntuacion( actividade: Actividade, dificultade: Dificultade, xogador: Xogador ): Int {
 
         val onde = mapOf(
-            "actividade_id" to mapOf( "operador" to "=", "valor" to actividade.id ),
-            "dificultade" to mapOf( "operador" to "=", "valor" to dificultade.nome ),
-            "xogador_id" to mapOf( "operador" to "=", "valor" to xogador.id )
+            "actividade_id" to Condicion.Simple( actividade.id ),
+            "dificultade" to Condicion.Simple( dificultade.nome ),
+            "xogador_id" to Condicion.Simple( xogador.id )
         )
 
-        return db.eliminar( TaboaBase.PUNTUACIONS, onde )
+        return bd.eliminar( TaboaBase.PUNTUACIONS, onde )
 
     }
 
     fun collerClasificacion( actividade: Actividade, dificultade: Dificultade ): Clasificacion {
 
-        val onde = mapOf(
-            "p.actividade_id" to mapOf( "operador" to "=", "valor" to actividade.id ),
-            "p.dificultade" to mapOf( "operador" to "=", "valor" to dificultade.nome )
-        )
-
-        val resultados = db.seleccionar(
-            TaboaBase.PUNTUACIONS,
-            mapOf(
-                "columnas" to setOf( "x.nome", "p.puntos", "p.unix_rexistro" ),
-                "alias" to "p",
-                "joins" to listOf(
-                    mapOf(
-                        "tipo" to "INNER",
-                        "principal" to "xogador_id",
-                        "secundaria" to "x.id",
-                        "taboa-join" to TaboaBase.XOGADORES
-                    )
-                ),
-                "onde" to onde,
-                "ordenar" to mapOf( "p.puntos" to "DESC", "p.unix_rexistro" to "ASC" )
+        val colummnas = setOf( "x.nome", "p.puntos", "p.unix_rexistro" )
+        val datosCombinacion = listOf(
+            CombinacionSQL(
+                TipoCombinacion.INNER,
+                "xogador_id",
+                "x",
+                "id",
+                TaboaBase.XOGADORES
             )
         )
+        val onde = mapOf( "p.actividade_id" to Condicion.Simple( actividade.id ), "p.dificultade" to Condicion.Simple( dificultade.nome ) )
+        val ordenar = mapOf("p.puntos" to Orde.DESC, "p.unix_rexistro" to Orde.ASC)
+
+        val datos = SelectSQL( colummnas, alias = "p", combinacions = datosCombinacion, onde = onde, ordenar = ordenar)
+        val resultados = bd.seleccionar( TaboaBase.PUNTUACIONS, datos )
 
         val listaPuntuacions = resultados.associate { fila ->
             ( fila[ "nome" ] as String ) to mapOf(

@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.data.bd
+package com.aprengal.lendasnubeiras.data.bd.clases
 
 import android.database.sqlite.SQLiteDatabase
 import com.aprengal.lendasnubeiras.data.actividades.dixitais.elementos.Dificultade
@@ -8,7 +8,7 @@ import com.aprengal.lendasnubeiras.data.localizacion.Idioma
 
 internal class EstruturaDB {
 
-    fun crear( db: SQLiteDatabase ) {
+    fun crear( db: SQLiteDatabase) {
 
         val idiomas = Idioma.entries.filter { idioma -> idioma != Idioma.NADA }.joinToString( "," ) { idioma -> "'${ idioma.codigoRexion }'" }
         val dificultades = Dificultade.entries.joinToString( "," ) { dificultade -> "'${ dificultade.nome }'" }
@@ -201,7 +201,7 @@ internal class EstruturaDB {
 
     // Hai cambios. O importante igual sería ver se hai borradores no dispositivo.
     // Se non os hai, igual é mellor borrar a DB e creala de novo
-    fun actualizar( db: SQLiteDatabase, oldVersion: Int, newVersion: Int ) {
+    fun actualizar(db: SQLiteDatabase, oldVersion: Int, newVersion: Int ) {
 
         if ( oldVersion < 2 && newVersion == 3 ) {
 

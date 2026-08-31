@@ -1,17 +1,18 @@
 package com.aprengal.lendasnubeiras.data.bd.operacions
 
 import com.aprengal.lendasnubeiras.data.actividades.dixitais.elementos.Grupo
-import com.aprengal.lendasnubeiras.data.bd.BD
+import com.aprengal.lendasnubeiras.data.bd.clases.BD
+import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
 import com.aprengal.lendasnubeiras.data.bd.taboas.TaboaBase
 
-internal object Grupos {
+object Grupos {
 
     fun insertarGrupo( nome: String ): Long {
-        return BD.db.insertar( TaboaBase.GRUPOS, mapOf( "nome" to nome ) )
+        return BD.bd.insertar( TaboaBase.GRUPOS, mapOf( "nome" to nome ) )
     }
 
     fun collerGrupo( id: Long ): Grupo?{
-        val onde = mapOf( "id" to mapOf( "operador" to "=", "valor" to id ) )
+        val onde = mapOf( "id" to Condicion.Simple( id ) )
         return BD.buscarElemento( TaboaBase.GRUPOS, onde ) { fila -> crearGrupo( fila ) }
     }
 
@@ -24,11 +25,11 @@ internal object Grupos {
     }
 
     fun actualizarGrupo( grupo: Grupo, campos: Map<String, Any> ): Int {
-        return BD.db.actualizar( TaboaBase.GRUPOS, campos, mapOf( "id" to mapOf( "operador" to "=", "valor" to grupo.id ) ) )
+        return BD.bd.actualizar( TaboaBase.GRUPOS, campos, mapOf( "id" to Condicion.Simple( grupo.id ) ) )
     }
 
     fun eliminarGrupo( grupo: Grupo ): Int {
-        return BD.db.eliminar( TaboaBase.GRUPOS, mapOf( "id" to mapOf( "operador" to "=", "valor" to grupo.id ) ) )
+        return BD.bd.eliminar( TaboaBase.GRUPOS, mapOf( "id" to Condicion.Simple( grupo.id ) ) )
     }
 
 }

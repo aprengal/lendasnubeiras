@@ -3,10 +3,10 @@ package com.aprengal.lendasnubeiras.data.actividades.datos
 import com.aprengal.lendasnubeiras.data.actividades.datos.atributos.Categoria
 import com.aprengal.lendasnubeiras.data.actividades.datos.atributos.Destinatario
 import com.aprengal.lendasnubeiras.data.actividades.datos.atributos.Estado
-import com.aprengal.lendasnubeiras.data.bd.BD
+import com.aprengal.lendasnubeiras.data.bd.clases.BD.ElementoBD
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
 
-internal interface DatosActividade: BD.ElementoBD {
+internal interface DatosActividade: ElementoBD {
     val id: Long
     val titulo: String
     val descricion: String

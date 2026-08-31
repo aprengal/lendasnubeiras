@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.ui.estruturas
+package com.aprengal.lendasnubeiras.ui.reutilizables.estruturas
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,9 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.aprengal.lendasnubeiras.ui.reutilizables.AmosarTitulo
-import com.aprengal.lendasnubeiras.ui.reutilizables.EspazadorAncho
-import com.aprengal.lendasnubeiras.ui.reutilizables.Logo
+import com.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.AmosarTitulo
+import com.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.EspazadorAncho
+import com.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.Logo
 
 @Composable
 fun EstruturaSuperior( contido: @Composable () -> Unit ) {

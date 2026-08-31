@@ -1,4 +1,5 @@
-package com.aprengal.lendasnubeiras.ui.pantallas
+package com.aprengal.lendasnubeiras.ui.pantallas.abertas
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -21,25 +22,28 @@ import androidx.compose.ui.unit.dp
 import com.aprengal.lendasnubeiras.data.utilidades.Corrutinas.corrutina
 import com.aprengal.lendasnubeiras.data.utilidades.Contexto.haiLector
 import com.aprengal.lendasnubeiras.data.localizacion.Localizacion.cambiarIdioma
-import com.aprengal.lendasnubeiras.ui.tema.Tema
-import com.aprengal.lendasnubeiras.ui.tema.Tema.gardarTema
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
 import com.aprengal.lendasnubeiras.data.localizacion.claves.L10nSingular
-import com.aprengal.lendasnubeiras.ui.reutilizables.EspazadorAlto
 import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodePecharSesion
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.pecharSesion
-import com.aprengal.lendasnubeiras.ui.reutilizables.AlertaDialogo
-import com.aprengal.lendasnubeiras.ui.reutilizables.DatosListaOpcions
-import com.aprengal.lendasnubeiras.ui.reutilizables.ElementoLista
-import com.aprengal.lendasnubeiras.ui.reutilizables.Icona
-import com.aprengal.lendasnubeiras.ui.reutilizables.ListaOpcions
-import com.aprengal.lendasnubeiras.ui.reutilizables.LocalAviso
-import com.aprengal.lendasnubeiras.ui.reutilizables.LocalIdioma
-import com.aprengal.lendasnubeiras.ui.reutilizables.Texto
-import com.aprengal.lendasnubeiras.ui.reutilizables.amosarAviso
-import com.aprengal.lendasnubeiras.ui.tema.Variante
-import com.aprengal.lendasnubeiras.ui.tema.escollerVarianteImaxe
+import com.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosListaOpcions
+import com.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalAviso
+import com.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalIdioma
+import com.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosAlerta
+import com.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosElementoLista
+import com.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.Texto
+import com.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.EspazadorAlto
+import com.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.iconas.Icona
+import com.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.AlertaDialogo
+import com.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.ElementoLista
+import com.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.ListaOpcions
+import com.aprengal.lendasnubeiras.ui.tema.Tema.escollerVarianteImaxe
+import com.aprengal.lendasnubeiras.ui.tema.Tema.gardarTema
+import com.aprengal.lendasnubeiras.ui.tema.Tema.temaActual
+import com.aprengal.lendasnubeiras.ui.tema.Tema.Variante
+import com.aprengal.lendasnubeiras.ui.utilidades.Accions.amosarAviso
+import com.aprengal.lendasnubeiras.ui.utilidades.Accions.executarAccion
 
 private enum class TipoOpcion { ALERTA, INTERRUPTOR }
 
@@ -93,7 +97,7 @@ fun PantallaAxustes() {
                 tipo = TipoOpcion.ALERTA,
                 icona = escollerVarianteImaxe( isSystemInDarkTheme(), Icona.TEMA_CLARO, Icona.TEMA_ESCURO ),
                 opcions = Variante.entries,
-                valorInicial = Tema.temaActual,
+                valorInicial = temaActual,
                 nomeUI = { variante -> variante.nome },
                 accion = { novoTema -> gardarTema( novoTema ) }
             )
@@ -142,11 +146,16 @@ private fun <T> ContidoOpcion( datos: DatosOpcion<T> ) {
 
     when( datos.tipo ) {
 
-        TipoOpcion.INTERRUPTOR -> { ElementoLista( { activo = !activo }, datos.titulo, datos.icona, contido ) }
+        TipoOpcion.INTERRUPTOR -> {
+            val datosLista = DatosElementoLista( { activo = !activo }, datos.titulo, datos.icona, contido )
+            ElementoLista( datosLista )
+        }
 
         TipoOpcion.ALERTA -> {
 
-            ElementoLista( { activo = true }, datos.titulo, datos.icona, contido )
+            val datosLista = DatosElementoLista( { activo = true }, datos.titulo, datos.icona, contido )
+
+            ElementoLista( datosLista )
 
             if ( activo ) {
                 DebuxarAlerta( datos, { estado -> activo = estado }, valorActual, { novoValor -> valorActual = novoValor } )
@@ -184,17 +193,9 @@ private fun <T> DebuxarAlerta( datos: DatosOpcion<T>, amosar: ( Boolean ) -> Uni
     val titulo = L10nSingular.buscar( "dialogo_${ datos.clave }" )
     val contido = @Composable { ListaOpcions( datosLista ) }
 
-    AlertaDialogo( titulo, { amosar( false ) }, contido = contido, confirmado = confirmado )
+    val datosAlerta = DatosAlerta( titulo, { amosar( false ) }, contido = contido, confirmado = confirmado )
 
-}
-
-suspend fun executarAccion( accion: suspend () -> Boolean, erro: suspend () -> SnackbarResult ): Boolean {
-
-    while ( !accion() ) {
-        if ( erro() != SnackbarResult.ActionPerformed ) { return false }
-    }
-
-    return true
+    AlertaDialogo( datosAlerta )
 
 }
 
@@ -218,7 +219,8 @@ fun intentoPecheSesion(): () -> Unit {
 
         }
 
-        AlertaDialogo( L10nSingular.DIALOGO_PECHE_SESION, { amosarDialogo = false }, confirmado = accion )
+        val datosAlerta = DatosAlerta( L10nSingular.DIALOGO_PECHE_SESION, { amosarDialogo = false }, confirmado = accion )
+        AlertaDialogo( datosAlerta )
 
     }
 

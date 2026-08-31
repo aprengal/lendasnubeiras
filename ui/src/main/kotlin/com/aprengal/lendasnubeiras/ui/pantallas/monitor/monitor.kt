@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.ui.pantallas.lector
+package com.aprengal.lendasnubeiras.ui.pantallas.monitor
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,9 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.aprengal.lendasnubeiras.data.localizacion.claves.L10nPlural
 import com.aprengal.lendasnubeiras.data.localizacion.claves.L10nSingular
-import com.aprengal.lendasnubeiras.ui.reutilizables.EspazadorAlto
-import com.aprengal.lendasnubeiras.ui.reutilizables.Texto
-import com.aprengal.lendasnubeiras.ui.reutilizables.TextoPlural
+import com.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.Texto
+import com.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.TextoPlural
+import com.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.EspazadorAlto
 
 @Composable
 fun PantallaBuscador( termo: String) {

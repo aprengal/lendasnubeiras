@@ -30,7 +30,7 @@ import com.aprengal.lendasnubeiras.data.localizacion.Localizacion
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.collerSesionActual
 import com.aprengal.lendasnubeiras.ui.tema.Tema
-import com.aprengal.lendasnubeiras.ui.tema.TemaNubeiro
+import com.aprengal.lendasnubeiras.ui.tema.Tema.TemaNubeiro
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 import androidx.navigation3.runtime.NavBackStack

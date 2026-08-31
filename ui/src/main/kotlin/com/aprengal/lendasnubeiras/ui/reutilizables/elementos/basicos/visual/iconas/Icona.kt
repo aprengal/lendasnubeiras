@@ -1,8 +1,8 @@
-package com.aprengal.lendasnubeiras.ui.reutilizables
+package com.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.iconas
 
 import com.aprengal.lendasnubeiras.data.localizacion.claves.L10nSingular
 
-enum class Icona( val codigo: String, val descricion: L10nSingular ) {
+enum class Icona( val codigo: String, val descricion: L10nSingular) {
 
     //Poderían volver
     //val perfil      = "\uDB80\uDC04" // U+F0004

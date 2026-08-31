@@ -11,9 +11,9 @@ import androidx.navigation3.ui.NavDisplay
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
 import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeLer
 import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeRexistrarse
-import com.aprengal.lendasnubeiras.ui.reutilizables.LocalAviso
-import com.aprengal.lendasnubeiras.ui.reutilizables.LocalIdioma
-import com.aprengal.lendasnubeiras.ui.reutilizables.LocalNavegacion
+import com.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalAviso
+import com.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalIdioma
+import com.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalNavegacion
 import kotlin.reflect.KClass
 
 class Navegacion ( private val traza: NavBackStack<Ruta>, seleccionada: KClass<out Ruta>? = null ) {

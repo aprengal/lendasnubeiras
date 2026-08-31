@@ -1,5 +1,5 @@
 package com.aprengal.lendasnubeiras.data.bd.taboas
 
-interface Taboa {
+sealed interface Taboa {
     val nome: String
 }

@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.ui.estruturas
+package com.aprengal.lendasnubeiras.ui.reutilizables.estruturas
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -10,7 +10,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.aprengal.lendasnubeiras.ui.reutilizables.LocalAviso
+import com.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalAviso
 
 @Composable
 fun ColocarExtras( contido: @Composable BoxScope.() -> Unit ) {

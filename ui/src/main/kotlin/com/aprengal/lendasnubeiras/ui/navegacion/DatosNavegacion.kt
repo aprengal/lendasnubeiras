@@ -15,20 +15,20 @@ import com.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.AP
 import com.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.COMPLETA
 import com.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.SOSUPERIOR
 import com.aprengal.lendasnubeiras.ui.pantallas.NovaActividade
-import com.aprengal.lendasnubeiras.ui.pantallas.PantallaAcceso
-import com.aprengal.lendasnubeiras.ui.pantallas.PantallaAxustes
-import com.aprengal.lendasnubeiras.ui.pantallas.PantallaBenvida
-import com.aprengal.lendasnubeiras.ui.pantallas.PantallaRexistro
-import com.aprengal.lendasnubeiras.ui.pantallas.lector.PantallaActividade
-import com.aprengal.lendasnubeiras.ui.pantallas.lector.PantallaActividadeDetalle
-import com.aprengal.lendasnubeiras.ui.pantallas.lector.PantallaBuscador
-import com.aprengal.lendasnubeiras.ui.pantallas.lector.PantallaInicio
-import com.aprengal.lendasnubeiras.ui.pantallas.lector.actividadesDixitais.XogoDados
-import com.aprengal.lendasnubeiras.ui.reutilizables.LocalRuta
-import com.aprengal.lendasnubeiras.ui.reutilizables.LocalTitulo
-import com.aprengal.lendasnubeiras.ui.estruturas.EstruturaApertura
-import com.aprengal.lendasnubeiras.ui.estruturas.EstruturaBase
-import com.aprengal.lendasnubeiras.ui.estruturas.EstruturaSuperior
+import com.aprengal.lendasnubeiras.ui.pantallas.autenticacion.PantallaAcceso
+import com.aprengal.lendasnubeiras.ui.pantallas.abertas.PantallaAxustes
+import com.aprengal.lendasnubeiras.ui.pantallas.autenticacion.PantallaBenvida
+import com.aprengal.lendasnubeiras.ui.pantallas.autenticacion.PantallaRexistro
+import com.aprengal.lendasnubeiras.ui.pantallas.monitor.PantallaActividade
+import com.aprengal.lendasnubeiras.ui.pantallas.monitor.PantallaActividadeDetalle
+import com.aprengal.lendasnubeiras.ui.pantallas.monitor.PantallaBuscador
+import com.aprengal.lendasnubeiras.ui.pantallas.monitor.PantallaInicio
+import com.aprengal.lendasnubeiras.ui.pantallas.monitor.actividadesDixitais.XogoDados
+import com.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalRuta
+import com.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalTitulo
+import com.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaApertura
+import com.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaBase
+import com.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaSuperior
 
 internal class DatosNavegacion( val navegacion: Navegacion ) {
 

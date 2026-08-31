@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.ui.estruturas
+package com.aprengal.lendasnubeiras.ui.reutilizables.estruturas
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,14 +27,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeCrear
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
-import com.aprengal.lendasnubeiras.ui.reutilizables.Logo
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.ui.Alignment
 import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion
 import com.aprengal.lendasnubeiras.ui.navegacion.Ruta
-import com.aprengal.lendasnubeiras.ui.reutilizables.DebuxarIconaMenu
-import com.aprengal.lendasnubeiras.ui.reutilizables.LocalAviso
+import com.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalAviso
+import com.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.Logo
+import com.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.iconas.DebuxarIconaMenu
 
 @Composable
 internal fun EstruturaBase( navegacion: Navegacion, contido: @Composable () -> Unit ) {

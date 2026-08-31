@@ -18,15 +18,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.aprengal.lendasnubeiras.data.configuracion.corrutina
-import com.aprengal.lendasnubeiras.data.configuracion.haiLector
+import com.aprengal.lendasnubeiras.data.utilidades.Corrutinas.corrutina
+import com.aprengal.lendasnubeiras.data.utilidades.Contexto.haiLector
 import com.aprengal.lendasnubeiras.data.localizacion.Localizacion.cambiarIdioma
 import com.aprengal.lendasnubeiras.ui.tema.Tema
 import com.aprengal.lendasnubeiras.ui.tema.Tema.gardarTema
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
-import com.aprengal.lendasnubeiras.data.localizacion.L10nSingular
+import com.aprengal.lendasnubeiras.data.localizacion.claves.L10nSingular
 import com.aprengal.lendasnubeiras.ui.reutilizables.EspazadorAlto
-import com.aprengal.lendasnubeiras.data.usuarios.PodePecharSesion
+import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodePecharSesion
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.pecharSesion
 import com.aprengal.lendasnubeiras.ui.reutilizables.AlertaDialogo
@@ -128,7 +128,7 @@ private fun <T> ContidoOpcion( datos: DatosOpcion<T> ) {
 
     var activo by rememberSaveable { mutableStateOf( false ) }
     var valorActual by rememberSaveable { mutableStateOf( datos.valorInicial ) }
-    val haiLector = LocalContext.current.haiLector()
+    val haiLector = haiLector( LocalContext.current )
     val textoUI = datos.descricion( valorActual )
 
     val contido = @Composable {

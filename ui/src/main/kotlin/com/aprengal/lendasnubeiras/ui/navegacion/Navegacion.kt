@@ -9,8 +9,8 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
-import com.aprengal.lendasnubeiras.data.usuarios.PodeLer
-import com.aprengal.lendasnubeiras.data.usuarios.PodeRexistrarse
+import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeLer
+import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeRexistrarse
 import com.aprengal.lendasnubeiras.ui.reutilizables.LocalAviso
 import com.aprengal.lendasnubeiras.ui.reutilizables.LocalIdioma
 import com.aprengal.lendasnubeiras.ui.reutilizables.LocalNavegacion
@@ -91,7 +91,7 @@ class Navegacion ( private val traza: NavBackStack<Ruta>, seleccionada: KClass<o
                 aviso.currentSnackbarData?.dismiss()
             }
 
-            val entradas = DatosNavegacion().entradas
+            val entradas = DatosNavegacion( navegacion ).entradas
             val transicions = Transicions()
 
             CompositionLocalProvider( LocalIdioma provides idioma, LocalNavegacion provides navegacion, LocalAviso provides aviso ) {

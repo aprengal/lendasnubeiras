@@ -1,6 +1,6 @@
 package com.aprengal.lendasnubeiras
 
-import com.aprengal.lendasnubeiras.data.configuracion.Opcion
+import com.aprengal.lendasnubeiras.data.axustes.Opcion
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
 import com.aprengal.lendasnubeiras.data.usuarios.Rol
 import org.junit.Assert.assertEquals

@@ -1,6 +1,6 @@
 package com.aprengal.lendasnubeiras.ui.reutilizables
 
-import com.aprengal.lendasnubeiras.data.localizacion.L10nSingular
+import com.aprengal.lendasnubeiras.data.localizacion.claves.L10nSingular
 
 enum class Icona( val codigo: String, val descricion: L10nSingular ) {
 

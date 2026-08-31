@@ -1,21 +1,22 @@
 package com.aprengal.lendasnubeiras.data.usuarios
 
 import android.util.Log
-import com.aprengal.lendasnubeiras.data.configuracion.Axustes.borrarOpcion
-import com.aprengal.lendasnubeiras.data.configuracion.Axustes.borrarSesionsLocais
-import com.aprengal.lendasnubeiras.data.configuracion.Axustes.collerOpcion
-import com.aprengal.lendasnubeiras.data.configuracion.Axustes.collerSesionLocal
-import com.aprengal.lendasnubeiras.data.configuracion.Axustes.gardarOpcion
-import com.aprengal.lendasnubeiras.data.configuracion.Axustes.gardarSesionLocal
-import com.aprengal.lendasnubeiras.data.configuracion.Opcion
-import com.aprengal.lendasnubeiras.data.configuracion.api.Conexion.procesarPeticion
-import com.aprengal.lendasnubeiras.data.configuracion.api.MetodoApi
-import com.aprengal.lendasnubeiras.data.configuracion.api.RespostaXenerica
-import com.aprengal.lendasnubeiras.data.configuracion.api.RutaApi
-import com.aprengal.lendasnubeiras.data.configuracion.api.SesionUsuario
-import com.aprengal.lendasnubeiras.data.configuracion.corrutina
-import com.aprengal.lendasnubeiras.data.configuracion.corrutinaResposta
+import com.aprengal.lendasnubeiras.data.axustes.Axustes.borrarOpcion
+import com.aprengal.lendasnubeiras.data.axustes.Axustes.borrarSesionsLocais
+import com.aprengal.lendasnubeiras.data.axustes.Axustes.collerOpcion
+import com.aprengal.lendasnubeiras.data.axustes.Axustes.collerSesionLocal
+import com.aprengal.lendasnubeiras.data.axustes.Axustes.gardarOpcion
+import com.aprengal.lendasnubeiras.data.axustes.Axustes.gardarSesionLocal
+import com.aprengal.lendasnubeiras.data.axustes.Opcion
+import com.aprengal.lendasnubeiras.data.api.ConexionApi.procesarPeticion
+import com.aprengal.lendasnubeiras.data.api.ConexionApi.MetodoApi
+import com.aprengal.lendasnubeiras.data.api.RespostaApi.RespostaXenerica
+import com.aprengal.lendasnubeiras.data.api.RutasApi
+import com.aprengal.lendasnubeiras.data.api.RespostaApi.SesionUsuario
+import com.aprengal.lendasnubeiras.data.utilidades.Corrutinas.corrutina
+import com.aprengal.lendasnubeiras.data.utilidades.Corrutinas.corrutinaResposta
 import com.aprengal.lendasnubeiras.data.usuarios.Rol.Companion.buscarRol
+import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodePecharSesion
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -80,7 +81,7 @@ object SesionActual {
             var rol = Rol.MONITOR
 
             val idDispositivo = collerOpcion( Opcion.IdDispositivo )
-            val datos: SesionUsuario = procesarPeticion( MetodoApi.GET, RutaApi.VALIDACION, mapOf( "id" to idDispositivo ) )
+            val datos: SesionUsuario = procesarPeticion( MetodoApi.GET, RutasApi.VALIDACION, mapOf( "id" to idDispositivo ) )
 
             if ( datos.exito ) { //Usuario atopado
 
@@ -143,7 +144,7 @@ object SesionActual {
 
             }
 
-            val resposta: RespostaXenerica = procesarPeticion( MetodoApi.DELETE, RutaApi.VALIDACION )
+            val resposta: RespostaXenerica = procesarPeticion( MetodoApi.DELETE, RutasApi.VALIDACION )
 
             if ( resposta.exito ) {
 

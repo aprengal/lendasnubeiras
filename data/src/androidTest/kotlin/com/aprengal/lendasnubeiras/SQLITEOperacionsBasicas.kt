@@ -1,12 +1,12 @@
 package com.aprengal.lendasnubeiras
 
 import androidx.test.platform.app.InstrumentationRegistry
-import com.aprengal.lendasnubeiras.data.actividades.Categoria
-import com.aprengal.lendasnubeiras.data.configuracion.db.DB
-import com.aprengal.lendasnubeiras.data.configuracion.db.DB.collerActividade
+import com.aprengal.lendasnubeiras.data.actividades.datos.atributos.Categoria
+import com.aprengal.lendasnubeiras.data.bd.BD
+import com.aprengal.lendasnubeiras.data.bd.BD.collerActividade
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
-import com.aprengal.lendasnubeiras.data.usuarios.PodeCrear
-import com.aprengal.lendasnubeiras.data.usuarios.PodeEditarOutras
+import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeCrear
+import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeEditarOutras
 import com.aprengal.lendasnubeiras.data.usuarios.Rol
 import com.aprengal.lendasnubeiras.data.usuarios.Usuario
 
@@ -24,7 +24,7 @@ class SQLITEOperacionsBasicas {
 
     companion object {
 
-        private val db: DB = DB
+        private val db: BD = BD
 
         @JvmStatic
         @BeforeClass
@@ -32,7 +32,7 @@ class SQLITEOperacionsBasicas {
 
             try {
                 val contexto = InstrumentationRegistry.getInstrumentation().targetContext
-                db.arrancar(contexto )
+                db.arrancar( contexto )
             } catch ( _: IllegalArgumentException ) {
 
             }

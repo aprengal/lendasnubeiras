@@ -37,7 +37,7 @@ import com.aprengal.lendasnubeiras.ui.reutilizables.EspazadorAlto
 @Composable
 fun XogoDados() {
 
-    val tarefaDatos = ActividadeDados()
+    val tarefaDatos = remember { ActividadeDados() }
     var listaSeleccionados by rememberSaveable { mutableStateOf<List<String>>( emptyList() ) }
     var cantidadeDados by rememberSaveable { mutableIntStateOf( 3 ) }
 

@@ -1,9 +1,7 @@
-package com.aprengal.lendasnubeiras.data.configuracion.api
+package com.aprengal.lendasnubeiras.data.api
 
 
-enum class MetodoApi { GET, POST, DELETE }
-
-enum class RutaApi ( val ruta: String ) {
+enum class RutasApi (val ruta: String ) {
 
     REXISTRO( "rexistro" ),
     ACCESO( "iniciar-sesion" ),

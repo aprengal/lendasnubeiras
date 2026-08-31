@@ -5,8 +5,11 @@ import android.content.res.Resources
 import android.icu.text.PluralRules
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
-import com.aprengal.lendasnubeiras.data.configuracion.haiLector
-import com.aprengal.lendasnubeiras.data.configuracion.reiniciarAplicacion
+import com.aprengal.lendasnubeiras.data.utilidades.Contexto.haiLector
+import com.aprengal.lendasnubeiras.data.utilidades.Contexto.reiniciarAplicacion
+import com.aprengal.lendasnubeiras.data.localizacion.claves.L10nSingular
+import com.aprengal.lendasnubeiras.data.localizacion.claves.L10nPlural
+import com.aprengal.lendasnubeiras.data.localizacion.claves.L10nVariante
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -71,7 +74,7 @@ object Localizacion {
         if ( _idiomaActual.value == novoIdioma ) return true
 
         _idiomaActual.value = novoIdioma
-        if ( appContext.haiLector() ) appContext.reiniciarAplicacion()
+        if ( haiLector( appContext ) ) reiniciarAplicacion( appContext )
 
         traducions.clear()
         traducionsPlurais.clear()

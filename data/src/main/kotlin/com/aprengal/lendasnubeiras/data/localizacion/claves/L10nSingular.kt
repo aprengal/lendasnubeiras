@@ -1,13 +1,9 @@
-package com.aprengal.lendasnubeiras.data.localizacion
+package com.aprengal.lendasnubeiras.data.localizacion.claves
 
-internal interface L10n {
+import com.aprengal.lendasnubeiras.data.localizacion.Dominio
+import com.aprengal.lendasnubeiras.data.localizacion.Localizacion
 
-    val clave: String
-    val dominio: Dominio
-
-}
-
-enum class L10nSingular( override val clave: String, override val dominio: Dominio ): L10n {
+enum class L10nSingular( override val clave: String, override val dominio: Dominio): L10n {
 
     // Base
     NOME_APP( "nome_app", Dominio.Base ),
@@ -85,23 +81,5 @@ enum class L10nSingular( override val clave: String, override val dominio: Domin
         }
 
     }
-
-}
-
-enum class L10nPlural( override val clave: String, override val dominio: Dominio ): L10n {
-
-    // Test
-    MENSAXES_NOVAS( "mensaxes_novas", Dominio.Test );
-
-    fun texto( num: Number ): String = Localizacion.l10nPlural( this, num )
-
-}
-
-enum class L10nVariante( override val clave: String, override val dominio: Dominio ): L10n {
-
-    // Test
-    MENSAXE_FALLOS( "mensaxe_fallos", Dominio.Test );
-
-    fun texto( num: Int ): String = Localizacion.l10nVariante( this, num )
 
 }

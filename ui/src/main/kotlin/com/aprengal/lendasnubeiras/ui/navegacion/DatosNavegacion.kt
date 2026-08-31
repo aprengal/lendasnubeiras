@@ -6,11 +6,11 @@ import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavMetadataKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.metadata
-import com.aprengal.lendasnubeiras.data.localizacion.L10nSingular
-import com.aprengal.lendasnubeiras.data.usuarios.PodeAdministrar
-import com.aprengal.lendasnubeiras.data.usuarios.PodeCrear
-import com.aprengal.lendasnubeiras.data.usuarios.PodeLer
-import com.aprengal.lendasnubeiras.data.usuarios.PodeRexistrarse
+import com.aprengal.lendasnubeiras.data.localizacion.claves.L10nSingular
+import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeAdministrar
+import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeCrear
+import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeLer
+import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeRexistrarse
 import com.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.APERTURA
 import com.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.COMPLETA
 import com.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.SOSUPERIOR
@@ -24,14 +24,13 @@ import com.aprengal.lendasnubeiras.ui.pantallas.lector.PantallaActividadeDetalle
 import com.aprengal.lendasnubeiras.ui.pantallas.lector.PantallaBuscador
 import com.aprengal.lendasnubeiras.ui.pantallas.lector.PantallaInicio
 import com.aprengal.lendasnubeiras.ui.pantallas.lector.actividadesDixitais.XogoDados
-import com.aprengal.lendasnubeiras.ui.reutilizables.LocalNavegacion
 import com.aprengal.lendasnubeiras.ui.reutilizables.LocalRuta
 import com.aprengal.lendasnubeiras.ui.reutilizables.LocalTitulo
 import com.aprengal.lendasnubeiras.ui.estruturas.EstruturaApertura
 import com.aprengal.lendasnubeiras.ui.estruturas.EstruturaBase
 import com.aprengal.lendasnubeiras.ui.estruturas.EstruturaSuperior
 
-internal class DatosNavegacion {
+internal class DatosNavegacion( val navegacion: Navegacion ) {
 
     enum class TipoPantalla { COMPLETA, SOSUPERIOR, APERTURA }
 
@@ -100,7 +99,6 @@ internal class DatosNavegacion {
 
         entry<T>( metadata = tipo ) { ruta ->
 
-            val navegacion = LocalNavegacion.current
             val control = ControlAcceso( navegacion )
 
             if ( !control.comprobarAcceso( T::class ) ) return@entry

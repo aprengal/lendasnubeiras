@@ -3,9 +3,9 @@ package com.aprengal.lendasnubeiras
 import com.ibm.icu.text.PluralRules
 import com.aprengal.lendasnubeiras.data.localizacion.Dominio
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
-import com.aprengal.lendasnubeiras.data.localizacion.L10nPlural
-import com.aprengal.lendasnubeiras.data.localizacion.L10nSingular
-import com.aprengal.lendasnubeiras.data.localizacion.L10nVariante
+import com.aprengal.lendasnubeiras.data.localizacion.claves.L10nPlural
+import com.aprengal.lendasnubeiras.data.localizacion.claves.L10nSingular
+import com.aprengal.lendasnubeiras.data.localizacion.claves.L10nVariante
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue

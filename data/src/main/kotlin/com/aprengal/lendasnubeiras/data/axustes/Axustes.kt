@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.data.configuracion
+package com.aprengal.lendasnubeiras.data.axustes
 
 import android.content.Context
 import android.util.Log
@@ -9,17 +9,10 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.aprengal.lendasnubeiras.data.utilidades.Corrutinas.corrutina
 import kotlinx.coroutines.flow.first
 import okio.IOException
-
-sealed class Opcion<T : Any>( val nome: String, val predeterminado: T ) {
-
-    data object SesionUsuario: Opcion<String>( "sesion-usuario", "" )
-    data object SesionAnonima: Opcion<Boolean>( "sesion-anonima",false )
-    data object Tema: Opcion<String>( "tema", "predeterminado" )
-    data object IdDispositivo: Opcion<String> ( "id-dispositivo", "" )
-
-}
+import java.util.UUID
 
 object Axustes {
 
@@ -145,6 +138,18 @@ object Axustes {
         }
 
         return false
+
+    }
+
+    fun collerIdDispositivo(): String {
+
+        var idDispositivo = collerOpcion( Opcion.IdDispositivo )
+        if ( idDispositivo.isNotBlank() ) return idDispositivo
+
+        idDispositivo = UUID.randomUUID().toString()
+        corrutina { gardarOpcion( Opcion.IdDispositivo, idDispositivo ) }
+
+        return idDispositivo
 
     }
 

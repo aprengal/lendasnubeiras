@@ -3,14 +3,14 @@ package com.aprengal.lendasnubeiras.ui.navegacion
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import com.aprengal.lendasnubeiras.data.configuracion.db.DB.collerActividade
-import com.aprengal.lendasnubeiras.data.usuarios.PodeAcceder
-import com.aprengal.lendasnubeiras.data.usuarios.PodeAdministrar
-import com.aprengal.lendasnubeiras.data.usuarios.PodeCrear
-import com.aprengal.lendasnubeiras.data.usuarios.PodeEditar
-import com.aprengal.lendasnubeiras.data.usuarios.PodeIniciarSesion
-import com.aprengal.lendasnubeiras.data.usuarios.PodeLer
-import com.aprengal.lendasnubeiras.data.usuarios.PodeRexistrarse
+import com.aprengal.lendasnubeiras.data.bd.BD.collerActividade
+import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeAcceder
+import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeAdministrar
+import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeCrear
+import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeEditar
+import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeIniciarSesion
+import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeLer
+import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeRexistrarse
 import kotlin.reflect.KClass
 
 internal class ControlAcceso( val navegacion: Navegacion ) {

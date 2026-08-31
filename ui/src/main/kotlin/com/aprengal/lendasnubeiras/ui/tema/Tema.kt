@@ -21,10 +21,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import com.aprengal.lendasnubeiras.data.configuracion.Axustes.collerOpcion
-import com.aprengal.lendasnubeiras.data.configuracion.Axustes.gardarOpcion
+import com.aprengal.lendasnubeiras.data.axustes.Axustes.collerOpcion
+import com.aprengal.lendasnubeiras.data.axustes.Axustes.gardarOpcion
 import androidx.compose.material3.Typography
-import com.aprengal.lendasnubeiras.data.configuracion.Opcion
+import com.aprengal.lendasnubeiras.data.axustes.Opcion
 import com.aprengal.lendasnubeiras.ui.R
 import com.aprengal.lendasnubeiras.ui.tema.Tema.temaActual
 

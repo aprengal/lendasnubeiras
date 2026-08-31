@@ -22,9 +22,9 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.core.os.LocaleListCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle as escoitarEstado
-import com.aprengal.lendasnubeiras.data.configuracion.db.DB
-import com.aprengal.lendasnubeiras.data.configuracion.api.Conexion
-import com.aprengal.lendasnubeiras.data.configuracion.Axustes
+import com.aprengal.lendasnubeiras.data.bd.BD
+import com.aprengal.lendasnubeiras.data.api.ConexionApi
+import com.aprengal.lendasnubeiras.data.axustes.Axustes
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
 import com.aprengal.lendasnubeiras.data.localizacion.Localizacion
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual
@@ -56,8 +56,8 @@ class Entrada : AppCompatActivity() {
 
         runBlocking {
             Axustes.arrancar( contexto )
-            Conexion.arrancar( contexto )
-            DB.arrancar( contexto )
+            ConexionApi.arrancar( contexto )
+            BD.arrancar( contexto )
             idioma = Localizacion.arrancar( contexto )
             Tema.arrancar()
             SesionActual.arrancar()

@@ -25,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aprengal.lendasnubeiras.data.usuarios.PodeCrear
+import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeCrear
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
 import com.aprengal.lendasnubeiras.ui.reutilizables.Logo
 import androidx.compose.material3.Scaffold

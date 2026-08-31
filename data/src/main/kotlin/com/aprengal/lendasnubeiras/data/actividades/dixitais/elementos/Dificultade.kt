@@ -1,4 +1,4 @@
-package com.aprengal.lendasnubeiras.data.actividades.dixitais
+package com.aprengal.lendasnubeiras.data.actividades.dixitais.elementos
 
 enum class Dificultade( val nome: String ) {
 

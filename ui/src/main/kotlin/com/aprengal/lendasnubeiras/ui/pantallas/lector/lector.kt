@@ -10,8 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.aprengal.lendasnubeiras.data.localizacion.L10nPlural
-import com.aprengal.lendasnubeiras.data.localizacion.L10nSingular
+import com.aprengal.lendasnubeiras.data.localizacion.claves.L10nPlural
+import com.aprengal.lendasnubeiras.data.localizacion.claves.L10nSingular
 import com.aprengal.lendasnubeiras.ui.reutilizables.EspazadorAlto
 import com.aprengal.lendasnubeiras.ui.reutilizables.Texto
 import com.aprengal.lendasnubeiras.ui.reutilizables.TextoPlural

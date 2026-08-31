@@ -1,8 +1,8 @@
-package com.aprengal.lendasnubeiras.data.configuracion.api
+package com.aprengal.lendasnubeiras.data.api
 
 import android.content.Context
 import android.util.Log
-import com.aprengal.lendasnubeiras.data.configuracion.Axustes.collerOpcion
+import com.aprengal.lendasnubeiras.data.axustes.Axustes.collerOpcion
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.FormBody
@@ -13,12 +13,17 @@ import org.json.JSONObject
 import java.io.IOException
 import java.net.SocketTimeoutException
 import java.util.concurrent.TimeUnit
-import com.aprengal.lendasnubeiras.data.configuracion.Opcion
+import com.aprengal.lendasnubeiras.data.axustes.Opcion
 import com.aprengal.lendasnubeiras.data.BuildConfig
+import com.aprengal.lendasnubeiras.data.api.RespostaApi.DatosActividades
+import com.aprengal.lendasnubeiras.data.api.RespostaApi.RespostaXenerica
+import com.aprengal.lendasnubeiras.data.api.RespostaApi.SesionUsuario
 
-private class ApiException( mensaxe: String, val codigo: Int ) : Exception( mensaxe )
+object ConexionApi {
 
-object Conexion {
+    enum class MetodoApi { GET, POST, DELETE }
+
+    private class ApiException( mensaxe: String, val codigo: Int ) : Exception( mensaxe )
 
     private const val URL_BASE = BuildConfig.API_URL
 
@@ -35,14 +40,14 @@ object Conexion {
         .writeTimeout( 5, TimeUnit.SECONDS )
         .build()
 
-    suspend fun <T : RespostaApi> procesarPeticion( metodoApi: MetodoApi, rutaApi: RutaApi, campos: Map<String, Any> = emptyMap() ): T {
+    suspend fun <T : RespostaApi> procesarPeticion( metodoApi: MetodoApi, rutaApi: RutasApi, campos: Map<String, Any> = emptyMap() ): T {
 
         val datos = peticion( metodoApi, rutaApi, campos )
 
         val saida = when( rutaApi ) {
-            RutaApi.VALIDACION -> SesionUsuario( datos )
-            RutaApi.REXISTRO, RutaApi.ACCESO, RutaApi.REPORTES -> RespostaXenerica( datos )
-            RutaApi.ACTUALIZAR -> DatosActividades( datos )
+            RutasApi.VALIDACION -> SesionUsuario( datos )
+            RutasApi.REXISTRO, RutasApi.ACCESO, RutasApi.REPORTES -> RespostaXenerica( datos )
+            RutasApi.ACTUALIZAR -> DatosActividades(datos)
         }
 
         @Suppress( "UNCHECKED_CAST" )
@@ -50,7 +55,7 @@ object Conexion {
 
     }
 
-    private suspend fun peticion( metodoApi: MetodoApi, rutaApi: RutaApi, campos: Map<String, Any> ): JSONObject {
+    private suspend fun peticion(metodoApi: MetodoApi, rutaApi: RutasApi, campos: Map<String, Any> ): JSONObject {
 
         try {
             return realizarPeticion( metodoApi, rutaApi, campos )
@@ -63,7 +68,7 @@ object Conexion {
 
     }
 
-    private suspend fun realizarPeticion( metodoApi: MetodoApi, ruta: RutaApi, campos: Map<String, Any> ): JSONObject {
+    private suspend fun realizarPeticion(metodoApi: MetodoApi, ruta: RutasApi, campos: Map<String, Any> ): JSONObject {
 
         val sesion = collerOpcion( Opcion.SesionUsuario )
 

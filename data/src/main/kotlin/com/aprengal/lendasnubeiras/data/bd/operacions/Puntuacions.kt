@@ -10,7 +10,7 @@ import com.aprengal.lendasnubeiras.data.bd.clases.BD.Orde
 import com.aprengal.lendasnubeiras.data.bd.clases.BD.TipoCombinacion
 import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.CombinacionSQL
 import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
-import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.SelectSQL
+import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.SeleccionSQL
 import com.aprengal.lendasnubeiras.data.bd.taboas.TaboaBase
 import java.time.Instant
 
@@ -54,7 +54,7 @@ object Puntuacions {
 
     fun collerClasificacion( actividade: Actividade, dificultade: Dificultade ): Clasificacion {
 
-        val colummnas = setOf( "x.nome", "p.puntos", "p.unix_rexistro" )
+        val colummnas = setOf( "x.clave", "p.puntos", "p.unix_rexistro" )
         val datosCombinacion = listOf(
             CombinacionSQL(
                 TipoCombinacion.INNER,
@@ -65,13 +65,13 @@ object Puntuacions {
             )
         )
         val onde = mapOf( "p.actividade_id" to Condicion.Simple( actividade.id ), "p.dificultade" to Condicion.Simple( dificultade.nome ) )
-        val ordenar = mapOf("p.puntos" to Orde.DESC, "p.unix_rexistro" to Orde.ASC)
+        val ordenar = mapOf( "p.puntos" to Orde.DESC, "p.unix_rexistro" to Orde.ASC )
 
-        val datos = SelectSQL( colummnas, alias = "p", combinacions = datosCombinacion, onde = onde, ordenar = ordenar)
+        val datos = SeleccionSQL( colummnas, alias = "p", combinacions = datosCombinacion, onde = onde, ordenar = ordenar)
         val resultados = bd.seleccionar( TaboaBase.PUNTUACIONS, datos )
 
         val listaPuntuacions = resultados.associate { fila ->
-            ( fila[ "nome" ] as String ) to mapOf(
+            ( fila[ "clave" ] as String ) to mapOf(
                 "puntos" to fila[ "puntos" ] as Long,
                 "unix_rexistro" to fila[ "unix_rexistro" ] as Long
             )

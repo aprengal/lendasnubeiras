@@ -33,8 +33,8 @@ import androidx.compose.ui.Alignment
 import com.aprengal.lendasnubeiras.ui.navegacion.Navegacion
 import com.aprengal.lendasnubeiras.ui.navegacion.Ruta
 import com.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalAviso
+import com.aprengal.lendasnubeiras.ui.reutilizables.clases.Icona.Companion.DebuxarIconaMenu
 import com.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.Logo
-import com.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.iconas.DebuxarIconaMenu
 
 @Composable
 internal fun EstruturaBase( navegacion: Navegacion, contido: @Composable () -> Unit ) {
@@ -87,7 +87,7 @@ private fun NavegacionInferior( navegacion: Navegacion ) {
 
     val elementos = listOf(
         Ruta.Inicio,
-        Ruta.Buscar( "" ),
+        Ruta.Buscar,
         Ruta.Idioma,
         Ruta.Actividades
     )

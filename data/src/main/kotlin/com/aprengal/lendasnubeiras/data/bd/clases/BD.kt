@@ -7,7 +7,7 @@ import com.aprengal.lendasnubeiras.data.api.ConexionApi
 import com.aprengal.lendasnubeiras.data.api.RespostaApi
 import com.aprengal.lendasnubeiras.data.api.RutasApi
 import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
-import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.SelectSQL
+import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.SeleccionSQL
 import com.aprengal.lendasnubeiras.data.bd.operacions.Actividades
 import com.aprengal.lendasnubeiras.data.bd.taboas.Taboa
 import com.aprengal.lendasnubeiras.data.bd.taboas.TaboaBase
@@ -23,10 +23,10 @@ object BD {
 
     internal interface ElementoBD
 
-    enum class Orde( val nome: String ) { ASC( "ASC" ), DESC( "DESC" ) }
+    enum class Orde( val clave: String ) { ASC( "ASC" ), DESC( "DESC" ) }
 
     //As combinacións con Right dan problemas en versións anteriores de Android de 2022
-    enum class TipoCombinacion( val nome: String ) { INNER( "INNER" ), LEFT( "LEFT" ) }
+    enum class TipoCombinacion( val clave: String ) { INNER( "INNER" ), LEFT( "LEFT" ) }
 
     enum class OperadorSimple( val simbolo: String ) {
         IGUAL( "=" ),
@@ -46,12 +46,12 @@ object BD {
     }
 
     internal fun <T: ElementoBD> buscarElemento(taboa: Taboa, onde: Map<String, Condicion>, accion: (Map<String, Any> ) -> T ): T? {
-        val resultados = bd.seleccionar( taboa, SelectSQL(setOf("*"), onde = onde))
+        val resultados = bd.seleccionar( taboa, SeleccionSQL(setOf("*"), onde = onde))
         return resultados.firstOrNull()?.let( accion )
     }
 
     internal fun <T: ElementoBD> buscarElementos(taboa: Taboa, onde: Map<String, Condicion> = mapOf(), accion: (Map<String, Any> ) -> T ): List<T> {
-        val resultados = bd.seleccionar( taboa, SelectSQL(setOf("*"), onde = onde))
+        val resultados = bd.seleccionar( taboa, SeleccionSQL(setOf("*"), onde = onde))
         return resultados.map( accion )
     }
 
@@ -113,8 +113,8 @@ object BD {
 
             }
 
-            if (problemas.isNotEmpty()) {
-                campos["erro"] = problemas.toString()
+            if ( problemas.isNotEmpty() ) {
+                campos[ "erro" ] = problemas.toString()
                 ConexionApi.procesarPeticion(
                     ConexionApi.MetodoApi.POST,
                     RutasApi.REPORTES,

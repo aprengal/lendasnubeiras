@@ -15,10 +15,10 @@ class TesteoDatos {
 
         val esperados = Idioma.entries.associateWith { idioma ->
             when ( idioma ) {
-                Idioma.GALEGO -> "gl_ES"
-                Idioma.CASTELAN -> "es_ES"
-                Idioma.INGLES -> "en_GB"
-                Idioma.NADA -> "_"
+                Idioma.Galego -> "gl_ES"
+                Idioma.Castelan -> "es_ES"
+                Idioma.Ingles -> "en_GB"
+                Idioma.Nada -> "_"
             }
         }
 
@@ -58,7 +58,7 @@ class TesteoDatos {
             Rol.ADMIN -> "admin"
         }
 
-        assertEquals( esperado, rol.nome )
+        assertEquals( esperado, rol.clave )
 
     }
 
@@ -69,7 +69,7 @@ class TesteoDatos {
 
     @Test
     fun buscarRoles() {
-        Rol.entries.forEach { rol -> assertEquals( rol, Rol.buscarRol( rol.nome ) ) }
+        Rol.entries.forEach { rol -> assertEquals( rol, Rol.buscarRol( rol.clave ) ) }
         assertEquals( Rol.NADA, Rol.buscarRol( "invalido" ) )
         assertEquals( Rol.NADA, Rol.buscarRol( "" ) )
     }

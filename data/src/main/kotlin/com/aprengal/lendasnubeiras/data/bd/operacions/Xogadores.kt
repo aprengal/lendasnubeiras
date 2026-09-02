@@ -10,7 +10,7 @@ import com.aprengal.lendasnubeiras.data.bd.taboas.TaboaBase
 object Xogadores {
 
     fun insertarXogador( nome: String, grupo: Grupo ): Long {
-        return bd.insertar( TaboaBase.XOGADORES, mapOf( "nome" to nome, "grupo_id" to grupo.id ) )
+        return bd.insertar( TaboaBase.XOGADORES, mapOf( "clave" to nome, "grupo_id" to grupo.id ) )
     }
 
     fun actualizarXogador( xogador: Xogador, campos: Map<String, Any> ): Int {
@@ -32,7 +32,7 @@ object Xogadores {
     }
 
     private fun crearXogador( datos: Map<String, Any> ): Xogador {
-        return Xogador( id = datos[ "id" ] as Long, nome = datos[ "nome" ] as String )
+        return Xogador( id = datos[ "id" ] as Long, nome = datos[ "clave" ] as String )
     }
 
 }

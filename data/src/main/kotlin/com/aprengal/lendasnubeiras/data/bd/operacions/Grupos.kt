@@ -8,7 +8,7 @@ import com.aprengal.lendasnubeiras.data.bd.taboas.TaboaBase
 object Grupos {
 
     fun insertarGrupo( nome: String ): Long {
-        return BD.bd.insertar( TaboaBase.GRUPOS, mapOf( "nome" to nome ) )
+        return BD.bd.insertar( TaboaBase.GRUPOS, mapOf( "clave" to nome ) )
     }
 
     fun collerGrupo( id: Long ): Grupo?{
@@ -21,7 +21,7 @@ object Grupos {
     }
 
     private fun crearGrupo( datos: Map<String, Any> ): Grupo {
-        return Grupo( id = datos[ "id" ] as Long, nome = datos[ "nome" ] as String )
+        return Grupo( id = datos[ "id" ] as Long, nome = datos[ "clave" ] as String )
     }
 
     fun actualizarGrupo( grupo: Grupo, campos: Map<String, Any> ): Int {

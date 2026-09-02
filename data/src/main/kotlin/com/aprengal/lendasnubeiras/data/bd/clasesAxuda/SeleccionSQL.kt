@@ -2,7 +2,7 @@ package com.aprengal.lendasnubeiras.data.bd.clasesAxuda
 
 import com.aprengal.lendasnubeiras.data.bd.clases.BD.Orde
 
-data class SelectSQL(
+data class SeleccionSQL(
     val columnas: Set<String>,
     val distinto: Boolean = false,
     val alias: String = "",

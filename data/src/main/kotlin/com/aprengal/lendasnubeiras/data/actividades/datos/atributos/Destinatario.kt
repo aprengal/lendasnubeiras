@@ -1,18 +1,21 @@
 package com.aprengal.lendasnubeiras.data.actividades.datos.atributos
 
-enum class Destinatario( override val clave: String ): Atributo {
+import com.aprengal.lendasnubeiras.data.localizacion.ElementoL10n
+import com.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nActividades
 
-    XERAL( "xeral" ),
-    PEQUES( "peques" ),
-    XUVENIL( "xuvenil" ),
-    ADULTOS( "adultos" ),
-    MAIORES( "maiores" ),
-    MIXTO( "mixto" );
+enum class Destinatario( override val clave: String, override val nome: L10nActividades): ElementoL10n {
+
+    Xeral( "xeral", L10nActividades.DestinatarioXeral ),
+    Peques( "peques", L10nActividades.DestinatarioPeques ),
+    Xuvenil( "xuvenil", L10nActividades.DestinatarioXuvenil ),
+    Adultos( "adultos", L10nActividades.DestinatarioAdultos ),
+    Maiores( "maiores", L10nActividades.DestinatarioMaiores ),
+    Mixto( "mixto", L10nActividades.DestinatarioMixto );
 
     companion object {
 
         fun escollerDestinatario( clave: String ): Destinatario {
-            return entries.find { destinario -> destinario.clave == clave } ?: XERAL
+            return entries.find { destinario -> destinario.clave == clave } ?: Xeral
         }
 
     }

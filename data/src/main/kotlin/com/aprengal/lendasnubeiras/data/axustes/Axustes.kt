@@ -54,7 +54,7 @@ object Axustes {
                     is String -> opcions[ stringPreferencesKey( nome ) ] = valor
                     is Int -> opcions[ intPreferencesKey( nome ) ] = valor
                     is Boolean -> opcions[ booleanPreferencesKey( nome ) ] = valor
-                    //is Float -> opcions[ floatPreferencesKey( nome ) ] = valor
+                    //is Float -> opcions[ floatPreferencesKey( clave ) ] = valor
                     is Long -> opcions[ longPreferencesKey( nome ) ] = valor
                     else -> throw IllegalArgumentException( "Tipo non soportado: ${valor::class.simpleName}" )
                 }
@@ -85,7 +85,7 @@ object Axustes {
                     is String -> opcions.remove( stringPreferencesKey( nome ) )
                     is Int -> opcions.remove( intPreferencesKey( nome ) )
                     is Boolean -> opcions.remove( booleanPreferencesKey( nome ) )
-                    //is Float -> opcions.remove( floatPreferencesKey( nome ) )
+                    //is Float -> opcions.remove( floatPreferencesKey( clave ) )
                     is Long -> opcions.remove( longPreferencesKey( nome ) )
                     else -> throw IllegalArgumentException( "Tipo non soportado: ${predeterminado::class.simpleName}" )
                 }

@@ -7,9 +7,16 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import com.aprengal.lendasnubeiras.data.utilidades.Contexto.haiLector
 import com.aprengal.lendasnubeiras.data.utilidades.Contexto.reiniciarAplicacion
-import com.aprengal.lendasnubeiras.data.localizacion.claves.L10nSingular
 import com.aprengal.lendasnubeiras.data.localizacion.claves.L10nPlural
 import com.aprengal.lendasnubeiras.data.localizacion.claves.L10nVariante
+import com.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nActividades
+import com.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nAutenticacion
+import com.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nBase
+import com.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nIconas
+import com.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nOpcions
+import com.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nSingular
+import com.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nTitulos
+import com.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nValidacion
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,7 +39,7 @@ object Localizacion {
 
     private val traducionsVariantes: MutableMap<Dominio, Map<L10nVariante, Map<String, String>>> = mutableMapOf()
 
-    private val _idiomaActual = MutableStateFlow( Idioma.NADA )
+    private val _idiomaActual = MutableStateFlow( Idioma.Nada )
 
     private var pluraisCardinais: PluralRules? = null
 
@@ -57,7 +64,7 @@ object Localizacion {
 
     fun arrancar( contexto: Context ): StateFlow<Idioma> {
 
-        if ( ::appContext.isInitialized && _idiomaActual.value != Idioma.NADA ) return _idiomaActual.asStateFlow()
+        if ( ::appContext.isInitialized && _idiomaActual.value != Idioma.Nada ) return _idiomaActual.asStateFlow()
 
         appContext = contexto.applicationContext
         _idiomaActual.value = Idioma.escollerIdiomaAplicacion(
@@ -103,6 +110,7 @@ object Localizacion {
 
     private fun cargarDominio( dominio: Dominio ) {
 
+
         if ( traducions.containsKey( dominio ) ) return
 
         try {
@@ -111,7 +119,7 @@ object Localizacion {
             val cadeasPlurais = mutableMapOf<L10nPlural, Map<String, String>>()
             val cadeasVariantes = mutableMapOf<L10nVariante, Map<String, String>>()
 
-            val clavesSingulares = L10nSingular.entries.filter { elemento -> elemento.dominio == dominio }
+            val clavesSingulares = collerClavesSingular( dominio )
             val clavesPlurais = L10nPlural.entries.filter { elemento -> elemento.dominio == dominio }
             val clavesVariantes = L10nVariante.entries.filter { elemento -> elemento.dominio == dominio }
 
@@ -200,10 +208,30 @@ object Localizacion {
 
     }
 
+    private fun collerClavesSingular( dominio: Dominio ): List<L10nSingular> {
+
+        val lista = when( dominio ) {
+            Dominio.ACTIVIDADES -> L10nActividades.entries
+            Dominio.AUTENTICACION -> L10nAutenticacion.entries
+            Dominio.BASE -> L10nBase.entries
+            Dominio.TITULOS -> L10nTitulos.entries
+            Dominio.ICONAS -> L10nIconas.entries
+            Dominio.VALIDACION -> L10nValidacion.entries
+            Dominio.OPCIONS -> L10nOpcions.entries
+        }
+
+        return lista
+
+    }
+
     private fun descargarDominio( dominio: Dominio ) {
         traducions.remove( dominio )
         traducionsPlurais.remove( dominio )
         traducionsVariantes.remove( dominio )
+    }
+
+    fun <T> obterTexto( elemento: T ): String {
+        return if ( elemento is L10nSingular ) elemento.texto() else elemento.toString()
     }
 
     internal fun l10n( elemento: L10nSingular ): String {
@@ -254,7 +282,7 @@ object Localizacion {
     private fun categoriaCardinal( numAbs: Double, local: Locale ): String {
 
         //Se houbese regras concretas diferentes, habería que cambiar a un when
-        if ( _idiomaActual.value in listOf( Idioma.GALEGO, Idioma.CASTELAN ) ) {
+        if ( _idiomaActual.value in listOf( Idioma.Galego, Idioma.Castelan ) ) {
 
             if ( numAbs == 1.0 ) return "one"
 

@@ -10,7 +10,7 @@ internal class EstruturaDB {
 
     fun crear( db: SQLiteDatabase) {
 
-        val idiomas = Idioma.entries.filter { idioma -> idioma != Idioma.NADA }.joinToString( "," ) { idioma -> "'${ idioma.codigoRexion }'" }
+        val idiomas = Idioma.entries.filter { idioma -> idioma != Idioma.Nada }.joinToString( "," ) { idioma -> "'${ idioma.codigoRexion }'" }
         val dificultades = Dificultade.entries.joinToString( "," ) { dificultade -> "'${ dificultade.nome }'" }
 
         //Nomes táboas
@@ -54,18 +54,18 @@ internal class EstruturaDB {
             """
             CREATE TABLE $grupos (
                 id   INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT CHECK ( id >= 0 ),
-                nome TEXT NOT NULL COLLATE NOCASE CHECK ( LENGTH( nome ) BETWEEN 1 AND 100 )
+                clave TEXT NOT NULL COLLATE NOCASE CHECK ( LENGTH( clave ) BETWEEN 1 AND 100 )
             )
             """
         )
 
-        db.execSQL( "CREATE UNIQUE INDEX uq_grupos_nome ON $grupos( nome )" )
+        db.execSQL( "CREATE UNIQUE INDEX uq_grupos_nome ON $grupos( clave )" )
 
         db.execSQL(
             """
             CREATE TABLE $xogadores (
                 id       INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT CHECK ( id >= 0 ),
-                nome     TEXT NOT NULL COLLATE NOCASE CHECK ( LENGTH( nome ) BETWEEN 1 AND 100 ),
+                clave     TEXT NOT NULL COLLATE NOCASE CHECK ( LENGTH( clave ) BETWEEN 1 AND 100 ),
                 grupo_id INTEGER NOT NULL CHECK ( grupo_id >= 0 ),
         
                 CONSTRAINT fk_xogadores_grupo FOREIGN KEY ( grupo_id ) REFERENCES $grupos ( id ) ON UPDATE RESTRICT ON DELETE CASCADE
@@ -73,7 +73,7 @@ internal class EstruturaDB {
             """
         )
 
-        db.execSQL( "CREATE UNIQUE INDEX uq_xogadores_nome_grupo ON $xogadores( nome, grupo_id )" )
+        db.execSQL( "CREATE UNIQUE INDEX uq_xogadores_nome_grupo ON $xogadores( clave, grupo_id )" )
         db.execSQL( "CREATE INDEX idx_xogadores_grupo ON $xogadores( grupo_id )" )
 
         db.execSQL(

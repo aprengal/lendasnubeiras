@@ -4,8 +4,15 @@ import com.ibm.icu.text.PluralRules
 import com.aprengal.lendasnubeiras.data.localizacion.Dominio
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
 import com.aprengal.lendasnubeiras.data.localizacion.claves.L10nPlural
-import com.aprengal.lendasnubeiras.data.localizacion.claves.L10nSingular
 import com.aprengal.lendasnubeiras.data.localizacion.claves.L10nVariante
+import com.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nActividades
+import com.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nAutenticacion
+import com.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nBase
+import com.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nIconas
+import com.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nOpcions
+import com.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nSingular
+import com.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nTitulos
+import com.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nValidacion
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -16,17 +23,32 @@ import java.util.Locale
 
 class LocalizacionTest {
 
+    private fun collerClavesSingular( dominio: Dominio ): List<L10nSingular> {
+
+        val lista = when( dominio ) {
+            Dominio.ACTIVIDADES -> L10nActividades.entries
+            Dominio.AUTENTICACION -> L10nAutenticacion.entries
+            Dominio.BASE -> L10nBase.entries
+            Dominio.TITULOS -> L10nTitulos.entries
+            Dominio.ICONAS -> L10nIconas.entries
+            Dominio.VALIDACION -> L10nValidacion.entries
+            Dominio.OPCIONS -> L10nOpcions.entries
+        }
+
+        return lista
+
+    }
+
     @Test
     fun comprobarLocalizacion() {
 
-        val dominios = Dominio::class.sealedSubclasses.mapNotNull { clase -> clase.objectInstance }
-
-        val idiomas = Idioma.entries.filter { idioma -> idioma != Idioma.NADA }
+        val dominios = Dominio.entries
+        val idiomas = Idioma.entries.filter { idioma -> idioma != Idioma.Nada }
 
         //Hai categorías de plurais que non engade Android
         val categoriasExtras = mapOf(
-            Idioma.GALEGO to listOf( "many" ),
-            Idioma.CASTELAN to listOf( "many" )
+            Idioma.Galego to listOf( "many" ),
+            Idioma.Castelan to listOf( "many" )
         )
 
         for ( dominio in dominios ) {
@@ -35,7 +57,7 @@ class LocalizacionTest {
             val carpetaUrl = javaClass.getResource( "/$carpeta" ) ?: error( "Non existe o dominio ${ dominio.nome }" )
             val arquivos = carpetaUrl.toURI().let { File( it ).list() ?: emptyArray() }.toList()
 
-            val singulares = L10nSingular.entries.filter { el -> el.dominio == dominio }.map { el -> el.clave }.toSet()
+            val singulares = collerClavesSingular( dominio ).map { el -> el.clave }.toSet()
             val plurais = L10nPlural.entries.filter { el -> el.dominio == dominio }.map { el -> el.clave }.toSet()
             val variantes = L10nVariante.entries.filter { el -> el.dominio == dominio }.map { el -> el.clave }.toSet()
 
@@ -58,7 +80,18 @@ class LocalizacionTest {
 
                 val clavesJSON = json.keys().asSequence().toSet()
 
-                assertEquals( "Claves incorrectas en $arquivo", clavesEsperadas, clavesJSON )
+                val faltan = clavesEsperadas - clavesJSON
+                val sobran = clavesJSON - clavesEsperadas
+
+                if ( faltan.isNotEmpty() || sobran.isNotEmpty() ) {
+                    fail(
+                        buildString {
+                            append( "$arquivo: Claves incorrectas.\n" )
+                            if ( faltan.isNotEmpty() ) append( "  - Faltan: $faltan\n" )
+                            if ( sobran.isNotEmpty() ) append( "  - Sobran: $sobran" )
+                        }.trim()
+                    )
+                }
 
                 for ( clave in singulares ) {
                     assertTrue( "$arquivo: $clave debería ser String", json.get( clave ) is String )

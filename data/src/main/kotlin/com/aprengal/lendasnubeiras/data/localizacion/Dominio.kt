@@ -7,18 +7,19 @@ package com.aprengal.lendasnubeiras.data.localizacion
     }
 }*/
 
-sealed class Dominio( val nome: String ) {
+enum class Dominio( val nome: String ) {
 
-    object Base : Dominio( "base" )
-    object Autenticacion : Dominio( "autenticacion" )
-    object Titulos : Dominio( "titulos" )
-    object Icona : Dominio( "icona" )
-    object Test : Dominio( "test" )
-    object Opcions: Dominio( "opcions" )
+    ACTIVIDADES( "actividades" ),
+    AUTENTICACION( "autenticacion" ),
+    BASE( "base" ),
 
-    //object Actividade : Dominio( "actividade" )
+    ICONAS( "iconas" ),
+    TITULOS( "titulos" ),
+    VALIDACION( "validacion" ),
+    OPCIONS( "opcions" ),
+    //Test( "test" )
 
-    //object AxustesXogos: Dominio( "xogos/axustes" )
-    //object XogoDados: Dominio( "xogos/dados" )
-
+    //Actividade( "actividade" ),
+    //AxustesXogos( "xogos/axustes" ),
+    //XogoDados( "xogos/dados" ),
 }

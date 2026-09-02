@@ -23,7 +23,8 @@ import com.aprengal.lendasnubeiras.data.utilidades.Corrutinas.corrutina
 import com.aprengal.lendasnubeiras.data.utilidades.Contexto.haiLector
 import com.aprengal.lendasnubeiras.data.localizacion.Localizacion.cambiarIdioma
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
-import com.aprengal.lendasnubeiras.data.localizacion.claves.L10nSingular
+import com.aprengal.lendasnubeiras.data.localizacion.Localizacion.obterTexto
+import com.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nOpcions
 import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodePecharSesion
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
 import com.aprengal.lendasnubeiras.data.usuarios.SesionActual.pecharSesion
@@ -32,9 +33,11 @@ import com.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalAviso
 import com.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalIdioma
 import com.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosAlerta
 import com.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosElementoLista
+import com.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosOpcion
+import com.aprengal.lendasnubeiras.ui.reutilizables.clases.Icona
+import com.aprengal.lendasnubeiras.ui.reutilizables.clases.TipoOpcion
 import com.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.Texto
 import com.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.EspazadorAlto
-import com.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.iconas.Icona
 import com.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.AlertaDialogo
 import com.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.ElementoLista
 import com.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.ListaOpcions
@@ -45,32 +48,6 @@ import com.aprengal.lendasnubeiras.ui.tema.Tema.Variante
 import com.aprengal.lendasnubeiras.ui.utilidades.Accions.amosarAviso
 import com.aprengal.lendasnubeiras.ui.utilidades.Accions.executarAccion
 
-private enum class TipoOpcion { ALERTA, INTERRUPTOR }
-
-private data class DatosOpcion<T>(
-    val clave: String, val tipo: TipoOpcion, val icona: Icona?, val descricionExtra: Boolean = false,
-    val opcions: List<T>? = null, val valorInicial: T, val nomeUI: ( T ) -> String, val accion: suspend ( T ) -> Boolean
-) {
-
-    val titulo = L10nSingular.buscar( "boton_${ clave }" )
-
-    val gardadoFallido = L10nSingular.buscar( "gardado_fallido_${ clave }" )
-    val localizar = clave != "cambio_idioma"
-
-    fun descricion( valor: T ): String {
-
-        val descricion = if ( localizar ) {
-            L10nSingular.buscar( "${ clave }_${ nomeUI( valor ) }" ).texto()
-        } else {
-            nomeUI( valor )
-        }
-
-        return descricion
-
-    }
-
-}
-
 @Composable
 fun PantallaAxustes() {
 
@@ -80,13 +57,15 @@ fun PantallaAxustes() {
 
             val datosIdioma = DatosOpcion(
                 clave = "cambio_idioma",
+                titulo = L10nOpcions.TituloCambioIdioma,
+                gardadoFallido = L10nOpcions.GardadoFallidoCambioIdioma,
                 tipo = TipoOpcion.ALERTA,
-                icona = Icona.IDIOMA,
-                descricionExtra = true,
-                opcions = Idioma.entries.filter { idioma -> idioma != Idioma.NADA },
+                icona = Icona.Idioma,
                 valorInicial = LocalIdioma.current,
-                nomeUI = { idioma -> idioma.nome },
-                accion = { novoIdioma -> cambiarIdioma( novoIdioma ) }
+                accion = { novoIdioma -> cambiarIdioma( novoIdioma ) },
+                tituloAlerta = L10nOpcions.DialogoCambioIdioma,
+                opcions = Idioma.entries.filter { idioma -> idioma != Idioma.Nada },
+                descricionExtra = L10nOpcions.SubtituloCambioIdioma
             )
 
             ContidoOpcion( datosIdioma )
@@ -94,12 +73,14 @@ fun PantallaAxustes() {
 
             val datosTema = DatosOpcion(
                 clave = "cambio_tema",
+                titulo = L10nOpcions.TituloCambioTema,
+                gardadoFallido = L10nOpcions.GardadoFallidoCambioTema,
                 tipo = TipoOpcion.ALERTA,
-                icona = escollerVarianteImaxe( isSystemInDarkTheme(), Icona.TEMA_CLARO, Icona.TEMA_ESCURO ),
-                opcions = Variante.entries,
+                icona = escollerVarianteImaxe( isSystemInDarkTheme(), Icona.TemaClaro, Icona.TemaEscuro ),
                 valorInicial = temaActual,
-                nomeUI = { variante -> variante.nome },
-                accion = { novoTema -> gardarTema( novoTema ) }
+                accion = { novoTema -> gardarTema( novoTema ) },
+                tituloAlerta = L10nOpcions.DialogoCambioTema,
+                opcions = Variante.entries
             )
 
             ContidoOpcion( datosTema )
@@ -114,9 +95,8 @@ fun PantallaAxustes() {
 
             Card {
 
-                //Valorar se aquí se pode empregar unha alerta para confirmar o peche de sesión
-                Column( modifier = modificador, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center ) {
-                    Texto( L10nSingular.BOTON_PECHE_SESION )
+                Column( modificador, Arrangement.Center, Alignment.CenterHorizontally ) {
+                    Texto( L10nOpcions.TituloPecheSesion )
                 }
 
             }
@@ -133,13 +113,13 @@ private fun <T> ContidoOpcion( datos: DatosOpcion<T> ) {
     var activo by rememberSaveable { mutableStateOf( false ) }
     var valorActual by rememberSaveable { mutableStateOf( datos.valorInicial ) }
     val haiLector = haiLector( LocalContext.current )
-    val textoUI = datos.descricion( valorActual )
+    val textoUI = obterTexto( valorActual )
 
     val contido = @Composable {
 
         Column {
             Text( textoUI )
-            if ( haiLector && datos.descricionExtra ) { Texto( L10nSingular.buscar( "subtitulo_${ datos.clave }" ) ) }
+            datos.descricionExtra?.takeIf { haiLector }?.let { texto -> Texto( texto ) }
         }
 
     }
@@ -186,11 +166,11 @@ private fun <T> DebuxarAlerta( datos: DatosOpcion<T>, amosar: ( Boolean ) -> Uni
 
     }
 
-    val datosLista = DatosListaOpcions( datos.clave, datos.opcions, escollido, datos.nomeUI, datos.localizar ) {
+    val datosLista = DatosListaOpcions( datos.opcions, escollido ) {
         novoValor -> escollido = novoValor
     }
 
-    val titulo = L10nSingular.buscar( "dialogo_${ datos.clave }" )
+    val titulo = datos.tituloAlerta!!
     val contido = @Composable { ListaOpcions( datosLista ) }
 
     val datosAlerta = DatosAlerta( titulo, { amosar( false ) }, contido = contido, confirmado = confirmado )
@@ -212,14 +192,14 @@ fun intentoPecheSesion(): () -> Unit {
             amosarDialogo = false
 
             corrutina {
-                val clave = L10nSingular.PECHE_SESION_FALLIDO
+                val clave = L10nOpcions.PecheSesionFallido
                 val erro: suspend () -> SnackbarResult = { amosarAviso( aviso, clave, true ) }
                 executarAccion( { pecharSesion() }, erro )
             }
 
         }
 
-        val datosAlerta = DatosAlerta( L10nSingular.DIALOGO_PECHE_SESION, { amosarDialogo = false }, confirmado = accion )
+        val datosAlerta = DatosAlerta( L10nOpcions.DialogoPecheSesion, { amosarDialogo = false }, confirmado = accion )
         AlertaDialogo( datosAlerta )
 
     }

@@ -19,7 +19,7 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import com.aprengal.lendasnubeiras.data.bd.operacions.Actividades.collerActividade
 import com.aprengal.lendasnubeiras.data.localizacion.claves.L10nPlural
-import com.aprengal.lendasnubeiras.data.localizacion.claves.L10nSingular
+import com.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nSingular
 import com.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalRuta
 import com.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalTitulo
 import com.aprengal.lendasnubeiras.ui.navegacion.Ruta
@@ -57,7 +57,7 @@ fun AmosarTitulo() {
 }
 
 @Composable
-fun TextoEnlazado( elemento: L10nSingular, enlaces: Map<L10nSingular, () -> Unit> ) {
+fun <T: L10nSingular> TextoEnlazado( elemento: T, enlaces: Map<T, () -> Unit> ) {
 
     require( enlaces.isNotEmpty() ) { "TextoEnlazado require polo menos un enlace" }
 

@@ -9,12 +9,12 @@ class TestTema {
     fun comprobarNomeVariante( variante: Variante ) {
 
         val esperado = when ( variante ) {
-            Variante.CLARO -> "claro"
-            Variante.ESCURO -> "escuro"
-            Variante.PREDETERMINADO -> "predeterminado"
+            Variante.Claro -> "claro"
+            Variante.Escuro -> "escuro"
+            Variante.Predeterminado -> "predeterminado"
         }
 
-        assertEquals( esperado, variante.nome )
+        assertEquals( esperado, variante.clave )
 
     }
 
@@ -25,14 +25,14 @@ class TestTema {
 
     @Test
     fun buscarVariante() {
-        assertEquals( Variante.CLARO, Variante.buscar( "claro" ) )
-        assertEquals( Variante.ESCURO, Variante.buscar( "escuro" ) )
-        assertEquals( Variante.PREDETERMINADO, Variante.buscar( "predeterminado" ) )
+        assertEquals( Variante.Claro, Variante.buscar( "claro" ) )
+        assertEquals( Variante.Escuro, Variante.buscar( "escuro" ) )
+        assertEquals( Variante.Predeterminado, Variante.buscar( "predeterminado" ) )
     }
 
     @Test
     fun buscarVarianteInexistente() {
-        assertEquals( Variante.PREDETERMINADO, Variante.buscar( "outra" ) )
+        assertEquals( Variante.Predeterminado, Variante.buscar( "outra" ) )
     }
 
 

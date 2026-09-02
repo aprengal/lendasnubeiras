@@ -8,17 +8,17 @@ import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import androidx.core.database.sqlite.transaction
-import com.aprengal.lendasnubeiras.data.actividades.datos.atributos.Atributo
 import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.CombinacionSQL
 import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
-import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.SelectSQL
+import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.SeleccionSQL
 import com.aprengal.lendasnubeiras.data.bd.taboas.Taboa
 import com.aprengal.lendasnubeiras.data.bd.taboas.TaboaBase
 import com.aprengal.lendasnubeiras.data.bd.taboas.TaboaLectura
+import com.aprengal.lendasnubeiras.data.localizacion.ElementoL10n
 import com.aprengal.lendasnubeiras.data.localizacion.Idioma
 import kotlin.collections.iterator
 
-internal class BBDD( contexto: Context) : SQLiteOpenHelper( contexto, DB_NOME, null, DB_VERSION ) {
+internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, null, DB_VERSION ) {
 
     private enum class Modo { LECTURA, ESCRITURA }
 
@@ -73,7 +73,7 @@ internal class BBDD( contexto: Context) : SQLiteOpenHelper( contexto, DB_NOME, n
 
         val procesado = when ( valor ) {
             is String, is Number -> valor.toString()
-            is Atributo -> valor.clave
+            is ElementoL10n -> valor.clave
             is Idioma -> valor.codigoRexion
             else -> error( "Tipo non soportado: ${ valor::class }" )
         }
@@ -113,7 +113,7 @@ internal class BBDD( contexto: Context) : SQLiteOpenHelper( contexto, DB_NOME, n
 
     }
 
-    fun seleccionar(taboa: Taboa, datos: SelectSQL): List<Map<String, Any>> {
+    fun seleccionar(taboa: Taboa, datos: SeleccionSQL): List<Map<String, Any>> {
 
         verificarTaboa( taboa, Modo.LECTURA )
         require( datos.columnas.isNotEmpty() ) { "Deben indicarse as columnas nunha consulta select" }
@@ -132,7 +132,7 @@ internal class BBDD( contexto: Context) : SQLiteOpenHelper( contexto, DB_NOME, n
 
             if ( datos.ordenar.isNotEmpty() ) {
                 append( " ORDER BY " )
-                append( datos.ordenar.entries.joinToString( ", " ) { ( columna, orde ) ->  "$columna ${ orde.nome }" } )
+                append( datos.ordenar.entries.joinToString( ", " ) { ( columna, orde ) ->  "$columna ${ orde.clave }" } )
             }
 
             if ( datos.limite.isNotEmpty() ) {
@@ -294,7 +294,7 @@ internal class BBDD( contexto: Context) : SQLiteOpenHelper( contexto, DB_NOME, n
                 val secundaria = "${ info.aliasSecundario }.${ info.colSecundaria }"
                 val condicion = if ( info.colPrincipal != info.colSecundaria ) " ON $principal = $secundaria" else " USING ( ${ info.colPrincipal } )"
 
-                append( " ${ info.tipo.nome } JOIN ${ info.taboaCombinacion.nome } AS ${ info.aliasSecundario }$condicion" )
+                append( " ${ info.tipo.clave } JOIN ${ info.taboaCombinacion.nome } AS ${ info.aliasSecundario }$condicion" )
 
             }
 

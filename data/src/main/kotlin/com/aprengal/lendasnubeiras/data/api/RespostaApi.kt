@@ -6,9 +6,9 @@ sealed class RespostaApi( val codigo: Int ) {
 
     val exito: Boolean = codigo in 200..299
 
-    class RespostaXenerica( datos: JSONObject): RespostaApi( datos.optInt( "codigo" ) )
+    class RespostaXenerica( datos: JSONObject ) : RespostaApi( datos.optInt( "codigo" ) )
 
-    class SesionUsuario( datos: JSONObject): RespostaApi( datos.optInt( "codigo" ) ) {
+    class SesionUsuario( datos: JSONObject ) : RespostaApi( datos.optInt( "codigo" ) ) {
 
         val sesion: String = datos.optString( "sesion" )
 
@@ -22,7 +22,7 @@ sealed class RespostaApi( val codigo: Int ) {
 
     }
 
-    class DatosActividades( datos: JSONObject): RespostaApi( datos.optInt( "codigo" ) ) {
+    class DatosActividades( datos: JSONObject ) : RespostaApi( datos.optInt( "codigo" ) ) {
 
         val lista = collerActividades( datos )
 

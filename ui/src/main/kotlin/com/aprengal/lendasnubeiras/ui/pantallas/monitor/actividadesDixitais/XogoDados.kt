@@ -31,8 +31,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aprengal.lendasnubeiras.data.actividades.dixitais.ActividadeDados
+import com.aprengal.lendasnubeiras.ui.reutilizables.clases.Icona.Companion.DebuxarIcona
 import com.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.EspazadorAlto
-import com.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.iconas.DebuxarIcona
 
 @Composable
 fun XogoDados() {

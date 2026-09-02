@@ -14,11 +14,11 @@ class Enlaces( intento: Intent ) {
     private val peticion = Peticion( intento )
 
     private val enlaces = listOf(
-        ValidadorEnlace( Enlace( "$dominio://axustes" ), serializer<Ruta.Axustes>() ),
+        //ValidadorEnlace( Enlace( "$dominio://axustes" ), serializer<Ruta.Axustes>() ),
         ValidadorEnlace( Enlace( "$dominio://actividades" ), serializer<Ruta.Actividades>() ),
         ValidadorEnlace( Enlace( "$dominio://actividade/detalle/{id}" ), serializer<Ruta.ActividadeDetalle>() ),
-        ValidadorEnlace( Enlace( "$dominio://buscar/{termo}" ), serializer<Ruta.Buscar>() ),
-        ValidadorEnlace( Enlace( "$dominio://idioma" ), serializer<Ruta.Idioma>() )
+        ValidadorEnlace( Enlace( "$dominio://buscar/{termo}" ), serializer<Ruta.Buscar>() ),//TODO: hai que cambiar a detalle busca, non buscar directamnente
+        //ValidadorEnlace( Enlace( "$dominio://idioma" ), serializer<Ruta.Idioma>() )
     )
 
     //TODO: En lugar de engadir unha soa entrada, igual se podería engadir unha lista de rutas no seu lugar

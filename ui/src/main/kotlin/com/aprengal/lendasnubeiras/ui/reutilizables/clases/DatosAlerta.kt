@@ -1,8 +1,7 @@
 package com.aprengal.lendasnubeiras.ui.reutilizables.clases
 
 import androidx.compose.runtime.Composable
-import com.aprengal.lendasnubeiras.data.localizacion.claves.L10nSingular
-import com.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.iconas.Icona
+import com.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nSingular
 
 data class DatosAlerta(
     val titulo: L10nSingular,

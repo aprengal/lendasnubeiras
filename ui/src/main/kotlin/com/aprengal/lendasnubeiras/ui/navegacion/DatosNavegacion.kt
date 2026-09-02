@@ -6,14 +6,16 @@ import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavMetadataKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.metadata
-import com.aprengal.lendasnubeiras.data.localizacion.claves.L10nSingular
+import com.aprengal.lendasnubeiras.data.localizacion.claves.L10n
+import com.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nBase
+import com.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nTitulos
 import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeAdministrar
 import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeCrear
 import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeLer
 import com.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeRexistrarse
 import com.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.APERTURA
 import com.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.COMPLETA
-import com.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.SOSUPERIOR
+import com.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.TITULO_SUPERIOR
 import com.aprengal.lendasnubeiras.ui.pantallas.NovaActividade
 import com.aprengal.lendasnubeiras.ui.pantallas.autenticacion.PantallaAcceso
 import com.aprengal.lendasnubeiras.ui.pantallas.abertas.PantallaAxustes
@@ -26,27 +28,28 @@ import com.aprengal.lendasnubeiras.ui.pantallas.monitor.PantallaInicio
 import com.aprengal.lendasnubeiras.ui.pantallas.monitor.actividadesDixitais.XogoDados
 import com.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalRuta
 import com.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalTitulo
+import com.aprengal.lendasnubeiras.ui.pantallas.monitor.PantallaResultadoBusca
 import com.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaApertura
 import com.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaBase
 import com.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaSuperior
 
 internal class DatosNavegacion( val navegacion: Navegacion ) {
 
-    enum class TipoPantalla { COMPLETA, SOSUPERIOR, APERTURA }
+    enum class TipoPantalla { COMPLETA, TITULO_SUPERIOR, APERTURA }
 
-    data class DatosPantalla( val tipo: TipoPantalla, val titulo: L10nSingular? = null )
+    data class DatosPantalla( val tipo: TipoPantalla, val titulo: L10nTitulos? = null )
     object Tipo : NavMetadataKey<TipoPantalla>
 
     val entradas = entryProvider {
 
-        val axustes = DatosPantalla( SOSUPERIOR, L10nSingular.TITULO_AXUSTES )
+        val axustes = DatosPantalla( TITULO_SUPERIOR, L10nTitulos.Axustes )
         ruta<Ruta.Axustes>( axustes ) { PantallaAxustes() }
 
         if ( PodeRexistrarse() ) {
 
-            val benvida = DatosPantalla( APERTURA, L10nSingular.TITULO_BENVIDA )
-            val acceso = DatosPantalla( APERTURA, L10nSingular.TITULO_ACCESO )
-            val rexistro = DatosPantalla( APERTURA, L10nSingular.TITULO_REXISTRO )
+            val benvida = DatosPantalla( APERTURA, L10nTitulos.Benvida )
+            val acceso = DatosPantalla( APERTURA, L10nTitulos.Acceso )
+            val rexistro = DatosPantalla( APERTURA, L10nTitulos.Rexistro )
 
             ruta<Ruta.Benvida>( benvida ) { PantallaBenvida() }
             ruta<Ruta.Acceso>( acceso ) { PantallaAcceso() }
@@ -56,29 +59,31 @@ internal class DatosNavegacion( val navegacion: Navegacion ) {
 
         if ( PodeLer() ) {
 
-            val actividades = DatosPantalla( SOSUPERIOR, L10nSingular.SI )
+            val actividades = DatosPantalla( TITULO_SUPERIOR, TODO( "PENDENTE" ) )
             val inicio = DatosPantalla( COMPLETA )
             val idioma = DatosPantalla( COMPLETA )
+            val buscar = DatosPantalla( COMPLETA )
 
             ruta<Ruta.Actividades>( actividades ) { PantallaActividade() }
             ruta<Ruta.Inicio>( inicio ) { PantallaInicio() }
             ruta<Ruta.Idioma>( idioma ) { XogoDados() }
+            ruta<Ruta.Buscar>( buscar ) { PantallaBuscador() }
 
             //Con argumentos
 
-            val actividadeDetalle = DatosPantalla( SOSUPERIOR )
-            val buscar = DatosPantalla( COMPLETA )
+            val actividadeDetalle = DatosPantalla( TITULO_SUPERIOR )
+            val buscaDetalle = DatosPantalla( COMPLETA )
 
             ruta<Ruta.ActividadeDetalle>( actividadeDetalle) { datos -> PantallaActividadeDetalle( datos.id ) }
-            ruta<Ruta.Buscar>( buscar ) { datos -> PantallaBuscador( datos.termo ) }
+            ruta<Ruta.BuscaDetalle>( buscaDetalle ) { datos -> PantallaResultadoBusca( datos.termo ) }
 
         }
 
         if ( PodeCrear() ) {
 
-            val listar = DatosPantalla( SOSUPERIOR )
-            val crear = DatosPantalla( SOSUPERIOR )
-            val modificar = DatosPantalla( SOSUPERIOR )
+            val listar = DatosPantalla( TITULO_SUPERIOR )
+            val crear = DatosPantalla( TITULO_SUPERIOR )
+            val modificar = DatosPantalla( TITULO_SUPERIOR )
 
             ruta<Ruta.ListarActividades>( listar ) { TODO() }
             ruta<Ruta.CrearActividade>( crear ) { NovaActividade() }
@@ -87,7 +92,7 @@ internal class DatosNavegacion( val navegacion: Navegacion ) {
         }
 
         if ( PodeAdministrar() ) {
-            val administrar = DatosPantalla( SOSUPERIOR )
+            val administrar = DatosPantalla( TITULO_SUPERIOR )
             ruta<Ruta.Administrar>( administrar ) { TODO() }
         }
 
@@ -110,7 +115,7 @@ internal class DatosNavegacion( val navegacion: Navegacion ) {
 
                 when ( datos.tipo ) {
                     COMPLETA -> EstruturaBase( navegacion ) { contido( ruta ) }
-                    SOSUPERIOR -> EstruturaSuperior { contido( ruta ) }
+                    TITULO_SUPERIOR -> EstruturaSuperior { contido( ruta ) }
                     APERTURA -> EstruturaApertura( navegacion ) { contido( ruta ) }
                 }
 

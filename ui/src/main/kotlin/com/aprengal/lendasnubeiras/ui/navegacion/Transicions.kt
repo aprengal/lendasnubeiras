@@ -16,15 +16,15 @@ import com.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.Tipo
 import com.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla
 import com.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.APERTURA
 import com.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.COMPLETA
-import com.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.SOSUPERIOR
+import com.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.TITULO_SUPERIOR
 
 class Transicions {
 
-    enum class Transicion( val entrada: EnterTransition, val saida: ExitTransition, val atrasEntrada: EnterTransition, val atrasSaida: ExitTransition ) {
+    private enum class Transicion( val entrada: EnterTransition, val saida: ExitTransition, val atrasEntrada: EnterTransition, val atrasSaida: ExitTransition ) {
 
-        DISOLVER( fadeIn( tween() ), fadeOut( tween() ), fadeIn( tween() ), fadeOut( tween() ) ),
+        Disolver( fadeIn( tween() ), fadeOut( tween() ), fadeIn( tween() ), fadeOut( tween() ) ),
 
-        DESLIZAR( moverDH( tween() ) { w -> w }, moverFH( tween() ) { w -> -w }, moverDH( tween() ) { w -> -w }, moverFH( tween() ) { w -> w } )
+        Deslizar( moverDH( tween() ) { w -> w }, moverFH( tween() ) { w -> -w }, moverDH( tween() ) { w -> -w }, moverFH( tween() ) { w -> w } )
 
     }
 
@@ -35,8 +35,8 @@ class Transicions {
     private fun collerTransicion( tipo: TipoPantalla ): Transicion {
 
         val transicion = when( tipo ) {
-            COMPLETA -> Transicion.DISOLVER
-            SOSUPERIOR, APERTURA -> Transicion.DESLIZAR
+            COMPLETA -> Transicion.Disolver
+            TITULO_SUPERIOR, APERTURA -> Transicion.Deslizar
         }
 
         return transicion

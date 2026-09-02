@@ -1,0 +1,27 @@
+{
+  "categoria_outros": "Others",
+  "categoria_dixital": "Digital",
+  "categoria_aire_libre": "Outdoors",
+  "categoria_interior": "Indoor",
+  "categoria_lectura": "Reading",
+
+  "destinatario_xeral": "General",
+  "destinatario_peques": "Kids",
+  "destinatario_xuvenil": "Youth",
+  "destinatario_adultos": "Adults",
+  "destinatario_maiores": "Seniors",
+  "destinatario_mixto": "Mixed",
+
+  "estado_borrador_local": "Local draft",
+  "estado_pendente_local": "Local pending",
+  "estado_publicado_local": "Local published",
+  "estado_borrador": "Draft",
+  "estado_pendente": "Pending",
+  "estado_publicado": "Published",
+  "estado_borrado": "Deleted",
+
+  "dificultade_facil": "Easy",
+  "dificultade_media": "Medium",
+  "dificultade_dificil": "Hard",
+  "dificultade_pesadelo": "Nightmare"
+}

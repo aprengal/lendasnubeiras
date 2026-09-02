@@ -2,11 +2,11 @@ package com.aprengal.lendasnubeiras.data.localizacion
 
 enum class Idioma( val nome: String, val codigo: String, val rexion: String, val pendente: String ) {
 
-    GALEGO( "Galego", "gl", "ES", pendente = "PENDENTE!!" ),
-    CASTELAN( "Español", "es", "ES", pendente = "¡PENDIENTE!" ),
-    INGLES( "English", "en", "GB", pendente = "PENDING!!" ),
+    Galego( "Galego", "gl", "ES", pendente = "PENDENTE!!" ),
+    Castelan( "Español", "es", "ES", pendente = "¡PENDIENTE!" ),
+    Ingles( "English", "en", "GB", pendente = "PENDING!!" ),
 
-    NADA( "", "", "", "" );
+    Nada( "", "", "", "" );
 
     val codigoRexion: String get() = "${codigo}_$rexion"
 
@@ -14,11 +14,11 @@ enum class Idioma( val nome: String, val codigo: String, val rexion: String, val
 
         fun escollerIdiomaAplicacion( vararg codigos: String ): Idioma {
             codigos.forEach { codigoRexion -> entries.find { idioma -> idioma.codigoRexion == codigoRexion }?.let { resultado -> return resultado } }
-            return CASTELAN
+            return Castelan
         }
 
         fun escollerIdioma( etiqueta: String ): Idioma {
-            return entries.find { idioma -> idioma.codigoRexion == etiqueta } ?: NADA
+            return entries.find { idioma -> idioma.codigoRexion == etiqueta } ?: Nada
         }
 
     }

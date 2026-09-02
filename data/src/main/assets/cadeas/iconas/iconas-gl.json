@@ -1,9 +1,8 @@
 {
 
-  "axustes": "Ajustes",
+  "axustes": "Axustes",
   "atras": "Atrás",
   "crear": "Crear",
-
   "inicio": "Inicio",
   "buscar": "Buscar",
   "actividades": "Actividades",
@@ -11,12 +10,14 @@
 
   "correo": "Correo electrónico",
 
-  "amosar": "Mostrar elemento",
-  "agochar": "Ocultar elemento",
+  "amosar": "Amosar elemento",
+  "agochar": "Agochar elemento",
   "valido": "Elemento válido",
   "invalido": "Elemento inválido",
 
   "tema_claro": "Tema claro",
-  "tema_escuro": "Tema oscuro"
+  "tema_escuro": "Tema escuro",
+
+  "limpar": "Limpar campo"
 
 }

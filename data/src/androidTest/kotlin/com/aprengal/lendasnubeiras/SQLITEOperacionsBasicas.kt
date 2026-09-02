@@ -5,7 +5,7 @@ import com.aprengal.lendasnubeiras.data.actividades.datos.atributos.Categoria
 import com.aprengal.lendasnubeiras.data.bd.clases.BBDD
 import com.aprengal.lendasnubeiras.data.bd.clases.BD
 import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
-import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.SelectSQL
+import com.aprengal.lendasnubeiras.data.bd.clasesAxuda.SeleccionSQL
 import com.aprengal.lendasnubeiras.data.bd.operacions.Actividades.collerActividade
 import com.aprengal.lendasnubeiras.data.bd.operacions.Actividades.collerActividadesBuscables
 import com.aprengal.lendasnubeiras.data.bd.taboas.TaboaBase
@@ -84,7 +84,7 @@ class SQLITEOperacionsBasicas {
         assertEquals( 3, ids.size )
         assertTrue( ids.all { it > 0 } )
 
-        val consulta = SelectSQL( columnas = setOf( "*" ) )
+        val consulta = SeleccionSQL( columnas = setOf( "*" ) )
         val resultados = bd.seleccionar( TaboaBase.ACTIVIDADES, consulta )
 
         assertEquals( 3, resultados.size )
@@ -103,7 +103,7 @@ class SQLITEOperacionsBasicas {
 
         assertEquals( 1, actualizadas )
         assertEquals( "Título cambiado", collerActividade( id )!!.titulo )
-        assertEquals( "Título cambiado", collerActividade( "título cambiado", Idioma.GALEGO )!!.titulo )
+        assertEquals( "Título cambiado", collerActividade( "título cambiado", Idioma.Galego )!!.titulo )
 
     }
 
@@ -165,17 +165,17 @@ class SQLITEOperacionsBasicas {
     @Test
     fun tituloIdiomaDuplicadoRexeitado() {
 
-        val datos1 = datosCompletos( mapOf( "id" to "501", "titulo" to "Repetido", "id_idioma" to Idioma.GALEGO.codigoRexion ) )
+        val datos1 = datosCompletos( mapOf( "id" to "501", "titulo" to "Repetido", "id_idioma" to Idioma.Galego.codigoRexion ) )
         assertEquals( 501, bd.insertar( TaboaBase.ACTIVIDADES, datos1 ) )
 
-        val datos2 = datosCompletos( mapOf( "id" to "502", "titulo" to "Repetido", "id_idioma" to Idioma.GALEGO.codigoRexion ) )
+        val datos2 = datosCompletos( mapOf( "id" to "502", "titulo" to "Repetido", "id_idioma" to Idioma.Galego.codigoRexion ) )
         assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES, datos2 ) )
 
     }
 
     @Test
     fun idiomaMinusculasRexeitado() {
-        val datos1 = datosCompletos( mapOf( "id" to "502", "titulo" to "Repetido", "id_idioma" to Idioma.GALEGO.codigoRexion.lowercase() ) )
+        val datos1 = datosCompletos( mapOf( "id" to "502", "titulo" to "Repetido", "id_idioma" to Idioma.Galego.codigoRexion.lowercase() ) )
         assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES, datos1 ) )
     }
 
@@ -264,7 +264,7 @@ class SQLITEOperacionsBasicas {
         bd.insertar( TaboaBase.ACTIVIDADES, datos )
 
         val onde = mapOf( "docid" to Condicion.Simple( id ) )
-        val consulta = SelectSQL( columnas = setOf( "*" ), onde = onde )
+        val consulta = SeleccionSQL( columnas = setOf( "*" ), onde = onde )
         val resultado = bd.seleccionar( TaboaLectura.BUSCADOR_ACTIVIDADES, consulta )
 
         assertEquals( 1, resultado.size )
@@ -283,7 +283,7 @@ class SQLITEOperacionsBasicas {
         val onde = mapOf( "id" to Condicion.Simple( id ) )
         bd.actualizar( TaboaBase.ACTIVIDADES, cambios, onde )
 
-        val consulta = SelectSQL( columnas = setOf( "titulo" ), onde = mapOf( "docid" to Condicion.Simple( id ) ) )
+        val consulta = SeleccionSQL( columnas = setOf( "titulo" ), onde = mapOf( "docid" to Condicion.Simple( id ) ) )
         val resultado = bd.seleccionar( TaboaLectura.BUSCADOR_ACTIVIDADES, consulta )
 
         assertEquals( "Título actualizado", resultado[ 0 ][ "titulo" ] )
@@ -300,7 +300,7 @@ class SQLITEOperacionsBasicas {
         val onde = mapOf( "id" to Condicion.Simple( id ) )
         bd.eliminar( TaboaBase.ACTIVIDADES, onde )
 
-        val consulta = SelectSQL( columnas = setOf( "*" ), onde = mapOf( "docid" to Condicion.Simple( id ) ) )
+        val consulta = SeleccionSQL( columnas = setOf( "*" ), onde = mapOf( "docid" to Condicion.Simple( id ) ) )
         val resultado = bd.seleccionar( TaboaLectura.BUSCADOR_ACTIVIDADES, consulta )
 
         assertTrue( resultado.isEmpty() )
@@ -315,7 +315,7 @@ class SQLITEOperacionsBasicas {
         bd.insertar( TaboaBase.ACTIVIDADES, datos )
 
         val onde = mapOf( "docid" to Condicion.Simple( id ) )
-        val consulta = SelectSQL( columnas = setOf( "*" ), onde = onde )
+        val consulta = SeleccionSQL( columnas = setOf( "*" ), onde = onde )
         val resultado = bd.seleccionar( TaboaLectura.BUSCADOR_ACTIVIDADES, consulta )
 
         assertTrue( resultado.isEmpty() )
@@ -337,7 +337,7 @@ class SQLITEOperacionsBasicas {
         bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 2 ), onde )
 
         val ondeBuscador = mapOf( "docid" to Condicion.Simple( id ) )
-        val consulta = SelectSQL( columnas = setOf( "*" ), onde = ondeBuscador )
+        val consulta = SeleccionSQL( columnas = setOf( "*" ), onde = ondeBuscador )
         val resultado = bd.seleccionar( TaboaLectura.BUSCADOR_ACTIVIDADES, consulta )
 
         assertEquals( 1, resultado.size )
@@ -358,7 +358,7 @@ class SQLITEOperacionsBasicas {
         bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 3 ), onde )
 
         val ondeBuscador = mapOf( "docid" to Condicion.Simple( id ) )
-        val consulta = SelectSQL( columnas = setOf( "*" ), onde = ondeBuscador )
+        val consulta = SeleccionSQL( columnas = setOf( "*" ), onde = ondeBuscador )
         val resultado = bd.seleccionar( TaboaLectura.BUSCADOR_ACTIVIDADES, consulta )
 
         assertTrue( resultado.isEmpty() )
@@ -391,13 +391,13 @@ class SQLITEOperacionsBasicas {
     fun buscarActividadesConFiltro() {
 
         val datos = listOf(
-            datosCompletosAny( mapOf( "id" to 804L, "titulo" to "Percusión corporal", "descricion" to "Ritmo sen instrumentos", "id_categoria" to Categoria.INTERIOR, "estado" to 2 ) ),
-            datosCompletosAny( mapOf( "id" to 805L, "titulo" to "Percusión en obradoiro de baile", "descricion" to "Percusión aplicada ao movemento", "id_categoria" to Categoria.OUTROS, "estado" to 2 ) )
+            datosCompletosAny( mapOf( "id" to 804L, "titulo" to "Percusión corporal", "descricion" to "Ritmo sen instrumentos", "id_categoria" to Categoria.Interior, "estado" to 2 ) ),
+            datosCompletosAny( mapOf( "id" to 805L, "titulo" to "Percusión en obradoiro de baile", "descricion" to "Percusión aplicada ao movemento", "id_categoria" to Categoria.Outros, "estado" to 2 ) )
         )
 
         bd.insertar( TaboaBase.ACTIVIDADES, datos )
 
-        val resultados = collerActividadesBuscables( "percusión", "data_modificado", filtros = mapOf( "id_categoria" to Categoria.INTERIOR ) )
+        val resultados = collerActividadesBuscables( "percusión", "data_modificado", filtros = mapOf( "id_categoria" to Categoria.Interior ) )
 
         assertEquals( 1, resultados.size )
         assertEquals( "Percusión corporal", resultados[ 0 ].titulo )
@@ -423,7 +423,7 @@ class SQLITEOperacionsBasicas {
             emptyMap()
         }
 
-        val datos = SelectSQL( columnas = setOf( "*" ), onde = onde )
+        val datos = SeleccionSQL( columnas = setOf( "*" ), onde = onde )
 
         val resultados = bd.seleccionar( TaboaBase.ACTIVIDADES, datos )
         val saida = mutableListOf<Map<String, Any>>()

@@ -5,6 +5,11 @@ plugins {
     alias( libs.plugins.kotlin.compose )
 }
 
+repositories {
+    google()
+    mavenCentral()
+}
+
 val localProperties = Properties().apply {
 
     val arquivo = rootProject.file( "local.properties" )
@@ -17,16 +22,16 @@ val localProperties = Properties().apply {
 
 android {
 
-    namespace = "com.aprengal.lendasnubeiras"
+    namespace = "org.aprengal.lendasnubeiras"
     compileSdk = 37
 
     defaultConfig {
 
-        applicationId = "com.aprengal.lendasnubeiras"
+        applicationId = "org.aprengal.lendasnubeiras"
         minSdk = 29
         targetSdk = 37
         versionCode = 2
-        versionName = "0.1.1"
+        versionName = "0.1.11"
 
         ndk {
             //noinspection ChromeOsAbiSupport
@@ -87,7 +92,7 @@ android {
 dependencies {
 
     //Dependecias de compose para arrancar a aplicación
-    implementation( platform(libs.androidx.compose.bom ) )
+    implementation( platform( libs.androidx.compose.bom ) )
     implementation( libs.androidx.compose.material3 )
     implementation( libs.androidx.activity.compose )
 

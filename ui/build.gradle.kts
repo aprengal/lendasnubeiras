@@ -5,9 +5,14 @@ plugins {
     alias( libs.plugins.kotlin.serialization )
 }
 
+repositories {
+    google()
+    mavenCentral()
+}
+
 android {
 
-    namespace = "com.aprengal.lendasnubeiras.ui"
+    namespace = "org.aprengal.lendasnubeiras.ui"
     compileSdk = 37
 
     defaultConfig {
@@ -37,7 +42,7 @@ android {
 dependencies {
 
     //Unificador de versións de compose
-    implementation( platform(libs.androidx.compose.bom ) )
+    implementation( platform( libs.androidx.compose.bom ) )
 
     // Dependencias básicas de Compose
     implementation( libs.androidx.compose.ui )

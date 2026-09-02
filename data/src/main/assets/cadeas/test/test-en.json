@@ -1,22 +1,5 @@
 {
   "carla": "Carla's app DOES work",
-  "natasha": "And karma gave it right back to her",
+  "natasha": "And karma gave it right back to her"
 
-  "mensaxes_novas": {
-    "one": "You have %s new message",
-    "other": "You have %s new messages"
-  },
-  "mensaxe_fallos": {
-    "0": "You submitted your thesis on the aerodynamics of croquettes. Intergalactic honorary doctorate.",
-    "1": "You forgot the bibliography. Your only source was a tweet from a DJ cat at three in the morning.",
-    "2": "Napoleon lost at Waterloo because his alphabet soup went cold. Tasty but false.",
-    "3": "You handed in the calculus exam during zarzuela class. The dean wept with joy at your high notes.",
-    "4": "In anatomy class you drew the digestive system shooting out like confetti from the belly button.",
-    "5": "You showed up dressed as a 17th-century pirate arguing that inflation is a social construct.",
-    "6": "You answered Góngora by quoting old-school reggaetón. The department has called an emergency coven meeting.",
-    "7": "Instead of a Kant essay, you sent a blueprint for catapulting toast at the neighbor.",
-    "8": "You claimed Madrid sits inside a giant watermelon and Murcia is an elf colony.",
-    "9": "You played the periodic table with your lips like a harmonica. Catastrophe on the Richter scale.",
-    "10": "You handed in a blank page with a dried-out slice of ham and a shiny pony sticker. The faculty has gone up in flames."
-  }
 }

@@ -5,6 +5,11 @@ plugins {
     alias( libs.plugins.android.library )
 }
 
+repositories {
+    google()
+    mavenCentral()
+}
+
 val localProperties = Properties().apply {
 
     val arquivo = rootProject.file( "local.properties" )
@@ -39,7 +44,7 @@ tasks.withType<ProcessJavaResTask>().configureEach {
 
 android {
 
-    namespace = "com.aprengal.lendasnubeiras.data"
+    namespace = "org.aprengal.lendasnubeiras.data"
     compileSdk = 37
 
     defaultConfig {
@@ -101,9 +106,6 @@ dependencies {
 
     //DataStorage
     implementation( libs.androidx.datastore.preferences )
-
-    //Conector coa API
-    implementation( libs.okhttp )
 
     //Tests unitarios
     testImplementation( libs.junit )

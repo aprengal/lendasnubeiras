@@ -13,7 +13,7 @@ if ( empty( $_SERVER[ 'REQUEST_URI' ] ) ) {
 
 }
 
-http_response_code( 400 );
+http_response_code( 404 );
 
 $ruta = parse_url( $_SERVER[ 'REQUEST_URI' ], PHP_URL_PATH );
 

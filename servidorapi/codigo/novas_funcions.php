@@ -53,6 +53,6 @@ $unix = xerar_id_unica();
 
 echo $unix . "\n";
 
-$data = (new DateTime('@' . obter_data_creacion( $unix ) ) )->format('Y-m-d H:i:s');
+$data = ( new DateTime( '@' . obter_data_creacion( $unix ) ) )->format('Y-m-d H:i:s');
 
 echo $data;

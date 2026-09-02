@@ -1,0 +1,59 @@
+package org.aprengal.lendasnubeiras.ui.navegacion
+
+import androidx.navigation3.runtime.NavKey
+import kotlinx.serialization.Serializable
+
+@Serializable
+sealed interface Ruta: NavKey {
+
+    //Autenticación
+
+    @Serializable
+    object Benvida : Ruta
+
+    @Serializable
+    object Acceso : Ruta
+
+    @Serializable
+    object Rexistro : Ruta
+
+    //Lectura
+
+    @Serializable
+    object Inicio : Ruta
+
+    @Serializable
+    object Axustes : Ruta
+
+    @Serializable
+    object Actividades : Ruta
+
+    @Serializable
+    data class ActividadeDetalle( val id: Long ) : Ruta
+
+    @Serializable
+    object Buscar : Ruta
+
+    @Serializable
+    data class BuscaDetalle( val termo: String ) : Ruta
+
+    @Serializable
+    object Idioma : Ruta
+
+    //Creación
+
+    @Serializable
+    object ListarActividades : Ruta
+
+    @Serializable
+    object CrearActividade : Ruta
+
+    @Serializable
+    object ModificarActividade : Ruta
+
+    //Administración
+
+    @Serializable
+    object Administrar : Ruta
+
+}

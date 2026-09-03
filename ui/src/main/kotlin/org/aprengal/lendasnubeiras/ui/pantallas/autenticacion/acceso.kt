@@ -14,9 +14,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import org.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nAutenticacion
-import org.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nSingular
-import org.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nValidacion
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nAutenticacion
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nValidacion
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalNavegacion
 import org.aprengal.lendasnubeiras.ui.navegacion.Ruta
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosCampoTexto

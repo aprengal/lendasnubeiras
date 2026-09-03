@@ -13,7 +13,7 @@ import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeLer
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeRexistrarse
 import kotlin.reflect.KClass
 
-internal class ControlAcceso( val navegacion: Navegacion) {
+internal class ControlAcceso( val navegacion: Navegacion ) {
 
     //Hai que mirar se isto ao final acaba duplicando comportamento en ListaNavegacion
     //Non se pode navegar á ruta que nunca se rexistrou
@@ -65,7 +65,7 @@ internal class ControlAcceso( val navegacion: Navegacion) {
     }
 
     @Composable
-    internal fun verificarRuta( ruta: Ruta): Boolean {
+    internal fun verificarRuta( ruta: Ruta ): Boolean {
 
         val redirixir = when ( ruta ) {
             is Ruta.ActividadeDetalle -> if ( collerActividade( ruta.id ) == null ) Ruta.Actividades else null

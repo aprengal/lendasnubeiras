@@ -10,8 +10,8 @@ import androidx.compose.runtime.setValue
 import org.aprengal.lendasnubeiras.data.axustes.Axustes.collerOpcion
 import org.aprengal.lendasnubeiras.data.axustes.Axustes.gardarOpcion
 import org.aprengal.lendasnubeiras.data.axustes.Opcion
-import org.aprengal.lendasnubeiras.data.localizacion.ElementoL10n
-import org.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nOpcions
+import org.aprengal.lendasnubeiras.data.localizacion.clases.ElementoL10n
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nOpcions
 import org.aprengal.lendasnubeiras.ui.tema.Bordos.collerBordos
 import org.aprengal.lendasnubeiras.ui.tema.Cores.collerTemaClaro
 import org.aprengal.lendasnubeiras.ui.tema.Cores.collerTemaEscuro

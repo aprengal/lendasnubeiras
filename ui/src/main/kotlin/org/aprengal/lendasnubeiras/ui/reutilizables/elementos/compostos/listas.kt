@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.aprengal.lendasnubeiras.data.localizacion.Localizacion.obterTexto
+import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.obterTexto
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosElementoLista
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosListaOpcions
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.Icona.Companion.DebuxarIcona

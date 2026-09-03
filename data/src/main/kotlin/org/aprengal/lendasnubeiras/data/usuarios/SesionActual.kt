@@ -10,9 +10,9 @@ import org.aprengal.lendasnubeiras.data.axustes.Axustes.gardarSesionLocal
 import org.aprengal.lendasnubeiras.data.axustes.Opcion
 import org.aprengal.lendasnubeiras.data.api.ConexionApi.procesarPeticion
 import org.aprengal.lendasnubeiras.data.api.ConexionApi.MetodoApi
-import org.aprengal.lendasnubeiras.data.api.RespostaApi.RespostaXenerica
+import org.aprengal.lendasnubeiras.data.api.resposta.RespostaXenerica
 import org.aprengal.lendasnubeiras.data.api.RutasApi
-import org.aprengal.lendasnubeiras.data.api.RespostaApi.SesionUsuario
+import org.aprengal.lendasnubeiras.data.api.resposta.SesionUsuario
 import org.aprengal.lendasnubeiras.data.utilidades.Corrutinas.corrutina
 import org.aprengal.lendasnubeiras.data.utilidades.Corrutinas.corrutinaResposta
 import org.aprengal.lendasnubeiras.data.usuarios.Rol.Companion.buscarRol

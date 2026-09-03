@@ -12,8 +12,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
-import org.aprengal.lendasnubeiras.data.localizacion.ElementoL10n
-import org.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nIconas
+import org.aprengal.lendasnubeiras.data.localizacion.clases.ElementoL10n
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nIconas
 import org.aprengal.lendasnubeiras.ui.R
 import org.aprengal.lendasnubeiras.ui.navegacion.Ruta
 

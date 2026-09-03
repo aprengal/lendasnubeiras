@@ -25,8 +25,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle as escoitarEstado
 import org.aprengal.lendasnubeiras.data.bd.clases.BD
 import org.aprengal.lendasnubeiras.data.api.ConexionApi
 import org.aprengal.lendasnubeiras.data.axustes.Axustes
-import org.aprengal.lendasnubeiras.data.localizacion.Idioma
-import org.aprengal.lendasnubeiras.data.localizacion.Localizacion
+import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma
+import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion
 import org.aprengal.lendasnubeiras.data.usuarios.SesionActual
 import org.aprengal.lendasnubeiras.data.usuarios.SesionActual.collerSesionActual
 import org.aprengal.lendasnubeiras.ui.tema.Tema.TemaNubeiro
@@ -88,11 +88,7 @@ class Entrada : AppCompatActivity() {
 
                         @Suppress( "UNCHECKED_CAST" )
                         val traza = rememberNavBackStack( rutaInicial() ) as NavBackStack<Ruta>
-                        navegacion = rememberSaveable( saver = gardarNavegacion( traza ) ) {
-                            Navegacion(
-                                traza
-                            )
-                        }
+                        navegacion = rememberSaveable( saver = gardarNavegacion( traza ) ) { Navegacion( traza ) }
 
                         RexistrarNavegacion( idiomaActual, navegacion )
 

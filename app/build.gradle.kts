@@ -100,7 +100,7 @@ dependencies {
     implementation( libs.androidx.appcompat )
 
     //Navegación 3
-    implementation(libs.androidx.navigation3.runtime)
+    implementation( libs.androidx.navigation3.runtime )
 
     //Exclusión da dependencia anterior para impedir que cargue emojis
     implementation( libs.androidx.startup.runtime )

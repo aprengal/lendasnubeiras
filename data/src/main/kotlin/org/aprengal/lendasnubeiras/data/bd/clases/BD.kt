@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import org.aprengal.lendasnubeiras.data.actividades.datos.Actividade
 import org.aprengal.lendasnubeiras.data.api.ConexionApi
-import org.aprengal.lendasnubeiras.data.api.RespostaApi
 import org.aprengal.lendasnubeiras.data.api.RutasApi
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.SeleccionSQL
@@ -14,6 +13,8 @@ import org.aprengal.lendasnubeiras.data.bd.taboas.TaboaBase
 import org.aprengal.lendasnubeiras.data.usuarios.SesionActual
 import org.aprengal.lendasnubeiras.data.utilidades.Corrutinas
 import kotlinx.coroutines.CoroutineScope
+import org.aprengal.lendasnubeiras.data.api.resposta.DatosActividades
+import org.aprengal.lendasnubeiras.data.api.resposta.RespostaXenerica
 import java.util.UUID
 
 object BD {
@@ -68,15 +69,15 @@ object BD {
 
             val problemas = mutableListOf<String>()
             val idPeticion = UUID.randomUUID().toString()
-            val campos = mutableMapOf("sesion" to SesionActual.collerSesionActual().value, "id_peticion" to idPeticion)
+            val campos = mutableMapOf( "sesion" to SesionActual.collerSesionActual().value, "id_peticion" to idPeticion )
 
-            val actividadesServidor: RespostaApi.DatosActividades = ConexionApi.procesarPeticion(
+            val actividadesServidor: DatosActividades = ConexionApi.procesarPeticion(
                 ConexionApi.MetodoApi.GET,
                 RutasApi.ACTUALIZAR,
                 campos
             )
 
-            if (!actividadesServidor.exito) return@corrutinaResposta false
+            if ( !actividadesServidor.exito ) return@corrutinaResposta false
 
             val ondeLocal = mapOf("id" to Condicion.Simple(0, OperadorSimple.MAIOR_IGUAL))
 
@@ -119,7 +120,7 @@ object BD {
                     ConexionApi.MetodoApi.POST,
                     RutasApi.REPORTES,
                     campos
-                ) as RespostaApi.RespostaXenerica
+                ) as RespostaXenerica
             }
 
             actividadesObsoletas.values.forEach { actividade -> eliminarPuntuacionActividade(actividade) }

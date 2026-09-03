@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import org.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nBase
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nBase
 import org.aprengal.lendasnubeiras.ui.R
 import org.aprengal.lendasnubeiras.ui.tema.Tema.escollerVarianteImaxe
 

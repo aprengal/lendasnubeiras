@@ -1,9 +1,9 @@
 package org.aprengal.lendasnubeiras.data.bd.operacions
 
 import org.aprengal.lendasnubeiras.data.actividades.datos.Actividade
-import org.aprengal.lendasnubeiras.data.actividades.dixitais.elementos.Clasificacion
-import org.aprengal.lendasnubeiras.data.actividades.dixitais.elementos.Dificultade
-import org.aprengal.lendasnubeiras.data.actividades.dixitais.elementos.Xogador
+import org.aprengal.lendasnubeiras.data.actividades.dixitais.datos.Clasificacion
+import org.aprengal.lendasnubeiras.data.actividades.dixitais.datos.Dificultade
+import org.aprengal.lendasnubeiras.data.actividades.dixitais.datos.Xogador
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.bd
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.OperadorSimple
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.Orde

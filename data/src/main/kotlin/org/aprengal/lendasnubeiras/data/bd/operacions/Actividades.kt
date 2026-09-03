@@ -2,9 +2,9 @@ package org.aprengal.lendasnubeiras.data.bd.operacions
 
 import org.aprengal.lendasnubeiras.data.actividades.datos.Actividade
 import org.aprengal.lendasnubeiras.data.actividades.datos.ActividadeBuscable
-import org.aprengal.lendasnubeiras.data.actividades.datos.atributos.Categoria.Companion.escollerCategoria
-import org.aprengal.lendasnubeiras.data.actividades.datos.atributos.Destinatario.Companion.escollerDestinatario
-import org.aprengal.lendasnubeiras.data.actividades.datos.atributos.Estado.Companion.escollerEstado
+import org.aprengal.lendasnubeiras.data.actividades.datos.Categoria.Companion.escollerCategoria
+import org.aprengal.lendasnubeiras.data.actividades.datos.Destinatario.Companion.escollerDestinatario
+import org.aprengal.lendasnubeiras.data.actividades.datos.Estado.Companion.escollerEstado
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.TipoCombinacion
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.OperadorSimple
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.Orde
@@ -16,9 +16,9 @@ import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.SeleccionSQL
 import org.aprengal.lendasnubeiras.data.bd.taboas.TaboaBase
 import org.aprengal.lendasnubeiras.data.bd.taboas.TaboaLectura
-import org.aprengal.lendasnubeiras.data.localizacion.ElementoL10n
-import org.aprengal.lendasnubeiras.data.localizacion.Idioma
-import org.aprengal.lendasnubeiras.data.localizacion.Idioma.Companion.escollerIdioma
+import org.aprengal.lendasnubeiras.data.localizacion.clases.ElementoL10n
+import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma
+import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma.Companion.escollerIdioma
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeCrear
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeEditarOutras
 import org.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual

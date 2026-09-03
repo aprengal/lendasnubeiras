@@ -1,8 +1,5 @@
 package org.aprengal.lendasnubeiras.data.usuarios
 
-import org.aprengal.lendasnubeiras.data.localizacion.ElementoL10n
-import org.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nBase
-
 //O nome igual se amosa na UI, pero é innecesario cargar esta información se só se amosa en pantallas para un administrador
 enum class Rol( val clave: String ) {
 

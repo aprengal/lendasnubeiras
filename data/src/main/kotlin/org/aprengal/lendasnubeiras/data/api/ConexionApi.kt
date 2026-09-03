@@ -11,9 +11,10 @@ import java.io.IOException
 import java.net.SocketTimeoutException
 import org.aprengal.lendasnubeiras.data.axustes.Opcion
 import org.aprengal.lendasnubeiras.data.BuildConfig
-import org.aprengal.lendasnubeiras.data.api.RespostaApi.DatosActividades
-import org.aprengal.lendasnubeiras.data.api.RespostaApi.RespostaXenerica
-import org.aprengal.lendasnubeiras.data.api.RespostaApi.SesionUsuario
+import org.aprengal.lendasnubeiras.data.api.resposta.DatosActividades
+import org.aprengal.lendasnubeiras.data.api.resposta.RespostaApi
+import org.aprengal.lendasnubeiras.data.api.resposta.RespostaXenerica
+import org.aprengal.lendasnubeiras.data.api.resposta.SesionUsuario
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder

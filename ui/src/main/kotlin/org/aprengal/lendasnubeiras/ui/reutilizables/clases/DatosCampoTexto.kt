@@ -6,7 +6,7 @@ import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.maxLength
 import androidx.compose.ui.Modifier
-import org.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nSingular
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nSingular
 
 data class DatosCampoTexto(
     val estado: TextFieldState,

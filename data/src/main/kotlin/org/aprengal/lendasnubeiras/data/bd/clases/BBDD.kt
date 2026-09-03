@@ -14,8 +14,8 @@ import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.SeleccionSQL
 import org.aprengal.lendasnubeiras.data.bd.taboas.Taboa
 import org.aprengal.lendasnubeiras.data.bd.taboas.TaboaBase
 import org.aprengal.lendasnubeiras.data.bd.taboas.TaboaLectura
-import org.aprengal.lendasnubeiras.data.localizacion.ElementoL10n
-import org.aprengal.lendasnubeiras.data.localizacion.Idioma
+import org.aprengal.lendasnubeiras.data.localizacion.clases.ElementoL10n
+import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma
 import kotlin.collections.iterator
 
 internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, null, DB_VERSION ) {

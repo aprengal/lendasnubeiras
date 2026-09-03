@@ -3,8 +3,8 @@ package org.aprengal.lendasnubeiras.ui.utilidades
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
-import org.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nBase
-import org.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nSingular
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nBase
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nSingular
 
 
 object Accions {

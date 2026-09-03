@@ -21,10 +21,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import org.aprengal.lendasnubeiras.data.utilidades.Corrutinas.corrutina
 import org.aprengal.lendasnubeiras.data.utilidades.Contexto.haiLector
-import org.aprengal.lendasnubeiras.data.localizacion.Localizacion.cambiarIdioma
-import org.aprengal.lendasnubeiras.data.localizacion.Idioma
-import org.aprengal.lendasnubeiras.data.localizacion.Localizacion.obterTexto
-import org.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nOpcions
+import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.cambiarIdioma
+import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma
+import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.obterTexto
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nOpcions
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodePecharSesion
 import org.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
 import org.aprengal.lendasnubeiras.data.usuarios.SesionActual.pecharSesion

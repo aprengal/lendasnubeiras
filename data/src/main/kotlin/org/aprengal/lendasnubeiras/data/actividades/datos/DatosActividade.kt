@@ -1,10 +1,7 @@
 package org.aprengal.lendasnubeiras.data.actividades.datos
 
-import org.aprengal.lendasnubeiras.data.actividades.datos.atributos.Categoria
-import org.aprengal.lendasnubeiras.data.actividades.datos.atributos.Destinatario
-import org.aprengal.lendasnubeiras.data.actividades.datos.atributos.Estado
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.ElementoBD
-import org.aprengal.lendasnubeiras.data.localizacion.Idioma
+import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma
 
 internal interface DatosActividade: ElementoBD {
     val id: Long

@@ -6,7 +6,7 @@ import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavMetadataKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.metadata
-import org.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nTitulos
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nTitulos
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeAdministrar
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeCrear
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeLer
@@ -14,7 +14,7 @@ import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeRexistrarse
 import org.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.APERTURA
 import org.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.COMPLETA
 import org.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.TITULO_SUPERIOR
-import org.aprengal.lendasnubeiras.ui.pantallas.NovaActividade
+import org.aprengal.lendasnubeiras.ui.pantallas.creador.NovaActividade
 import org.aprengal.lendasnubeiras.ui.pantallas.autenticacion.PantallaAcceso
 import org.aprengal.lendasnubeiras.ui.pantallas.abertas.PantallaAxustes
 import org.aprengal.lendasnubeiras.ui.pantallas.autenticacion.PantallaBenvida
@@ -57,7 +57,7 @@ internal class DatosNavegacion( val navegacion: Navegacion ) {
 
         if ( PodeLer() ) {
 
-            val actividades = DatosPantalla( TITULO_SUPERIOR, L10nTitulos.Actividades ) //TODO( "PENDENTE" )
+            val actividades = DatosPantalla( TITULO_SUPERIOR, L10nTitulos.Actividades )
             val inicio = DatosPantalla( COMPLETA )
             val idioma = DatosPantalla( COMPLETA )
             val buscar = DatosPantalla( COMPLETA )
@@ -80,7 +80,7 @@ internal class DatosNavegacion( val navegacion: Navegacion ) {
         if ( PodeCrear() ) {
 
             val listar = DatosPantalla( TITULO_SUPERIOR )
-            val crear = DatosPantalla( TITULO_SUPERIOR )
+            val crear = DatosPantalla( TITULO_SUPERIOR, L10nTitulos.CrearActividade )
             val modificar = DatosPantalla( TITULO_SUPERIOR )
 
             ruta<Ruta.ListarActividades>( listar ) { TODO() }

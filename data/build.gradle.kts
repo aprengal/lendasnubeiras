@@ -48,16 +48,8 @@ android {
     compileSdk = 37
 
     defaultConfig {
-
         minSdk = 29
-
-        ndk {
-            //noinspection ChromeOsAbiSupport
-            abiFilters += listOf( "arm64-v8a", "armeabi-v7a" )
-        }
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
     }
 
     buildTypes {
@@ -71,13 +63,11 @@ android {
         }
 
         getByName( "release" ) {
-
             buildConfigField(
                 "String",
                 "API_URL",
                 "\"${localProperties.getProperty( "API_URL_RELEASE" )}\""
             )
-
         }
 
     }

@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import org.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nAutenticacion
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nAutenticacion
 import org.aprengal.lendasnubeiras.data.usuarios.SesionActual.crearSesionAnonima
 import org.aprengal.lendasnubeiras.ui.navegacion.Ruta
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.BotonPrincipal

@@ -8,7 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.ui.NavDisplay
-import org.aprengal.lendasnubeiras.data.localizacion.Idioma
+import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeLer
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeRexistrarse
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalAviso

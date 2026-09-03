@@ -1,6 +1,6 @@
 package org.aprengal.lendasnubeiras.ui.reutilizables.clases
 
-import org.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nOpcions
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nOpcions
 
 enum class TipoOpcion { ALERTA, INTERRUPTOR }
 

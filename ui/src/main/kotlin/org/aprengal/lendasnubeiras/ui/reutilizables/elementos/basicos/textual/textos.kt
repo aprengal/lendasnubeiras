@@ -18,8 +18,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.collerActividade
-import org.aprengal.lendasnubeiras.data.localizacion.claves.L10nPlural
-import org.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nSingular
+import org.aprengal.lendasnubeiras.data.localizacion.cantidades.L10nPlural
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nSingular
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalRuta
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalTitulo
 import org.aprengal.lendasnubeiras.ui.navegacion.Ruta

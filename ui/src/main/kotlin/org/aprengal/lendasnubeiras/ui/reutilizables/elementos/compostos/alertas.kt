@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-import org.aprengal.lendasnubeiras.data.localizacion.claves.singular.L10nBase
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nBase
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosAlerta
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.Icona.Companion.DebuxarIcona
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.BotonAuxiliar

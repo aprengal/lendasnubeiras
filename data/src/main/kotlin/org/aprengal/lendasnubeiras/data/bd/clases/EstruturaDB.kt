@@ -1,10 +1,10 @@
 package org.aprengal.lendasnubeiras.data.bd.clases
 
 import android.database.sqlite.SQLiteDatabase
-import org.aprengal.lendasnubeiras.data.actividades.dixitais.elementos.Dificultade
+import org.aprengal.lendasnubeiras.data.actividades.dixitais.datos.Dificultade
 import org.aprengal.lendasnubeiras.data.bd.taboas.TaboaBase
 import org.aprengal.lendasnubeiras.data.bd.taboas.TaboaLectura
-import org.aprengal.lendasnubeiras.data.localizacion.Idioma
+import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma
 
 internal class EstruturaDB {
 

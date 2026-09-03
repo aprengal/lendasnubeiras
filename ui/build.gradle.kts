@@ -16,10 +16,8 @@ android {
     compileSdk = 37
 
     defaultConfig {
-
         minSdk = 29
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
     }
 
     compileOptions {
@@ -57,7 +55,6 @@ dependencies {
 
     //Navegación 3
     implementation( libs.androidx.navigation3.ui )
-    implementation( libs.androidx.lifecycle.viewmodel.navigation3 )
 
     //Serialización
     implementation( libs.kotlinx.serialization.json )

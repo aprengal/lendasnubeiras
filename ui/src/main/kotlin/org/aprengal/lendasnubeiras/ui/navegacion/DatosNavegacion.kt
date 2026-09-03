@@ -11,9 +11,12 @@ import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeAdministrar
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeCrear
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeLer
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeRexistrarse
+import org.aprengal.lendasnubeiras.ui.navegacion.ControlAcceso.comprobarAcceso
+import org.aprengal.lendasnubeiras.ui.navegacion.ControlAcceso.verificarRuta
 import org.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.APERTURA
 import org.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.COMPLETA
 import org.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.TITULO_SUPERIOR
+import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalNavegacion
 import org.aprengal.lendasnubeiras.ui.pantallas.creador.NovaActividade
 import org.aprengal.lendasnubeiras.ui.pantallas.autenticacion.PantallaAcceso
 import org.aprengal.lendasnubeiras.ui.pantallas.abertas.PantallaAxustes
@@ -31,14 +34,14 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaApertura
 import org.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaBase
 import org.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaSuperior
 
-internal class DatosNavegacion( val navegacion: Navegacion ) {
+internal object DatosNavegacion {
 
     enum class TipoPantalla { COMPLETA, TITULO_SUPERIOR, APERTURA }
 
     data class DatosPantalla( val tipo: TipoPantalla, val titulo: L10nTitulos? = null )
     object Tipo : NavMetadataKey<TipoPantalla>
 
-    val entradas = entryProvider {
+    val entradasNavegacion = entryProvider {
 
         val axustes = DatosPantalla( TITULO_SUPERIOR, L10nTitulos.Axustes )
         ruta<Ruta.Axustes>( axustes ) { PantallaAxustes() }
@@ -102,11 +105,10 @@ internal class DatosNavegacion( val navegacion: Navegacion ) {
 
         entry<T>( metadata = tipo ) { ruta ->
 
-            val control = ControlAcceso( navegacion )
+            if ( !comprobarAcceso( T::class ) ) return@entry
+            if ( !verificarRuta( ruta  ) ) return@entry
 
-            if ( !control.comprobarAcceso( T::class ) ) return@entry
-            if ( !control.verificarRuta( ruta  ) ) return@entry
-
+            val navegacion = LocalNavegacion.current
             val titulo = datos.titulo
 
             CompositionLocalProvider( LocalRuta provides ruta, LocalTitulo provides titulo ) {

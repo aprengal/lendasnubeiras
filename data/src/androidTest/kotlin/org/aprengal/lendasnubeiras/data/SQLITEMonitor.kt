@@ -27,7 +27,6 @@ import org.aprengal.lendasnubeiras.data.bd.operacions.Xogadores.collerXogadores
 import org.aprengal.lendasnubeiras.data.bd.operacions.Xogadores.eliminarXogador
 import org.aprengal.lendasnubeiras.data.bd.operacions.Xogadores.insertarXogador
 import org.aprengal.lendasnubeiras.data.bd.taboas.TaboaBase
-import org.aprengal.lendasnubeiras.datosCompletos
 
 import org.junit.After
 import org.junit.Assert.assertEquals

@@ -15,9 +15,6 @@ import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeCrear
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeEditarOutras
 import org.aprengal.lendasnubeiras.data.usuarios.Rol
 import org.aprengal.lendasnubeiras.data.usuarios.Usuario
-import org.aprengal.lendasnubeiras.datosCompletos
-import org.aprengal.lendasnubeiras.datosCompletosAny
-import org.aprengal.lendasnubeiras.revisarHashElemento
 
 import org.junit.After
 import org.junit.Assert.assertEquals

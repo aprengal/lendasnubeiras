@@ -67,7 +67,7 @@ class Entrada : AppCompatActivity() {
     }
 
     @SuppressLint( "UnusedContentLambdaTargetStateParameter" )
-    override fun onCreate( savedInstanceState: Bundle?) {
+    override fun onCreate( savedInstanceState: Bundle? ) {
 
         installSplashScreen()
         enableEdgeToEdge()
@@ -105,13 +105,9 @@ class Entrada : AppCompatActivity() {
 
     }
 
-    private fun procesarEnlace( intent: Intent ) {
-        Enlaces( intent ).confirmar()?.let { enlace -> navegacion.engadir( enlace ) }
-    }
-
     override fun onNewIntent( intent: Intent ) {
         super.onNewIntent( intent )
-        procesarEnlace( intent )
+        Enlaces( intent ).confirmar()?.let { enlace -> navegacion.engadir( enlace ) }
     }
 
     override fun onStop() {

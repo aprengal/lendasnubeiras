@@ -1,9 +1,23 @@
-package org.aprengal.lendasnubeiras
+package org.aprengal.lendasnubeiras.data
 
 import android.content.res.AssetManager
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Assert.assertEquals
 import java.security.MessageDigest
+
+enum class TipoIdentificador( val tipo: String ) {
+
+    CLASS( "class" ),
+    DATA_CLASS( "data class" ),
+    SEALED_CLASS( "sealed class" ),
+    ENUM_CLASS( "enum class" ),
+    OBJECT( "object" ),
+    INTERFACE( "interface" ),
+    SEALED_INTERFACE( "sealed interface" ),
+    FUN( "fun" );
+
+}
+
 
 private fun buscarArquivosKotlin( assets: AssetManager, directorio: String = "" ): List<String> {
 
@@ -24,7 +38,7 @@ private fun buscarArquivosKotlin( assets: AssetManager, directorio: String = "" 
 
 }
 
-private fun buscarElemento( nomeFuncion: String, identificador: String ): Pair<String, String> {
+private fun buscarElemento( nomeElemento: String, identificador: String ): Pair<String, String> {
 
     val assets = InstrumentationRegistry
         .getInstrumentation()
@@ -38,15 +52,15 @@ private fun buscarElemento( nomeFuncion: String, identificador: String ): Pair<S
                 .bufferedReader()
                 .use { it.readText() }
 
-            texto.contains( Regex( "$identificador\\s+${Regex.escape( nomeFuncion )}\\s*\\(" ) )
+            texto.contains( Regex( "${ identificador }\\s+${ Regex.escape( nomeElemento ) }\\s*" ) )
         }
 
     require( candidatos.isNotEmpty() ) {
-        "Non se atopou ningunha función $nomeFuncion"
+        "Non se atopou ningún elemento $nomeElemento"
     }
 
     require( candidatos.size == 1 ) {
-        "Atopáronse varias definicións de $nomeFuncion: ${candidatos.joinToString()}"
+        "Atopáronse varias definicións de $nomeElemento: ${ candidatos.joinToString() }"
     }
 
     val texto = assets
@@ -57,10 +71,11 @@ private fun buscarElemento( nomeFuncion: String, identificador: String ): Pair<S
     return candidatos.first() to texto
 }
 
-private fun hashElemento( nomeFuncion: String, identificador: String ): String {
+private fun hashElemento( nomeFuncion: String, identificador: TipoIdentificador ): String {
 
-    val ( _, texto ) = buscarElemento( nomeFuncion, identificador )
-    val inicio = texto.indexOf( "$identificador $nomeFuncion" )
+    val tipo = identificador.tipo
+    val ( _, texto ) = buscarElemento( nomeFuncion, tipo )
+    val inicio = texto.indexOf( "$tipo $nomeFuncion" )
     var profundidade = 0
     var fin = inicio
 
@@ -126,7 +141,7 @@ fun datosCompletosAny( datos: Map<String, Any> = emptyMap() ): Map<String, Any> 
 
 }
 
-fun revisarHashElemento( nome: String, hashEsperado: String, identificador: String = "fun" ) {
+fun revisarHashElemento( nome: String, hashEsperado: String, identificador: TipoIdentificador = TipoIdentificador.FUN ) {
 
     val hashActual = hashElemento( nome, identificador )
     assertEquals( "$nome cambiou no código real: revisa e actualiza a copia do test. Esperábase: $hashEsperado, pero atopouse $hashActual", hashEsperado, hashActual )

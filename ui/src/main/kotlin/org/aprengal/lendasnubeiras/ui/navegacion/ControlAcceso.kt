@@ -11,9 +11,10 @@ import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeEditar
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeIniciarSesion
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeLer
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeRexistrarse
+import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalNavegacion
 import kotlin.reflect.KClass
 
-internal class ControlAcceso( val navegacion: Navegacion ) {
+internal object ControlAcceso {
 
     //Hai que mirar se isto ao final acaba duplicando comportamento en ListaNavegacion
     //Non se pode navegar á ruta que nunca se rexistrou
@@ -57,6 +58,8 @@ internal class ControlAcceso( val navegacion: Navegacion ) {
 
         if ( verificarAcceso( ruta ) ) return true
 
+        val navegacion = LocalNavegacion.current
+
         Log.wtf( "PERMISO", "Tratouse de realizar un acceso indebido" )
         LaunchedEffect( Unit ) { navegacion.reiniciar() }
 
@@ -66,6 +69,8 @@ internal class ControlAcceso( val navegacion: Navegacion ) {
 
     @Composable
     internal fun verificarRuta( ruta: Ruta ): Boolean {
+
+        val navegacion = LocalNavegacion.current
 
         val redirixir = when ( ruta ) {
             is Ruta.ActividadeDetalle -> if ( collerActividade( ruta.id ) == null ) Ruta.Actividades else null

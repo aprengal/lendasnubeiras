@@ -146,7 +146,7 @@ object Localizacion {
 
     }
 
-    private fun cargarDominio( dominio: Dominio) {
+    private fun cargarDominio( dominio: Dominio ) {
 
         if ( traducions.containsKey( dominio ) ) return
 

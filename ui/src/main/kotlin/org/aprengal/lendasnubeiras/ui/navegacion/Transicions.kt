@@ -18,7 +18,7 @@ import org.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.AP
 import org.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.COMPLETA
 import org.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.TITULO_SUPERIOR
 
-class Transicions {
+object Transicions {
 
     private enum class Transicion( val entrada: EnterTransition, val saida: ExitTransition, val atrasEntrada: EnterTransition, val atrasSaida: ExitTransition ) {
 
@@ -43,7 +43,7 @@ class Transicions {
 
     }
 
-    fun avance(): AnimatedContentTransitionScope<Scene<Ruta>>.() -> ContentTransform = {
+    fun avanceTransicion(): AnimatedContentTransitionScope<Scene<Ruta>>.() -> ContentTransform = {
 
         val orixe = initialState.entries.last().metadata[ Tipo ]!!
         val destino = targetState.entries.last().metadata[ Tipo ]!!
@@ -61,7 +61,7 @@ class Transicions {
 
     }
 
-    fun retroceso(): AnimatedContentTransitionScope<Scene<Ruta>>.() -> ContentTransform = {
+    fun retrocesoTransicion(): AnimatedContentTransitionScope<Scene<Ruta>>.() -> ContentTransform = {
 
         val orixe = initialState.entries.last().metadata[ Tipo ]!!
         val destino = targetState.entries.last().metadata[ Tipo ]!!

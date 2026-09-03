@@ -87,7 +87,7 @@ private fun hashElemento( nomeFuncion: String, identificador: String ): String {
 
 }
 
-fun datosCompletos( overrides: Map<String, String> = emptyMap() ): Map<String, String> {
+fun datosCompletos( datos: Map<String, String> = emptyMap() ): Map<String, String> {
 
     val base = mapOf(
         "id" to System.currentTimeMillis().toString(),
@@ -103,11 +103,11 @@ fun datosCompletos( overrides: Map<String, String> = emptyMap() ): Map<String, S
         "data_modificado" to System.currentTimeMillis().toString()
     )
 
-    return base + overrides
+    return base + datos
 
 }
 
-fun datosCompletosAny( overrides: Map<String, Any> = emptyMap() ): Map<String, Any> {
+fun datosCompletosAny( datos: Map<String, Any> = emptyMap() ): Map<String, Any> {
 
     val base = mapOf(
         "id" to System.currentTimeMillis(),
@@ -122,7 +122,7 @@ fun datosCompletosAny( overrides: Map<String, Any> = emptyMap() ): Map<String, A
         "materiais" to "Materiais de proba abondo longos para pasar o check",
         "data_modificado" to System.currentTimeMillis()
     )
-    return base + overrides
+    return base + datos
 
 }
 

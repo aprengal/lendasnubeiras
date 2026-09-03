@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.aprengal.lendasnubeiras.data.localizacion.cantidades.L10nPlural
+import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.AmosarTituloCentrado
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.CampoBuscador
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.TextoPlural
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.EspazadorAlto
@@ -47,7 +48,16 @@ fun PantallaActividadeDetalle( id: Long ) {
 @Composable
 fun PantallaActividade() {
 
-    Text( "Lista de actividades presentes na aplicación?" )
+    Column {
+
+        AmosarTituloCentrado()
+
+        EspazadorAlto()
+        Text( "Lista de actividades presentes na aplicación?" )
+
+    }
+
+
 
 }
 

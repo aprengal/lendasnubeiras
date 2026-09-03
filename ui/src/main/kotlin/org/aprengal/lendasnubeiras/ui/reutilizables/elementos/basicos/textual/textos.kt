@@ -1,10 +1,12 @@
 package org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -38,6 +40,15 @@ fun TextoAnunciable( elemento: L10nSingular, modifier: Modifier = Modifier ) {
 @Composable
 fun TextoPlural( elemento: L10nPlural, cantidade: Number, modifier: Modifier = Modifier, estilo: TextStyle = LocalTextStyle.current ) {
     Text( elemento.texto( cantidade ), modifier, style = estilo )
+}
+
+@Composable
+fun AmosarTituloCentrado() {
+
+    Column( Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally ) {
+        AmosarTitulo()
+    }
+
 }
 
 @Composable

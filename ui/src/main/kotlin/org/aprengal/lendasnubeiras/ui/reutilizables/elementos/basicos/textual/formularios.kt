@@ -62,14 +62,22 @@ fun CampoTexto( datos: DatosCampoTexto ) {
 }
 
 @Composable
-fun CampoBuscador( state: TextFieldState ) {
+fun CampoBuscador( estado: TextFieldState ) {
 
     val buscar = Icona.Buscar
     val limpar = Icona.Limpar
     var amosar by rememberSaveable { mutableStateOf( false ) }
 
+    val reiniciar = @Composable {
+        if ( estado.text.isNotEmpty() ) {
+            IconButton( onClick = { estado.clearText() } ) {
+                DebuxarIcona( limpar.clave, limpar.nome, 20.sp )
+            }
+        }
+    }
+
     OutlinedTextField(
-        state = state,
+        state = estado,
         modifier = Modifier.fillMaxWidth(),
         lineLimits = TextFieldLineLimits.SingleLine,
         keyboardOptions = KeyboardOptions( imeAction = ImeAction.Search ),
@@ -77,16 +85,12 @@ fun CampoBuscador( state: TextFieldState ) {
         onKeyboardAction = { amosar = true }, //Aquí igual habería que cambiar isto pola acción que actualizaría a pantalla?
         leadingIcon = { DebuxarIcona( buscar.clave, buscar.nome, 20.sp ) },
         placeholder = { Text( "Buscar" ) }, //Cambio por Texto_busca o valorar outro
-        trailingIcon = {
-            IconButton( onClick = { state.clearText() } ) {
-                DebuxarIcona( limpar.clave, limpar.nome, 20.sp )
-            }
-        },
+        trailingIcon = reiniciar,
         shape = CircleShape
     )
 
     if ( amosar ) {
-        Buscar( state.text.toString() ) {
+        Buscar( estado.text.toString() ) {
             amosar = false
         }
     }

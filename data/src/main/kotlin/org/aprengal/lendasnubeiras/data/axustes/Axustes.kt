@@ -37,12 +37,12 @@ object Axustes {
 
     }
 
-    fun <T : Any> collerOpcion( opcion: Opcion<T> ): T {
+    internal fun <T : Any> collerOpcion( opcion: Opcion<T> ): T {
         @Suppress( "UNCHECKED_CAST" )
         return ( cache[ opcion.nome ] as? T ) ?: opcion.predeterminado
     }
 
-    suspend fun <T : Any> gardarOpcion( opcion: Opcion<T>, valor: T ): Boolean {
+    internal suspend fun <T : Any> gardarOpcion( opcion: Opcion<T>, valor: T ): Boolean {
 
         val nome = opcion.nome
 
@@ -72,7 +72,7 @@ object Axustes {
 
     }
 
-    suspend fun <T : Any> borrarOpcion( opcion: Opcion<T> ): Boolean {
+    internal suspend fun <T : Any> borrarOpcion( opcion: Opcion<T> ): Boolean {
 
         val nome = opcion.nome
 
@@ -102,11 +102,12 @@ object Axustes {
 
     }
 
-    fun collerSesionLocal( sufixo: String ): String {
+    //Estas e as seguintes funcións conectan este módulo con UI indirectamente
+    internal fun collerSesionLocal( sufixo: String ): String {
         return cache[ Opcion.SesionUsuario.nome + "_" + sufixo ] as? String ?: ""
     }
 
-    suspend fun gardarSesionLocal( sufixo: String, datos: String ): Boolean {
+    internal suspend fun gardarSesionLocal( sufixo: String, datos: String ): Boolean {
 
         try {
             val nome = Opcion.SesionUsuario.nome + "_" + sufixo
@@ -141,7 +142,7 @@ object Axustes {
 
     }
 
-    fun collerIdDispositivo(): String {
+    internal fun collerIdDispositivo(): String {
 
         var idDispositivo = collerOpcion( Opcion.IdDispositivo )
         if ( idDispositivo.isNotBlank() ) return idDispositivo

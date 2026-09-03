@@ -42,10 +42,10 @@ enum class Icona( override val clave: String, override val nome: L10nIconas ): E
 
     companion object {
 
-        private val fonteIconas = FontFamily(Font(R.font.ubuntu_iconas_nerd, FontWeight.Bold))
+        private val fonteIconas = FontFamily( Font( R.font.ubuntu_iconas_nerd, FontWeight.Bold ) )
 
         @Composable
-        fun DebuxarIcona(contido: String, descricion: L10nIconas? = null, dimension: TextUnit ) {
+        fun DebuxarIcona( contido: String, descricion: L10nIconas? = null, dimension: TextUnit ) {
 
             val cor = LocalContentColor.current
             val modificador = descricion?.let { Modifier.semantics { contentDescription = descricion.texto() } } ?: Modifier.clearAndSetSemantics { }

@@ -2,8 +2,6 @@ package org.aprengal.lendasnubeiras.ui.reutilizables.clases
 
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nOpcions
 
-enum class TipoOpcion { ALERTA, INTERRUPTOR }
-
 data class DatosOpcion<T>(
     val clave: String,
     val titulo: L10nOpcions,

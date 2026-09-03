@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
@@ -66,7 +67,7 @@ class Entrada : AppCompatActivity() {
     }
 
     @SuppressLint( "UnusedContentLambdaTargetStateParameter" )
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate( savedInstanceState: Bundle?) {
 
         installSplashScreen()
         enableEdgeToEdge()
@@ -86,8 +87,10 @@ class Entrada : AppCompatActivity() {
 
                     AnimatedContent( targetState = sesion, transitionSpec = { fadeIn() togetherWith fadeOut() } ) {
 
+                        val ruta = remember { Enlaces( intent ).confirmar() ?: rutaInicial() }
+
                         @Suppress( "UNCHECKED_CAST" )
-                        val traza = rememberNavBackStack( rutaInicial() ) as NavBackStack<Ruta>
+                        val traza = rememberNavBackStack( ruta ) as NavBackStack<Ruta>
                         navegacion = rememberSaveable( saver = gardarNavegacion( traza ) ) { Navegacion( traza ) }
 
                         RexistrarNavegacion( idiomaActual, navegacion )
@@ -102,9 +105,13 @@ class Entrada : AppCompatActivity() {
 
     }
 
+    private fun procesarEnlace( intent: Intent ) {
+        Enlaces( intent ).confirmar()?.let { enlace -> navegacion.engadir( enlace ) }
+    }
+
     override fun onNewIntent( intent: Intent ) {
         super.onNewIntent( intent )
-        Enlaces( intent ).confirmar()?.let { enlace -> navegacion.engadir( enlace ) }
+        procesarEnlace( intent )
     }
 
     override fun onStop() {

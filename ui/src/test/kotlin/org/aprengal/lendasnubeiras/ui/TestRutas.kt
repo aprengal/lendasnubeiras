@@ -1,6 +1,14 @@
-package org.aprengal.lendasnubeiras
+package org.aprengal.lendasnubeiras.ui
 
-/*class TestRutas {
+import org.junit.Test
+class TestRutas {
+
+    @Test
+    fun okRutas() {
+
+        //fail()
+
+    }
 
     /*@Test
     fun todasRutasUsadas() {
@@ -19,4 +27,4 @@ package org.aprengal.lendasnubeiras
 
     }*/
 
-}*/
+}

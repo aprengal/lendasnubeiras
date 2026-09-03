@@ -1,6 +1,8 @@
-package org.aprengal.lendasnubeiras
+package org.aprengal.lendasnubeiras.data
 
+import junit.framework.TestCase
 import org.aprengal.lendasnubeiras.data.axustes.Opcion
+import org.aprengal.lendasnubeiras.data.axustes.DatosTema.Variante
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma
 import org.aprengal.lendasnubeiras.data.usuarios.Rol
 import org.junit.Assert.assertEquals
@@ -26,7 +28,7 @@ class TesteoDatos {
 
     }
 
-    fun comprobarOpcion( opcion: Opcion<*> ) {
+    internal fun comprobarOpcion( opcion: Opcion<*> ) {
 
         val ( nome, preterminado ) = when ( opcion ) {
             Opcion.SesionUsuario -> "sesion-usuario" to ""
@@ -72,9 +74,35 @@ class TesteoDatos {
         assertEquals( Rol.NADA, Rol.buscarRol( "" ) )
     }
 
-    //TODO: Faltan por revisar as rutas api (endpoint)
+    fun comprobarNomeVarianteTema( variante: Variante ) {
+
+        val esperado = when ( variante ) {
+            Variante.Claro -> "claro"
+            Variante.Escuro -> "escuro"
+            Variante.Predeterminado -> "predeterminado"
+        }
+
+        TestCase.assertEquals( esperado, variante.clave )
+
+    }
+
+    @Test
+    fun nomeVarianteTema() {
+        Variante::class.sealedSubclasses.forEach { opcion -> comprobarNomeVarianteTema( opcion.objectInstance!! ) }
+    }
+
+    @Test
+    fun buscarVarianteTema() {
+        TestCase.assertEquals( Variante.Claro, Variante.buscar ( "claro" ) )
+        TestCase.assertEquals( Variante.Escuro, Variante.buscar( "escuro" ) )
+        TestCase.assertEquals( Variante.Predeterminado, Variante.buscar( "predeterminado" ) )
+    }
+
+    @Test
+    fun buscarVarianteTemaInexistente() {
+        TestCase.assertEquals( Variante.Predeterminado, Variante.buscar( "outra"  ))
+    }
 
     //Só test. Tamén falta atributo: categoria, destinatario e estado. E dificultades
-
 
 }

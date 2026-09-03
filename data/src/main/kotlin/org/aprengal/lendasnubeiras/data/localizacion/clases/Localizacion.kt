@@ -31,11 +31,11 @@ object Localizacion {
 
     private lateinit var appContext: Context
 
-    private val traducions: MutableMap<Dominio, Map<L10nSingular, String>> = mutableMapOf()
+    private val traducions = mutableMapOf<Dominio, Map<L10nSingular, String>>()
 
-    private val traducionsPlurais: MutableMap<Dominio, Map<L10nPlural, Map<String, String>>> = mutableMapOf()
+    private val traducionsPlurais = mutableMapOf<Dominio, Map<L10nPlural, Map<String, String>>>()
 
-    private val traducionsVariantes: MutableMap<Dominio, Map<L10nVariante, Map<String, String>>> = mutableMapOf()
+    private val traducionsVariantes = mutableMapOf<Dominio, Map<L10nVariante, Map<String, String>>>()
 
     private val idiomaActual = MutableStateFlow( Idioma.Nada )
 
@@ -98,7 +98,7 @@ object Localizacion {
 
     }
 
-    fun cambiarIdioma( novoIdioma: Idioma): Boolean {
+    fun cambiarIdioma( novoIdioma: Idioma ): Boolean {
 
         if ( idiomaActual.value == novoIdioma ) return true
 
@@ -147,7 +147,6 @@ object Localizacion {
     }
 
     private fun cargarDominio( dominio: Dominio) {
-
 
         if ( traducions.containsKey( dominio ) ) return
 

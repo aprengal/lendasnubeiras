@@ -57,7 +57,7 @@ internal class DatosNavegacion( val navegacion: Navegacion ) {
 
         if ( PodeLer() ) {
 
-            val actividades = DatosPantalla( TITULO_SUPERIOR, L10nTitulos.Actividades )
+            val actividades = DatosPantalla( COMPLETA, L10nTitulos.Actividades )
             val inicio = DatosPantalla( COMPLETA )
             val idioma = DatosPantalla( COMPLETA )
             val buscar = DatosPantalla( COMPLETA )

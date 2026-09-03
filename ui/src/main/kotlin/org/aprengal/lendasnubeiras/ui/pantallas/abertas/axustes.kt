@@ -19,8 +19,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import org.aprengal.lendasnubeiras.data.utilidades.Corrutinas.corrutina
-import org.aprengal.lendasnubeiras.data.utilidades.Contexto.haiLector
+import org.aprengal.lendasnubeiras.data.axustes.DatosTema.escollerVarianteImaxe
+import org.aprengal.lendasnubeiras.data.axustes.DatosTema.Variante
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.cambiarIdioma
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.obterTexto
@@ -28,6 +28,8 @@ import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nOpcions
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodePecharSesion
 import org.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
 import org.aprengal.lendasnubeiras.data.usuarios.SesionActual.pecharSesion
+import org.aprengal.lendasnubeiras.data.utilidades.Corrutinas.corrutina
+import org.aprengal.lendasnubeiras.data.utilidades.Contexto.haiLector
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosListaOpcions
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalAviso
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalIdioma
@@ -41,10 +43,8 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.Esp
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.AlertaDialogo
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.ElementoLista
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.ListaOpcions
-import org.aprengal.lendasnubeiras.ui.tema.Tema.escollerVarianteImaxe
-import org.aprengal.lendasnubeiras.ui.tema.Tema.gardarTema
+import org.aprengal.lendasnubeiras.ui.tema.Tema.cambiarTema
 import org.aprengal.lendasnubeiras.ui.tema.Tema.temaActual
-import org.aprengal.lendasnubeiras.ui.tema.Tema.Variante
 import org.aprengal.lendasnubeiras.ui.utilidades.Accions.amosarAviso
 import org.aprengal.lendasnubeiras.ui.utilidades.Accions.executarAccion
 
@@ -76,9 +76,9 @@ fun PantallaAxustes() {
                 titulo = L10nOpcions.TituloCambioTema,
                 gardadoFallido = L10nOpcions.GardadoFallidoCambioTema,
                 tipo = TipoOpcion.ALERTA,
-                icona = escollerVarianteImaxe( isSystemInDarkTheme(), Icona.TemaClaro, Icona.TemaEscuro ),
+                icona = escollerVarianteImaxe( temaActual, isSystemInDarkTheme(), Icona.TemaClaro, Icona.TemaEscuro ),
                 valorInicial = temaActual,
-                accion = { novoTema -> gardarTema( novoTema ) },
+                accion = { novoTema -> cambiarTema( novoTema ) },
                 tituloAlerta = L10nOpcions.DialogoCambioTema,
                 opcions = Variante.entries
             )

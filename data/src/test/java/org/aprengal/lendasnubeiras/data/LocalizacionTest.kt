@@ -1,4 +1,4 @@
-package org.aprengal.lendasnubeiras
+package org.aprengal.lendasnubeiras.data
 
 import com.ibm.icu.text.PluralRules
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Dominio

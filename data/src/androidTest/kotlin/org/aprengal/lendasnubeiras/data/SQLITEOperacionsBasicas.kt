@@ -155,7 +155,7 @@ class SQLITEOperacionsBasicas {
     //nos métodos que realizan operacións coa base de datos directamente
 
     @Test
-    fun idDuplicadaRexeitada() {
+    fun idActividadeDuplicadaRexeitada() {
 
         val datos1 = datosCompletos(mapOf("id" to "500", "titulo" to "Primeira"))
         bd.insertar( TaboaBase.ACTIVIDADES, datos1 )
@@ -166,7 +166,7 @@ class SQLITEOperacionsBasicas {
     }
 
     @Test
-    fun tituloIdiomaDuplicadoRexeitado() {
+    fun tituloIdiomaActividadeDuplicadoRexeitado() {
 
         val datos1 = datosCompletos(
             mapOf(
@@ -189,7 +189,7 @@ class SQLITEOperacionsBasicas {
     }
 
     @Test
-    fun idiomaMinusculasRexeitado() {
+    fun idiomaActividadeRexeitado() {
         val datos1 = datosCompletos(
             mapOf(
                 "id" to "502",
@@ -201,54 +201,42 @@ class SQLITEOperacionsBasicas {
     }
 
     @Test
-    fun estadoForaDeRangoRexeitado() {
+    fun estadoActividadeRexeitado() {
         assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos(mapOf("id" to "503", "estado" to "4"))) )
         assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos(mapOf("id" to "504", "estado" to "-4"))) )
     }
 
     @Test
-    fun duracionForaDeRangoRexeitado() {
+    fun duracionActividadeRexeitada() {
         assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos(mapOf("id" to "505", "duracion" to "0"))) )
         assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos(mapOf("id" to "506", "duracion" to "181"))) )
     }
 
     @Test
-    fun descricionRexeitada() {
-        assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES,
-            datosCompletos(mapOf("id" to "507", "descricion" to "curta"))
-        ) )
-        assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES,
-            datosCompletos(mapOf("id" to "508", "descricion" to "a".repeat(1001)))
-        ) )
+    fun descricionActividadeRexeitada() {
+        assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to "507", "descricion" to "curta" ) ) ) )
+        assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to "508", "descricion" to "a".repeat( 1001 ) ) ) ) )
     }
 
     @Test
-    fun obxectivoRexeitado() {
-        assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES,
-            datosCompletos(mapOf("id" to "509", "obxectivo" to "curto"))
-        ) )
-        assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES,
-            datosCompletos(mapOf("id" to "510", "obxectivo" to "a".repeat(201)))
-        ) )
+    fun obxectivoActividadeRexeitado() {
+        assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to "509", "obxectivo" to "curto" ) ) ) )
+        assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to "510", "obxectivo" to "a".repeat( 201 ) ) ) ) )
     }
 
     @Test
-    fun materiaisRexeitados() {
-        assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES,
-            datosCompletos(mapOf("id" to "511", "materiais" to "curto"))
-        ) )
-        assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES,
-            datosCompletos(mapOf("id" to "512", "materiais" to "a".repeat(201)))
-        ) )
+    fun materiaisActividadeRexeitados() {
+        assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to "511", "materiais" to "curto" ) ) ) )
+        assertEquals( -1, bd.insertar( TaboaBase.ACTIVIDADES, datosCompletos( mapOf( "id" to "512", "materiais" to "a".repeat( 201 ) ) ) ) )
     }
 
     @Test
     fun actualizarIdExistente() {
 
-        val datos1 = datosCompletos(mapOf("id" to "600", "titulo" to "Primeira", "estado" to "-1"))
+        val datos1 = datosCompletos( mapOf( "id" to "600", "titulo" to "Primeira", "estado" to "-1" ) )
         bd.insertar( TaboaBase.ACTIVIDADES, datos1 )
 
-        val datos2 = datosCompletos(mapOf("id" to "601", "titulo" to "Segunda", "estado" to "-1"))
+        val datos2 = datosCompletos( mapOf( "id" to "601", "titulo" to "Segunda", "estado" to "-1" ) )
         bd.insertar( TaboaBase.ACTIVIDADES, datos2 )
 
         val cambios = mapOf( "id" to 600L )
@@ -277,7 +265,7 @@ class SQLITEOperacionsBasicas {
     @Test
     fun actualizarIdActividadeNonEnviada() {
 
-        val datos = datosCompletos(mapOf("id" to "603", "titulo" to "Non enviada", "estado" to "-1"))
+        val datos = datosCompletos( mapOf("id" to "603", "titulo" to "Non enviada", "estado" to "-1" ) )
         bd.insertar( TaboaBase.ACTIVIDADES, datos )
 
         val cambios = mapOf( "id" to 604L )

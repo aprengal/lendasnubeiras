@@ -39,14 +39,14 @@ fun PantallaResultadoBusca( termo: String ) {
 }
 
 @Composable
-fun PantallaActividadeDetalle( id: Long ) {
+fun PantallaActividadeDetalle( id: String ) {
 
     Text( "Detalle de $id" )
 
 }
 
 @Composable
-fun PantallaActividade() {
+fun PantallaCatalogo() {
 
     Column {
 

@@ -4,8 +4,8 @@ import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma
 
 data class ActividadeBuscable(
     override val id: Long,
-    override val titulo: String,
-    override val descricion: String,
+    override val claveTitulo: String,
+    //override val descricion: String,
     override val categoria: Categoria,
     override val destinatario: Destinatario,
     override val idioma: Idioma,

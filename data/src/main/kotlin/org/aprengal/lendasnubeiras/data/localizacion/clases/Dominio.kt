@@ -9,7 +9,7 @@ package org.aprengal.lendasnubeiras.data.localizacion.clases
 
 enum class Dominio( val nome: String ) {
 
-    ACTIVIDADES( "actividades" ),
+    DATOS_ACTIVIDADES( "datos-actividades" ),
     AUTENTICACION( "autenticacion" ),
     BASE( "base" ),
 

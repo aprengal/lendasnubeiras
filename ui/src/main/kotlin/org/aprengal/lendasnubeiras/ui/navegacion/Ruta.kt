@@ -26,10 +26,10 @@ sealed interface Ruta: NavKey {
     object Axustes : Ruta
 
     @Serializable
-    object Actividades : Ruta
+    object Catalogo : Ruta
 
     @Serializable
-    data class ActividadeDetalle( val id: Long ) : Ruta
+    data class ActividadeDetalle( val clave: String ) : Ruta
 
     @Serializable
     object Buscar : Ruta

@@ -89,7 +89,7 @@ private fun NavegacionInferior( navegacion: Navegacion ) {
         Ruta.Inicio,
         Ruta.Buscar,
         Ruta.Idioma,
-        Ruta.Actividades
+        Ruta.Catalogo
     )
 
     NavigationBar( modifier = Modifier.heightIn( max = alturaTotal ) ) {

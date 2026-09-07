@@ -43,23 +43,6 @@ object Localizacion {
 
     private var pluraisOrdinarios: PluralRules? = null
 
-    private var dominiosRecordados: MutableSet<Dominio> = mutableSetOf()
-
-    var recordarDominios: Boolean = false //Igual isto se pode quitar
-
-        set( valor ) {
-
-            if ( field == valor ) return
-            field = valor
-
-            if ( !field && dominiosRecordados.isNotEmpty() ) {
-                dominiosRecordados.forEach { dominio -> descargarDominio( dominio ) }
-            }
-
-            dominiosRecordados.clear()
-
-        }
-
     internal val L10nSingular.clave: String
 
         get() = when ( this ) {
@@ -107,6 +90,7 @@ object Localizacion {
 
         traducions.clear()
         traducionsPlurais.clear()
+        traducionsVariantes.clear()
         pluraisCardinais = null
         pluraisOrdinarios = null
 
@@ -117,7 +101,7 @@ object Localizacion {
     private fun collerClavesSingular( dominio: Dominio): List<L10nSingular> {
 
         val lista = when( dominio ) {
-            Dominio.ACTIVIDADES -> L10nActividades.entries
+            Dominio.DATOS_ACTIVIDADES -> L10nActividades.entries
             Dominio.AUTENTICACION -> L10nAutenticacion.entries
             Dominio.BASE -> L10nBase.entries
             Dominio.TITULOS -> L10nTitulos.entries
@@ -233,10 +217,6 @@ object Localizacion {
             traducionsPlurais[ dominio ] = cadeasPlurais.toMap()
             traducionsVariantes[ dominio ] = cadeasVariantes.toMap()
 
-            if ( recordarDominios && dominio.nome.startsWith( "actividade" ) ) {
-                dominiosRecordados.add( dominio )
-            }
-
         } catch ( e: FileNotFoundException ) {
             Log.wtf( "IDIOMA", "O dominio $dominio non existe para o idioma $idiomaActual", e )
         } catch ( e: JSONException ) {
@@ -245,11 +225,11 @@ object Localizacion {
 
     }
 
-    private fun descargarDominio( dominio: Dominio) {
+    /*private fun descargarDominio( dominio: Dominio ) {
         traducions.remove( dominio )
         traducionsPlurais.remove( dominio )
         traducionsVariantes.remove( dominio )
-    }
+    }*/
 
     fun <T> obterTexto( elemento: T ): String {
 
@@ -262,7 +242,6 @@ object Localizacion {
         return texto
 
     }
-
 
     internal fun l10n( elemento: L10nSingular ): String {
         cargarDominio( elemento.dominio )
@@ -295,7 +274,7 @@ object Localizacion {
 
     }
 
-    private fun categoriaPlurais(numAbs: Double, local: Locale, cardinal: Boolean ): String {
+    private fun categoriaPlurais( numAbs: Double, local: Locale, cardinal: Boolean ): String {
 
         if ( cardinal ) {
             return categoriaCardinal( numAbs, local )

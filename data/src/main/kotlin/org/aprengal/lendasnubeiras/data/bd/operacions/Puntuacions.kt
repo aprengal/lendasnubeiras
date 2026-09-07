@@ -77,7 +77,7 @@ object Puntuacions {
             )
         }
 
-        return Clasificacion( actividade.titulo, dificultade, listaPuntuacions )
+        return Clasificacion( actividade.claveTitulo, dificultade, listaPuntuacions )
 
     }
 

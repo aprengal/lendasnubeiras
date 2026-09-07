@@ -27,7 +27,7 @@ class LocalizacionTest {
     private fun collerClavesSingular( dominio: Dominio ): List<L10nSingular> {
 
         val lista = when( dominio ) {
-            Dominio.ACTIVIDADES -> L10nActividades.entries
+            Dominio.DATOS_ACTIVIDADES -> L10nActividades.entries
             Dominio.AUTENTICACION -> L10nAutenticacion.entries
             Dominio.BASE -> L10nBase.entries
             Dominio.TITULOS -> L10nTitulos.entries

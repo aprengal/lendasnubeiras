@@ -30,6 +30,6 @@ enum class L10nActividades( internal val clave: String ) : L10nSingular {
     DificultadeDificil( "dificultade_dificil" ),
     DificultadePesadelo( "dificultade_pesadelo" );
 
-    internal val dominio: Dominio = Dominio.ACTIVIDADES
+    internal val dominio: Dominio = Dominio.DATOS_ACTIVIDADES
 
 }

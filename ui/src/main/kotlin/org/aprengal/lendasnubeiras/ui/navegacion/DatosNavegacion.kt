@@ -22,7 +22,7 @@ import org.aprengal.lendasnubeiras.ui.pantallas.autenticacion.PantallaAcceso
 import org.aprengal.lendasnubeiras.ui.pantallas.abertas.PantallaAxustes
 import org.aprengal.lendasnubeiras.ui.pantallas.autenticacion.PantallaBenvida
 import org.aprengal.lendasnubeiras.ui.pantallas.autenticacion.PantallaRexistro
-import org.aprengal.lendasnubeiras.ui.pantallas.monitor.PantallaActividade
+import org.aprengal.lendasnubeiras.ui.pantallas.monitor.PantallaCatalogo
 import org.aprengal.lendasnubeiras.ui.pantallas.monitor.PantallaActividadeDetalle
 import org.aprengal.lendasnubeiras.ui.pantallas.monitor.PantallaBuscador
 import org.aprengal.lendasnubeiras.ui.pantallas.monitor.PantallaInicio
@@ -65,7 +65,7 @@ internal object DatosNavegacion {
             val idioma = DatosPantalla( COMPLETA )
             val buscar = DatosPantalla( COMPLETA )
 
-            ruta<Ruta.Actividades>( actividades ) { PantallaActividade() }
+            ruta<Ruta.Catalogo>( actividades ) { PantallaCatalogo() }
             ruta<Ruta.Inicio>( inicio ) { PantallaInicio() }
             ruta<Ruta.Idioma>( idioma ) { XogoDados() }
             ruta<Ruta.Buscar>( buscar ) { PantallaBuscador() }
@@ -75,7 +75,12 @@ internal object DatosNavegacion {
             val actividadeDetalle = DatosPantalla( TITULO_SUPERIOR )
             val buscaDetalle = DatosPantalla( COMPLETA )
 
-            ruta<Ruta.ActividadeDetalle>( actividadeDetalle) { datos -> PantallaActividadeDetalle( datos.id ) }
+            //Pantalla Actividade pasa a conter a clave do título en lugar da clave como parámetro
+            //Detalle pasaría a ser /actividade/claveTitulo
+            // a descrición estaría despregada ou amosaríase sempre?
+            //Os datos da configuración irían antes de arrancar a actividade
+            //A actividade desenvolveríase en /actividade/claveTitulo/xogo
+            ruta<Ruta.ActividadeDetalle>( actividadeDetalle ) { datos -> PantallaActividadeDetalle( datos.clave ) }
             ruta<Ruta.BuscaDetalle>( buscaDetalle ) { datos -> PantallaResultadoBusca( datos.termo ) }
 
         }

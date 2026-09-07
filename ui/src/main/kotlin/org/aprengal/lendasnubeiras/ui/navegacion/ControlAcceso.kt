@@ -32,7 +32,7 @@ internal object ControlAcceso {
 
             // Lectura
             Ruta.Inicio::class -> PodeLer
-            Ruta.Actividades::class -> PodeLer
+            Ruta.Catalogo::class -> PodeLer
             Ruta.ActividadeDetalle::class -> PodeLer
             Ruta.Buscar::class -> PodeLer
             Ruta.Idioma::class -> PodeLer
@@ -73,7 +73,7 @@ internal object ControlAcceso {
         val navegacion = LocalNavegacion.current
 
         val redirixir = when ( ruta ) {
-            is Ruta.ActividadeDetalle -> if ( collerActividade( ruta.id ) == null ) Ruta.Actividades else null
+            is Ruta.ActividadeDetalle -> if ( collerActividade( ruta.clave ) == null ) Ruta.Catalogo else null
             else -> null
         }
 

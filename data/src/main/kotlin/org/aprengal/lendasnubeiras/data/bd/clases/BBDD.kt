@@ -13,14 +13,14 @@ import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.SeleccionSQL
 import org.aprengal.lendasnubeiras.data.bd.taboas.Taboa
 import org.aprengal.lendasnubeiras.data.bd.taboas.TaboaBase
-import org.aprengal.lendasnubeiras.data.bd.taboas.TaboaLectura
+//import org.aprengal.lendasnubeiras.data.bd.taboas.TaboaLectura
 import org.aprengal.lendasnubeiras.data.localizacion.clases.ElementoL10n
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma
 import kotlin.collections.iterator
 
 internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, null, DB_VERSION ) {
 
-    private enum class Modo { LECTURA, ESCRITURA }
+    //private enum class Modo { LECTURA, ESCRITURA }
 
     private val taboasPermitidas: Set<Taboa> = TaboaBase.entries.toSet()
 
@@ -30,23 +30,23 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
         const val DB_VERSION = 1
     }
 
-    override fun onCreate( db: SQLiteDatabase) {
+    override fun onCreate( db: SQLiteDatabase ) {
         EstruturaDB().crear( db )
     }
 
-    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int ) {
+    override fun onUpgrade( db: SQLiteDatabase, oldVersion: Int, newVersion: Int ) {
         EstruturaDB().actualizar( db, oldVersion, newVersion )
     }
 
-    override fun onConfigure( db: SQLiteDatabase) {
+    override fun onConfigure( db: SQLiteDatabase ) {
         super.onConfigure( db )
         db.setForeignKeyConstraintsEnabled( true )
     }
 
-    private fun verificarTaboa(taboa: Taboa, modo: Modo = Modo.ESCRITURA ) {
+    private fun verificarTaboa( taboa: Taboa/*, modo: Modo = Modo.ESCRITURA*/ ) {
 
         val permitidas = taboasPermitidas.toMutableSet()
-        if ( modo == Modo.LECTURA ) permitidas.addAll( TaboaLectura.entries.toSet() )
+        //if ( modo == Modo.LECTURA ) permitidas.addAll( TaboaLectura.entries.toSet() )
 
         require( taboa in permitidas ) { "A táboa $taboa non está na lista de táboas permitidas" }
 
@@ -113,9 +113,9 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
 
     }
 
-    fun seleccionar(taboa: Taboa, datos: SeleccionSQL): List<Map<String, Any>> {
+    fun seleccionar( taboa: Taboa, datos: SeleccionSQL): List<Map<String, Any>> {
 
-        verificarTaboa( taboa, Modo.LECTURA )
+        verificarTaboa( taboa/*, Modo.LECTURA*/ )
         require( datos.columnas.isNotEmpty() ) { "Deben indicarse as columnas nunha consulta select" }
 
         val ( condicions, argumentos ) = if ( datos.onde.isEmpty() ) "" to emptyArray() else establecerCondicions( datos.onde )
@@ -288,7 +288,7 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
 
             datos.forEach { info ->
 
-                verificarTaboa( info.taboaCombinacion, Modo.LECTURA )
+                verificarTaboa( info.taboaCombinacion/*, Modo.LECTURA*/ )
 
                 val principal = "$aliasPrincipal.${ info.colPrincipal }"
                 val secundaria = "${ info.aliasSecundario }.${ info.colSecundaria }"

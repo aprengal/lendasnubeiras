@@ -1,0 +1,20 @@
+{
+
+  "dialogo_cambio_idioma": "Idioma de los menús",
+  "dialogo_cambio_tema": "Tema de la aplicación",
+  "dialogo_peche_sesion": "¿Cerrar sesión?",
+  "titulo_cambio_idioma": "Idioma",
+  "titulo_cambio_tema": "Tema",
+  "boton_peche_sesion": "Cerrar sesión",
+
+  "reinicio_cambio_idioma": "La aplicación se reiniciará tras cambiar el idioma",
+
+  "tema_claro": "Claro",
+  "tema_escuro": "Oscuro",
+  "tema_predeterminado": "Predeterminado",
+
+  "gardado_fallido_cambio_idioma": "No se ha podido cambiar el idioma",
+  "gardado_fallido_cambio_tema": "No se ha podido cambiar el tema",
+  "peche_sesion_fallido": "No se ha podido cerrar sesión"
+
+}

@@ -50,25 +50,12 @@ android {
     defaultConfig {
         minSdk = 29
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
 
-    buildTypes {
-
-        getByName( "debug" ) {
-            buildConfigField(
-                "String",
-                "API_URL",
-                "\"${localProperties.getProperty( "API_URL_DEBUG" )}\""
-            )
-        }
-
-        getByName( "release" ) {
-            buildConfigField(
-                "String",
-                "API_URL",
-                "\"${localProperties.getProperty( "API_URL_RELEASE" )}\""
-            )
-        }
+        buildConfigField(
+            "String",
+            "API_URL",
+            "\"${ localProperties.getProperty( "API_URL" ) }\""
+        )
 
     }
 

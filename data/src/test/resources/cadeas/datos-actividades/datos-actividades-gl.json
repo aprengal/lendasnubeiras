@@ -1,0 +1,27 @@
+{
+  "categoria_outros": "Outros",
+  "categoria_dixital": "Dixital",
+  "categoria_aire_libre": "Aire libre",
+  "categoria_interior": "Interior",
+  "categoria_lectura": "Lectura",
+
+  "destinatario_xeral": "Xeral",
+  "destinatario_peques": "Peques",
+  "destinatario_xuvenil": "Xuvenil",
+  "destinatario_adultos": "Adultos",
+  "destinatario_maiores": "Maiores",
+  "destinatario_mixto": "Mixto",
+
+  "estado_borrador_local": "Borrador local",
+  "estado_pendente_local": "Pendente local",
+  "estado_publicado_local": "Publicado local",
+  "estado_borrador": "Borrador",
+  "estado_pendente": "Pendente",
+  "estado_publicado": "Publicado",
+  "estado_borrado": "Borrado",
+
+  "dificultade_facil": "Fácil",
+  "dificultade_media": "Media",
+  "dificultade_dificil": "Difícil",
+  "dificultade_pesadelo": "Pesadelo"
+}

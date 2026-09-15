@@ -1,0 +1,28 @@
+{
+  "nome_app": "Lendas Nubeiras",
+  "si": "Si",
+  "non": "Non",
+  "aceptar": "Aceptar",
+  "cancelar": "Cancelar",
+  "reintentar_accion": "Reintentar",
+
+  "mensaxes_novas": {
+    "one": "Tes %s mensaxe nova",
+    "other": "Tes %s mensaxes novas",
+    "many": "Tes %s de mensaxes novas"
+  },
+  "mensaxe_fallos": {
+    "0": "Entregaches a tese sobre a aerodinámica das croquetas. Doutoramento honoris causa intergaláctico.",
+    "1": "Esqueche a bibliografía. A túa única fonte era un tuit dun gato DJ ás tres da mañá.",
+    "2": "Napoleón perdeu en Waterloo porque se lle enfriou a sopa de letras. Sabroso pero falso.",
+    "3": "Entregaches o exame de cálculo en clase de zarzuela. O decano chorou de emoción cos teus agudos.",
+    "4": "En anatomía debuxases o aparato dixestivo saíndo en forma de confeti polo embigo.",
+    "5": "Presentáchesche vestido de pirata do XVII defendendo que a inflación é un construto social.",
+    "6": "Respondeches a Góngora citando regueton antigo. O departamento convocou un aquelarre.",
+    "7": "En vez dun ensaio de Kant, envíaches un plano para lanzar tostadas con catapulta ao veciño.",
+    "8": "Afirmaches que Madrid está dentro dunha sandía xigante e Murcia é unha colonia de elfos.",
+    "9": "Tocaches a táboa periódica cos morros coma se fose unha harmónica. Catástrofe en escala Richter.",
+    "10": "Entregaches a folla en branco cunha lonxa de xamón curado reseco e un poni brillante. O claustro ardeu."
+  }
+
+}

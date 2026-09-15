@@ -1,0 +1,28 @@
+{
+  "nome_app": "Lendas Nubeiras",
+  "si": "Sí",
+  "non": "No",
+  "aceptar": "Aceptar",
+  "cancelar": "Cancelar",
+  "reintentar_accion": "Reintentar",
+
+  "mensaxes_novas": {
+    "one": "Tienes %s mensaje nuevo",
+    "other": "Tienes %s mensajes nuevos",
+    "many": "Tienes %s de mensajes nuevos"
+  },
+  "mensaxe_fallos": {
+    "0": "Has entregado la tesis sobre la aerodinámica de las croquetas. Doctorado honoris causa intergaláctico.",
+    "1": "Olvidaste la bibliografía. Tu única fuente era un tuit de un gato DJ a las tres de la mañana.",
+    "2": "Napoleón perdió en Waterloo porque se le enfrió la sopa de letras. Sabroso pero falso.",
+    "3": "Entregaste el examen de cálculo en clase de zarzuela. El decano lloró de emoción con tus agudos.",
+    "4": "En anatomía dibujaste el aparato digestivo saliendo en forma de confeti por el ombligo.",
+    "5": "Te presentaste vestido de pirata del XVII defendiendo que la inflación es un constructo social.",
+    "6": "Respondiste a Góngora citando reguetón antiguo. El departamento ha convocado un aquelarre.",
+    "7": "En vez de un ensayo de Kant, enviaste un plano para lanzar tostadas con catapulta al vecino.",
+    "8": "Afirmaste que Madrid está dentro de una sandía gigante y Murcia es una colonia de elfos.",
+    "9": "Tocaste la tabla periódica con los morros como si fuera una armónica. Catástrofe en escala Richter.",
+    "10": "Entregaste la hoja en blanco con una loncha de jamón york reseca y un pony brillante. El claustro ha ardido."
+  }
+
+}

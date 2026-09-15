@@ -1,0 +1,20 @@
+{
+
+  "dialogo_cambio_idioma": "Menu language",
+  "dialogo_cambio_tema": "Application theme",
+  "dialogo_peche_sesion": "Log out?",
+  "titulo_cambio_idioma": "Language",
+  "titulo_cambio_tema": "Theme",
+  "boton_peche_sesion": "Log out",
+
+  "reinicio_cambio_idioma": "The application will restart after changing the language",
+
+  "tema_claro": "Light",
+  "tema_escuro": "Dark",
+  "tema_predeterminado": "Default",
+
+  "gardado_fallido_cambio_idioma": "Could not change the language",
+  "gardado_fallido_cambio_tema": "Could not change the theme",
+  "peche_sesion_fallido": "Could not log out"
+
+}

@@ -29,6 +29,12 @@ android {
         compose = true
     }
 
+    packaging {
+        resources {
+            excludes += "res/font/LICENSE.txt"
+        }
+    }
+
     testOptions {
         unitTests {
             isIncludeAndroidResources = true

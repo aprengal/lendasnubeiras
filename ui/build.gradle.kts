@@ -31,7 +31,7 @@ android {
 
     packaging {
         resources {
-            excludes += "res/font/LICENSE.txt"
+            excludes += "res/LICENSE"
         }
     }
 

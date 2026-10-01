@@ -34,7 +34,7 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaApertura
 import org.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaBase
 import org.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaSuperior
 
-internal object DatosNavegacion {
+internal class DatosNavegacion {
 
     enum class TipoPantalla { COMPLETA, TITULO_SUPERIOR, APERTURA }
 

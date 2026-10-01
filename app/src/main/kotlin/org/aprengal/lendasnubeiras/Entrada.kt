@@ -73,6 +73,8 @@ class Entrada : AppCompatActivity() {
         enableEdgeToEdge()
         super.onCreate( savedInstanceState )
 
+        var rutaEnlace: Ruta? = if ( savedInstanceState == null ) Enlaces( intent ).confirmar() else null
+
         setContent {
 
             TemaNubeiro {
@@ -87,7 +89,7 @@ class Entrada : AppCompatActivity() {
 
                     AnimatedContent( targetState = sesion, transitionSpec = { fadeIn() togetherWith fadeOut() } ) {
 
-                        val ruta = remember { Enlaces( intent ).confirmar() ?: rutaInicial() }
+                        val ruta = remember { rutaEnlace.also { rutaEnlace = null } ?: rutaInicial() }
 
                         @Suppress( "UNCHECKED_CAST" )
                         val traza = rememberNavBackStack( ruta ) as NavBackStack<Ruta>

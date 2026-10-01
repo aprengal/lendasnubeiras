@@ -11,7 +11,6 @@ import androidx.navigation3.ui.NavDisplay
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeLer
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeRexistrarse
-import org.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.entradasNavegacion
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalAviso
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalIdioma
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalNavegacion
@@ -94,10 +93,10 @@ class Navegacion ( private val traza: NavBackStack<Ruta>, seleccionada: KClass<o
                 aviso.currentSnackbarData?.dismiss()
             }
 
-            val entradas = entradasNavegacion
+            val entradas = remember { DatosNavegacion() }
 
             CompositionLocalProvider( LocalIdioma provides idioma, LocalNavegacion provides navegacion, LocalAviso provides aviso ) {
-                NavDisplay( navegacion.lista, transitionSpec = avanceTransicion(), popTransitionSpec = retrocesoTransicion(), entryProvider = entradas )
+                NavDisplay( navegacion.lista, transitionSpec = avanceTransicion(), popTransitionSpec = retrocesoTransicion(), entryProvider = entradas.entradasNavegacion )
             }
 
         }

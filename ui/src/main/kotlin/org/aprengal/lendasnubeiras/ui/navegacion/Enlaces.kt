@@ -14,7 +14,7 @@ class Enlaces( intento: Intent ) {
     private val peticion = Peticion( intento )
 
     private val enlaces = listOf(
-        //ValidadorEnlace( Enlace( "$dominio://axustes" ), serializer<Ruta.Axustes>() ),
+        ValidadorEnlace( Enlace( "$dominio://axustes" ), serializer<Ruta.Axustes>() ),
         ValidadorEnlace( Enlace( "$dominio://catalogo" ), serializer<Ruta.Catalogo>() ),
         ValidadorEnlace( Enlace( "$dominio://actividade/{clave}" ), serializer<Ruta.ActividadeDetalle>() ),
         ValidadorEnlace( Enlace( "$dominio://buscar/{termo}" ), serializer<Ruta.Buscar>() ),//TODO: hai que cambiar a detalle busca, non buscar directamnente

@@ -14,10 +14,28 @@ import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeRexistrarse
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalNavegacion
 import kotlin.reflect.KClass
 
+/**
+ * Controla o acceso ás pantallas segundo os permisos do usuario.
+ *
+ * Cada ruta ten asociado un permiso. Antes de mostrar unha pantalla
+ * compróbase que o usuario o teña e que a ruta sexa válida.
+ */
 internal object ControlAcceso {
 
     //Hai que mirar se isto ao final acaba duplicando comportamento en ListaNavegacion
     //Non se pode navegar á ruta que nunca se rexistrou
+    /**
+     * Comproba se o usuario actual ten permiso para acceder a unha ruta.
+     *
+     * Cada clase de ruta asócíase a un permiso: calquera usuario ([PodeAcceder]),
+     * autenticación ([PodeIniciarSesion], [PodeRexistrarse]), lectura
+     * ([PodeLer]), creación ([PodeCrear]), edición ([PodeEditar]) ou
+     * administración ([PodeAdministrar]).
+     *
+     * @param ruta Clase da ruta á que se quere acceder.
+     * @return `true` se o usuario ten o permiso asociado a esa ruta.
+     * @throws IllegalStateException Se a ruta non ten ningún permiso asignado.
+     */
     private fun verificarAcceso( ruta: KClass<out Ruta> ): Boolean {
 
         val permiso = when ( ruta ) {
@@ -35,7 +53,7 @@ internal object ControlAcceso {
             Ruta.Catalogo::class -> PodeLer
             Ruta.ActividadeDetalle::class -> PodeLer
             Ruta.Buscar::class -> PodeLer
-            Ruta.Idioma::class -> PodeLer
+            //Ruta.Idioma::class -> PodeLer
 
             // Creación
             Ruta.ListarActividades::class -> PodeCrear
@@ -53,6 +71,16 @@ internal object ControlAcceso {
 
     }
 
+    /**
+     * Comproba que o usuario poida acceder a unha pantalla.
+     *
+     * Se non ten permiso, rexístrase o intento no log e a navegación
+     * reiníciase (ver [Navegacion.reiniciar]), de modo que só queda a primeira
+     * pantalla da pila.
+     *
+     * @param ruta Clase da ruta á que se quere acceder.
+     * @return `true` se o acceso está permitido; `false` se non.
+     */
     @Composable
     internal fun comprobarAcceso( ruta: KClass<out Ruta> ): Boolean {
 
@@ -67,6 +95,15 @@ internal object ControlAcceso {
 
     }
 
+    /**
+     * Comproba que unha ruta concreta sexa válida.
+     *
+     * Por agora só se valida [Ruta.ActividadeDetalle]: se a actividade
+     * indicada non existe, redirixe ao [Ruta.Catalogo].
+     *
+     * @param ruta Ruta que se quere mostrar.
+     * @return `true` se a ruta é válida; `false` se se redirixiu a outra pantalla.
+     */
     @Composable
     internal fun verificarRuta( ruta: Ruta ): Boolean {
 

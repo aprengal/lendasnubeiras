@@ -43,16 +43,43 @@ import org.aprengal.lendasnubeiras.ui.navegacion.Navegacion.Companion.rutaInicia
 import org.aprengal.lendasnubeiras.ui.navegacion.Ruta
 import org.aprengal.lendasnubeiras.ui.tema.Tema
 
+/**
+ * Actividade única da aplicación e punto de entrada do módulo `app`.
+ *
+ * Arranca a configuración da aplicación, constrúe a interface con Compose e
+ * xestiona as ligazóns directas. A navegación entre pantallas non se fai con
+ * máis actividades, senón mediante [Navegacion].
+ */
 class Entrada : AppCompatActivity() {
 
+    /**
+     * Prepara o contexto base da actividade e arranca a configuración.
+     *
+     * Execútase antes de [onCreate], polo que a configuración queda lista
+     * antes de crear a interface.
+     *
+     * @param contexto Contexto base da actividade.
+     */
     override fun attachBaseContext( contexto: Context ) {
         super.attachBaseContext( contexto )
         arrancarConfiguracion( contexto )
     }
 
+    /** Idioma actual da aplicación, en forma de fluxo de estado observable. */
     private lateinit var idioma: StateFlow<Idioma>
+
+    /** Xestor de navegación da pantalla actual. Crease ao construír a interface. */
     private lateinit var navegacion: Navegacion
 
+    /**
+     * Inicializa os servizos que a aplicación necesita antes de mostrar nada.
+     *
+     * Arranca, por orde: axustes, conexión coa API, base de datos,
+     * localización (obtendo o fluxo do idioma), tema e sesión actual.
+     * Execútase con [runBlocking], así que bloquea o fío ata que remata.
+     *
+     * @param contexto Contexto co que se inicializan os servizos que o precisan.
+     */
     private fun arrancarConfiguracion( contexto: Context ) {
 
         runBlocking {
@@ -66,6 +93,20 @@ class Entrada : AppCompatActivity() {
 
     }
 
+    /**
+     * Crea a actividade e constrúe a interface.
+     *
+     * Se a actividade se abre por primeira vez (non se está restaurando), le a
+     * ligazón directa co que se abriu, se a hai. A interface:
+     * 1. Aplica o tema ([TemaNubeiro]) e a cor da barra de navegación do sistema.
+     * 2. Observa a sesión e o idioma actuais.
+     * 3. Cando cambia a sesión, reconstrúe a navegación cun fundido gradual.
+     * 4. Elixe a pantalla inicial: a da ligazón directa, se a hai, ou
+     *    [rutaInicial] en caso contrario. A ligazón úsase só unha vez.
+     * 5. Rexistra a navegación ([RexistrarNavegacion]).
+     *
+     * @param savedInstanceState Estado gardado, ou `null` se é a primeira vez.
+     */
     @SuppressLint( "UnusedContentLambdaTargetStateParameter" )
     override fun onCreate( savedInstanceState: Bundle? ) {
 
@@ -107,11 +148,23 @@ class Entrada : AppCompatActivity() {
 
     }
 
+    /**
+     * Xestiona unha ligazón directa recibida mentres a aplicación xa está aberta.
+     *
+     * Se a ligazón é válida, engade a súa pantalla á pila de navegación.
+     *
+     * @param intent Intent coa ligazón recibida.
+     */
     override fun onNewIntent( intent: Intent ) {
         super.onNewIntent( intent )
         Enlaces( intent ).confirmar()?.let { enlace -> navegacion.engadir( enlace ) }
     }
 
+    /**
+     * Sincroniza o idioma da aplicación co do sistema cando a actividade deixa de ser visible.
+     *
+     * Se o idioma actual da aplicación é distinto do rexistrado en [AppCompatDelegate], actualízao.
+     */
     override fun onStop() {
 
         super.onStop()

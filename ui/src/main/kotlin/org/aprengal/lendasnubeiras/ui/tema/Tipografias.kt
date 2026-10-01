@@ -10,19 +10,42 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import org.aprengal.lendasnubeiras.ui.R
 
+/**
+ * Tipografías da aplicación.
+ *
+ * Define as dúas familias de letra empregadas e o conxunto de estilos de texto
+ * de Material 3 ([Typography]) que se aplican en toda a interface.
+ */
 internal object Tipografias {
 
+    /**
+     * Familia Expletus Sans, empregada nas cabeceiras e nos títulos.
+     *
+     * Utiliza o mesmo ficheiro de fonte variable para os pesos normal e negriña.
+     */
     private val expletusSans = FontFamily(
         Font( R.font.expletus_sans_variable, FontWeight.Normal ),
         Font( R.font.expletus_sans_variable, FontWeight.Bold )
     )
 
+    /**
+     * Familia Ubuntu, empregada nos parágrafos e nas etiquetas.
+     *
+     * Ten ficheiros propios para o estilo normal, a negriña e a cursiva.
+     */
     private val ubuntu = FontFamily(
         Font( R.font.ubuntu_regular, FontWeight.Normal ),
         Font( R.font.ubuntu_bold, FontWeight.Bold ),
         Font( R.font.ubuntu_italic, style = FontStyle.Italic )
     )
 
+    /**
+     * Estilos de texto da aplicación.
+     *
+     * - Cabeceiras e títulos: Expletus Sans en negriña, con tamaños de 14 sp a 26 sp.
+     * - Parágrafos: Ubuntu en peso normal, con 18 sp para o texto principal e 12 sp para anotacións.
+     * - Etiquetas: Ubuntu en negriña, con tamaños de 11 sp a 16 sp.
+     */
     private val tipografias = Typography(
         // Cabeceira 1
         headlineLarge = TextStyle(
@@ -77,7 +100,7 @@ internal object Tipografias {
         // Parágrafo (corpo de texto normal)
         bodyLarge = TextStyle(
             fontFamily = ubuntu,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.Normal,
             fontSize = 18.sp,
             lineHeight = 26.sp
         ),
@@ -119,6 +142,11 @@ internal object Tipografias {
         )
     )
 
+    /**
+     * Devolve os estilos de texto da aplicación.
+     *
+     * @return O conxunto de [Typography] que se pasa ao tema da aplicación.
+     */
     fun collerTipografias(): Typography {
         return tipografias
     }

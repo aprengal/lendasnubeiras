@@ -26,7 +26,6 @@ import org.aprengal.lendasnubeiras.ui.pantallas.monitor.PantallaCatalogo
 import org.aprengal.lendasnubeiras.ui.pantallas.monitor.PantallaActividadeDetalle
 import org.aprengal.lendasnubeiras.ui.pantallas.monitor.PantallaBuscador
 import org.aprengal.lendasnubeiras.ui.pantallas.monitor.PantallaInicio
-import org.aprengal.lendasnubeiras.ui.pantallas.monitor.actividadesDixitais.XogoDados
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalRuta
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalTitulo
 import org.aprengal.lendasnubeiras.ui.pantallas.monitor.PantallaResultadoBusca
@@ -34,13 +33,51 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaApertura
 import org.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaBase
 import org.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaSuperior
 
+/**
+ * Rexistra as pantallas da aplicación na navegación.
+ *
+ * Asocia cada [Ruta] coa súa pantalla, co seu tipo ([TipoPantalla]) e co seu
+ * título. Só se rexistran as rutas ás que o usuario ten permiso no momento de
+ * crear o obxecto: por exemplo, as de creación só existen se [PodeCrear] o
+ * permite.
+ */
 internal class DatosNavegacion {
 
+    /**
+     * Tipo de estrutura visual dunha pantalla.
+     *
+     * Determina que estrutura a envolve (ver [ruta]) e que animación se usa ao
+     * entrar nela ou saír dela (ver [Transicions]).
+     *
+     * - [COMPLETA]: pantalla coa estrutura base, que recibe a [Navegacion].
+     * - [TITULO_SUPERIOR]: pantalla cun título na parte superior.
+     * - [APERTURA]: pantalla de benvida, acceso e rexistro.
+     */
     enum class TipoPantalla { COMPLETA, TITULO_SUPERIOR, APERTURA }
 
+    /**
+     * Datos asociados a unha pantalla.
+     *
+     * @property tipo Tipo de estrutura visual da pantalla.
+     * @property titulo Título da pantalla, ou `null` se non ten.
+     */
     data class DatosPantalla( val tipo: TipoPantalla, val titulo: L10nTitulos? = null )
+
+    /** Clave dos metadatos co que se garda o [TipoPantalla] de cada entrada de navegación. */
     object Tipo : NavMetadataKey<TipoPantalla>
 
+    /**
+     * Proveedor de entradas de Navigation 3.
+     *
+     * Rexistra as pantallas por grupos segundo o permiso necesario:
+     * - Sempre: [Ruta.Axustes].
+     * - [PodeRexistrarse]: [Ruta.Benvida], [Ruta.Acceso] e [Ruta.Rexistro].
+     * - [PodeLer]: [Ruta.Catalogo], [Ruta.Inicio], [Ruta.Buscar],
+     *   [Ruta.ActividadeDetalle] e [Ruta.BuscaDetalle].
+     * - [PodeCrear]: [Ruta.ListarActividades], [Ruta.CrearActividade] e
+     *   [Ruta.ModificarActividade].
+     * - [PodeAdministrar]: [Ruta.Administrar].
+     */
     val entradasNavegacion = entryProvider {
 
         val axustes = DatosPantalla( TITULO_SUPERIOR, L10nTitulos.Axustes )
@@ -62,12 +99,10 @@ internal class DatosNavegacion {
 
             val actividades = DatosPantalla( COMPLETA, L10nTitulos.Actividades )
             val inicio = DatosPantalla( COMPLETA )
-            val idioma = DatosPantalla( COMPLETA )
             val buscar = DatosPantalla( COMPLETA )
 
             ruta<Ruta.Catalogo>( actividades ) { PantallaCatalogo() }
             ruta<Ruta.Inicio>( inicio ) { PantallaInicio() }
-            ruta<Ruta.Idioma>( idioma ) { XogoDados() }
             ruta<Ruta.Buscar>( buscar ) { PantallaBuscador() }
 
             //Con argumentos
@@ -104,6 +139,21 @@ internal class DatosNavegacion {
 
     }
 
+    /**
+     * Rexistra unha pantalla no proveedor de entradas.
+     *
+     * Garda o [TipoPantalla] nos metadatos da entrada e, ao mostrala:
+     * 1. Comproba o permiso de acceso ([ControlAcceso.comprobarAcceso]).
+     * 2. Comproba que a ruta sexa válida ([ControlAcceso.verificarRuta]).
+     * 3. Fornece a ruta e o título aos compoñentes fillos ([LocalRuta] e [LocalTitulo]).
+     * 4. Envolve o contido na estrutura que corresponde ao seu tipo.
+     *
+     * Se falla algunha das dúas comprobacións, non se mostra a pantalla.
+     *
+     * @param T Tipo de [Ruta] que se rexistra.
+     * @param datos Tipo e título da pantalla.
+     * @param contido Contido da pantalla, que recibe a ruta (con os seus argumentos).
+     */
     inline fun <reified T : Ruta> EntryProviderScope<Ruta>.ruta( datos: DatosPantalla, noinline contido: @Composable ( T ) -> Unit ) {
 
         val tipo = metadata { put( Tipo, datos.tipo ) }

@@ -18,13 +18,32 @@ import org.aprengal.lendasnubeiras.ui.tema.Cores.collerTemaClaro
 import org.aprengal.lendasnubeiras.ui.tema.Cores.collerTemaEscuro
 import org.aprengal.lendasnubeiras.ui.tema.Tipografias.collerTipografias
 
+/**
+ * Xestiona o tema visual da aplicación (claro, escuro ou predeterminado).
+ *
+ * Garda o tema escollido, cárgao ao arrancar a aplicación e aplícao a toda a
+ * interface mediante [TemaNubeiro].
+ */
 object Tema {
 
+    /**
+     * Tema que se está aplicando actualmente.
+     *
+     * Ao ser un estado de Compose, a interface actualízase automaticamente
+     * cando cambia. Só se pode modificar desde esta clase.
+     */
     internal var temaActual by mutableStateOf( Predeterminado )
         private set
 
+    /** Indica se o tema gardado xa se cargou, para facelo só unha vez. */
     private var temaCargado = false
 
+    /**
+     * Carga o tema gardado no dispositivo.
+     *
+     * Só actúa a primeira vez que se chama; as seguintes non fan nada. Se non
+     * hai ningún tema gardado, o resultado depende de [Variante.buscar].
+     */
     fun arrancar() {
 
         if ( temaCargado ) return
@@ -35,6 +54,16 @@ object Tema {
 
     }
 
+    /**
+     * Cambia o tema da aplicación e gárdao para as próximas execucións.
+     *
+     * O tema só se actualiza se se consegue gardar. Se o tema indicado xa é o
+     * actual, non fai nada.
+     *
+     * @param novoTema Tema que se quere aplicar.
+     * @return `true` se o tema queda aplicado (ou xa o estaba); `false` se non
+     * se puido gardar e, polo tanto, non se cambiou.
+     */
     internal suspend fun cambiarTema( novoTema: Variante ): Boolean {
 
         if ( temaActual == novoTema ) return true
@@ -45,6 +74,15 @@ object Tema {
 
     }
 
+    /**
+     * Escolle o esquema de cores que corresponde ao tema actual.
+     *
+     * Co tema [Predeterminado], segue o do sistema: usa o escuro se o
+     * dispositivo está en modo escuro e o claro en caso contrario.
+     *
+     * @param temaEscuro Indica se o sistema está en modo escuro.
+     * @return O [ColorScheme] que se debe aplicar.
+     */
     private fun collerCoresTema( temaEscuro: Boolean ): ColorScheme {
 
         val esquemaCores = when( temaActual ) {
@@ -57,6 +95,14 @@ object Tema {
 
     }
 
+    /**
+     * Aplica o tema da aplicación ao contido que recibe.
+     *
+     * Combina as cores do tema actual coas formas ([Bordos]) e as tipografías
+     * ([Tipografias]) da aplicación, e envolve o contido nun [MaterialTheme].
+     *
+     * @param contido Interface á que se aplica o tema.
+     */
     @Composable
     fun TemaNubeiro( contido: @Composable () -> Unit ) {
 
@@ -71,4 +117,3 @@ object Tema {
     }
 
 }
-

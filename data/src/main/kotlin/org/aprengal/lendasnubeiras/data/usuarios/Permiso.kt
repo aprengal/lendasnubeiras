@@ -44,6 +44,13 @@ sealed class Permiso {
         }
     }
 
+    object PodeXestionarUsuariosGrupos : Permiso() {
+        override fun invoke( usuario: Usuario ): Boolean {
+            return usuario.rol != Rol.NADA
+            //return usuario.rol in listOf( Rol.MONITOR, Rol.COLABORADOR, Rol.AUTOR, Rol.EDITOR, Rol.ADMIN )
+        }
+    }
+
     object PodeCrear : Permiso() {
         override fun invoke( usuario: Usuario ): Boolean {
             return usuario.rol in listOf( Rol.COLABORADOR, Rol.AUTOR, Rol.EDITOR, Rol.ADMIN )

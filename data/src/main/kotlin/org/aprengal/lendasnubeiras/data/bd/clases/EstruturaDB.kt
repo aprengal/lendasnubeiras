@@ -5,13 +5,11 @@ import org.aprengal.lendasnubeiras.data.actividades.datos.Estado
 import org.aprengal.lendasnubeiras.data.actividades.dixitais.datos.Dificultade
 import org.aprengal.lendasnubeiras.data.bd.taboas.TaboaBase
 //import org.aprengal.lendasnubeiras.data.bd.taboas.TaboaLectura
-import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma
 
 internal class EstruturaDB {
 
     fun crear( db: SQLiteDatabase ) {
 
-        val idiomas = Idioma.entries.filter { idioma -> idioma != Idioma.Nada }.joinToString( "," ) { idioma -> "'${ idioma.codigoRexion }'" }
         val dificultades = Dificultade.entries.joinToString( "," ) { dificultade -> "'${ dificultade.clave }'" }
 
         //Nomes táboas
@@ -29,13 +27,12 @@ internal class EstruturaDB {
                 id_autoria      INTEGER NOT NULL CHECK ( id_autoria >= 0 ),
                 id_categoria    TEXT NOT NULL CHECK ( LENGTH( id_categoria ) <= 15 ),
                 id_destinatario TEXT NOT NULL CHECK ( LENGTH( id_destinatario ) <= 15 ),
-                id_idioma       TEXT NOT NULL CHECK ( id_idioma in ( $idiomas ) ),
                 -- Positivos = xa enviado ao servidor: 0=borrador, 1=pendente, 2=publicado, 3=borrado. Negativos = aínda non enviado: -1=borrador, -2=pendente, -3=publicado
                 estado          TINYINT NOT NULL DEFAULT -1 CHECK ( estado BETWEEN -3 AND 3 ),
                 duracion        TINYINT NOT NULL CHECK ( duracion BETWEEN 1 AND 180 ),
                 -- descricion   TEXT NOT NULL CHECK ( LENGTH( descricion ) BETWEEN 10 AND 1000 ),
                 -- obxectivo    TEXT NOT NULL CHECK ( LENGTH( obxectivo ) BETWEEN 10 AND 200 ),
-                materiais       TEXT NOT NULL CHECK ( LENGTH( materiais ) BETWEEN 3 AND 200 ),
+                -- materiais    TEXT NOT NULL CHECK ( LENGTH( materiais ) BETWEEN 3 AND 200 ),
                 data_modificado INTEGER NOT NULL CHECK ( data_modificado >= 0 )
             )
             """
@@ -45,7 +42,6 @@ internal class EstruturaDB {
         db.execSQL( "CREATE INDEX idx_actividades_autoria ON $actividades( id_autoria )" )
         db.execSQL( "CREATE INDEX idx_actividades_categoria ON $actividades( id_categoria )" )
         db.execSQL( "CREATE INDEX idx_actividades_destinatario ON $actividades( id_destinatario )" )
-        db.execSQL( "CREATE INDEX idx_actividades_idioma ON $actividades( id_idioma )" )
         db.execSQL( "CREATE INDEX idx_actividades_estado ON $actividades( estado )" )
         db.execSQL( "CREATE INDEX idx_actividades_data_modificado ON $actividades( data_modificado )" )
 

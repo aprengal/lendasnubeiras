@@ -1,0 +1,355 @@
+openapi: 3.0.3
+ 
+info:
+  title: API de Lendas Nubeiras
+  description: >
+    API REST que serve de intermediaria entre a aplicación Android Lendas
+    Nubeiras e a base de datos do servidor.
+    Salvo as tarefas programadas, os endpoints que non comproban a
+    autenticación directamente requiren ter a sesión iniciada, e a validación
+    da sesión faise automaticamente no servidor.
+  version: "0.1.0"
+ 
+servers:
+  - url: https://lendasnubeiras.duckdns.org
+ 
+tags:
+  - name: Autenticación
+    description: Rexistro, inicio de sesión e validación da sesión.
+  - name: Actividades
+    description: Consulta e xestión das actividades.
+  - name: Administración
+    description: Xestión de usuarios (só administradores).
+  - name: Sistema
+    description: Informes de erros e tarefas programadas.
+ 
+paths:
+ 
+  /rexistro:
+    post:
+      tags: [Autenticación]
+      summary: Rexistrar un usuario novo
+      description: >
+        Rexistra un usuario a partir do seu correo electrónico. Envíase unha
+        mensaxe ao correo cunha URL que contén un token para verificar a
+        acción. A ligazón é válida durante 30 minutos. Unha vez verificada, a
+        solicitude queda en espera ata que un administrador a aprobe.
+ 
+        Cada usuario ten un máximo de 3 intentos de rexistro en 24 horas. Para
+        aplicar este límite, compróbase se xa existe un dato temporal para ese
+        correo dentro do intervalo.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [correo, uuid]
+              properties:
+                correo:
+                  type: string
+                  format: email
+                  description: Correo electrónico co que se quere rexistrar o usuario.
+                uuid:
+                  type: string
+                  format: uuid
+                  description: Identificador único do dispositivo.
+      responses:
+        "200":
+          description: A petición para rexistrarse realizouse correctamente
+        "409":
+          description: Xa existe unha conta con este correo electrónico
+        "429":
+          description: Realizáronse demasiados intentos (3) para rexistrarse con este correo nas últimas 24 horas
+ 
+  /iniciar-sesion:
+    post:
+      tags: [Autenticación]
+      summary: Iniciar sesión
+      description: >
+        Envía ao correo do usuario unha URL cun token para verificar a acción.
+        Como o correo xa foi autorizado por un administrador, non hai límite de
+        reintentos, pero só se pode enviar unha mensaxe cada 60 segundos para
+        evitar envíos innecesarios. Devólvese o token da sesión, pero este debe
+        activarse premendo na ligazón que se envía ao correo.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [correo, uuid]
+              properties:
+                correo:
+                  type: string
+                  format: email
+                  description: Correo electrónico do usuario.
+                uuid:
+                  type: string
+                  format: uuid
+                  description: Identificador único do dispositivo.
+      responses:
+        "200":
+          description: Enviouse o correo de verificación. Devólvese o token da sesión, que aínda non está activo.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Token da sesión. Ten que activarse coa ligazón enviada ao correo.
+        "403":
+          description: A conta non está activa ou foi suspendida. Habería que contactar con administrador para máis información
+        "404":
+          description: O correo non está rexistrado
+        "429":
+          description: Xa se enviou unha mensaxe hai menos de 60 segundos
+ 
+  /validar-sesion:
+    post:
+      tags: [Autenticación]
+      summary: Validar a sesión actual
+      description: >
+        Execútase ao abrir a aplicación cando o usuario iniciou sesión con
+        anterioridade. Comproba que a sesión é correcta e segue activa. A sesión
+        envíase na cookie da petición.
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: A sesión foi validada correctamente
+        "403":
+          description: Houbo un problema coa sesión actual e é preciso iniciar sesión outra vez para poder repetir a acción
+        "404":
+          description: O usuario non existe. Por exemplo, borrouse da base de datos ou a información da sesión é incorrecta
+ 
+  /actividade/actualizar:
+    get:
+      tags: [Actividades]
+      summary: Actualizar o catálogo de actividades
+      description: Actualiza o catálogo das actividades dispoñibles.
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: A solicitude procesouse correctamente e devolveuse un JSON con toda a lista de actividades dispoñibles
+        "429":
+          description: Enviáronse demasiadas solicitudes de actualización en menos de 60 segundos
+ 
+  /actividade/crear:
+    post:
+      tags: [Actividades]
+      summary: Crear unha actividade
+      description: >
+        Crea unha actividade e engádea á base de datos do servidor. O servidor
+        asigna o identificador da actividade e devólveo na resposta.
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [clave_titulo, id_autoria, id_categoria, id_destinatario, estado, duracion, data_modificado]
+              properties:
+                clave_titulo:
+                  type: string
+                  maxLength: 100
+                  description: Clave do título da actividade.
+                id_autoria:
+                  type: integer
+                  minimum: 0
+                  description: Identificador do usuario autor da actividade.
+                id_categoria:
+                  type: string
+                  maxLength: 15
+                  description: Identificador da categoría.
+                id_destinatario:
+                  type: string
+                  maxLength: 15
+                  description: Identificador do destinatario.
+                estado:
+                  type: integer
+                  enum: [0, 1, 2]
+                  description: "0 = borrador, 1 = pendente, 2 = publicado."
+                duracion:
+                  type: integer
+                  minimum: 1
+                  maximum: 180
+                  description: Duración da actividade.
+                data_modificado:
+                  type: integer
+                  minimum: 0
+                  description: Data da última modificación.
+      responses:
+        "200":
+          description: A actividade creouse correctamente. Devólvese un JSON que contén a ID da actividade creada.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    minimum: 1
+                    description: Identificador asignado pola actividade no servidor.
+        "400":
+          description: A petición non tiña a forma esperada
+        "403":
+          description: Houbo un problema coa sesión actual e é preciso iniciar sesión outra vez para poder repetir a acción
+ 
+  /actividade/modificar:
+    post:
+      tags: [Actividades]
+      summary: Modificar, borrar ou restaurar unha actividade
+      description: >
+        Modifica os datos dunha actividade, ou ben a borra ou a restaura. Envíanse
+        todos os campos da actividade e a operación indícase co campo estado:
+        3 para borrar e un valor entre 0 e 2 para restaurar ou cambiar o seu estado.
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id, clave_titulo, id_autoria, id_categoria, id_destinatario, estado, duracion, data_modificado]
+              properties:
+                id:
+                  type: integer
+                  minimum: 1
+                  description: Identificador da actividade no servidor (sempre positivo).
+                clave_titulo:
+                  type: string
+                  maxLength: 100
+                  description: Clave do título da actividade.
+                id_autoria:
+                  type: integer
+                  minimum: 0
+                  description: Identificador do usuario autor da actividade.
+                id_categoria:
+                  type: string
+                  maxLength: 15
+                  description: Identificador da categoría.
+                id_destinatario:
+                  type: string
+                  maxLength: 15
+                  description: Identificador do destinatario.
+                estado:
+                  type: integer
+                  enum: [0, 1, 2, 3]
+                  description: "0 = borrador, 1 = pendente, 2 = publicado, 3 = borrado."
+                duracion:
+                  type: integer
+                  minimum: 1
+                  maximum: 180
+                  description: Duración da actividade.
+                data_modificado:
+                  type: integer
+                  minimum: 0
+                  description: Data da última modificación.
+      responses:
+        "200":
+          description: A actividade foi actualizada
+        "400":
+          description: A petición non tiña a forma esperada
+        "403":
+          description: Houbo un problema coa sesión actual e é preciso iniciar sesión outra vez para poder repetir a acción
+        "404":
+          description: A actividade non existe
+ 
+  /reportar-erros:
+    post:
+      tags: [Sistema]
+      summary: Rexistrar un erro da aplicación
+      description: >
+        Rexistra os erros producidos a nivel de aplicación. Normalmente
+        emprégase unha ferramenta de terceiros para isto, pero, por falta de
+        tempo e por motivos de privacidade, inténtase primeiro unha solución
+        que non envíe información a outras plataformas.
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id_peticion, erro]
+              properties:
+                id_peticion:
+                  type: string
+                  format: uuid
+                  description: Identificador único da petición na que se produciu o erro.
+                erro:
+                  type: string
+                  description: Descrición do erro. Se hai varios problemas, envíanse xuntos nun único texto.
+      responses:
+        "200":
+          description: O erro foi procesado correctamente
+        "400":
+          description: O erro non tiña o formato axeitado
+ 
+  /axustar-usuarios:
+    post:
+      tags: [Administración]
+      summary: Xestionar usuarios
+      description: >
+        Só para administradores. Permite cambiar o rol ou o correo electrónico
+        dun usuario, e mesmo inhabilitar a súa conta se é preciso.
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id]
+              properties:
+                id:
+                  type: integer
+                  description: Identificador do usuario que se quere modificar.
+                correo:
+                  type: string
+                  format: email
+                  description: Novo correo electrónico (opcional).
+                rol:
+                  type: string
+                  enum: [Monitor, Colaborador, Autor, Editor, Administrador]
+                  description: Novo rol do usuario (opcional).
+                estado:
+                  type: string
+                  description: Novo estado da conta, por exemplo para inhabilitala (opcional).
+      responses:
+        "200":
+          description: O usuario indicado foi actualizado cos parámetros indicados
+        "400":
+          description: A petición non puido procesarse correctamente porque faltaban parámetros esenciais
+        "403":
+          description: Houbo un problema coa sesión actual e é preciso iniciar sesión outra vez para poder repetir a acción
+        "404":
+          description: O usuario non existe. Por exemplo, borrouse da base de datos ou a información da sesión é incorrecta
+ 
+  /limpar:
+    get:
+      tags: [Sistema]
+      summary: Executar as tarefas programadas
+      description: >
+        Executa as tarefas programadas do servidor. Actualmente só elimina os
+        datos temporais que xa caducaron. Non require sesión de usuario.
+      responses:
+        "204":
+          description: As tarefas programadas executáronse correctamente e non hai ningunha resposta
+        "409":
+          description: Xa hai unha execución de tarefas programadas en curso
+ 
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: permiso

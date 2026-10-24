@@ -41,3 +41,8 @@ google-services.json
 
 #Api de PHP
 .htaccess
+constantes-privadas.php
+
+#Probas da api (non funcionan fóra de local e é preciso revisar para ver se é posible subilas ao
+#repositorio
+servidorapi/probas

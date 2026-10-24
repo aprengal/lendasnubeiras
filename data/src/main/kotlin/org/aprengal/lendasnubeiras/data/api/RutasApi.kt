@@ -42,7 +42,7 @@ enum class RutasApi ( val ruta: String ) {
      * Execútase ao abrir a aplicación cando o usuario iniciou sesión con
      * anterioridade, e comproba que a sesión é correcta e segue activa.
      */
-    VALIDACION( "validar-sesion" ),
+    VALIDACION( "sesion/validacion" ),
 
     /** Actualiza o catálogo das actividades dispoñibles. */
     ACTUALIZAR( "actividade/actualizar" ),
@@ -71,9 +71,18 @@ enum class RutasApi ( val ruta: String ) {
     USUARIOS( "axustar-usuarios" ),
 
     /**
+     * Pide o borrado da propia conta do usuario.
+     *
+     * Envíase unha ligazón de verificación ao correo. Ao confirmala, a conta péchase e bórrase
+     * de forma definitiva pasados 30 días. Os administradores non poden borrar a súa conta.
+     */
+    BORRARCONTA( "conta/borrado" ),
+
+    /**
      * Executa as tarefas programadas do servidor.
      *
-     * Actualmente só elimina os datos temporais que xa caducaron.
+     * Elimina os datos temporais caducados, baleira a papeleira e borra as contas
+     * que pediron o borrado hai máis de 30 días.
      */
     LIMPAR( "limpar" );
 

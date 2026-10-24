@@ -1,22 +1,20 @@
 <?php
 
+declare ( strict_types = 1 );
+
+//Carga de configuración
+error_reporting( E_ALL );
+mb_internal_encoding( 'UTF-8' );
+ini_set( 'memory_limit', '256M' );
+
+//Constantes iniciais antes da primeira carga
+const NOME = 'Lendas Nubeiras';
+const DOMINIO = 'lendasnubeiras.duckdns.org';
+const BASE = __DIR__;
+define( 'ORIXE', dirname( __DIR__, 1 ) . '/' );
+
+ini_set( "error_log", ORIXE . "error_log" );
+
 header( 'Content-Type: application/json; charset=utf-8' );
 
-if ( empty( $_SERVER[ 'REQUEST_URI' ] ) ) {
-
-    http_response_code( 404 );
-
-    $resposta = [ "mensaxe" => "O recurso solicitado non existe" ];
-
-    echo json_encode( $resposta );
-    exit;
-
-}
-
-http_response_code( 404 );
-
-$ruta = parse_url( $_SERVER[ 'REQUEST_URI' ], PHP_URL_PATH );
-
-$resposta = [ "mensaxe" => "O recurso solicitado " . $ruta . " non existe" ];
-
-echo json_encode( $resposta, JSON_UNESCAPED_SLASHES );
+require_once "codigo/carga.php";

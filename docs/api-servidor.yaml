@@ -1,5 +1,5 @@
 openapi: 3.0.3
- 
+
 info:
   title: API de Lendas Nubeiras
   description: >
@@ -8,11 +8,16 @@ info:
     Salvo as tarefas programadas, os endpoints que non comproban a
     autenticación directamente requiren ter a sesión iniciada, e a validación
     da sesión faise automaticamente no servidor.
+    Como a aplicación está traducida, non se poden enviar mensaxes dende a API
+    para indicar de maneira concreta que problema ocorreu.
+    Cada endpoint admite un único método HTTP, POST ou GET, segundo se indica
+    na súa descrición. Se se emprega outro método, a API responde cun 405 e
+    indica o método válido na cabeceira Allow.
   version: "0.1.0"
- 
+
 servers:
   - url: https://lendasnubeiras.duckdns.org
- 
+
 tags:
   - name: Autenticación
     description: Rexistro, inicio de sesión e validación da sesión.
@@ -20,11 +25,13 @@ tags:
     description: Consulta e xestión das actividades.
   - name: Administración
     description: Xestión de usuarios (só administradores).
+  - name: Conta
+    description: Xestión da propia conta do usuario.
   - name: Sistema
     description: Informes de erros e tarefas programadas.
- 
+
 paths:
- 
+
   /rexistro:
     post:
       tags: [Autenticación]
@@ -34,7 +41,8 @@ paths:
         mensaxe ao correo cunha URL que contén un token para verificar a
         acción. A ligazón é válida durante 30 minutos. Unha vez verificada, a
         solicitude queda en espera ata que un administrador a aprobe.
- 
+        O correo envíase no idioma da aplicación, indicado no campo idioma.
+        
         Cada usuario ten un máximo de 3 intentos de rexistro en 24 horas. Para
         aplicar este límite, compróbase se xa existe un dato temporal para ese
         correo dentro do intervalo.
@@ -44,7 +52,7 @@ paths:
           application/json:
             schema:
               type: object
-              required: [correo, uuid]
+              required: [correo, uuid, idioma]
               properties:
                 correo:
                   type: string
@@ -54,14 +62,28 @@ paths:
                   type: string
                   format: uuid
                   description: Identificador único do dispositivo.
+                idioma:
+                  type: string
+                  enum: [gl, es, en]
+                  description: Idioma da aplicación (galego, castelán ou inglés). O correo envíase neste idioma.
       responses:
         "200":
           description: A petición para rexistrarse realizouse correctamente
+        "400":
+          description: A petición non tiña a forma esperada. Por exemplo, o JSON non é válido, falta o correo, o uuid ou o idioma, ou algún deles non ten un formato correcto
+        "405":
+          description: A petición non pode procesarse porque o método HTTP empregado non é o correcto. Este endpoint só admite POST, polo que hai que usar POST e non outro método. A resposta inclúe a cabeceira Allow co método válido.
+          headers:
+            Allow:
+              description: Método HTTP que admite o endpoint.
+              schema:
+                type: string
+                example: POST
         "409":
           description: Xa existe unha conta con este correo electrónico
         "429":
           description: Realizáronse demasiados intentos (3) para rexistrarse con este correo nas últimas 24 horas
- 
+
   /iniciar-sesion:
     post:
       tags: [Autenticación]
@@ -71,14 +93,15 @@ paths:
         Como o correo xa foi autorizado por un administrador, non hai límite de
         reintentos, pero só se pode enviar unha mensaxe cada 60 segundos para
         evitar envíos innecesarios. Devólvese o token da sesión, pero este debe
-        activarse premendo na ligazón que se envía ao correo.
+        activarse premendo na ligazón que se envía ao correo. O correo envíase
+        no idioma da aplicación, indicado no campo idioma.
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [correo, uuid]
+              required: [correo, uuid, idioma]
               properties:
                 correo:
                   type: string
@@ -88,6 +111,10 @@ paths:
                   type: string
                   format: uuid
                   description: Identificador único do dispositivo.
+                idioma:
+                  type: string
+                  enum: [gl, es, en]
+                  description: Idioma da aplicación (galego, castelán ou inglés). O correo envíase neste idioma.
       responses:
         "200":
           description: Enviouse o correo de verificación. Devólvese o token da sesión, que aínda non está activo.
@@ -99,14 +126,71 @@ paths:
                   token:
                     type: string
                     description: Token da sesión. Ten que activarse coa ligazón enviada ao correo.
+        "400":
+          description: A petición non tiña a forma esperada. Por exemplo, o JSON non é válido, falta o correo, o uuid ou o idioma, ou algún deles non ten un formato correcto
         "403":
-          description: A conta non está activa ou foi suspendida. Habería que contactar con administrador para máis información
+          description: A conta non está activa, foi suspendida ou está en proceso de borrado. Habería que contactar con administrador para máis información
         "404":
           description: O correo non está rexistrado
+        "405":
+          description: A petición non pode procesarse porque o método HTTP empregado non é o correcto. Este endpoint só admite POST, polo que hai que usar POST e non outro método. A resposta inclúe a cabeceira Allow co método válido.
+          headers:
+            Allow:
+              description: Método HTTP que admite o endpoint.
+              schema:
+                type: string
+                example: POST
         "429":
           description: Xa se enviou unha mensaxe hai menos de 60 segundos
- 
-  /validar-sesion:
+
+  /accion/verificacion:
+    get:
+      tags: [Autenticación]
+      summary: Verificar unha acción
+      description: >
+        Verifica unha acción (rexistro, inicio de sesión ou borrado da conta) coa ligazón que se envía
+        ao correo electrónico do usuario. A verificación execútase ao premer sobre a
+        ligazón, polo que os datos van na propia URL. As ligazóns teñen unha duración
+        máxima de 30 minutos e só se poden usar unha vez.
+
+        Ao verificar un rexistro, a solicitude queda en espera ata que un administrador
+        a aprobe. Ao verificar un inicio de sesión, a sesión queda activada. Ao verificar
+        un borrado, a conta péchase e bórrase de forma definitiva pasados 30 días.
+
+        Como este endpoint é sensible, devolve a menor información posible. Calquera
+        fallo (parámetros ausentes ou incorrectos, ligazón caducada, descoñecida ou xa
+        usada) responde co mesmo código 409.
+      parameters:
+        - name: id_accion
+          in: query
+          required: true
+          description: Token que permite identificar a acción. Forma parte da ligazón enviada ao correo.
+          schema:
+            type: string
+            minLength: 40
+            maxLength: 40
+        - name: uuid
+          in: query
+          required: true
+          description: Identificador único do dispositivo que solicita a acción. Debe coincidir co enviado ao solicitala.
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: A acción foi verificada correctamente
+        "405":
+          description: A petición non pode procesarse porque o método HTTP empregado non é o correcto. Este endpoint só admite GET, polo que hai que usar GET e non outro método. A resposta inclúe a cabeceira Allow co método válido.
+          headers:
+            Allow:
+              description: Método HTTP que admite o endpoint.
+              schema:
+                type: string
+                example: GET
+        "409":
+          description: A acción non puido verificarse. Por exemplo, faltan parámetros, a ligazón caducou, non existe ou xa se usou
+
+  /sesion/validacion:
     post:
       tags: [Autenticación]
       summary: Validar a sesión actual
@@ -123,7 +207,64 @@ paths:
           description: Houbo un problema coa sesión actual e é preciso iniciar sesión outra vez para poder repetir a acción
         "404":
           description: O usuario non existe. Por exemplo, borrouse da base de datos ou a información da sesión é incorrecta
- 
+        "405":
+          description: A petición non pode procesarse porque o método HTTP empregado non é o correcto. Este endpoint só admite POST, polo que hai que usar POST e non outro método. A resposta inclúe a cabeceira Allow co método válido.
+          headers:
+            Allow:
+              description: Método HTTP que admite o endpoint.
+              schema:
+                type: string
+                example: POST
+
+  /conta/borrado:
+    post:
+      tags: [Conta]
+      summary: Pedir o borrado da propia conta
+      description: >
+        O usuario pide borrar a súa propia conta. Envíase unha ligazón de verificación
+        ao seu correo electrónico, que se verifica con /accion/verificacion. Ao
+        confirmala, a conta péchase (xa non se pode iniciar sesión) e bórrase de forma
+        definitiva pasados 30 días. Nese momento as súas actividades publicadas pasan a
+        un usuario reservado e o resto (borradores, pendentes e papeleira) elimínanse.
+        Durante o prazo, un administrador pode recuperar a conta cambiándolle o estado
+        con /axustar-usuarios.
+
+        Non fai falta que un administrador aprobe o borrado. Os administradores non
+        poden borrar a súa conta. Só se pode enviar unha mensaxe cada 60 segundos.
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [idioma]
+              properties:
+                idioma:
+                  type: string
+                  enum: [gl, es, en]
+                  description: Idioma da aplicación (galego, castelán ou inglés). O correo envíase neste idioma.
+      responses:
+        "200":
+          description: Enviouse o correo para confirmar o borrado da conta
+        "400":
+          description: A petición non tiña a forma esperada. Por exemplo, o JSON non é válido ou falta o idioma ou non é correcto
+        "403":
+          description: Houbo un problema coa sesión actual e é preciso iniciar sesión outra vez para poder repetir a acción
+        "405":
+          description: A petición non pode procesarse porque o método HTTP empregado non é o correcto. Este endpoint só admite POST, polo que hai que usar POST e non outro método. A resposta inclúe a cabeceira Allow co método válido.
+          headers:
+            Allow:
+              description: Método HTTP que admite o endpoint.
+              schema:
+                type: string
+                example: POST
+        "409":
+          description: A conta non se pode borrar porque é de administrador
+        "429":
+          description: Xa se enviou unha mensaxe hai menos de 60 segundos
+
   /actividade/actualizar:
     get:
       tags: [Actividades]
@@ -134,9 +275,17 @@ paths:
       responses:
         "200":
           description: A solicitude procesouse correctamente e devolveuse un JSON con toda a lista de actividades dispoñibles
+        "405":
+          description: A petición non pode procesarse porque o método HTTP empregado non é o correcto. Este endpoint só admite GET, polo que hai que usar GET e non outro método. A resposta inclúe a cabeceira Allow co método válido.
+          headers:
+            Allow:
+              description: Método HTTP que admite o endpoint.
+              schema:
+                type: string
+                example: GET
         "429":
           description: Enviáronse demasiadas solicitudes de actualización en menos de 60 segundos
- 
+
   /actividade/crear:
     post:
       tags: [Actividades]
@@ -199,7 +348,15 @@ paths:
           description: A petición non tiña a forma esperada
         "403":
           description: Houbo un problema coa sesión actual e é preciso iniciar sesión outra vez para poder repetir a acción
- 
+        "405":
+          description: A petición non pode procesarse porque o método HTTP empregado non é o correcto. Este endpoint só admite POST, polo que hai que usar POST e non outro método. A resposta inclúe a cabeceira Allow co método válido.
+          headers:
+            Allow:
+              description: Método HTTP que admite o endpoint.
+              schema:
+                type: string
+                example: POST
+
   /actividade/modificar:
     post:
       tags: [Actividades]
@@ -260,7 +417,15 @@ paths:
           description: Houbo un problema coa sesión actual e é preciso iniciar sesión outra vez para poder repetir a acción
         "404":
           description: A actividade non existe
- 
+        "405":
+          description: A petición non pode procesarse porque o método HTTP empregado non é o correcto. Este endpoint só admite POST, polo que hai que usar POST e non outro método. A resposta inclúe a cabeceira Allow co método válido.
+          headers:
+            Allow:
+              description: Método HTTP que admite o endpoint.
+              schema:
+                type: string
+                example: POST
+
   /reportar-erros:
     post:
       tags: [Sistema]
@@ -292,7 +457,15 @@ paths:
           description: O erro foi procesado correctamente
         "400":
           description: O erro non tiña o formato axeitado
- 
+        "405":
+          description: A petición non pode procesarse porque o método HTTP empregado non é o correcto. Este endpoint só admite POST, polo que hai que usar POST e non outro método. A resposta inclúe a cabeceira Allow co método válido.
+          headers:
+            Allow:
+              description: Método HTTP que admite o endpoint.
+              schema:
+                type: string
+                example: POST
+
   /axustar-usuarios:
     post:
       tags: [Administración]
@@ -300,6 +473,11 @@ paths:
       description: >
         Só para administradores. Permite cambiar o rol ou o correo electrónico
         dun usuario, e mesmo inhabilitar a súa conta se é preciso.
+
+        Cambiar o estado dunha conta que está en proceso de borrado cancela o borrado.
+        O estado de borrado non se pode asignar desde aquí: só o pode pedir o propio
+        usuario. O usuario reservado, ao que pasan as actividades publicadas das contas
+        borradas, non se pode modificar.
       security:
         - cookieAuth: []
       requestBody:
@@ -322,8 +500,9 @@ paths:
                   enum: [Monitor, Colaborador, Autor, Editor, Administrador]
                   description: Novo rol do usuario (opcional).
                 estado:
-                  type: string
-                  description: Novo estado da conta, por exemplo para inhabilitala (opcional).
+                  type: integer
+                  enum: [0, 1, 2]
+                  description: "Novo estado da conta (opcional): 0 = pendente, 1 = activo, 2 = suspendido."
       responses:
         "200":
           description: O usuario indicado foi actualizado cos parámetros indicados
@@ -333,20 +512,41 @@ paths:
           description: Houbo un problema coa sesión actual e é preciso iniciar sesión outra vez para poder repetir a acción
         "404":
           description: O usuario non existe. Por exemplo, borrouse da base de datos ou a información da sesión é incorrecta
- 
+        "405":
+          description: A petición non pode procesarse porque o método HTTP empregado non é o correcto. Este endpoint só admite POST, polo que hai que usar POST e non outro método. A resposta inclúe a cabeceira Allow co método válido.
+          headers:
+            Allow:
+              description: Método HTTP que admite o endpoint.
+              schema:
+                type: string
+                example: POST
+        "409":
+          description: O usuario indicado é o usuario reservado e non se pode modificar
+
   /limpar:
     get:
       tags: [Sistema]
       summary: Executar as tarefas programadas
       description: >
-        Executa as tarefas programadas do servidor. Actualmente só elimina os
-        datos temporais que xa caducaron. Non require sesión de usuario.
+        Executa as tarefas programadas do servidor. Non require sesión de usuario.
+        Elimina os datos temporais que xa caducaron, baleira a papeleira (elimina
+        de forma definitiva as actividades que levan máis de 30 días borradas) e
+        borra as contas que pediron o borrado hai máis de 30 días: as súas
+        actividades publicadas pasan ao usuario reservado e o resto elimínase.
       responses:
         "204":
           description: As tarefas programadas executáronse correctamente e non hai ningunha resposta
+        "405":
+          description: A petición non pode procesarse porque o método HTTP empregado non é o correcto. Este endpoint só admite GET, polo que hai que usar GET e non outro método. A resposta inclúe a cabeceira Allow co método válido.
+          headers:
+            Allow:
+              description: Método HTTP que admite o endpoint.
+              schema:
+                type: string
+                example: GET
         "409":
           description: Xa hai unha execución de tarefas programadas en curso
- 
+
 components:
   securitySchemes:
     cookieAuth:

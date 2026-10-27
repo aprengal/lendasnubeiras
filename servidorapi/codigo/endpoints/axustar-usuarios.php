@@ -28,7 +28,7 @@ function endpoint_axustar_usuarios(): never {
 	$datos = validar_corpo( coller_corpo(), [
 		'id' => [ 'tipo' => 'enteiro', 'min' => 1 ],
 		'correo' => [ 'tipo' => 'correo', 'opcional' => true ],
-		'rol' => [ 'tipo' => 'texto', 'max' => 20, 'opcional' => true ],
+		'rol' => [ 'tipo' => 'texto', 'max' => 15, 'opcional' => true ],
 		'estado' => [ 'tipo' => 'enteiro', 'valores' => [ ESTADO_USUARIO_PENDENTE, ESTADO_USUARIO_ACTIVO, ESTADO_USUARIO_SUSPENDIDO ], 'opcional' => true ]
 	] );
 
@@ -58,7 +58,7 @@ function endpoint_axustar_usuarios(): never {
 	}
 
 	//O usuario reservado non se pode modificar
-	if ( es_usuario_legado( $obxectivo ) ) {
+	if ( usuario_legado( $obxectivo ) ) {
 		responder( 409 );
 	}
 
@@ -67,7 +67,7 @@ function endpoint_axustar_usuarios(): never {
 		$existente = coller_usuario( 'correo', $cambios[ 'correo' ] );
 
 		if ( $existente->existe() && $existente->id !== $obxectivo->id ) {
-			responder( 400 );
+			responder( 409 );
 		}
 
 	}

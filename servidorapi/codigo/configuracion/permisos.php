@@ -2,13 +2,21 @@
 
 declare ( strict_types = 1 );
 
+/**
+ * Recupera e cachea os permisos asociados a cada rol de usuario
+ * mediante unha consulta con xúncota (JOIN) á base de datos.
+ *
+ * @param Rol     $rol  Instancia do enum Rol do que se queren obter os permisos.
+ * @return array  Array plano coas claves dos permisos que posúe o rol.
+ * @throws Exception Se se pasa un rol que non existe na caché ou no sistema.
+ */
 function coller_permisos( Rol $rol ) {
 
     static $permisos_rol;
 
     if ( !isset( $permisos_rol ) ) {
 
-        //DB agrupa as filas pola columna principal (rol) e a columna 'campo' dá nome á propiedade que leva a seguinte (valor)
+        // DB agrupa as filas pola columna principal (rol) e a columna 'campo' dá nome á propiedade que leva a seguinte (valor)
         $busca_permisos = [
             'columnas' => [
                 't2.clave' => 't2.clave AS rol',

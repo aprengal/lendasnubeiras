@@ -27,7 +27,7 @@ function crear_usuario_pendente( string $correo, string $uuid ): int {
  * Indica se un usuario é o usuario reservado (CORREO_USUARIO_LEGADO), ao que pasan as actividades
  * publicadas das contas borradas. Non se pode modificar nin borrar.
  */
-function es_usuario_legado( Usuario $usuario ): bool {
+function usuario_legado( Usuario $usuario ): bool {
 	return mb_strtolower( $usuario->correo ) === CORREO_USUARIO_LEGADO;
 }
 

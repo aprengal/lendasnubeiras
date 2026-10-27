@@ -2,487 +2,632 @@
 
 declare ( strict_types = 1 );
 
+/**
+ * Clase final e inmutable que xestiona a conexión á base de datos MySQL,
+ * a prefixación de táboas e a construción segura de consultas mediante prepared statements.
+ */
 final readonly class DB {
 
-	public mysqli $conexion;
-	
-	//táboas
-	public string $roles, $permisos, $permisos_roles, $usuarios;
-	public string $categorias, $destinatarios, $actividades;
-	public string $opcions, $info_temporal, $tarefas_programadas;
+    /** @var mysqli Obxecto de conexión nativa de MySQLi. */
+    public mysqli $conexion;
 
-	public function __construct( string $host, string $nome_us, string $contrasinal, string $nome_base ) {
+    /** @var string Nome da táboa de roles. */
+    public string $roles;
 
-		try {
-			$this->conexion = new mysqli( $host, $nome_us, $contrasinal, $nome_base, 3306 );
-		} catch ( Exception $problema ) {
+    /** @var string Nome da táboa de permisos. */
+    public string $permisos;
 
-			$mensaxe = 'Ocorreu un erro á hora de conectarse á base de datos.' . "\n\t\t" . 'Detalles: ' . $problema->getMessage();
-			rexistrar_problema( new ProblemaMysqli( $mensaxe ) );
-			erro();
+    /** @var string Nome da táboa de relación entre permisos e roles. */
+    public string $permisos_roles;
 
-		}
+    /** @var string Nome da táboa de usuarios. */
+    public string $usuarios;
 
-		$this->crear_taboas();
+    /** @var string Nome da táboa de categorías. */
+    public string $categorias;
 
-	}
+    /** @var string Nome da táboa de destinatarios. */
+    public string $destinatarios;
 
-	private function crear_taboas() {
+    /** @var string Nome da táboa de actividades. */
+    public string $actividades;
 
-		$prefixo = 'LendasNubeiras_417072_';
+    /** @var string Nome da táboa de opcións do sistema. */
+    public string $opcions;
 
-		//Recórrense os nomes das propiedades (foreach sobre $this daría os valores e saltaría as que aínda non teñen valor)
-		foreach ( ( new ReflectionClass( $this ) )->getProperties() as $propiedade ) {
+    /** @var string Nome da táboa de información temporal e sesións. */
+    public string $info_temporal;
 
-			$nome = $propiedade->getName();
+    /** @var string Nome da táboa de tarefas programadas. */
+    public string $tarefas_programadas;
 
-			if ( $nome == 'conexion' ) {
-				continue;
-			}
+    /**
+     * Construtor da clase DB.
+     * Establece a conexión co servidor MySQL e inicializa automaticamente os nomes prefixados das táboas.
+     *
+     * @param string  $host         Enderezo do servidor de base de datos.
+     * @param string  $nome_us      Nome de usuario da base de datos.
+     * @param string  $contrasinal  Contrasinal de acceso.
+     * @param string  $nome_base    Nome da base de datos.
+     */
+    public function __construct( string $host, string $nome_us, string $contrasinal, string $nome_base ) {
 
-			$this->$nome = $prefixo . $nome;
+       try {
+          $this->conexion = new mysqli( $host, $nome_us, $contrasinal, $nome_base, 3306 );
+       } catch ( Exception $problema ) {
 
-		}
+          $mensaxe = 'Ocorreu un erro á hora de conectarse á base de datos.' . "\n\t\t" . 'Detalles: ' . $problema->getMessage();
+          rexistrar_problema( new ProblemaMysqli( $mensaxe ) );
+          erro();
 
-	}
+       }
 
-	//Valídanse os resultados e despois devólvense os valores
-	private function validar_datos( array $datos ) {
+       $this->crear_taboas();
 
-		$datos_validos = [];
+    }
 
-		foreach ( $datos as $identificador => $valor ) {
-	
-			if ( !is_scalar( $valor ) ) {
-				throw new InvalidArgumentException( 'Só se admiten valores escalables no elemento ' . $identificador );
-			}
+    /**
+     * Asigna dinámicamente un prefixo a cada unha das propiedades de táboas definidas na clase.
+     */
+    private function crear_taboas() {
 
-			$datos_validos[] = $valor;
+       $prefixo = 'LendasNubeiras_417072_';
 
-		}
+       // Recórrense os nomes das propiedades (foreach sobre $this daría os valores e saltaría as que aínda non teñen valor)
+       foreach ( ( new ReflectionClass( $this ) )->getProperties() as $propiedade ) {
 
-		return $datos_validos;
+          $nome = $propiedade->getName();
 
-	}
+          if ( $nome == 'conexion' ) {
+             continue;
+          }
 
-	private function reemprazo() {
-		return '?';
-	}
+          $this->$nome = $prefixo . $nome;
 
-	public function insert( string $taboa, array $datos, ?array $actualizar = null ) {
+       }
 
-		$taboa_db = $this->establecer_taboa( $taboa );
-		$reemprazos = $valores = [];
+    }
 
-		//Se non existe o índice 0, significa que só se quere insertar 1 soa fila
-		if ( !isset( $datos[ 0 ] ) ) {
-			$datos = [ $datos ];
-		}
+    /**
+     * Valida que os datos a introducir sexan escalares antes de executalos en consultas preparadas.
+     *
+     * @param array  $datos  Array asociativo cos datos a validar.
+     * @return array Array plano cos valores validados.
+     * @throws InvalidArgumentException Se algún valor non é escalar.
+     */
+    private function validar_datos( array $datos ) {
 
-		$columnas = array_keys( $datos[ 0 ] );
-		$cantidade = count( $datos[ 0 ] );
+       $datos_validos = [];
 
-		//Creación de valores e reemprazos
-		foreach ( $datos as $elemento ) {
-	
-			if ( !is_array( $elemento ) ) {
-				throw new InvalidArgumentException( 'Trataron de pasarse datos para insertar na base de datos sen ter forma de array' );
-			}
+       foreach ( $datos as $identificador => $valor ) {
 
-			$datos_validos = $this->validar_datos( $elemento );
-			$array_reemprazos = array_fill( 0, $cantidade, $this->reemprazo() );
+          if ( !is_scalar( $valor ) ) {
+             throw new InvalidArgumentException( 'Só se admiten valores escalables no elemento ' . $identificador );
+          }
 
-			$reemprazos[] = '( ' . implode( ',', $array_reemprazos ) . ' )';
-			$valores = array_merge( $valores, $datos_validos );
+          $datos_validos[] = $valor;
 
-		}
+       }
 
-		$consulta = 'INSERT ' . $taboa_db . '( ' . implode( ', ', $columnas ) . ' ) VALUES ' . implode( ', ', $reemprazos );
+       return $datos_validos;
 
-		if ( $actualizar ) {
+    }
 
-			$columnas_act = [];
+    /**
+     * Devolve o carácter de marcador de posición para as consultas preparadas.
+     *
+     * @return string O símbolo '?'.
+     */
+    private function reemprazo() {
+       return '?';
+    }
 
-			foreach ( $actualizar as $columna ) {
-				$columnas_act[] = $columna . ' = VALUES( ' . $columna . ' )';
-			}
+    /**
+     * Constrúe e executa unha sentenza SQL INSERT (ou UPSERT mediante ON DUPLICATE KEY UPDATE).
+     *
+     * @param string      $taboa       Nome da táboa onde inserir.
+     * @param array       $datos       Datos a inserir (fila única ou array de filas).
+     * @param ?array      $actualizar  Columnas a actualizar en caso de duplicidade (opcional).
+     * @return mixed      O ID inserido ou o número de filas afectadas.
+     * @throws InvalidArgumentException Se os datos non teñen forma de array válido.
+     */
+    public function insert( string $taboa, array $datos, ?array $actualizar = null ) {
 
-			$consulta .= ' ON DUPLICATE KEY UPDATE ' . implode( ', ', $columnas_act );
+       $taboa_db = $this->establecer_taboa( $taboa );
+       $reemprazos = $valores = [];
 
-		}
+       // Se non existe o índice 0, significa que só se quere insertar 1 soa fila
+       if ( !isset( $datos[ 0 ] ) ) {
+          $datos = [ $datos ];
+       }
 
-		return $this->executar_consulta( $consulta, $valores, 'insert' );
+       $columnas = array_keys( $datos[ 0 ] );
+       $cantidade = count( $datos[ 0 ] );
 
-	}
+       // Creación de valores e reemprazos
+       foreach ( $datos as $elemento ) {
 
-	public function select( string $taboa, array $datos, string $saida = 'obxecto' ) {
+          if ( !is_array( $elemento ) ) {
+             throw new InvalidArgumentException( 'Trataron de pasarse datos para insertar na base de datos sen ter forma de array' );
+          }
 
-		if ( empty( $datos[ 'columnas' ] ) ) {
-			throw new LogicException( 'Hai que indicar que columnas se seleccionan nunha consulta select' );
-		}
+          $datos_validos = $this->validar_datos( $elemento );
+          $array_reemprazos = array_fill( 0, $cantidade, $this->reemprazo() );
 
-		$columnas = $valores = [];
+          $reemprazos[] = '( ' . implode( ',', $array_reemprazos ) . ' )';
+          $valores = array_merge( $valores, $datos_validos );
 
-		//Cada columna pode levar un alias con AS. As claves do array de columnas son só etiquetas
-		foreach ( (array) $datos[ 'columnas' ] as $identificador ) {
+       }
 
-			foreach ( (array) $identificador as $columna ) {
-				$columnas[] = $columna;
-			}
+       $consulta = 'INSERT ' . $taboa_db . '( ' . implode( ', ', $columnas ) . ' ) VALUES ' . implode( ', ', $reemprazos );
 
-		}
+       if ( $actualizar ) {
 
-		$consulta = 'SELECT';
+          $columnas_act = [];
 
-		if ( !empty( $datos[ 'distinto' ] ) ) {
-			$consulta .= ' DISTINCT';
-		}
+          foreach ( $actualizar as $columna ) {
+             $columnas_act[] = $columna . ' = VALUES( ' . $columna . ' )';
+          }
 
-		$consulta .= ' ' . implode( ', ', $columnas ) . "\n\t\t" . 'FROM ' . $this->establecer_taboa( $taboa );
+          $consulta .= ' ON DUPLICATE KEY UPDATE ' . implode( ', ', $columnas_act );
 
-		if ( !empty( $datos[ 'alias' ] ) ) {
-			$consulta .= ' AS ' . $datos[ 'alias' ];
-		}
+       }
 
-		if ( !empty( $datos[ 'join' ] ) ) {
+       return $this->executar_consulta( $consulta, $valores, 'insert' );
 
-			if ( empty( $datos[ 'alias' ] ) ) {
-				throw new LogicException( 'Unha consulta con JOIN necesita un alias na táboa principal' );
-			}
+    }
 
-			$consulta .= $this->engadir_join( $datos[ 'alias' ], $datos[ 'join' ] );
+    /**
+     * Constrúe e executa unha sentenza SQL SELECT con soporte para JOINs, filtros WHERE, ordes e límites.
+     *
+     * @param string  $taboa   Nome da táboa principal.
+     * @param array   $datos   Configuración da consulta (columnas, condicións, joins, etc.).
+     * @param string  $saida   Formato de saída ('obxecto', 'array' ou outra opción para columna única).
+     * @return mixed  Os resultados procesados segundo o formato de saída.
+     * @throws LogicException Se non se indican columnas ou falta un alias nun JOIN.
+     * @throws OutofBoundsException Se a orde especificada non é válida.
+     */
+    public function select( string $taboa, array $datos, string $saida = 'obxecto' ) {
 
-		}
+       if ( empty( $datos[ 'columnas' ] ) ) {
+          throw new LogicException( 'Hai que indicar que columnas se seleccionan nunha consulta select' );
+       }
 
-		if ( !empty( $datos[ 'onde' ] ) ) {
-			$onde = $this->establecer_condicions( 'WHERE', $datos[ 'onde' ] );
-			$consulta .= $onde[ 'consulta' ];
-			$valores = array_merge( $valores, $onde[ 'valores' ] );
-		}
+       $columnas = $valores = [];
 
-		if ( !empty( $datos[ 'ordenar' ] ) ) {
+       // Cada columna pode levar un alias con AS. As claves do array de columnas son só etiquetas
+       foreach ( (array) $datos[ 'columnas' ] as $identificador ) {
 
-			$lista_orde = [];
+          foreach ( (array) $identificador as $columna ) {
+             $columnas[] = $columna;
+          }
 
-			foreach ( $datos[ 'ordenar' ] as $identificador => $orde ) {
+       }
 
-				if ( !in_array( $orde, [ 'ASC', 'DESC' ], true ) ) {
-					throw new OutofBoundsException( 'A orde indicada non é correcta: ' . $orde );
-				}
+       $consulta = 'SELECT';
 
-				$lista_orde[] = $identificador . ' ' . $orde;
+       if ( !empty( $datos[ 'distinto' ] ) ) {
+          $consulta .= ' DISTINCT';
+       }
 
-			}
+       $consulta .= ' ' . implode( ', ', $columnas ) . "\n\t\t" . 'FROM ' . $this->establecer_taboa( $taboa );
 
-			$consulta .= ' ORDER BY ' . implode( ', ', $lista_orde );
+       if ( !empty( $datos[ 'alias' ] ) ) {
+          $consulta .= ' AS ' . $datos[ 'alias' ];
+       }
 
-		}
+       if ( !empty( $datos[ 'join' ] ) ) {
 
-		if ( !empty( $datos[ 'limit' ] ) ) {
-			$consulta .= $this->engadir_limit( (array) $datos[ 'limit' ] );
-		}
+          if ( empty( $datos[ 'alias' ] ) ) {
+             throw new LogicException( 'Unha consulta con JOIN necesita un alias na táboa principal' );
+          }
 
-		$res_busca = $this->executar_consulta( $consulta, $valores, 'select' );
+          $consulta .= $this->engadir_join( $datos[ 'alias' ], $datos[ 'join' ] );
 
-		if ( in_array( $saida, [ 'obxecto', 'array' ], true ) ) {
+       }
 
-			$elementos = $res_busca->fetch_all( MYSQLI_ASSOC );
+       if ( !empty( $datos[ 'onde' ] ) ) {
+          $onde = $this->establecer_condicions( 'WHERE', $datos[ 'onde' ] );
+          $consulta .= $onde[ 'consulta' ];
+          $valores = array_merge( $valores, $onde[ 'valores' ] );
+       }
 
-			if ( !count( $elementos ) ) {
-				return;
-			}
+       if ( !empty( $datos[ 'ordenar' ] ) ) {
 
-			$cantidade = 0;
-			$columna_principal = $datos[ 'principal' ] ?? 'id';
+          $lista_orde = [];
 
-			//Incluise a columna principal?
-			if ( !isset( $elementos[ 0 ][ $columna_principal ] ) ) {
-				throw new LogicException( 'A columna principal ' . $columna_principal . ' non está presente nos resultados da última consulta realizada' );
-			}
+          foreach ( $datos[ 'ordenar' ] as $identificador => $orde ) {
 
-			$resultado = [];
+             if ( !in_array( $orde, [ 'ASC', 'DESC' ], true ) ) {
+                throw new OutofBoundsException( 'A orde indicada non é correcta: ' . $orde );
+             }
 
-			foreach ( $elementos as $fila ) {
+             $lista_orde[] = $identificador . ' ' . $orde;
 
-				$id_act = $fila[ $columna_principal ];
+          }
 
-				//Xa está definido o elemento?
-				if ( !isset( $resultado[ $id_act ] ) ) {
+          $consulta .= ' ORDER BY ' . implode( ', ', $lista_orde );
 
-					$resultado[ $id_act ] = new stdClass();
-					$resultado[ $id_act ]->$columna_principal = $id_act;
-					$cantidade++;
+       }
 
-				}
+       if ( !empty( $datos[ 'limit' ] ) ) {
+          $consulta .= $this->engadir_limit( (array) $datos[ 'limit' ] );
+       }
 
-				foreach ( $fila as $columna => $valor ) {
+       $res_busca = $this->executar_consulta( $consulta, $valores, 'select' );
 
-					if ( $columna == $columna_principal ) {
-						continue;
-					}
+       if ( in_array( $saida, [ 'obxecto', 'array' ], true ) ) {
 
-					//Serve para asociar máis datos a unha mesma columna principal dentro da mesma táboa
-					if ( $columna == 'campo' ) {
+          $elementos = $res_busca->fetch_all( MYSQLI_ASSOC );
 
-						$nome_columna = $valor;
-						continue;
+          if ( !count( $elementos ) ) {
+             return;
+          }
 
-					}
+          $cantidade = 0;
+          $columna_principal = $datos[ 'principal' ] ?? 'id';
 
-					//Habería contido só se a columna anterior foi campo
-					if ( empty( $nome_columna ) ) {
-						$nome_columna = $columna;
-					}
+          // Incluise a columna principal?
+          if ( !isset( $elementos[ 0 ][ $columna_principal ] ) ) {
+             throw new LogicException( 'A columna principal ' . $columna_principal . ' non está presente nos resultados da última consulta realizada' );
+          }
 
-					if ( is_numeric( $valor ) ) {
-						$valor = ctype_digit( (string) $valor ) ? (int) $valor : (float) $valor;
-					}
+          $resultado = [];
 
-					$resultado[ $id_act ]->$nome_columna = $valor;
-					$nome_columna = '';
+          foreach ( $elementos as $fila ) {
 
-				}
+             $id_act = $fila[ $columna_principal ];
 
-			}
+             // Xa está definido o elemento?
+             if ( !isset( $resultado[ $id_act ] ) ) {
 
-			if ( $cantidade === 1 && $saida == 'obxecto' ) {
-				$resultado = $resultado[ $fila[ $columna_principal ] ];
-			} elseif( $saida == 'array' ) {
+                $resultado[ $id_act ] = new stdClass();
+                $resultado[ $id_act ]->$columna_principal = $id_act;
+                $cantidade++;
 
-				foreach ( $resultado as $clave => $elemento ) {
-					$resultado[ $clave ] = (array) $elemento;
-				}
+             }
 
-			}
+             foreach ( $fila as $columna => $valor ) {
 
-		} else {
-			$resultado = $res_busca->fetch_column();
-		}
+                if ( $columna == $columna_principal ) {
+                   continue;
+                }
 
-		$res_busca->free_result();
+                // Serve para asociar máis datos a unha mesma columna principal dentro da mesma táboa
+                if ( $columna == 'campo' ) {
 
-		return $resultado;
+                   $nome_columna = $valor;
+                   continue;
 
-	}
+                }
 
-	public function update( string $taboa, array $datos ) {
+                // Habería contido só se a columna anterior foi campo
+                if ( empty( $nome_columna ) ) {
+                   $nome_columna = $columna;
+                }
 
-		if ( empty( $datos[ 'nova_info' ] ) ) {
-			throw new InvalidArgumentException( 'Hai que indicar os datos que se queren gardar nun UPDATE' );
-		}
+                if ( is_numeric( $valor ) ) {
+                   $valor = ctype_digit( (string) $valor ) ? (int) $valor : (float) $valor;
+                }
 
-		if ( empty( $datos[ 'onde' ] ) ) {
-			throw new LogicException( 'Un UPDATE sen condicións cambiaría todas as filas da táboa' );
-		}
+                $resultado[ $id_act ]->$nome_columna = $valor;
+                $nome_columna = '';
 
-		$valores = $partes_consulta = [];
+             }
 
-		foreach ( $datos[ 'nova_info' ] as $columna => $valor ) {
+          }
 
-			$partes_consulta[] = $columna . ' = ' . $this->reemprazo();
-			$valores[] = $this->validar_datos( [ $columna => $valor ] )[ 0 ];
+          if ( $cantidade === 1 && $saida == 'obxecto' ) {
+             $resultado = $resultado[ $fila[ $columna_principal ] ];
+          } elseif( $saida == 'array' ) {
 
-		}
+             foreach ( $resultado as $clave => $elemento ) {
+                $resultado[ $clave ] = (array) $elemento;
+             }
 
-		$onde = $this->establecer_condicions( 'WHERE', $datos[ 'onde' ] );
-		$valores = array_merge( $valores, $onde[ 'valores' ] );
+          }
 
-		$consulta = 'UPDATE ' . $this->establecer_taboa( $taboa ) . ' SET ' . implode( ',' . "\n\t", $partes_consulta ) . $onde[ 'consulta' ];
+       } else {
+          $resultado = $res_busca->fetch_column();
+       }
 
-		if ( !empty( $datos[ 'limit' ] ) ) {
-			$consulta .= $this->engadir_limit( (array) $datos[ 'limit' ] );
-		}
+       $res_busca->free_result();
 
-		return $this->executar_consulta( $consulta, $valores, 'update' );
+       return $resultado;
 
-	}
+    }
 
-	public function delete( string $taboa, array $datos ) {
+    /**
+     * Constrúe e executa unha sentenza SQL UPDATE.
+     *
+     * @param string  $taboa  Nome da táboa a actualizar.
+     * @param array   $datos  Array cos datos novos e as condicións WHERE.
+     * @return int    Número de filas afectadas.
+     * @throws InvalidArgumentException Se non se achegan datos para gardar.
+     * @throws LogicException Se non se inclúen condicións WHERE (evitando actualizacións masivas accidentais).
+     */
+    public function update( string $taboa, array $datos ) {
 
-		$onde = $this->establecer_condicions( 'WHERE', $datos[ 'onde' ] ?? $datos );
+       if ( empty( $datos[ 'nova_info' ] ) ) {
+          throw new InvalidArgumentException( 'Hai que indicar os datos que se queren gardar nun UPDATE' );
+       }
 
-		$consulta = 'DELETE FROM ' . $this->establecer_taboa( $taboa ) . $onde[ 'consulta' ];
+       if ( empty( $datos[ 'onde' ] ) ) {
+          throw new LogicException( 'Un UPDATE sen condicións cambiaría todas as filas da táboa' );
+       }
 
-		if ( !empty( $datos[ 'limit' ] ) ) {
-			$consulta .= $this->engadir_limit( (array) $datos[ 'limit' ] );
-		}
+       $valores = $partes_consulta = [];
 
-		return $this->executar_consulta( $consulta, $onde[ 'valores' ], 'delete' );
+       foreach ( $datos[ 'nova_info' ] as $columna => $valor ) {
 
-	}
+          $partes_consulta[] = $columna . ' = ' . $this->reemprazo();
+          $valores[] = $this->validar_datos( [ $columna => $valor ] )[ 0 ];
 
-	public function iniciar_transaccion() {
-		return $this->conexion->query( 'START TRANSACTION' );
-	}
+       }
 
-	public function executar_transaccion() {
-		return $this->conexion->query( 'COMMIT' );
-	}
+       $onde = $this->establecer_condicions( 'WHERE', $datos[ 'onde' ] );
+       $valores = array_merge( $valores, $onde[ 'valores' ] );
 
-	public function cancelar_transaccion() {
-		return $this->conexion->query( 'ROLLBACK' );
-	}
+       $consulta = 'UPDATE ' . $this->establecer_taboa( $taboa ) . ' SET ' . implode( ',' . "\n\t", $partes_consulta ) . $onde[ 'consulta' ];
 
-	private function establecer_taboa( string $taboa ) {
-	
-		if ( isset( $this->$taboa ) ) {
-			return $this->$taboa;
-		}
+       if ( !empty( $datos[ 'limit' ] ) ) {
+          $consulta .= $this->engadir_limit( (array) $datos[ 'limit' ] );
+       }
 
-		throw new OutOfRangeException( 'Non existe a táboa ' . $taboa );
-		
-	}
+       return $this->executar_consulta( $consulta, $valores, 'update' );
 
-	private function engadir_join( string $alias_principal, array $datos_join ) {
+    }
 
-		if ( !isset( $datos_join [ 0 ] ) ) {
-			$datos_join = [ $datos_join ];
-		}
+    /**
+     * Constrúe e executa unha sentenza SQL DELETE.
+     *
+     * @param string  $taboa  Nome da táboa.
+     * @param array   $datos  Condicións de borrado.
+     * @return int    Número de filas borradas.
+     */
+    public function delete( string $taboa, array $datos ) {
 
-		$consulta = '';
-		$joins_admitidas = [ 'INNER', 'LEFT', 'RIGHT', 'CROSS' ];
+       $onde = $this->establecer_condicions( 'WHERE', $datos[ 'onde' ] ?? $datos );
 
-		foreach ( $datos_join as $join ) {
+       $consulta = 'DELETE FROM ' . $this->establecer_taboa( $taboa ) . $onde[ 'consulta' ];
 
-			if ( !isset( $join[ 'tipo' ], $join[ 'principal' ], $join[ 'secundaria' ], $join[ 'taboa-join' ] ) ) {
-				throw new InvalidArgumentException( 'Faltan detalles esenciais para engadir unha JOIN (tipo, principal, secundaria e taboa-join)' );
-			}
+       if ( !empty( $datos[ 'limit' ] ) ) {
+          $consulta .= $this->engadir_limit( (array) $datos[ 'limit' ] );
+       }
 
-			if ( !in_array( $join[ 'tipo' ], $joins_admitidas, true ) ) {
-				throw new OutOfBoundsException( 'Indicouse un tipo de JOIN non admitida' );
-			}
+       return $this->executar_consulta( $consulta, $onde[ 'valores' ], 'delete' );
 
-			$taboa_secundaria = $this->establecer_taboa( $join[ 'taboa-join' ] );
+    }
 
-			$secundaria = explode( '.', $join[ 'secundaria' ] );
+    /**
+     * Inicia unha transacción SQL.
+     *
+     * @return bool True se se iniciou correctamente.
+     */
+    public function iniciar_transaccion() {
+       return $this->conexion->query( 'START TRANSACTION' );
+    }
 
-			$consulta_join = $join[ 'principal' ] != $secundaria[ 1 ] ? ' ON ' . $alias_principal . '.' . $join[ 'principal' ] . ' = ' . $join[ 'secundaria' ] : ' USING (' . $join[ 'principal' ] . ')';
+    /**
+     * Confirma (commit) unha transacción SQL activa.
+     *
+     * @return bool True se se executou correctamente.
+     */
+    public function executar_transaccion() {
+       return $this->conexion->query( 'COMMIT' );
+    }
 
-			$consulta .= ' ' . $join[ 'tipo' ] . ' JOIN ' . $taboa_secundaria . ' AS ' . $secundaria[ 0 ] . $consulta_join;
+    /**
+     * Cancela (rollback) unha transacción SQL activa.
+     *
+     * @return bool True se se revertiu correctamente.
+     */
+    public function cancelar_transaccion() {
+       return $this->conexion->query( 'ROLLBACK' );
+    }
 
-		}
+    /**
+     * Verifica e devolve o nome real prefixado dunha táboa.
+     *
+     * @param string  $taboa  Nome lóxico da táboa.
+     * @return string O nome real da táboa na base de datos.
+     * @throws OutOfRangeException Se a táboa non está definida.
+     */
+    private function establecer_taboa( string $taboa ) {
 
-		return $consulta;
+       if ( isset( $this->$taboa ) ) {
+          return $this->$taboa;
+       }
 
-	}
+       throw new OutOfRangeException( 'Non existe a táboa ' . $taboa );
 
-	private function engadir_limit( array $limit ) {
+    }
 
-		if ( count( $limit ) > 2 ) {
-			throw new OutOfRangeException( 'Só se poden poñer 2 valores como máximo no apartado LIMIT' );
-		}
+    /**
+     * Constrúe as cláusulas JOIN para as consultas SQL.
+     *
+     * @param string  $alias_principal  Alias da táboa principal.
+     * @param array   $datos_join       Configuración do ou dos joins.
+     * @return string A sentenza SQL correspondente aos joins.
+     * @throws InvalidArgumentException Se faltan parámetros esenciais no join.
+     * @throws OutOfBoundsException Se o tipo de join non está permitido.
+     */
+    private function engadir_join( string $alias_principal, array $datos_join ) {
 
-		foreach ( $limit as $numero ) {
+       if ( !isset( $datos_join [ 0 ] ) ) {
+          $datos_join = [ $datos_join ];
+       }
 
-			if ( !is_int( $numero ) ) {
-				throw new InvalidArgumentException( 'Os valores LIMIT só poden ser numéricos. Introduciuse ' . $numero );
-			}
+       $consulta = '';
+       $joins_admitidas = [ 'INNER', 'LEFT', 'RIGHT', 'CROSS' ];
 
-		}
+       foreach ( $datos_join as $join ) {
 
-		return ' LIMIT ' . implode( ', ', $limit );
+          if ( !isset( $join[ 'tipo' ], $join[ 'principal' ], $join[ 'secundaria' ], $join[ 'taboa-join' ] ) ) {
+             throw new InvalidArgumentException( 'Faltan detalles esenciais para engadir unha JOIN (tipo, principal, secundaria e taboa-join)' );
+          }
 
-	}
+          if ( !in_array( $join[ 'tipo' ], $joins_admitidas, true ) ) {
+             throw new OutOfBoundsException( 'Indicouse un tipo de JOIN non admitida' );
+          }
 
-	private function establecer_condicions( string $palabra_clave, array $datos ) {
+          $taboa_secundaria = $this->establecer_taboa( $join[ 'taboa-join' ] );
 
-		$partes_consulta = $valores = [];
+          $secundaria = explode( '.', $join[ 'secundaria' ] );
 
-		foreach ( $datos as $columna => $info ) {
+          $consulta_join = $join[ 'principal' ] != $secundaria[ 1 ] ? ' ON ' . $alias_principal . '.' . $join[ 'principal' ] . ' = ' . $join[ 'secundaria' ] : ' USING (' . $join[ 'principal' ] . ')';
 
-			$operador = $info[ 'operador' ] ?? '=';
+          $consulta .= ' ' . $join[ 'tipo' ] . ' JOIN ' . $taboa_secundaria . ' AS ' . $secundaria[ 0 ] . $consulta_join;
 
-			switch( $operador ) {
+       }
 
-				case '=':
-				case '!=':
-				case '<':
-				case '<=':
-				case '>':
-				case '>=':
-				case 'LIKE':
-				case 'NOT LIKE':
+       return $consulta;
 
-					$valor = $info[ 'valor' ] ?? $info;
-					$partes_consulta[] = $columna . ' ' . $operador . ' ' . $this->reemprazo();
-					$valores[] = $this->validar_datos( [ $columna => $valor ] )[ 0 ];
+    }
 
-					break;
+    /**
+     * Constrúe a cláusula LIMIT dunha consulta.
+     *
+     * @param array  $limit  Array con 1 ou 2 valores numéricos.
+     * @return string A sentenza LIMIT en formato SQL.
+     * @throws OutOfBoundsException Se se introducen máis de 2 valores.
+     * @throws InvalidArgumentException Se os valores non son enteiros.
+     */
+    private function engadir_limit( array $limit ) {
 
-				case 'IN':
-				case 'BETWEEN':
-					
-					$reemprazos = [];
+       if ( count( $limit ) > 2 ) {
+          throw new OutOfRangeException( 'Só se poden poñer 2 valores como máximo no apartado LIMIT' );
+       }
 
-					foreach ( $info[ 'valores' ] as $valor ) {
-						$reemprazos[] = $this->reemprazo();
-						$valores[] = $this->validar_datos( [ $columna => $valor ] )[ 0 ];
-					}
+       foreach ( $limit as $numero ) {
 
-					if ( $info[ 'operador' ] == 'IN' ) {
-						$reemprazos = '( ' . implode( ', ', $reemprazos ) . ' )';
-					} else {
-						$reemprazos = $reemprazos[ 0 ] . ' AND ' . $reemprazos[ 1 ];
-					}
+          if ( !is_int( $numero ) ) {
+             throw new InvalidArgumentException( 'Os valores LIMIT só poden ser numéricos. Introduciuse ' . $numero );
+          }
 
-					$partes_consulta[] = $columna . ' ' . $info[ 'operador' ] . ' ' . $reemprazos;
+       }
 
-					break;
+       return ' LIMIT ' . implode( ', ', $limit );
 
-				default:
-					throw new OutOfBoundsException( 'O operador ' . $operador . ' non entra dentro dos operadores admitidos' );
+    }
 
-			}
+    /**
+     * Constrúe condicións SQL para cláusulas como WHERE utilizando operadores seguros.
+     *
+     * @param string  $palabra_clave  Palabra chave (por exemplo, 'WHERE').
+     * @param array   $datos          Array asociativo coas condicións.
+     * @return array  Array coa porción de consulta xerada e os valores vinculados.
+     * @throws OutOfBoundsException Se o operador non é válido.
+     * @throws LogicException Se a lista de condicións está baleira.
+     */
+    private function establecer_condicions( string $palabra_clave, array $datos ) {
 
-		}
+       $partes_consulta = $valores = [];
 
-		if ( empty( $partes_consulta ) ) {
-			throw new LogicException( 'Unha lista de condicións con ' . $palabra_clave . ' non debería estar baleira' );
-		}
+       foreach ( $datos as $columna => $info ) {
 
-		$consulta = "\n\t\t" .  $palabra_clave . ' ' . implode( ' AND ', $partes_consulta );
+          $operador = $info[ 'operador' ] ?? '=';
 
-		return [ 'consulta' => $consulta, 'valores' => $valores ];
+          switch( $operador ) {
 
-	}
+             case '=':
+             case '!=':
+             case '<':
+             case '<=':
+             case '>':
+             case '>=':
+             case 'LIKE':
+             case 'NOT LIKE':
 
-	private function executar_consulta( string $consulta, array $valores, string $accion ) {
+                $valor = $info[ 'valor' ] ?? $info;
+                $partes_consulta[] = $columna . ' ' . $operador . ' ' . $this->reemprazo();
+                $valores[] = $this->validar_datos( [ $columna => $valor ] )[ 0 ];
 
-		$intentos = 6;
+                break;
 
-		for ( $i = 0; $i < $intentos; $i++ ) {
+             case 'IN':
+             case 'BETWEEN':
 
-			try {
+                $reemprazos = [];
 
-				$resultado = $this->conexion->execute_query( $consulta, $valores );
+                foreach ( $info[ 'valores' ] as $valor ) {
+                   $reemprazos[] = $this->reemprazo();
+                   $valores[] = $this->validar_datos( [ $columna => $valor ] )[ 0 ];
+                }
 
-				if ( $accion == 'select' ) {
-					return $resultado;
-				}
+                if ( $info[ 'operador' ] == 'IN' ) {
+                   $reemprazos = '( ' . implode( ', ', $reemprazos ) . ' )';
+                } else {
+                   $reemprazos = $reemprazos[ 0 ] . ' AND ' . $reemprazos[ 1 ];
+                }
 
-				if ( $accion == 'insert' && $this->conexion->affected_rows == 1 ) {
-					return $this->conexion->insert_id;
-				}
+                $partes_consulta[] = $columna . ' ' . $info[ 'operador' ] . ' ' . $reemprazos;
 
-				return $this->conexion->affected_rows;
+                break;
 
-			} catch ( mysqli_sql_exception $e ) {
+             default:
+                throw new OutOfBoundsException( 'O operador ' . $operador . ' non entra dentro dos operadores admitidos' );
 
-				$erros_conexion = [ 2006, 2013 ];
-				$mensaxe = 'Ocorreu un erro á hora de executarse a consulta ' . $consulta . "\n\t\t" . 'Detalles: ' . $this->conexion->error;
+          }
 
-				if ( !in_array( $e->getCode(), $erros_conexion ) ) {
-					throw new ProblemaMysqli( $mensaxe );
-				}
+       }
 
-				sleep( 1 );
+       if ( empty( $partes_consulta ) ) {
+          throw new LogicException( 'Unha lista de condicións con ' . $palabra_clave . ' non debería estar baleira' );
+       }
 
-			}
+       $consulta = "\n\t\t" .  $palabra_clave . ' ' . implode( ' AND ', $partes_consulta );
 
-		}
+       return [ 'consulta' => $consulta, 'valores' => $valores ];
 
-		erro();
+    }
 
-	}
+    /**
+     * Executa unha consulta preparada mediante MySQLi implementando reintentos ante desconexións.
+     *
+     * @param string  $consulta  Sentenza SQL preparada.
+     * @param array   $valores   Valores a vincular na consulta.
+     * @param string  $accion    Tipo de acción ('select', 'insert', 'update', 'delete').
+     * @return mixed  O resultado da execución ou do cursor de datos.
+     * @throws ProblemaMysqli Se se produce un erro de base de datos non recuperable.
+     */
+    private function executar_consulta( string $consulta, array $valores, string $accion ) {
+
+       $intentos = 6;
+
+       for ( $i = 0; $i < $intentos; $i++ ) {
+
+          try {
+
+             $resultado = $this->conexion->execute_query( $consulta, $valores );
+
+             if ( $accion == 'select' ) {
+                return $resultado;
+             }
+
+             if ( $accion == 'insert' && $this->conexion->affected_rows == 1 ) {
+                return $this->conexion->insert_id;
+             }
+
+             return $this->conexion->affected_rows;
+
+          } catch ( mysqli_sql_exception $e ) {
+
+             $erros_conexion = [ 2006, 2013 ];
+             $mensaxe = 'Ocorreu un erro á hora de executarse a consulta ' . $consulta . "\n\t\t" . 'Detalles: ' . $this->conexion->error;
+
+             if ( !in_array( $e->getCode(), $erros_conexion ) ) {
+                throw new ProblemaMysqli( $mensaxe );
+             }
+
+             sleep( 1 );
+
+          }
+
+       }
+
+       erro();
+
+    }
 
 }

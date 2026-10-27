@@ -3,99 +3,121 @@
 declare ( strict_types = 1 );
 
 /**
- * Devolve o valor dunha opción, ou false se non existe.
- * 
+ * Devolve o valor dunha opción do sistema, ou false se non existe.
+ *
  * Cada opción lese unha soa vez por petición, porque se consulta moitas veces
  * (por exemplo, a clave secreta en cada hash de sesión). A memoria só dura ata que remata a petición,
  * así que, se unha opción se cambia, o novo valor vese na petición seguinte.
+ *
+ * @param string  $nome  Nome da opción que se desexa consultar.
+ * @return mixed  O valor da opción ou false se non se atopa.
  */
 function coller_opcion( string $nome ) {
 
-	static $opcions = [];
+    static $opcions = [];
 
-	if ( array_key_exists( $nome, $opcions ) ) {
-		return $opcions[ $nome ];
-	}
+    if ( array_key_exists( $nome, $opcions ) ) {
+       return $opcions[ $nome ];
+    }
 
-	$args = [
-		'columnas' => 'valor',
-		'principal' => 'nome',
-		'onde' => [ 'nome' => $nome ],
-		'limit' => 1
-	];
+    $args = [
+       'columnas' => 'valor',
+       'principal' => 'nome',
+       'onde' => [ 'nome' => $nome ],
+       'limit' => 1
+    ];
 
-	return $opcions[ $nome ] = db()->select( 'opcions', $args, 'variable' );
+    return $opcions[ $nome ] = db()->select( 'opcions', $args, 'variable' );
 
 }
 
-//Datos temporais
+// Datos temporais
+/**
+ * Crea ou actualiza un dato temporal na base de datos con caducidade opcional.
+ * Se o valor non é un tipo escalar, serialízase automaticamente para o seu almacenamento.
+ *
+ * @param string  $nome      Identificador único do dato temporal.
+ * @param mixed   $valor     Valor que se desexa almacenar.
+ * @param int     $duracion  Duración en segundos ata a caducidade (por defecto 0).
+ */
 function crear_dato_temporal( string $nome, mixed $valor, int $duracion = 0 ) {
 
-	$db = db();
+    $db = db();
 
-	if ( $duracion < 0 ) {
-		error_log( 'Non se pode crear o dato temporal ' . $nome . ' con duración negativa' );
-		return;
-	}
+    if ( $duracion < 0 ) {
+       error_log( 'Non se pode crear o dato temporal ' . $nome . ' con duración negativa' );
+       return;
+    }
 
-	$valor = !is_scalar( $valor ) ? serialize( $valor ) : $valor;
-	$caducidade = time() + $duracion;
+    $valor = !is_scalar( $valor ) ? serialize( $valor ) : $valor;
+    $caducidade = time() + $duracion;
 
-	$datos_onde = [ 'id' => 0, 'nome' => $nome ];
-	$datos_info = [ 'valor' => $valor, 'data_caducidade' => $caducidade ];
+    $datos_onde = [ 'id' => 0, 'nome' => $nome ];
+    $datos_info = [ 'valor' => $valor, 'data_caducidade' => $caducidade ];
 
-	$valor_act = coller_dato_temporal( $nome );
+    $valor_act = coller_dato_temporal( $nome );
 
-	if ( in_array( $valor_act, [ false, '' ], true ) ) { //Non existe o dato temporal
+    if ( in_array( $valor_act, [ false, '' ], true ) ) { // Non existe o dato temporal
 
-		$datos = $datos_onde + $datos_info;
+       $datos = $datos_onde + $datos_info;
 
-		$db->insert( 'info_temporal', $datos, [ 'valor', 'data_caducidade' ] );
+       $db->insert( 'info_temporal', $datos, [ 'valor', 'data_caducidade' ] );
 
-	} else {
+    } else {
 
-		$args = [
-			'nova_info' => $datos_info,
-			'onde' => $datos_onde
-		];
+       $args = [
+          'nova_info' => $datos_info,
+          'onde' => $datos_onde
+       ];
 
-		$db->update( 'info_temporal', $args );
+       $db->update( 'info_temporal', $args );
 
-	}
+    }
 
 }
 
+/**
+ * Recupera o valor dun dato temporal se este existe e non caducou.
+ *
+ * @param string  $nome  Identificador do dato temporal.
+ * @return mixed  O valor almacenado ou o resultado baleiro se non é válido.
+ */
 function coller_dato_temporal( string $nome ) {
 
-	$args = [
-		'columnas' => 'valor',
-		'onde' => [
-			'id' => 0,
-			'nome' => $nome,
-			'data_caducidade' => [
-				'operador' => '>=',
-				'valor' => time()
-			]
-		],
-		'limit' => 1
-	];
+    $args = [
+       'columnas' => 'valor',
+       'onde' => [
+          'id' => 0,
+          'nome' => $nome,
+          'data_caducidade' => [
+             'operador' => '>=',
+             'valor' => time()
+          ]
+       ],
+       'limit' => 1
+    ];
 
-	$valor = db()->select( 'info_temporal', $args, 'variable' );
+    $valor = db()->select( 'info_temporal', $args, 'variable' );
 
-	return $valor;
+    return $valor;
 
 }
 
+/**
+ * Elimina un dato temporal da base de datos a partir do seu identificador.
+ *
+ * @param string  $nome  Identificador do dato temporal a borrar.
+ */
 function borrar_dato_temporal( string $nome ) {
 
-	$datos = [
-		'onde' => [
-			'id' => 0,
-			'nome' => $nome
-		],
-		'limit' => 1
-	];
+    $datos = [
+       'onde' => [
+          'id' => 0,
+          'nome' => $nome
+       ],
+       'limit' => 1
+    ];
 
-	db()->delete( 'info_temporal', $datos );
+    db()->delete( 'info_temporal', $datos );
 
 }

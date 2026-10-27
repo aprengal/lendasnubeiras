@@ -108,7 +108,7 @@ function verificar_borrado( array $accion ) {
 	$usuario = coller_usuario( 'id', (int) $accion[ 'id' ], false );
 
 	//Só se pode borrar unha conta activa que non sexa de administrador (nin a reservada)
-	if ( !$usuario->existe() || $usuario->estado !== ESTADO_USUARIO_ACTIVO || $usuario->rol === Rol::ADMINISTRADOR || es_usuario_legado( $usuario ) ) {
+	if ( !$usuario->existe() || $usuario->estado !== ESTADO_USUARIO_ACTIVO || $usuario->rol === Rol::ADMINISTRADOR || usuario_legado( $usuario ) ) {
 		responder( 409 );
 	}
 

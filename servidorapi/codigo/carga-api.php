@@ -22,6 +22,11 @@ require_once "codigo/endpoints/reportar-erros.php";
 require_once "codigo/endpoints/axustar-usuarios.php";
 require_once "codigo/endpoints/limpar.php";
 
+/**
+ * Inicializa o enrutador principal da API, configura os cabeceiros HTTP en formato JSON,
+ * analiza a URI da petición actual e deriva a execución ao endpoint correspondente.
+ * En caso de non atopar a ruta ou non existir, emite unha resposta HTTP 404.
+ */
 function arrancar_api() {
 
 	header( 'Content-Type: application/json; charset=utf-8' );

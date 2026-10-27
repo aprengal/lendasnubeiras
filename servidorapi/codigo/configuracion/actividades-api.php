@@ -8,9 +8,10 @@ declare ( strict_types = 1 );
  */
 
 /**
- * Regras de validación dunha actividade.
- * 
- * Ao modificar, tamén se pide o id e admítese o estado 3 (borrada).
+ * Regras de validación dunha actividade[cite: 9].
+ *
+ * Ao crear, admítense os estados do servidor (0, 1, 2) e os temporais do cliente (-1, -2, -3).
+ * Ao modificar, pídese o id e admítense os estados do 0 ao 3 (incluíndo o 3 de borrada).
  */
 function regras_actividade( bool $modificar ): array {
 
@@ -19,7 +20,10 @@ function regras_actividade( bool $modificar ): array {
 		'id_autoria' => [ 'tipo' => 'enteiro', 'min' => 0 ],
 		'id_categoria' => [ 'tipo' => 'texto', 'max' => 15 ],
 		'id_destinatario' => [ 'tipo' => 'texto', 'max' => 15 ],
-		'estado' => [ 'tipo' => 'enteiro', 'valores' => $modificar ? [ 0, 1, 2, 3 ] : [ 0, 1, 2 ] ],
+		'estado' => [
+			'tipo' => 'enteiro',
+			'valores' => $modificar ? [ 0, 1, 2, 3 ] : [ 0, 1, 2, -1, -2, -3 ]
+		],
 		'duracion' => [ 'tipo' => 'enteiro', 'min' => 1, 'max' => 180 ],
 		'data_modificado' => [ 'tipo' => 'enteiro', 'min' => 0 ]
 	];

@@ -49,19 +49,26 @@ function crear_sesion_api( Usuario $usuario ): array {
 }
 
 /**
- * Obtén o usuario da sesión actual. Se a sesión non é válida, non está activada
- * ou a conta non está activa, responde cun 403.
+ * Obtén o usuario da sesión actual. Se a sesión non é válida, responde cun 401.
+ * Se a conta non está activa, responde cun 403.
  */
 function esixir_sesion(): Usuario {
 
 	$usuario = usuario_act();
 
-	if ( !$usuario->existe() || $usuario->estado !== ESTADO_USUARIO_ACTIVO ) {
+	// Se a sesión non existe ou o token non está verificado -> 401
+	if ( !$usuario->existe() ) {
+		responder( 401 );
+	}
+
+	// Se a conta está suspendida, non activa ou en proceso de borrado -> 403
+	if ( $usuario->estado !== ESTADO_USUARIO_ACTIVO ) {
 		responder( 403 );
 	}
 
+	// Se a sesión non está activa (falta o dato temporal de activación) -> 401
 	if ( !hai_dato_temporal( nome_dato( 'sesion_activa', coller_token_sesion() ) ) ) {
-		responder( 403 );
+		responder( 401 );
 	}
 
 	return $usuario;

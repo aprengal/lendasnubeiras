@@ -14,7 +14,7 @@ require_once "codigo/constantes/constantes-privadas.php";
 
 //Clases
 require_once "codigo/clases/DB.php";
-require_once "codigo/configuracion/Rol.php";
+require_once "codigo/clases/Rol.php";
 require_once "codigo/clases/Usuario.php";
 require_once "codigo/clases/Correo.php";
 

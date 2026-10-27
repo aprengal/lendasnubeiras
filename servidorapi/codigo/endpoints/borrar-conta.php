@@ -20,7 +20,7 @@ function endpoint_borrar_conta(): never {
 
 	$usuario = esixir_sesion();
 
-	if ( $usuario->rol === Rol::ADMINISTRADOR || es_usuario_legado( $usuario ) ) {
+	if ( $usuario->rol === Rol::ADMINISTRADOR || usuario_legado( $usuario ) ) {
 		responder( 409 );
 	}
 

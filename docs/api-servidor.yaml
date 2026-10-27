@@ -18,7 +18,7 @@ info:
     e indica o método válido na cabeceira Allow.
 
     O corpo das peticións JSON ten un límite máximo de 20000 caracteres.
-    Se se supera este tamaño, a API responde cun código 400.
+    Se se supera este tamaño, a API responde cun código 413.
 
 servers:
   - url: https://lendasnubeiras.duckdns.org
@@ -356,7 +356,7 @@ paths:
                   minimum: 0
                   description: Marca temporal da última modificación.
       responses:
-        "200":
+        "201":
           description: A actividade creouse correctamente.
           content:
             application/json:
@@ -496,8 +496,6 @@ paths:
           description: JSON mal formado ou campos ausentes ou inválidos.
         "401":
           $ref: "#/components/responses/Unauthenticated"
-        "413":
-          description: O corpo da petición supera o tamaño máximo permitido.
         "405":
           $ref: "#/components/responses/MethodNotAllowed"
         default:

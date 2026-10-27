@@ -45,7 +45,9 @@ function esixir_metodo( string $metodo ) {
 }
 
 /**
- * Le o corpo da petición, que debe ser un JSON. Se non o é ou supera os 20.000 bytes, responde cun 400.
+ * Le o corpo da petición, que debe ser un JSON.
+ * Se a lonxitude supera os 20.000 bytes, responde cun 413.
+ * Se o formato é incorrecto ou contido está baleiro, devólvese un código 400
  *
  * @return array O corpo da petición decodificado como array asociativo.
  */
@@ -53,8 +55,12 @@ function coller_corpo(): array {
 
     $contido = file_get_contents( 'php://input' );
 
-    if ( !$contido || strlen( $contido ) > 20000 ) {
+    if ( $contido === false || strlen( $contido ) > 20000 ) {
        responder( 400 );
+    }
+
+    if ( strlen( $contido ) > 20000 ) {
+       responder( 413 );
     }
 
     try {

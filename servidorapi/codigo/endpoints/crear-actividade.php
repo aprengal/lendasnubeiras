@@ -40,6 +40,6 @@ function endpoint_crear_actividade(): never {
 		throw new LogicException( 'Non se obtivo o id da actividade creada' );
 	}
 
-	responder( 200, [ 'id' => $id ] );
+	responder( 201, [ 'id' => $id, 'estado' => $datos[ 'estado' ] ] );
 
 }

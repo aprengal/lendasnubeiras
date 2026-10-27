@@ -12,7 +12,7 @@ const DIA_EN_SEGUNDOS = 24 * HORA_EN_SEGUNDOS;
  */
 
 //Duración das ligazóns de verificación que se envían por correo
-const DURACION_LIGAZON = 30 * MINUTO_EN_SEGUNDOS;
+const DURACION_LIGAZON = 15 * MINUTO_EN_SEGUNDOS;
 
 //Duración máxima dunha sesión
 const DURACION_SESION = 30 * DIA_EN_SEGUNDOS;

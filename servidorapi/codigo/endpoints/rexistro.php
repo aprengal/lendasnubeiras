@@ -6,7 +6,7 @@ declare ( strict_types = 1 );
  * POST /rexistro
  * 
  * Inicia o rexistro dun usuario novo co seu correo. Envíase unha ligazón de verificación
- * que dura 30 minutos, no idioma da aplicación. Os datos do rexistro quedan nun dato temporal ata que se verifique.
+ * que dura 15 minutos, no idioma da aplicación. Os datos do rexistro quedan nun dato temporal ata que se verifique.
  * Despois, a solicitude queda en espera ata que un administrador a aprobe.
  * 
  * Respostas: 200, 400, 409, 429

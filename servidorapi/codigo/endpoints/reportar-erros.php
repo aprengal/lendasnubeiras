@@ -18,7 +18,7 @@ function endpoint_reportar_erros(): never {
 
 	$datos = validar_corpo( coller_corpo(), [
 		'id_peticion' => [ 'tipo' => 'uuid' ],
-		'erro' => [ 'tipo' => 'texto', 'max' => 20000 ]
+		'erro' => [ 'tipo' => 'texto', 'max' => 2000 ]
 	] );
 
 	$erro = sanitizar_campo( $datos[ 'erro' ] );

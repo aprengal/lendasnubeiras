@@ -14,7 +14,7 @@ function endpoint_validar_sesion(): never {
 
     esixir_metodo( 'POST' );
 
-    $rastro = analizar_rastro();
+    $rastro = analizar_rastro_sesion();
 
     if ( !$rastro ) {
        responder( 401 );

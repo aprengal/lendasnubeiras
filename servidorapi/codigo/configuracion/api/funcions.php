@@ -55,7 +55,7 @@ function coller_corpo(): array {
 
     $contido = file_get_contents( 'php://input' );
 
-    if ( $contido === false || strlen( $contido ) > 20000 ) {
+    if ( !$contido || strlen( $contido ) > 20000 ) {
        responder( 400 );
     }
 

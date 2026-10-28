@@ -35,9 +35,6 @@ const USUARIO_CORREO = "NON_USAR@example.com";
 const AUTORIZACION_CORREO = "NON_USAR";
 
 // Rastros
-/** @var string Ruta base do servidor para as cookies de rastro de sesión. */
-const RUTA_RASTRO = "/";
-
 /** @var string Nome identificador da cookie de rastro de sesión. */
 const RASTRO_SESION = "test";
 

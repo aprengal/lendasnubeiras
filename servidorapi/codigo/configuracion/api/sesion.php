@@ -15,36 +15,35 @@ declare ( strict_types = 1 );
 /**
  * Crea unha sesión para un usuario e devolve:
  * 
- * - token: valor da cookie de sesión, codificado para poder usalo directamente
- *          na cabeceira Cookie.
+ * - sesion: valor da credencial cifrada da sesión, lista para enviar no corpo da resposta JSON ao cliente Android.
  * - activacion: nome do dato temporal que activa a sesión.
- * 
+ *
  * A sesión queda creada pero inactiva ata que se cree o dato de activación.
  */
 function crear_sesion_api( Usuario $usuario ): array {
 
-	$agora = time();
-	$caducidade = $agora + DURACION_SESION;
-	$peche_ses = xerar_token( 15, false );
+    $agora = time();
+    $caducidade = $agora + DURACION_SESION;
+    $peche_ses = xerar_token( 15, false );
 
-	$token = $usuario->crear_sesion( $agora, $caducidade, $peche_ses );
+    $token = $usuario->crear_sesion( $agora, $caducidade, $peche_ses );
 
-	$valor_rastro = crear_rastro_sesion( $usuario, [
-		'caducidade_sesion' => $caducidade,
-		'esquema' => 'sesion',
-		'token' => $token,
-		'peche_ses' => $peche_ses,
-		'alongar_ses' => $agora + DIA_EN_SEGUNDOS
-	] );
+    $datos_sesion = crear_datos_sesion( $usuario, [
+       'caducidade_sesion' => $caducidade,
+       'esquema' => 'sesion',
+       'token' => $token,
+       'peche_ses' => $peche_ses,
+       'alongar_ses' => $agora + DIA_EN_SEGUNDOS
+    ] );
 
-	if ( !$valor_rastro ) {
-		throw new RuntimeException( 'Non se puido crear o rastro da sesión' );
-	}
+    if ( !$datos_sesion ) {
+       throw new RuntimeException( 'Non se puido crear a sesión' );
+    }
 
-	return [
-		'token' => rawurlencode( $valor_rastro ),
-		'activacion' => nome_dato( 'sesion_activa', $token )
-	];
+    return [
+       'sesion' => $datos_sesion,
+       'activacion' => nome_dato( 'sesion_activa', $token )
+    ];
 
 }
 
@@ -54,7 +53,7 @@ function crear_sesion_api( Usuario $usuario ): array {
  */
 function esixir_sesion(): Usuario {
 
-	$usuario = usuario_act();
+	$usuario = usuario_actual();
 
 	// Se a sesión non existe ou o token non está verificado -> 401
 	if ( !$usuario->existe() ) {

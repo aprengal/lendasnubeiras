@@ -65,18 +65,18 @@ function validar_campo_busca( string $campo, string $grupo ) {
 }
 
 /**
- * Constrúe e cifra o token de rastro de sesión (cookie) baseado en dobre hash HMAC para un usuario.
+ * Constrúe e cifra os datos de sesión basada en dobre hash HMAC para un usuario.
  *
  * @param Usuario  $usuario      O obxecto Usuario asociado á sesión.
  * @param array    $args_sesion  Array cos argumentos necesarios (caducidade_sesion, esquema, token, peche_ses, alongar_ses).
- * @return string  O valor cifrado e listo para gardar na cookie de rastro.
+ * @return string  O valor cifrado e listo para enviar no corpo da resposta JSON ao cliente Android.
  * @throws LogicException Se o usuario non existe.
  * @throws InvalidArgumentException Se faltan detalles básicos no array de argumentos.
  */
-function crear_rastro_sesion( Usuario $usuario, array $args_sesion ) {
+function crear_datos_sesion( Usuario $usuario, array $args_sesion ) {
 
     if ( !$usuario->existe() ) {
-       throw new LogicException( 'Só se poden crear rastros de sesión para usuarios que existen' );
+       throw new LogicException( 'Só se poden crear datos de sesión para usuarios que existen' );
     }
 
     if ( !isset( $args_sesion[ 'caducidade_sesion' ], $args_sesion[ 'esquema' ], $args_sesion[ 'token' ], $args_sesion[ 'peche_ses' ], $args_sesion[ 'alongar_ses' ] ) ) {
@@ -94,20 +94,20 @@ function crear_rastro_sesion( Usuario $usuario, array $args_sesion ) {
     $key = hash_hmac( 'sha256', $uuid_frag . '|' . $token . '|' . $usuario->correo . '|' . $alongar_ses . '|' . $caducidade_sesion . '|' . $peche_ses, salgado( $esquema ) );
     $hash = hash_hmac( 'sha256', $token . '|' . $usuario->correo . '|' . $alongar_ses . '|' . $caducidade_sesion . '|' . $peche_ses, $key );
 
-    $cookie = cifrar_descifrar( $caducidade_sesion . '|' . $token . '|' . $usuario->uuid . '|' . $hash . '|' . $peche_ses . '|' . $alongar_ses, 'cifrar', $esquema ) ;
+    $datos = cifrar_descifrar( $caducidade_sesion . '|' . $token . '|' . $usuario->uuid . '|' . $hash . '|' . $peche_ses . '|' . $alongar_ses, 'cifrar', $esquema ) ;
 
-    return $cookie;
+    return $datos;
 
 }
 
 /**
  * Xestiona o proceso de autenticación dun usuario, creando ou validando sesións
- * na base de datos e configurando as cookies de rastro correspondentes.
+ * na base de datos e xerando o rastro cifrado correspondente para a resposta da API.
  *
  * @param Usuario  $usuario    O obxecto Usuario que se está autenticando.
- * @param array    $elementos  Parámetros opcionais de sesión (token, peche_ses, data_caducidade, rastros).
+ * @param array    $elementos  Parámetros opcionais de sesión (token, peche_ses, data_caducidade).
  * @param bool     $recordar   Indica se se quere lembrar a sesión a longo prazo.
- * @return mixed   Array cos datos de sesión se non se xeran rastros automáticos.
+ * @return array   Array cos datos de sesión e o rastro cifrado para enviar ao cliente.
  */
 function xerar_autenticado( Usuario $usuario, array $elementos, bool $recordar ) {
 
@@ -132,10 +132,6 @@ function xerar_autenticado( Usuario $usuario, array $elementos, bool $recordar )
 
     }
 
-    if ( empty( $elementos[ 'rastros' ] ) ) {
-       return [ 'token' => $elementos[ 'token' ], 'data_caducidade' => $caducidade_sesion, 'peche_ses' => $elementos[ 'peche_ses' ] ];
-    }
-
     $args_sesion = [
        'caducidade_sesion' => $caducidade_sesion,
        'esquema' => 'sesion',
@@ -144,16 +140,13 @@ function xerar_autenticado( Usuario $usuario, array $elementos, bool $recordar )
        'alongar_ses' => $recordar ? time() + DIA_EN_SEGUNDOS : 0
     ];
 
-    $valor_rastro_basico = crear_rastro_sesion( $usuario, $args_sesion );
+    $valor_rastro = crear_rastro_sesion( $usuario, $args_sesion );
 
-    $info_rastro = [
-       'expires' => $caducidade_rastro,
-       'path' => RUTA_RASTRO,
-       'secure' => 1,
-       'httponly' => 1,
-       'samesite' => 'Lax'
+    return [
+       RASTRO_SESION => $valor_rastro,
+       'data_caducidade' => $caducidade_sesion,
+       'token' => $elementos[ 'token' ],
+       'peche_ses' => $elementos[ 'peche_ses' ]
     ];
-
-    setcookie( RASTRO_SESION, $valor_rastro_basico, $info_rastro );
 
 }

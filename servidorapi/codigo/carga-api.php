@@ -3,11 +3,11 @@
 declare ( strict_types = 1 );
 
 //Funcións comúns
-require_once "codigo/configuracion/funcions-api.php";
-require_once "codigo/configuracion/sesion-api.php";
-require_once "codigo/configuracion/actividades-api.php";
-require_once "codigo/configuracion/correos-api.php";
-require_once "codigo/configuracion/usuarios-api.php";
+require_once "codigo/configuracion/api/funcions.php";
+require_once "codigo/configuracion/api/sesion.php";
+require_once "codigo/configuracion/api/actividades.php";
+require_once "codigo/configuracion/api/correos.php";
+require_once "codigo/configuracion/api/usuarios.php";
 
 //Endpoints
 require_once "codigo/endpoints/rexistro.php";

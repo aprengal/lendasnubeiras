@@ -297,7 +297,7 @@ final readonly class Usuario {
 
        if ( $this->existe() && usuario_act()->id == $this->id ) {
 
-          $rastro = analizar_rastro();
+          $rastro = analizar_rastro_sesion();
 
           if ( !$rastro[ 'alongar_ses' ] ) {
              return;
@@ -326,7 +326,7 @@ final readonly class Usuario {
 
        if ( $this->existe() && usuario_act()->id == $this->id ) {
 
-          $rastro = analizar_rastro();
+          $rastro = analizar_rastro_sesion();
 
           $token = $rastro[ 'token' ];
           $peche_ses = $rastro[ 'peche_ses' ];
@@ -447,47 +447,8 @@ final readonly class Usuario {
 
        db()->$accion_db( 'info_temporal', $datos );
 
-       return xerar_autenticado( $this, [ 'rastros' => true, 'data_caducidade' => $caducidade, 'token' => $token, 'peche_ses' => $peche_ses ], true );
+        return xerar_autenticado( $this, [ 'data_caducidade' => $caducidade, 'token' => $token, 'peche_ses' => $peche_ses ], true );
 
     }
-
-}
-
-/**
- * Devolve un usuario buscándoo por id, correo ou uuid.
- * 
- * Cada usuario cárgase unha soa vez por petición (2 consultas: o usuario e as súas sesións).
- * Se se volve pedir co mesmo campo e valor devólvese o que xa estaba cargado, aínda que non exista,
- * polo que non se repiten consultas. A memoria só dura ata que remata a petición.
- * 
- * Como a clase Usuario é inmutable, compartir o obxecto é seguro. Se se modifica un usuario e hai que
- * lelo de novo na mesma petición, hai que pasar $memoria = false para forzar unha lectura nova.
- */
-function coller_usuario( string $campo, string|int $valor, bool $memoria = true ) {
-
-	static $usuarios = [];
-
-	validar_campo_busca( $campo, 'usuario' );
-
-	if ( 'id' === $campo && ( !is_numeric( $valor ) || $valor < -1 ) ) {
-		throw new OutOfBoundsException( 'Non se pode mirar o usuario co valor ' . $valor );
-	}
-
-	$valor = $campo == 'id' ? (int) $valor : trim( $valor );
-	$clave = $campo . ':' . $valor;
-
-	if ( $memoria && isset( $usuarios[ $clave ] ) ) {
-		return $usuarios[ $clave ];
-	}
-
-	try {
-		$usuario = new Usuario( $campo, $valor, false );
-	} catch ( Exception $problema ) {
-		rexistrar_problema( $problema );
-		//Se falla a lectura non se garda na memoria, para que se poida intentar de novo
-		return coller_usuario( 'id', -1 );
-	}
-
-	return $usuarios[ $clave ] = $usuario;
 
 }

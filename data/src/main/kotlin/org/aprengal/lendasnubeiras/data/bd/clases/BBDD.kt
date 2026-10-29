@@ -20,8 +20,6 @@ import kotlin.collections.iterator
 
 internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, null, DB_VERSION ) {
 
-    //private enum class Modo { LECTURA, ESCRITURA }
-
     private val taboasPermitidas: Set<Taboa> = TaboaBase.entries.toSet()
 
     // Estrutura

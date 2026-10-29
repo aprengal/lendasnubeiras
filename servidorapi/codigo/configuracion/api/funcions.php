@@ -13,7 +13,7 @@ declare ( strict_types = 1 );
  *
  * @param int         $codigo  Código de estado HTTP da resposta.
  * @param ?array      $datos   Datos opcionais a codificar en JSON.
- * @return never
+ * @return void
  */
 function responder( int $codigo, ?array $datos = null ): void {
 

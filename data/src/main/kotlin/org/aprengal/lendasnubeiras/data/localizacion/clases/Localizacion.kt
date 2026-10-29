@@ -27,22 +27,37 @@ import java.text.NumberFormat
 import java.util.Locale
 import kotlin.math.abs
 
+/**
+ * Obxecto encargado da internacionalización (i18n) e localización da aplicación.
+ * Xestiona a carga de recursos JSON de idioma desde os assets, o cambio dinámico de idioma,
+ * as regras gramaticais de plurais (cardinais e ordinais) e variantes.
+ */
 object Localizacion {
 
+    /** Contexto global da aplicación. */
     private lateinit var appContext: Context
 
+    /** Almacén en caché das traducións singulares organizadas por dominio. */
     private val traducions = mutableMapOf<Dominio, Map<L10nSingular, String>>()
 
+    /** Almacén en caché das traducións plurais organizadas por dominio. */
     private val traducionsPlurais = mutableMapOf<Dominio, Map<L10nPlural, Map<String, String>>>()
 
+    /** Almacén en caché das traducións de variantes organizadas por dominio. */
     private val traducionsVariantes = mutableMapOf<Dominio, Map<L10nVariante, Map<String, String>>>()
 
+    /** Fluxo de estado reactivo que emite o idioma actual da aplicación. */
     private val idiomaActual = MutableStateFlow( Idioma.Nada )
 
+    /** Regras de plurais cardinais para a factoría ICU. */
     private var pluraisCardinais: PluralRules? = null
 
+    /** Regras de plurais ordinais para a factoría ICU. */
     private var pluraisOrdinarios: PluralRules? = null
 
+    /**
+     * Obtén a clave de texto dun elemento singular, delegando segundo a súa implementación de dominio.
+     */
     internal val L10nSingular.clave: String
 
         get() = when ( this ) {
@@ -55,6 +70,9 @@ object Localizacion {
             is L10nOpcions -> clave
         }
 
+    /**
+     * Obtén o dominio ao que pertence un elemento singular.
+     */
     internal val L10nSingular.dominio: Dominio
 
         get() = when ( this ) {
@@ -67,6 +85,12 @@ object Localizacion {
             is L10nOpcions -> dominio
         }
 
+    /**
+     * Inicializa o sistema de localización se non estivese xa arrancado.
+     *
+     * @param contexto O contexto actual da aplicación.
+     * @return Un [StateFlow] co fluxo do idioma actual.
+     */
     fun arrancar( contexto: Context ): StateFlow<Idioma> {
 
         if ( ::appContext.isInitialized && idiomaActual.value != Idioma.Nada ) return idiomaActual.asStateFlow()
@@ -81,6 +105,12 @@ object Localizacion {
 
     }
 
+    /**
+     * Cambia o idioma activo da aplicación, limpa a caché de traducións e reinicia a app se é preciso.
+     *
+     * @param novoIdioma O novo [Idioma] que se desexa aplicar.
+     * @return `true` se se procesou correctamente.
+     */
     fun cambiarIdioma( novoIdioma: Idioma ): Boolean {
 
         if ( idiomaActual.value == novoIdioma ) return true
@@ -98,6 +128,9 @@ object Localizacion {
 
     }
 
+    /**
+     * Devolve a lista de claves singulares asociadas a un dominio concreto.
+     */
     private fun collerClavesSingular( dominio: Dominio): List<L10nSingular> {
 
         val lista = when( dominio ) {
@@ -114,6 +147,9 @@ object Localizacion {
 
     }
 
+    /**
+     * Lê o arquivo JSON de traducións correspondente ao dominio e ao idioma actual desde os assets.
+     */
     private fun collerArquivoIdioma( dominio: Dominio): String {
 
         val dominioTexto = dominio.nome
@@ -130,6 +166,9 @@ object Localizacion {
 
     }
 
+    /**
+     * Carga e parsea un dominio de traducións se non estivese previamente en caché.
+     */
     private fun cargarDominio( dominio: Dominio ) {
 
         if ( traducions.containsKey( dominio ) ) return
@@ -225,12 +264,9 @@ object Localizacion {
 
     }
 
-    /*private fun descargarDominio( dominio: Dominio ) {
-        traducions.remove( dominio )
-        traducionsPlurais.remove( dominio )
-        traducionsVariantes.remove( dominio )
-    }*/
-
+    /**
+     * Obtén o texto correspondente a calquera elemento localizable ou obxecto xenérico.
+     */
     fun <T> obterTexto( elemento: T ): String {
 
         val texto = when ( elemento ) {
@@ -243,6 +279,9 @@ object Localizacion {
 
     }
 
+    /**
+     * Recupera un obxecto JSON específico dunha actividade desde os assets do idioma actual.
+     */
     internal fun collerTextoActividade( clave: String ): JSONObject {
 
         val arquivoBase = "actividades-${ idiomaActual.value.codigo }.json"
@@ -260,11 +299,17 @@ object Localizacion {
 
     }
 
+    /**
+     * Traduce un elemento singular cargando previamente o seu dominio.
+     */
     internal fun l10n( elemento: L10nSingular ): String {
         cargarDominio( elemento.dominio )
         return traducions[ elemento.dominio ]?.get( elemento ) ?: idiomaActual.value.pendente
     }
 
+    /**
+     * Xera unha cadea traducida manexando regras plurais (cardinais ou ordinais).
+     */
     internal fun l10nPlural( elemento: L10nPlural, num: Number, cardinal: Boolean = true ): String {
 
         cargarDominio( elemento.dominio )
@@ -278,6 +323,9 @@ object Localizacion {
 
     }
 
+    /**
+     * Traduce un elemento en base a unha variante numérica específica.
+     */
     internal fun l10nVariante( elemento: L10nVariante, num: Int ): String {
 
         cargarDominio( elemento.dominio )
@@ -291,12 +339,15 @@ object Localizacion {
 
     }
 
+    /**
+     * Determina a categoría de plural (ordinal ou cardinal) empregando a librería ICU.
+     */
     private fun categoriaPlurais( numAbs: Double, local: Locale, cardinal: Boolean ): String {
 
         if ( cardinal ) {
             return categoriaCardinal( numAbs, local )
         }
-        
+
         pluraisOrdinarios?.let { elemento -> return elemento.select( numAbs ) }
         val regras = PluralRules.forLocale( local, PluralRules.PluralType.ORDINAL )
         pluraisOrdinarios = regras
@@ -305,9 +356,11 @@ object Localizacion {
 
     }
 
+    /**
+     * Aplica regras gramaticais específicas para plurais cardinais (con soporte para Galego e Castelán).
+     */
     private fun categoriaCardinal( numAbs: Double, local: Locale ): String {
 
-        //Se houbese regras concretas diferentes, habería que cambiar a un when
         if ( idiomaActual.value in listOf( Idioma.Galego, Idioma.Castelan ) ) {
 
             if ( numAbs == 1.0 ) return "one"

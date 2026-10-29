@@ -64,6 +64,14 @@ class Navegacion ( private val traza: NavBackStack<Ruta>, seleccionada: KClass<o
         engadir( elemento )
     }
 
+    /**
+     * Reinicia o valor de ultimaMenu a nulo ao navegar cara atrás para evitar
+     * problemas visuais nos que aparecían varios elementos seleccionados
+     */
+    fun reiniciarMenuInferiorSeleccionado() {
+        ultimaMenu = null
+    }
+
     /** Quita a pantalla actual da pila, se hai algunha. */
     fun quitarUltimo() {
         traza.removeLastOrNull()
@@ -162,8 +170,13 @@ class Navegacion ( private val traza: NavBackStack<Ruta>, seleccionada: KClass<o
 
             val entradas = remember { DatosNavegacion() }
 
+            val retroceder = {
+                navegacion.quitarUltimo()
+                navegacion.reiniciarMenuInferiorSeleccionado()
+            }
+
             CompositionLocalProvider( LocalIdioma provides idioma, LocalNavegacion provides navegacion, LocalAviso provides aviso ) {
-                NavDisplay( navegacion.lista, transitionSpec = avanceTransicion(), popTransitionSpec = retrocesoTransicion(), entryProvider = entradas.entradasNavegacion )
+                NavDisplay( navegacion.lista, onBack = retroceder, transitionSpec = avanceTransicion(), popTransitionSpec = retrocesoTransicion(), entryProvider = entradas.entradasNavegacion )
             }
 
         }

@@ -17,7 +17,6 @@
  * operador une os dous valores porque os bits do número aleatorio ocupan
  * unicamente os espazos reservados previamente, sen modificar a parte temporal.
  */
-
 function xerar_id_unica(): int {
 
     $data_inicial = (int) getenv( "INICIO_UNIX" ); //TODO: Cambiar a coller_opcion( xxx )

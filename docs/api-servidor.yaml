@@ -2,13 +2,13 @@ openapi: 3.0.3
 
 info:
   title: API de Lendas Nubeiras
-  version: "0.2.0"
+  version: "0.2.1"
   description: >
     API REST que serve de intermediaria entre a aplicación Android Lendas
     Nubeiras e a base de datos do servidor.
 
     Os endpoints que requiren autenticación validan automaticamente a sesión
-    mediante a cookie permiso, salvo que se indique expresamente o contrario.
+    mediante o rastro sesion_rastro, salvo que se indique expresamente o contrario.
 
     A API non devolve mensaxes de erro dependentes do idioma da aplicación.
     Os erros identifícanse mediante códigos HTTP.
@@ -44,7 +44,7 @@ paths:
       description: >
         Rexistra un usuario a partir do seu correo electrónico. Envíase unha
         mensaxe cunha ligazón para verificar a acción. A ligazón é válida
-        durante 30 minutos. Unha vez verificada, a solicitude queda pendente
+        durante 15 minutos. Unha vez verificada, a solicitude queda pendente
         de aprobación administrativa.
 
         O correo envíase no idioma indicado no campo idioma.
@@ -58,7 +58,10 @@ paths:
             schema:
               type: object
               additionalProperties: false
-              required: [correo, uuid, idioma]
+              required:
+                - correo
+                - uuid
+                - idioma
               properties:
                 correo:
                   type: string
@@ -70,7 +73,10 @@ paths:
                   description: Identificador único do dispositivo.
                 idioma:
                   type: string
-                  enum: [gl, es, en]
+                  enum:
+                    - gl
+                    - es
+                    - en
                   description: Idioma no que se envía o correo.
       responses:
         "200":
@@ -92,8 +98,8 @@ paths:
       summary: Iniciar sesión
       description: >
         Solicita o inicio de sesión enviando ao correo do usuario unha ligazón
-        de verificación. Devólvese un token de sesión que non queda activo ata
-        que se verifica a ligazón.
+        de verificación. Devólvese a información da sesión e do usuario, pero
+        a sesión non queda activa ata que se verifica a ligazón.
 
         Só se pode enviar unha mensaxe cada 60 segundos para o mesmo usuario.
         O correo envíase no idioma indicado no campo idioma.
@@ -104,7 +110,10 @@ paths:
             schema:
               type: object
               additionalProperties: false
-              required: [correo, uuid, idioma]
+              required:
+                - correo
+                - uuid
+                - idioma
               properties:
                 correo:
                   type: string
@@ -116,20 +125,37 @@ paths:
                   description: Identificador único do dispositivo.
                 idioma:
                   type: string
-                  enum: [gl, es, en]
+                  enum:
+                    - gl
+                    - es
+                    - en
                   description: Idioma no que se envía o correo.
       responses:
         "200":
-          description: Enviouse o correo de verificación.
+          description: Enviouse o correo de verificación e devólvese a información da sesión e do usuario.
           content:
             application/json:
               schema:
                 type: object
-                required: [token]
+                required:
+                  - sesion
+                  - id
+                  - correo
+                  - rol
                 properties:
-                  token:
+                  sesion:
                     type: string
-                    description: Token de sesión aínda pendente de activación.
+                    description: Rastro cifrado da sesión (pendente de activación).
+                  id:
+                    type: integer
+                    description: Identificador único do usuario.
+                  correo:
+                    type: string
+                    format: email
+                    description: Enderezo de correo electrónico do usuario.
+                  rol:
+                    type: string
+                    description: Rol asignado ao usuario.
         "400":
           description: JSON mal formado, campos obrigatorios ausentes ou valores inválidos.
         "403":
@@ -151,7 +177,7 @@ paths:
         Verifica unha acción de rexistro, inicio de sesión ou borrado da conta
         mediante a ligazón enviada ao correo electrónico.
 
-        As ligazóns caducan aos 30 minutos e só se poden usar unha vez.
+        As ligazóns caducan aos 15 minutos e só se poden usar unha vez.
 
         Ao verificar un rexistro, a solicitude queda pendente de aprobación
         administrativa. Ao verificar un inicio de sesión, actívase a sesión.
@@ -198,13 +224,13 @@ paths:
       tags: [Autenticación]
       summary: Validar a sesión actual
       description: >
-        Comproba que a sesión enviada na cookie permiso existe e segue activa.
+        Comproba que a sesión enviada en sesion_rastro existe e segue activa, alóngaa e actívaa.
         Se a sesión non é válida, o usuario debe iniciar sesión de novo.
       security:
         - cookieAuth: []
       responses:
         "200":
-          description: A sesión foi validada correctamente.
+          description: A sesión foi validada e alongada correctamente.
         "401":
           description: A cookie falta, a sesión é inválida, caducou ou non está activa.
         "404":
@@ -241,11 +267,15 @@ paths:
             schema:
               type: object
               additionalProperties: false
-              required: [idioma]
+              required:
+                - idioma
               properties:
                 idioma:
                   type: string
-                  enum: [gl, es, en]
+                  enum:
+                    - gl
+                    - es
+                    - en
                   description: Idioma no que se envía o correo.
       responses:
         "200":
@@ -263,31 +293,46 @@ paths:
         default:
           $ref: "#/components/responses/UnexpectedError"
 
-  /actividade/actualizar:
-    get:
-      tags: [Actividades]
-      summary: Actualizar o catálogo de actividades
-      description: Devolve a lista de actividades dispoñibles para o usuario.
-      security:
-        - cookieAuth: []
-      responses:
-        "200":
-          description: O catálogo actualizouse correctamente.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  description: Actividade dispoñible.
-        "401":
-          $ref: "#/components/responses/Unauthenticated"
-        "429":
-          description: Superouse o límite de solicitudes de actualización.
-        "405":
-          $ref: "#/components/responses/MethodNotAllowed"
-        default:
-          $ref: "#/components/responses/UnexpectedError"
+/actividade/actualizar:
+  post:
+    tags: [Actividades]
+    summary: Actualizar o catálogo de actividades
+    description: >
+      Devolve a lista de actividades dispoñibles que pode ver o usuario.
+      A sesión é opcional (admite uso anónimo). Require un intervalo mínimo de 60 segundos
+      entre solicitudes identificadas pola uuid do dispositivo.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+              - uuid
+            properties:
+              uuid:
+                type: string
+                format: uuid
+                description: Identificador único do dispositivo para o control de frecuencia (rate limiting).
+    responses:
+      "200":
+        description: O catálogo actualizouse correctamente.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                description: Actividade dispoñible.
+      "400":
+        description: JSON mal formado ou uuid ausente/inválido.
+      "429":
+        description: Superouse o límite de 1 solicitude cada 60 segundos por dispositivo.
+      "405":
+        $ref: "#/components/responses/MethodNotAllowed"
+      default:
+        $ref: "#/components/responses/UnexpectedError"
 
   /actividade/crear:
     post:
@@ -295,7 +340,7 @@ paths:
       summary: Crear unha actividade
       description: >
         Crea unha actividade e engádea á base de datos. O servidor asigna
-        o identificador da actividade e devólveo na resposta.
+        o identificador da actividade e devólveo na resposta xunto co estado convertido.
 
         Os estados negativos son códigos temporais do cliente e deben
         transformarse no servidor:
@@ -341,7 +386,13 @@ paths:
                   description: Identificador do destinatario.
                 estado:
                   type: integer
-                  enum: [0, 1, 2, -1, -2, -3]
+                  enum:
+                    - 0
+                    - 1
+                    - 2
+                    - -1
+                    - -2
+                    - -3
                   description: >
                     Estado solicitado. Os valores negativos son temporais
                     do cliente e transfórmanse no servidor: -1 a 0, -2 a 1
@@ -362,20 +413,27 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [id]
+                required:
+                  - id
+                  - estado
                 properties:
                   id:
                     type: integer
                     minimum: 1
                     description: Identificador asignado polo servidor.
+                  estado:
+                    type: integer
+                    enum:
+                      - 0
+                      - 1
+                      - 2
+                    description: Estado definitivo asignado polo servidor.
         "400":
           description: JSON mal formado, campos ausentes ou valores inválidos.
         "401":
           $ref: "#/components/responses/Unauthenticated"
         "403":
           description: O usuario non ten permisos para crear a actividade cos datos indicados.
-        "404":
-          description: Non existe algún recurso referenciado.
         "405":
           $ref: "#/components/responses/MethodNotAllowed"
         default:
@@ -433,7 +491,11 @@ paths:
                   description: Identificador do destinatario.
                 estado:
                   type: integer
-                  enum: [0, 1, 2, 3]
+                  enum:
+                    - 0
+                    - 1
+                    - 2
+                    - 3
                   description: "0 = borrador, 1 = pendente, 2 = publicado, 3 = borrado."
                 duracion:
                   type: integer
@@ -452,11 +514,9 @@ paths:
         "401":
           $ref: "#/components/responses/Unauthenticated"
         "403":
-          description: O usuario non ten permisos para modificar esta actividade ou cambiar o seu estado.
+          description: O usuario non ten permisos para modificar esta actividade ou cambiar o seu estado/autoría.
         "404":
           description: A actividade non existe.
-        "409":
-          description: Existe un conflito co estado actual da actividade ou coa súa versión.
         "405":
           $ref: "#/components/responses/MethodNotAllowed"
         default:
@@ -467,7 +527,7 @@ paths:
       tags: [Sistema]
       summary: Rexistrar un erro da aplicación
       description: >
-        Rexistra erros producidos na aplicación sen envialos a plataformas
+        Rexistra erros producidos na aplicación no servidor sen envialos a plataformas
         de terceiros. A petición require unha sesión válida. Os textos 
         demasiados longos son truncados polo servidor.
       security:
@@ -479,7 +539,9 @@ paths:
             schema:
               type: object
               additionalProperties: false
-              required: [id_peticion, erro]
+              required:
+                - id_peticion
+                - erro
               properties:
                 id_peticion:
                   type: string
@@ -493,7 +555,7 @@ paths:
         "200":
           description: O erro foi procesado correctamente.
         "400":
-          description: JSON mal formado ou campos ausentes ou inválidos.
+          description: JSON mal formado ou campos ausentes, baleiros ou inválidos.
         "401":
           $ref: "#/components/responses/Unauthenticated"
         "405":
@@ -523,7 +585,8 @@ paths:
             schema:
               type: object
               additionalProperties: false
-              required: [id]
+              required:
+                - id
               properties:
                 id:
                   type: integer
@@ -535,18 +598,26 @@ paths:
                   description: Novo correo electrónico.
                 rol:
                   type: string
-                  enum: [Monitor, Colaborador, Autor, Editor, Administrador]
+                  enum:
+                    - Monitor
+                    - Colaborador
+                    - Autor
+                    - Editor
+                    - Administrador
                   maxLength: 15
                   description: Novo rol do usuario.
                 estado:
                   type: integer
-                  enum: [0, 1, 2]
+                  enum:
+                    - 0
+                    - 1
+                    - 2
                   description: "0 = pendente, 1 = activo, 2 = suspendido."
       responses:
         "200":
-          description: O usuario foi actualizado.
+          description: O usuario foi actualizado correctamente.
         "400":
-          description: JSON mal formado, identificador inválido ou ningún campo que modificar.
+          description: JSON mal formado, identificador inválido, rol non válido ou ningún campo que modificar.
         "401":
           $ref: "#/components/responses/Unauthenticated"
         "403":
@@ -554,7 +625,7 @@ paths:
         "404":
           description: O usuario que se quere modificar non existe.
         "409":
-          description: O usuario indicado é o usuario reservado ou existe un conflito.
+          description: O usuario indicado é o usuario reservado ou o correo xa está en uso por outro usuario.
         "405":
           $ref: "#/components/responses/MethodNotAllowed"
         default:
@@ -587,7 +658,7 @@ components:
     cookieAuth:
       type: apiKey
       in: cookie
-      name: permiso
+      name: sesion_rastro
 
   responses:
     Unauthenticated:

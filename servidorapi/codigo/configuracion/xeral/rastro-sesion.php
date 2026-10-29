@@ -21,7 +21,6 @@ function validar_rastro_sesion() {
     $uuid    = $rastro[ 'uuid' ];
     $hmac    = $rastro[ 'hmac' ];
     $alongar_ses = $rastro[ 'alongar_ses' ];
-    $peche_ses = $rastro[ 'peche_ses' ];
     $esquema = $rastro[ 'esquema' ];
 
     // AJAX e solicitudes POST no caso de rastros de sesión (que non caducan)
@@ -46,8 +45,8 @@ function validar_rastro_sesion() {
 
     $algo = 'sha256';
 
-    $key = hash_hmac( $algo, $uuid_frag . '|' . $token . '|' . $usuario->correo . '|' . $alongar_ses . '|' . $caducidade_sesion . '|' . $peche_ses, salgado( $esquema ) );
-    $hash = hash_hmac( $algo, $token . '|' . $usuario->correo . '|' . $alongar_ses . '|' . $caducidade_sesion . '|' . $peche_ses, $key );
+    $key = hash_hmac( $algo, $uuid_frag . '|' . $token . '|' . $usuario->correo . '|' . $alongar_ses . '|' . $caducidade_sesion, salgado( $esquema ) );
+    $hash = hash_hmac( $algo, $token . '|' . $usuario->correo . '|' . $alongar_ses . '|' . $caducidade_sesion, $key );
 
     // 4ª Comprobación - Coinciden os hashes (cambio de datos de usuario)
     if ( !hash_equals( $hash, $hmac ) ) {
@@ -99,7 +98,7 @@ function analizar_rastro_sesion() {
     // Cada campo do rastro está separado por un '|'
     $lista = explode( '|', $info_rastro );
 
-    if ( count( $lista ) != 6 ) {
+    if ( count( $lista ) != 5 ) {
        $analizados[ $rastro ] = null;
        return;
     }
@@ -109,8 +108,7 @@ function analizar_rastro_sesion() {
        'token'           => $lista[ 1 ],
        'uuid'            => $lista[ 2 ],
        'hmac'            => $lista[ 3 ],
-       'peche_ses'       => $lista[ 4 ],
-       'alongar_ses'     => $lista[ 5 ],
+       'alongar_ses'     => $lista[ 4 ],
        'esquema'         => $esquema
     ];
 

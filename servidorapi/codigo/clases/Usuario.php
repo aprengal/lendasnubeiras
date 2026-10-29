@@ -14,7 +14,7 @@ final readonly class Usuario {
     public int $id;
 
     /**
-     * @var string Identificador único universal (UUID) do dispositivo ou usuario.
+     * @var string Identificador único do usuario.
      */
     public string $uuid;
 
@@ -251,7 +251,15 @@ final readonly class Usuario {
      * @return bool   True se a sesión é válida.
      */
     public function verificar_sesion( string $token ) {
-       return (bool) $this->coller_sesion( $token );
+
+        $datos = $this->coller_sesion( $token );
+
+        if ( !isset( $datos[ 'estado' ] ) {
+            return false;
+        }
+
+        return $datos[ 'estado' ] === 1;
+
     }
 
     /**
@@ -259,10 +267,9 @@ final readonly class Usuario {
      *
      * @param int     $agora       Marca de tempo Unix actual.
      * @param int     $caducidade  Marca de tempo de caducidade da sesión.
-     * @param string  $peche_ses   Token único de peche de sesión.
      * @return string O token de sesión xerado.
      */
-    public function crear_sesion( int $agora, int $caducidade, string $peche_ses ) {
+    public function crear_sesion( int $agora, int $caducidade ) {
 
        $sesion = [];
 
@@ -270,16 +277,16 @@ final readonly class Usuario {
           $sesion[ 'axente' ] = strlen( $_SERVER[ 'HTTP_USER_AGENT' ] ) < 300 ? $_SERVER[ 'HTTP_USER_AGENT' ] : 'demasiado longo';
        }
 
-       $sesion[ 'creada' ] = $agora;
-
        $token = xerar_token( 50, false );
 
-       $sesion[ 'peche' ] = hash_hmac( 'sha512', $agora . '|' . $peche_ses . '|' . $this->uuid . '|' . $token, salgado( 'sesion' ) );
+       $sesion[ 'creada' ] = $agora;
+       $sesion[ 'peche' ] = hash_hmac( 'sha512', $agora . '|' . $this->uuid . '|' . $token, salgado( 'sesion' ) );
+       $sesion[ 'estado' ] = 0;
 
        $sesion = serialize( $sesion );
 
        if ( $caducidade - $agora < 3 * DIA_EN_SEGUNDOS ) {
-          error_log( 'Creouse unha sesión de curta duración e aumentase 1 hora a súa caducidade para que poida usar solicitudes de AJAX ou POST' );
+          //'Creouse unha sesión de curta duración e aumentase 1 hora a súa caducidade para que poida usar solicitudes de AJAX ou POST'
           $caducidade += HORA_EN_SEGUNDOS;
        }
 
@@ -306,10 +313,9 @@ final readonly class Usuario {
           if ( $rastro[ 'alongar_ses' ] < time() ) {
 
              $token = $rastro[ 'token' ];
-             $peche_ses = $rastro[ 'peche_ses' ];
              $caducidade = $rastro[ 'data_caducidade' ] + DIA_EN_SEGUNDOS;
 
-             $this->axustar_sesion( $token, '', 'alongar_ses_act', $caducidade, $peche_ses );
+             $this->axustar_sesion( $token, '', 'alongar_ses_act', $caducidade );
 
           }
 
@@ -327,15 +333,11 @@ final readonly class Usuario {
        if ( $this->existe() && usuario_act()->id == $this->id ) {
 
           $rastro = analizar_rastro_sesion();
-
           $token = $rastro[ 'token' ];
-          $peche_ses = $rastro[ 'peche_ses' ];
-
           $datos_ses = $this->coller_sesion( $token );
-
           $agora = $datos_ses[ 'creada' ];
 
-          $hash_peche = hash_hmac( 'sha512', $agora . '|' . $peche_ses . '|' . $this->uuid . '|' . $token, salgado( 'sesion' ) );
+          $hash_peche = hash_hmac( 'sha512', $agora . '|' . $this->uuid . '|' . $token, salgado( 'sesion' ) );
 
           return hash_equals( $hash_peche, $datos_ses[ 'peche' ] );
 
@@ -368,10 +370,9 @@ final readonly class Usuario {
      * @param string  $datos_sesion  Datos serializados da sesión.
      * @param string  $accion        Tipo de acción ('crear', 'alongar_ses_act', 'destruir_unha', 'destruir_varias').
      * @param int     $caducidade    Nova data de caducidade.
-     * @param string  $peche_ses     Token de peche de sesión.
      * @return mixed  Resultado da xeración de autenticación posterior.
      */
-    private function axustar_sesion( string $token, string $datos_sesion, string $accion, int $caducidade, string $peche_ses = '' ) {
+    private function axustar_sesion( string $token, string $datos_sesion, string $accion, int $caducidade ) {
 
        $hash = hash_hmac( 'sha512', $token, salgado( 'sesion' ) );
 
@@ -447,7 +448,7 @@ final readonly class Usuario {
 
        db()->$accion_db( 'info_temporal', $datos );
 
-        return xerar_autenticado( $this, [ 'data_caducidade' => $caducidade, 'token' => $token, 'peche_ses' => $peche_ses ], true );
+        return xerar_autenticado( $this, [ 'data_caducidade' => $caducidade, 'token' => $token ], true );
 
     }
 

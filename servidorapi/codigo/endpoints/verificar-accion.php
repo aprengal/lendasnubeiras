@@ -91,7 +91,12 @@ function verificar_inicio( array $accion ) {
 		responder( 409 );
 	}
 
-	crear_dato_temporal( $accion[ 'activacion' ], '1', DURACION_SESION );
+    //Hai que revisar este sistema de validación de inicio de sesión
+    //En validación non se devolve información, pero o valor do token gardado depende da data de caducidade
+    //un valor que se cambia cada 24 horas, polo que tería que enviarse un novo token ou habería que cambiar
+    //este valor para que non teña como referencia a data de cadudidade
+
+	//crear_dato_temporal( $accion[ 'activacion' ], '1', DURACION_SESION );
 
 }
 

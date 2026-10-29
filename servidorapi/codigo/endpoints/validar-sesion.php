@@ -27,7 +27,7 @@ function endpoint_validar_sesion(): never {
     $usuario = esixir_sesion();
 
     $usuario->alongar_sesion_actual();
-    crear_dato_temporal( nome_dato( 'sesion_activa', coller_token_sesion() ), '1', DURACION_SESION );
+    //crear_dato_temporal( nome_dato( 'sesion_activa', coller_token_sesion() ), '1', DURACION_SESION );
 
     responder( 200 );
 

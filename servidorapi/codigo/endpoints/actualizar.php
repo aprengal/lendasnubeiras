@@ -3,23 +3,29 @@
 declare ( strict_types = 1 );
 
 /**
- * GET /actividade/actualizar
- * 
- * Devolve a lista de actividades que pode ver o usuario (ver coller_actividades_visibles).
- * Só se pode solicitar unha vez cada 60 segundos por usuario.
- * 
- * Respostas: 200, 403, 429
+ * POST /actividade/actualizar
+ *
+ * Devolve a lista de actividades dispoñibles que pode ver o usuario (ver coller_actividades_visibles).
+ * A sesión é opcional (admite uso anónimo) e requírese enviar a uuid do dispositivo no corpo da petición.
+ * Só se pode solicitar unha vez cada 60 segundos por dispositivo (ou usuario, se está autenticado).
+ *
+ * Respostas: 200, 400, 429
  */
 function endpoint_actualizar(): never {
 
-	esixir_metodo( 'GET' );
+    esixir_metodo( 'POST' );
 
-	$usuario = esixir_sesion();
+    $corpo = validar_corpo( coller_corpo(), [
+        'uuid' => [ 'tipo' => 'uuid' ]
+    ] );
 
-	if ( !reservar_intento( 'actualizar', (string) $usuario->id, 1, MINUTO_EN_SEGUNDOS ) ) {
-		responder( 429 );
-	}
+    $usuario = usuario_actual();
+    $identificador = $usuario->existe() ? (string) $usuario->id : $corpo[ 'uuid' ];
 
-	responder( 200, coller_actividades_visibles( $usuario ) );
+    if ( !reservar_intento( 'actualizar', $identificador, 1, MINUTO_EN_SEGUNDOS ) ) {
+        responder( 429 );
+    }
+
+    responder( 200, [ 'actividades' => coller_actividades_visibles( $usuario->existe() ? $usuario : null ) ] );
 
 }

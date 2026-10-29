@@ -97,7 +97,7 @@ object Actividades {
              ( datos[ "duracion" ] as Long ).toInt(),
             //datos[ "descricion" ] as String,
             //datos[ "obxectivo" ] as String,
-            datos[ "materiais" ] as String,
+            //datos[ "materiais" ] as String,
             datos[ "data_modificado" ] as Long
         )
 

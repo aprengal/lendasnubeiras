@@ -243,6 +243,23 @@ object Localizacion {
 
     }
 
+    internal fun collerTextoActividade( clave: String ): JSONObject {
+
+        val arquivoBase = "actividades-${ idiomaActual.value.codigo }.json"
+        val arquivoRexion = "actividades-${ idiomaActual.value.codigoRexion }.json"
+
+        val arquivos = appContext.assets.list( "actividades" )!!
+
+        val direccionArquivo = if ( arquivoBase in arquivos ) arquivoBase else arquivoRexion
+        val ruta = "actividades/$direccionArquivo"
+
+        val textoJson = appContext.assets.open( ruta ).bufferedReader().use { arquivo -> arquivo.readText() }
+        val json = JSONObject( textoJson )
+
+        return json.getJSONObject( clave )
+
+    }
+
     internal fun l10n( elemento: L10nSingular ): String {
         cargarDominio( elemento.dominio )
         return traducions[ elemento.dominio ]?.get( elemento ) ?: idiomaActual.value.pendente

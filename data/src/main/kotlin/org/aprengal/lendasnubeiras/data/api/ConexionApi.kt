@@ -11,6 +11,7 @@ import java.io.IOException
 import java.net.SocketTimeoutException
 import org.aprengal.lendasnubeiras.data.axustes.Opcion
 import org.aprengal.lendasnubeiras.data.BuildConfig
+import org.aprengal.lendasnubeiras.data.api.resposta.ActividadeCreada
 import org.aprengal.lendasnubeiras.data.api.resposta.DatosActividades
 import org.aprengal.lendasnubeiras.data.api.resposta.RespostaApi
 import org.aprengal.lendasnubeiras.data.api.resposta.RespostaXenerica
@@ -39,9 +40,11 @@ object ConexionApi {
         val datos = peticion( metodoApi, rutaApi, campos )
 
         val saida = when( rutaApi ) {
-            RutasApi.VALIDACION -> SesionUsuario( datos )
-            RutasApi.REXISTRO, RutasApi.ACCESO, RutasApi.REPORTES -> RespostaXenerica( datos )
+            RutasApi.ACCESO -> SesionUsuario( datos )
             RutasApi.ACTUALIZAR -> DatosActividades( datos )
+            RutasApi.CREARACTIVIDADE -> ActividadeCreada( datos )
+            RutasApi.REXISTRO, RutasApi.VALIDACION, RutasApi.MODIFICARACTIVIDADE,
+            RutasApi.REPORTES, RutasApi.USUARIOS, RutasApi.BORRARCONTA, RutasApi.LIMPAR -> RespostaXenerica( datos )
         }
 
         @Suppress( "UNCHECKED_CAST" )
@@ -111,7 +114,7 @@ object ConexionApi {
                     conexion.requestMethod = metodoApi.clave
                     conexion.instanceFollowRedirects = false
 
-                    if ( sesion.isNotBlank() ) conexion.setRequestProperty( "permiso", "Bearer $sesion" )
+                    if ( sesion.isNotBlank() ) conexion.setRequestProperty( "acceso_rastro", "Bearer $sesion" )
 
                     val haiCorpo = metodoApi != MetodoApi.GET && corpo.isNotBlank()
 

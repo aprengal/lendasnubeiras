@@ -6,6 +6,7 @@ import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma
 internal interface DatosActividade: ElementoBD {
     val id: Long
     val claveTitulo: String
+    val titulo: String
     //val descricion: String
     val categoria: Categoria
     val destinatario: Destinatario

@@ -8,8 +8,8 @@ declare ( strict_types = 1 );
  * Aquí quedan agrupadas todas as chamadas ao sistema de sesións (Usuario e rastros),
  * para que, se cambia a forma de xestionalas, só haxa que tocar este arquivo.
  * 
- * Unha sesión só é válida cando o usuario preme na ligazón que recibe por correo.
- * Iso márcase co dato temporal 'sesion_activa', que se crea ao verificar a ligazón.
+ * Unha sesión só é válida cando o usuario preme na ligazón que recibe por correo
+ * e cambiase o estado a 1 nos metadatos da sesión
  */
 
 /**
@@ -24,15 +24,13 @@ function crear_sesion_api( Usuario $usuario ): array {
 
     $agora = time();
     $caducidade = $agora + DURACION_SESION;
-    $peche_ses = xerar_token( 15, false );
 
-    $token = $usuario->crear_sesion( $agora, $caducidade, $peche_ses );
+    $token = $usuario->crear_sesion( $agora, $caducidade );
 
     $datos_sesion = crear_datos_sesion( $usuario, [
        'caducidade_sesion' => $caducidade,
        'esquema' => 'sesion',
        'token' => $token,
-       'peche_ses' => $peche_ses,
        'alongar_ses' => $agora + DIA_EN_SEGUNDOS
     ] );
 
@@ -55,7 +53,7 @@ function esixir_sesion(): Usuario {
 
 	$usuario = usuario_actual();
 
-	// Se a sesión non existe ou o token non está verificado -> 401
+	// O usuario actual é válido?
 	if ( !$usuario->existe() ) {
 		responder( 401 );
 	}
@@ -66,9 +64,9 @@ function esixir_sesion(): Usuario {
 	}
 
 	// Se a sesión non está activa (falta o dato temporal de activación) -> 401
-	if ( !hai_dato_temporal( nome_dato( 'sesion_activa', coller_token_sesion() ) ) ) {
+	/*if ( !hai_dato_temporal( nome_dato( 'sesion_activa', coller_token_sesion() ) ) ) {
 		responder( 401 );
-	}
+	}*/
 
 	return $usuario;
 

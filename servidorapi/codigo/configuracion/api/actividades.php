@@ -76,41 +76,44 @@ function coller_actividade( int $id ): ?array {
 }
 
 /**
- * Devolve as actividades que pode recibir un usuario.
- * 
- * Todos reciben as publicadas (2) e as borradas (3, para que o cliente actualice a súa copia).
- * Os editores e administradores reciben todas. Os demais reciben ademais
- * os seus propios borradores (0) e pendentes (1).
+ * Devolve as actividades que pode recibir un usuario (ou un usuario anónimo se é null).
+ *
+ * Todos reciben as publicadas (2). Os editores e administradores reciben todas.
+ * Os monitores reciben as publicadas. Os demais usuarios con sesión (autores, colaboradores, etc.)
+ * reciben ademais os seus propios borradores (0) e pendentes (1).
+ * As actividades borradas (3) non se envían; o cliente xestiona iso pola súa conta
+ * para borrar as actividades non enviadas no propio dispositivo.
  */
-function coller_actividades_visibles( Usuario $usuario ): array {
+function coller_actividades_visibles( ?Usuario $usuario ): array {
 
-	$todas = in_array( $usuario->rol, [ Rol::EDITOR, Rol::ADMINISTRADOR ], true );
+    $rol = $usuario?->rol;
+    $todas = in_array( $rol, [ Rol::EDITOR, Rol::ADMINISTRADOR ], true );
 
-	$busca = [ 'columnas' => COLUMNAS_ACTIVIDADE ];
+    $busca = [ 'columnas' => COLUMNAS_ACTIVIDADE ];
 
-	if ( !$todas ) {
-		$busca[ 'onde' ] = [ 'estado' => [ 'operador' => 'IN', 'valores' => [ 2, 3 ] ] ];
-	}
+    if ( !$todas ) {
+        $busca[ 'onde' ] = [ 'estado' => [ 'operador' => 'IN', 'valores' => [ 2 ] ] ];
+    }
 
-	$filas = db()->select( 'actividades', $busca, 'array' ) ?? [];
+    $filas = db()->select( 'actividades', $busca, 'array' ) ?? [];
 
-	if ( !$todas ) {
+    if ( $usuario && $usuario->existe() && !in_array( $rol, [ Rol::MONITOR, Rol::EDITOR, Rol::ADMINISTRADOR ], true ) && !$todas ) {
 
-		$busca_propias = [
-			'columnas' => COLUMNAS_ACTIVIDADE,
-			'onde' => [
-				'id_autoria' => $usuario->id,
-				'estado' => [ 'operador' => 'IN', 'valores' => [ 0, 1 ] ]
-			]
-		];
+        $busca_propias = [
+            'columnas' => COLUMNAS_ACTIVIDADE,
+            'onde' => [
+                'id_autoria' => $usuario->id,
+                'estado' => [ 'operador' => 'IN', 'valores' => [ 0, 1 ] ]
+            ]
+        ];
 
-		$filas += db()->select( 'actividades', $busca_propias, 'array' ) ?? [];
+        $filas += db()->select( 'actividades', $busca_propias, 'array' ) ?? [];
 
-	}
+    }
 
-	ksort( $filas );
+    ksort( $filas );
 
-	return array_values( array_map( 'formatar_actividade', $filas ) );
+    return array_values( array_map( 'formatar_actividade', $filas ) );
 
 }
 

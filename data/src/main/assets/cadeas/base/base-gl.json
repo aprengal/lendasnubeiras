@@ -5,6 +5,9 @@
   "aceptar": "Aceptar",
   "cancelar": "Cancelar",
   "reintentar_accion": "Reintentar",
+  "erro_conexion": "Non se puido conectar co servidor. Hai internet?",
+  "erro_informacion_confusa": "A información proporcionada é confusa ou incompleta. Por favor, revisa os datos introducidos e inténtao de novo.",
+  "erro_demasiados_intentos": "Superaches o límite de intentos permitidos. Por favor, inténtao de novo máis tarde.",
 
   "mensaxes_novas": {
     "one": "Tes %s mensaxe nova",

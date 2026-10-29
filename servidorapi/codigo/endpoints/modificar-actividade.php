@@ -10,7 +10,7 @@ declare ( strict_types = 1 );
  * 
  * Respostas: 200, 400, 403, 404
  */
-function endpoint_modificar_actividade(): never {
+function endpoint_modificar_actividade(): void {
 
 	esixir_metodo( 'POST' );
 

@@ -11,7 +11,7 @@ declare ( strict_types = 1 );
  *
  * Respostas: 200, 400, 429
  */
-function endpoint_actualizar(): never {
+function endpoint_actualizar(): void {
 
     esixir_metodo( 'POST' );
 

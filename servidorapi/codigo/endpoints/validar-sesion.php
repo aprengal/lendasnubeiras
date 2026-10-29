@@ -10,7 +10,7 @@ declare ( strict_types = 1 );
  * 
  * Respostas: 200, 401, 404
  */
-function endpoint_validar_sesion(): never {
+function endpoint_validar_sesion(): void {
 
     esixir_metodo( 'POST' );
 

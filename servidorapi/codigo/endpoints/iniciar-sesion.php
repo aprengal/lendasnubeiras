@@ -11,7 +11,7 @@ declare ( strict_types = 1 );
  *
  * Respostas: 200, 400, 403, 404, 429
  */
-function endpoint_iniciar_sesion(): never {
+function endpoint_iniciar_sesion(): void {
 
     esixir_metodo( 'POST' );
 
@@ -46,7 +46,7 @@ function endpoint_iniciar_sesion(): never {
        'activacion' => $sesion[ 'activacion' ]
     ], DURACION_LIGAZON );
 
-    enviar_correo_verificacion( $correo, 'inicio', crear_url_verificacion( $ligazon, $corpo[ 'uuid' ] ), $corpo[ 'idioma' ] );
+    enviar_correo_verificacion( $correo, 'inicio', crear_url_verificacion( $ligazon, $corpo[ 'uuid' ], $corpo[ 'idioma' ] ), $corpo[ 'idioma' ] );
 
     $datos_resposta = [
         'sesion' => $sesion[ 'sesion' ],

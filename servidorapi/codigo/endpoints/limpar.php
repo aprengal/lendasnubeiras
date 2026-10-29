@@ -16,7 +16,7 @@ declare ( strict_types = 1 );
  * 
  * Respostas: 204, 409
  */
-function endpoint_limpar(): never {
+function endpoint_limpar(): void {
 
 	esixir_metodo( 'GET' );
 

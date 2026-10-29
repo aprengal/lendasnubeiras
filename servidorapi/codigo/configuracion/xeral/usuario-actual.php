@@ -16,7 +16,7 @@ function usuario_actual( string $accion = 'coller' ) {
     if ( $accion == 'coller' ) {
 
        if ( $usuario ) {
-          return $usuario;º
+          return $usuario;
        }
 
        $novo_usuario = validar_rastro_sesion();

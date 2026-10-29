@@ -6,13 +6,18 @@ enum class L10nAutenticacion( internal val clave: String ) : L10nSingular {
 
     BotonAcceso( "boton_acceso" ),
     BotonRexistro( "boton_rexistro" ),
+    BotonXaConta( "boton_xa_conta" ),
     BotonAnonimo( "boton_anonimo" ),
     CorreoElectronico( "correo_electronico" ),
     ComprobandoCorreo( "comprobando_correo" ),
 
     CrearConta( "crear_conta" ),
     EnlaceCrearConta( "enlace_crear_conta" ),
-    VolverAcceso( "volver_acceso" );
+    VolverAcceso( "volver_acceso" ),
+
+    RexistroCorrecto( "rexistro_correcto" ),
+    RexistroContaXaExiste( "rexistro_duplicado" ),
+    ErroRexistro( "erro_rexistro" );
 
     internal val dominio: Dominio = Dominio.AUTENTICACION
 

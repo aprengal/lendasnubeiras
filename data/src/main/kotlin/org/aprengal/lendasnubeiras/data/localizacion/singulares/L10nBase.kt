@@ -9,7 +9,10 @@ enum class L10nBase( internal val clave: String ) : L10nSingular {
     Cancelar( "cancelar" ),
     Si( "si" ),
     Non( "non" ),
-    Reintentar( "reintentar_accion" );
+    Reintentar( "reintentar_accion" ),
+    ErroConexion( "erro_conexion" ),
+    ErroDatosInvalidos( "erro_informacion_confusa" ),
+    ErroLimiteIntentos( "erro_demasiados_intentos" );
 
     internal val dominio: Dominio = Dominio.BASE
 

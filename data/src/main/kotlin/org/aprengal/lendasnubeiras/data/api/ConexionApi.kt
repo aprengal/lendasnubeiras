@@ -65,7 +65,7 @@ object ConexionApi {
 
     }
 
-    private fun crearCorpo( campos: Map<String, Any> ): String {
+    /*private fun crearCorpo( campos: Map<String, Any> ): String {
 
         val partes = mutableListOf<String>()
 
@@ -77,6 +77,14 @@ object ConexionApi {
 
         return partes.joinToString( "&" )
 
+    }*/
+
+    private fun crearCorpo( campos: Map<String, Any> ): String {
+        val jsonObject = JSONObject()
+        for ( ( clave, valor ) in campos ) {
+            jsonObject.put( clave, valor )
+        }
+        return jsonObject.toString()
     }
 
     private fun procesarResposta( texto: String, codigo: Int ): JSONObject {
@@ -119,11 +127,16 @@ object ConexionApi {
                     val haiCorpo = metodoApi != MetodoApi.GET && corpo.isNotBlank()
 
                     if ( haiCorpo ) {
+
                         conexion.doOutput = true
-                        conexion.setRequestProperty( "Content-Type", "application/x-www-form-urlencoded" )
+
+                        conexion.setRequestProperty( "Content-Type", "application/json; charset=UTF-8" )
+                        conexion.setRequestProperty( "Accept", "application/json" )
+
                         val bytes = corpo.toByteArray( Charsets.UTF_8 )
                         conexion.setFixedLengthStreamingMode( bytes.size )
                         conexion.outputStream.use { it.write( bytes ) }
+
                     }
 
                     conexion.connect()

@@ -15,7 +15,7 @@ declare ( strict_types = 1 );
  * @param ?array      $datos   Datos opcionais a codificar en JSON.
  * @return never
  */
-function responder( int $codigo, ?array $datos = null ): never {
+function responder( int $codigo, ?array $datos = null ): void {
 
     http_response_code( $codigo );
 

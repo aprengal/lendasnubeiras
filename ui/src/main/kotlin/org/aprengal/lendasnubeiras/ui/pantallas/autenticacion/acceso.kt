@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nAutenticacion
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nValidacion
+import org.aprengal.lendasnubeiras.data.utilidades.Validacion.validarCorreo
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalNavegacion
 import org.aprengal.lendasnubeiras.ui.navegacion.Ruta
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosCampoTexto
@@ -44,21 +45,7 @@ fun PantallaAcceso() {
         activado = false
     }
 
-    val erro: L10nValidacion? by remember {
-
-        derivedStateOf {
-
-            val texto = correo.text.toString()
-
-            when {
-                texto.isEmpty() -> null
-                !texto.contains( "@" ) -> L10nValidacion.ErroFaltaArroba
-                !correoValido -> L10nValidacion.ErroFormatoCorreo
-                else -> null
-            }
-        }
-
-    }
+    val erro: L10nValidacion? by remember { derivedStateOf { validarCorreo( correo.text.toString() ) } }
 
     val datos = DatosCampoTexto( correo, campoCorreo, 255, Modifier.fillMaxWidth(), activado, teclado = tecladoCorreo, erro = erro )
 

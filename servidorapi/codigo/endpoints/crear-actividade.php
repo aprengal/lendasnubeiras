@@ -9,7 +9,7 @@ declare ( strict_types = 1 );
  * 
  * Respostas: 200, 400, 403
  */
-function endpoint_crear_actividade(): never {
+function endpoint_crear_actividade(): void {
 
 	esixir_metodo( 'POST' );
 

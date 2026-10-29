@@ -19,7 +19,7 @@
  */
 function xerar_id_unica(): int {
 
-    $data_inicial = (int) getenv( "INICIO_UNIX" ); //TODO: Cambiar a coller_opcion( xxx )
+    $data_inicial = (int) coller_opcion( 'data_base_ids' );
     $unix_modificado = (int) ( ( microtime( true ) - $data_inicial ) * 1000 );
     $bits_desprazamento = 4; // 16 posibilidades por milisegundo. 2^4
     $aleatorio = random_int( 0, ( 1 << $bits_desprazamento ) - 1 );

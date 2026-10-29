@@ -15,7 +15,7 @@ declare ( strict_types = 1 );
  * 
  * Respostas: 200, 400, 403, 404, 409
  */
-function endpoint_axustar_usuarios(): never {
+function endpoint_axustar_usuarios(): void {
 
 	esixir_metodo( 'POST' );
 

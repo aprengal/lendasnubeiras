@@ -142,7 +142,7 @@ object Axustes {
 
     }
 
-    internal fun collerIdDispositivo(): String {
+    fun collerIdDispositivo(): String {
 
         var idDispositivo = collerOpcion( Opcion.IdDispositivo )
         if ( idDispositivo.isNotBlank() ) return idDispositivo

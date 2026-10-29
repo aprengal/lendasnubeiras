@@ -10,7 +10,7 @@ declare ( strict_types = 1 );
  * 
  * Respostas: 200, 400, 403
  */
-function endpoint_reportar_erros(): never {
+function endpoint_reportar_erros(): void {
 
 	esixir_metodo( 'POST' );
 

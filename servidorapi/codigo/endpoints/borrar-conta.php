@@ -14,7 +14,7 @@ declare ( strict_types = 1 );
  * 
  * Respostas: 200, 400, 403, 409, 429
  */
-function endpoint_borrar_conta(): never {
+function endpoint_borrar_conta(): void {
 
 	esixir_metodo( 'POST' );
 
@@ -41,7 +41,7 @@ function endpoint_borrar_conta(): never {
 		'idioma' => $corpo[ 'idioma' ]
 	], DURACION_LIGAZON );
 
-	enviar_correo_verificacion( $usuario->correo, 'borrado', crear_url_verificacion( $ligazon, $usuario->uuid ), $corpo[ 'idioma' ] );
+	enviar_correo_verificacion( $usuario->correo, 'borrado', crear_url_verificacion( $ligazon, $usuario->uuid, $corpo[ 'idioma' ] ), $corpo[ 'idioma' ] );
 
 	responder( 200 );
 

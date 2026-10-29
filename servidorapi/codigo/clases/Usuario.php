@@ -254,7 +254,7 @@ final readonly class Usuario {
 
         $datos = $this->coller_sesion( $token );
 
-        if ( !isset( $datos[ 'estado' ] ) {
+        if ( !isset( $datos[ 'estado' ] ) ) {
             return false;
         }
 
@@ -302,7 +302,7 @@ final readonly class Usuario {
      */
     public function alongar_sesion_actual() {
 
-       if ( $this->existe() && usuario_act()->id == $this->id ) {
+       if ( $this->existe() && usuario_actual()->id == $this->id ) {
 
           $rastro = analizar_rastro_sesion();
 
@@ -330,7 +330,7 @@ final readonly class Usuario {
      */
     public function pechar_sesion_actual() {
 
-       if ( $this->existe() && usuario_act()->id == $this->id ) {
+       if ( $this->existe() && usuario_actual()->id == $this->id ) {
 
           $rastro = analizar_rastro_sesion();
           $token = $rastro[ 'token' ];
@@ -392,7 +392,7 @@ final readonly class Usuario {
 
           case 'alongar_ses_act':
 
-             if ( usuario_act()->id != $this->id ) {
+             if ( usuario_actual()->id != $this->id ) {
                 throw new LogicException( 'Só se pode alongar a sesión actual do usuario actual' );
              }
 

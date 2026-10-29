@@ -9,17 +9,45 @@ declare ( strict_types = 1 );
 
 /**
  * Crea un usuario novo en estado pendente, á espera de que un administrador o aprobe.
- * 
- * Devolve o id do usuario. O rol inicial é o máis básico (monitor).
+ * O rol inicial é o máis básico (monitor).
  */
-function crear_usuario_pendente( string $correo, string $uuid ): int {
+function crear_usuario_pendente( string $correo ): void {
 
-	return db()->insert( 'usuarios', [
-		'uuid' => $uuid,
-		'correo' => $correo,
-		'estado' => ESTADO_USUARIO_PENDENTE,
-		'rol' => Rol::MONITOR->value
-	] );
+    $args = [ 'columnas' => 'id', 'onde' => [ 'clave' => 'monitor' ], 'limit' => 1 ];
+    $id_monitor = db()->select( 'roles', $args, 'unico' );
+
+    $inserido = false;
+    $reintentos = 5;
+    $intento = 0;
+
+    do {
+
+        $uuid = xerar_token( 32, false );
+        $id_usuario = xerar_id_unica();
+
+        try {
+
+            $intento++;
+
+            db()->insert( 'usuarios', [
+                'id' => $id_usuario,
+                'uuid' => $uuid,
+                'correo' => $correo,
+                'estado' => ESTADO_USUARIO_PENDENTE,
+                'id_rol' => $id_monitor
+            ] );
+
+            $inserido = true;
+
+        } catch ( Exception $e ) {
+            error_log( "Intentouse crear un usuario, pero fallou a inserción: " . $e->getMessage() );
+        }
+
+    } while ( !$inserido && $intento < $reintentos );
+
+    if ( !$inserido ) {
+        responder( 409 );
+    }
 
 }
 

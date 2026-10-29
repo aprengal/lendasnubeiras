@@ -11,7 +11,7 @@ declare ( strict_types = 1 );
  * 
  * Respostas: 200, 400, 409, 429
  */
-function endpoint_rexistro(): never {
+function endpoint_rexistro(): void {
 
 	esixir_metodo( 'POST' );
 
@@ -41,7 +41,7 @@ function endpoint_rexistro(): never {
 		'idioma' => $corpo[ 'idioma' ]
 	], DURACION_LIGAZON );
 
-	enviar_correo_verificacion( $correo, 'rexistro', crear_url_verificacion( $ligazon, $corpo[ 'uuid' ] ), $corpo[ 'idioma' ] );
+	enviar_correo_verificacion( $correo, 'rexistro', crear_url_verificacion( $ligazon, $corpo[ 'uuid' ], $corpo[ 'idioma' ] ), $corpo[ 'idioma' ] );
 
 	responder( 200 );
 

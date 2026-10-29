@@ -13,7 +13,7 @@ declare ( strict_types = 1 );
  * 
  * Respostas: 200, 409
  */
-function endpoint_verificar_accion(): never {
+function endpoint_verificar_accion(): void {
 
 	esixir_metodo( 'GET' );
 
@@ -38,9 +38,6 @@ function endpoint_verificar_accion(): never {
 		responder( 409 );
 	}
 
-	//Bórrase antes de executar a acción para que non se poida usar dúas veces
-	borrar_dato_temporal( $nome );
-
 	switch ( $accion[ 'tipo' ] ) {
 
 		case 'rexistro':
@@ -60,7 +57,10 @@ function endpoint_verificar_accion(): never {
 
 	}
 
-	responder( 200 );
+	borrar_dato_temporal( $nome );
+
+    $idioma = $accion[ 'idioma' ] ?? 'es';
+    amosar_pantalla_exito( $idioma );
 
 }
 
@@ -73,12 +73,12 @@ function verificar_rexistro( array $accion ) {
 		responder( 409 );
 	}
 
-	//Entre a solicitude e a verificación o correo ou o dispositivo poderían ter sido rexistrados
-	if ( coller_usuario( 'correo', $accion[ 'correo' ] )->existe() || coller_usuario( 'uuid', $accion[ 'uuid' ] )->existe() ) {
+	//O correo xa está rexistrado?
+	if ( coller_usuario( 'correo', $accion[ 'correo' ] )->existe() ) {
 		responder( 409 );
 	}
 
-	crear_usuario_pendente( $accion[ 'correo' ], $accion[ 'uuid' ] );
+	crear_usuario_pendente( $accion[ 'correo' ] );
 
 }
 
@@ -124,5 +124,45 @@ function verificar_borrado( array $accion ) {
 	] );
 
 	pechar_sesions( $usuario->id );
+
+}
+
+function amosar_pantalla_exito( string $idioma ): never {
+
+    $titulos = [
+        'gl' => 'Verificación Exitosa',
+        'es' => 'Verificación Exitosa',
+        'en' => 'Successful Verification'
+    ];
+
+    $mensaxes = [
+        'gl' => 'Acción realizada correctamente. Xa podes pechar esta ventá.',
+        'es' => 'Acción realizada correctamente. Ya puedes cerrar esta ventana.',
+        'en' => 'Action completed successfully. You can now close this window.'
+    ];
+
+    $titulo = $titulos[ $idioma ] ?? $titulos[ 'es' ];
+    $texto = $mensaxes[ $idioma ] ?? $mensaxes[ 'es' ];
+
+    header( 'Content-Type: text/html; charset=UTF-8' );
+    http_response_code( 200 );
+
+    echo '<!DOCTYPE html>
+    <html lang="' . htmlspecialchars( $idioma ) . '">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>' . htmlspecialchars( $titulo ) . '</title>
+        <link rel="stylesheet" href="/css/estilo.css">
+    </head>
+    <body>
+        <div class="card">
+            <div class="checkmark">&#10003;</div>
+            <p>' . htmlspecialchars( $texto ) . '</p>
+        </div>
+    </body>
+    </html>';
+
+    exit;
 
 }

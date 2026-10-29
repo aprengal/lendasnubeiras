@@ -8,7 +8,6 @@ import org.aprengal.lendasnubeiras.data.axustes.DatosTema.Variante.Predeterminad
 import org.aprengal.lendasnubeiras.data.localizacion.clases.ElementoL10n
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nOpcions
 
-
 object DatosTema {
 
     enum class Variante( override val clave: String, override val nome: L10nOpcions ): ElementoL10n {

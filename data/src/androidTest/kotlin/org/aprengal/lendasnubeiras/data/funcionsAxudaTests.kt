@@ -110,11 +110,10 @@ fun datosCompletos( datos: Map<String, String> = emptyMap() ): Map<String, Strin
         "id_autoria" to "1",
         "id_categoria" to "nada",
         "id_destinatario" to "xeral",
-        "id_idioma" to "gl_ES",
         "duracion" to "30",
         //"descricion" to "Descrición de proba abondo longa",
         //"obxectivo" to "Obxectivo de proba abondo longo para pasar o check",
-        "materiais" to "Materiais de proba abondo longos para pasar o check",
+        //"materiais" to "Materiais de proba abondo longos para pasar o check",
         "data_modificado" to System.currentTimeMillis().toString()
     )
 
@@ -130,11 +129,10 @@ fun datosCompletosAny( datos: Map<String, Any> = emptyMap() ): Map<String, Any> 
         "id_autoria" to 1L,
         "id_categoria" to "nada",
         "id_destinatario" to "xeral",
-        "id_idioma" to "gl_ES",
         "duracion" to 30,
         //"descricion" to "Descrición de proba abondo longa",
         //"obxectivo" to "Obxectivo de proba abondo longo para pasar o check",
-        "materiais" to "Materiais de proba abondo longos para pasar o check",
+        //"materiais" to "Materiais de proba abondo longos para pasar o check",
         "data_modificado" to System.currentTimeMillis()
     )
     return base + datos

@@ -285,11 +285,6 @@ final readonly class Usuario {
 
        $sesion = serialize( $sesion );
 
-       if ( $caducidade - $agora < 3 * DIA_EN_SEGUNDOS ) {
-          //'Creouse unha sesión de curta duración e aumentase 1 hora a súa caducidade para que poida usar solicitudes de AJAX ou POST'
-          $caducidade += HORA_EN_SEGUNDOS;
-       }
-
        $this->axustar_sesion( $token, $sesion, 'crear', $caducidade );
 
        return $token;
@@ -446,9 +441,9 @@ final readonly class Usuario {
 
        }
 
-       db()->$accion_db( 'info_temporal', $datos );
+        db()->$accion_db( 'info_temporal', $datos );
 
-        return xerar_autenticado( $this, [ 'data_caducidade' => $caducidade, 'token' => $token ], true );
+        //return xerar_autenticado( $this, [ 'data_caducidade' => $caducidade, 'token' => $token ], true );
 
     }
 

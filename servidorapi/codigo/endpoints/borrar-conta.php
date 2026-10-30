@@ -28,7 +28,7 @@ function endpoint_borrar_conta(): void {
 		'idioma' => [ 'tipo' => 'texto', 'max' => 2, 'valores' => IDIOMAS_API ]
 	] );
 
-	if ( !reservar_intento( 'borrado_conta', (string) $usuario->id, 1, MINUTO_EN_SEGUNDOS ) ) {
+	if ( !revisar_intentos( 'borrado_conta', (string) $usuario->id, 1, MINUTO_EN_SEGUNDOS ) ) {
 		responder( 429 );
 	}
 

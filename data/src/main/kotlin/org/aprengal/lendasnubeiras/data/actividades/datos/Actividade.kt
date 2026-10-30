@@ -9,7 +9,6 @@ data class Actividade(
     val idAutoria: Long,
     override val categoria: Categoria,
     override val destinatario: Destinatario,
-    override val idioma: Idioma,
     override val estado: Estado,
     val duracion: Int,
     val dataModificado: Long

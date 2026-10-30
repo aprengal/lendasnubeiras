@@ -32,7 +32,7 @@ function endpoint_iniciar_sesion(): void {
        responder( 403 );
     }
 
-    if ( !reservar_intento( 'inicio_sesion', $correo, 1, MINUTO_EN_SEGUNDOS ) ) {
+    if ( !revisar_intentos( 'inicio_sesion', $correo, 1, MINUTO_EN_SEGUNDOS ) ) {
        responder( 429 );
     }
 

@@ -3,8 +3,6 @@ package org.aprengal.lendasnubeiras.data.bd.clases
 import android.database.sqlite.SQLiteDatabase
 import org.aprengal.lendasnubeiras.data.actividades.datos.Estado
 import org.aprengal.lendasnubeiras.data.actividades.dixitais.datos.Dificultade
-import org.aprengal.lendasnubeiras.data.bd.taboas.TaboaBase
-//import org.aprengal.lendasnubeiras.data.bd.taboas.TaboaLectura
 
 internal class EstruturaDB {
 
@@ -13,26 +11,22 @@ internal class EstruturaDB {
         val dificultades = Dificultade.entries.joinToString( "," ) { dificultade -> "'${ dificultade.clave }'" }
 
         //Nomes táboas
-        val actividades = TaboaBase.ACTIVIDADES.nome
-        //val buscador = TaboaLectura.BUSCADOR_ACTIVIDADES.nome
-        val grupos = TaboaBase.GRUPOS.nome
-        val xogadores = TaboaBase.XOGADORES.nome
-        val puntuacions = TaboaBase.PUNTUACIONS.nome
+        val actividades = Taboa.ACTIVIDADES.nome
+        val grupos = Taboa.GRUPOS.nome
+        val xogadores = Taboa.XOGADORES.nome
+        val puntuacions = Taboa.PUNTUACIONS.nome
 
         db.execSQL(
             """
             CREATE TABLE $actividades (
                 id              INTEGER NOT NULL PRIMARY KEY, --ids negativas reservadas a actividades locais e as positivas ás que están no servidor
-                clave_titulo    TEXT NOT NULL COLLATE NOCASE CHECK ( LENGTH( clave_titulo ) <= 100 ),
+                clave_titulo    TEXT NOT NULL UNIQUE CHECK ( LENGTH( clave_titulo ) <= 100 AND clave_titulo GLOB '[a-z0-9-]*' ),
                 id_autoria      INTEGER NOT NULL CHECK ( id_autoria >= 0 ),
                 id_categoria    TEXT NOT NULL CHECK ( LENGTH( id_categoria ) <= 15 ),
                 id_destinatario TEXT NOT NULL CHECK ( LENGTH( id_destinatario ) <= 15 ),
                 -- Positivos = xa enviado ao servidor: 0=borrador, 1=pendente, 2=publicado, 3=borrado. Negativos = aínda non enviado: -1=borrador, -2=pendente, -3=publicado
                 estado          TINYINT NOT NULL DEFAULT -1 CHECK ( estado BETWEEN -3 AND 3 ),
                 duracion        TINYINT NOT NULL CHECK ( duracion BETWEEN 1 AND 180 ),
-                -- descricion   TEXT NOT NULL CHECK ( LENGTH( descricion ) BETWEEN 10 AND 1000 ),
-                -- obxectivo    TEXT NOT NULL CHECK ( LENGTH( obxectivo ) BETWEEN 10 AND 200 ),
-                -- materiais    TEXT NOT NULL CHECK ( LENGTH( materiais ) BETWEEN 3 AND 200 ),
                 data_modificado INTEGER NOT NULL CHECK ( data_modificado >= 0 )
             )
             """
@@ -126,73 +120,6 @@ internal class EstruturaDB {
             END
             """
         )
-
-        //Relacionados co buscador
-
-        //1. Inserción
-        /*db.execSQL(
-            """
-            CREATE TRIGGER trg_actividades_ins_buscador AFTER INSERT ON $actividades 
-            WHEN new.estado IN ( -3, 2 )
-            BEGIN
-                INSERT INTO $buscador( docid, claveTitulo, descricion, obxectivo, materiais )
-                VALUES ( new.id, new.claveTitulo, new.descricion, new.obxectivo, new.materiais );
-            END
-            """
-        )*/
-
-        //2. Actualizacións
-
-        // 2.1. De NON buscable a buscable
-        /*db.execSQL(
-            """
-            CREATE TRIGGER trg_actividades_upd_inserir AFTER UPDATE ON $actividades 
-            FOR EACH ROW
-            WHEN old.estado NOT IN ( 2, -3 ) AND new.estado IN ( 2, -3 )
-            BEGIN
-                INSERT INTO $buscador( docid, claveTitulo, descricion, obxectivo, materiais )
-                VALUES ( new.id, new.claveTitulo, new.descricion, new.obxectivo, new.materiais );
-            END
-            """
-        )*/
-
-        // 2.2. Segue en buscable
-        /*db.execSQL(
-            """
-            CREATE TRIGGER trg_actividades_upd_actualizar AFTER UPDATE ON $actividades 
-            FOR EACH ROW
-            WHEN old.estado IN ( 2, -3 ) AND new.estado IN ( 2, -3 )
-            BEGIN
-                UPDATE $buscador SET
-                    claveTitulo = new.claveTitulo,
-                    descricion = new.descricion,
-                    obxectivo = new.obxectivo,
-                    materiais = new.materiais
-                WHERE docid = new.id;
-            END
-            """
-        )*/
-
-        // 2.3. Deixou de ser buscable
-        /*db.execSQL(
-            """
-            CREATE TRIGGER trg_actividades_upd_borrar AFTER UPDATE ON $actividades 
-            FOR EACH ROW
-            WHEN old.estado IN ( 2, -3 ) AND new.estado NOT IN ( 2, -3 )
-            BEGIN
-                DELETE FROM $buscador WHERE docid = old.id;
-            END
-            """
-        )*/
-
-        //3. Borrados
-        /*db.execSQL(
-            """
-            CREATE TRIGGER trg_actividades_del_buscador AFTER DELETE ON $actividades BEGIN
-                DELETE FROM $buscador WHERE docid = old.id;
-            END
-            """
-        )*/
 
     }
 

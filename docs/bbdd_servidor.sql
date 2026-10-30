@@ -8,7 +8,6 @@
 -- Eliminación de táboas
 -- =========================================
 
-DROP TABLE IF EXISTS LendasNubeiras_417072_tarefas_programadas;
 DROP TABLE IF EXISTS LendasNubeiras_417072_info_temporal;
 DROP TABLE IF EXISTS LendasNubeiras_417072_opcions;
 
@@ -98,7 +97,7 @@ CREATE TABLE IF NOT EXISTS LendasNubeiras_417072_destinatarios ( -- A id non seg
 -- =========================================
 CREATE TABLE IF NOT EXISTS LendasNubeiras_417072_actividades ( -- A id asígnase automaticamente cunha fórmula que parte como base do timestamp actual. // id = data_creado
     id              BIGINT UNSIGNED NOT NULL,
-    clave_titulo    VARCHAR(100) NOT NULL,
+    clave_titulo VARCHAR(100) COLLATE utf8mb4_bin NOT NULL,
     id_autoria      BIGINT UNSIGNED NOT NULL,
     id_categoria    TINYINT UNSIGNED NOT NULL,
     id_destinatario TINYINT UNSIGNED NOT NULL,
@@ -115,6 +114,7 @@ CREATE TABLE IF NOT EXISTS LendasNubeiras_417072_actividades ( -- A id asígnase
     KEY idx_actividades_destinatario ( id_destinatario ),
     KEY idx_actividades_estado_borrado ( estado, data_borrado ),
     KEY idx_actividades_data_modificado( data_modificado ),
+    CONSTRAINT chk_actividades_clave_titulo CHECK ( clave_titulo REGEXP '^[a-z0-9-]*$' ),
     CONSTRAINT chk_actividades_estado CHECK ( estado BETWEEN 0 AND 3 ),
     CONSTRAINT chk_actividades_duracion CHECK ( duracion BETWEEN 1 AND 180 ),
     CONSTRAINT fk_actividades_autor FOREIGN KEY ( id_autoria ) REFERENCES LendasNubeiras_417072_usuarios( id ) ON DELETE RESTRICT ON UPDATE RESTRICT,
@@ -144,19 +144,6 @@ CREATE TABLE IF NOT EXISTS LendasNubeiras_417072_info_temporal (
 	data_caducidade BIGINT UNSIGNED NOT NULL,
 	PRIMARY KEY ( id, nome ),
     KEY idx_info_temporal_data_caducidade ( data_caducidade )
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
-
--- =========================================
--- Táboa: tarefa_programada
--- =========================================
-CREATE TABLE IF NOT EXISTS LendasNubeiras_417072_tarefas_programadas ( -- A id asígnase automaticamente cunha fórmula que parte como base do timestamp actual
-	id         BIGINT UNSIGNED NOT NULL,
-	nome       VARCHAR(100) NOT NULL,
-    frecuencia ENUM( 'nunca', 'hora', 'bidiaria', 'diaria', 'semanal' ) NOT NULL,
-	PRIMARY KEY ( id, nome ),
-    KEY idx_tarefas_programadas_nome ( nome ),
-	KEY idx_tarefas_programadas_frecuencia ( frecuencia ),
-	KEY idx_tarefas_programadas_coller_tarefa ( nome, frecuencia, id )
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
 -- =========================================

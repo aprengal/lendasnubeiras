@@ -3,14 +3,11 @@ package org.aprengal.lendasnubeiras.data.bd.clases
 import android.content.Context
 import android.util.Log
 import org.aprengal.lendasnubeiras.data.actividades.datos.Actividade
-import org.aprengal.lendasnubeiras.data.api.ConexionApi
 import org.aprengal.lendasnubeiras.data.api.ConexionApi.MetodoApi
 import org.aprengal.lendasnubeiras.data.api.RutasApi
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.SeleccionSQL
 import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades
-import org.aprengal.lendasnubeiras.data.bd.taboas.Taboa
-import org.aprengal.lendasnubeiras.data.bd.taboas.TaboaBase
 import org.aprengal.lendasnubeiras.data.usuarios.SesionActual
 import org.aprengal.lendasnubeiras.data.utilidades.Corrutinas
 import kotlinx.coroutines.CoroutineScope
@@ -61,8 +58,8 @@ object BD {
     //Chamado ao eliminar unha actividade que se quita tras realizar unha actualización da táboa de actividades (as FK estarían desactivadas)
     //Pero os triggers deixarían borrar en paz?
     fun eliminarPuntuacionActividade( actividade: Actividade): Int {
-        bd.eliminar( TaboaBase.PUNTUACIONS, mapOf( "actividade_id" to Condicion.Simple( actividade.id ) ) )
-        return bd.eliminar( TaboaBase.ACTIVIDADES, mapOf( "id" to Condicion.Simple( actividade.id ) ) )
+        bd.eliminar( Taboa.PUNTUACIONS, mapOf( "actividade_id" to Condicion.Simple( actividade.id ) ) )
+        return bd.eliminar( Taboa.ACTIVIDADES, mapOf( "id" to Condicion.Simple( actividade.id ) ) )
     }
 
     suspend fun actualizarCatalogo( ambito: CoroutineScope ): Boolean {
@@ -93,11 +90,11 @@ object BD {
 
                     when {
 
-                        actLocal == null -> bd.insertar( TaboaBase.ACTIVIDADES, actServidor )
+                        actLocal == null -> bd.insertar( Taboa.ACTIVIDADES, actServidor )
 
                         dataModificadoServidor > actLocal.dataModificado -> {
                             actividadesObsoletas.remove( id )
-                            bd.actualizar( TaboaBase.ACTIVIDADES, actServidor, mapOf( "id" to Condicion.Simple( id ) ) )
+                            bd.actualizar( Taboa.ACTIVIDADES, actServidor, mapOf( "id" to Condicion.Simple( id ) ) )
                         }
 
                         else -> actividadesObsoletas.remove( id )

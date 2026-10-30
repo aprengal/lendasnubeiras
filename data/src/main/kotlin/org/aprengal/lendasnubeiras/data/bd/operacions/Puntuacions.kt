@@ -11,7 +11,7 @@ import org.aprengal.lendasnubeiras.data.bd.clases.BD.TipoCombinacion
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.CombinacionSQL
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.SeleccionSQL
-import org.aprengal.lendasnubeiras.data.bd.taboas.TaboaBase
+import org.aprengal.lendasnubeiras.data.bd.clases.Taboa
 import java.time.Instant
 
 object Puntuacions {
@@ -22,7 +22,7 @@ object Puntuacions {
             "xogador_id" to xogador.id, "puntos" to puntos, "unix_rexistro" to Instant.now().epochSecond
         )
 
-        return bd.insertar( TaboaBase.PUNTUACIONS, onde )
+        return bd.insertar( Taboa.PUNTUACIONS, onde )
 
     }
 
@@ -36,7 +36,7 @@ object Puntuacions {
             "puntos" to Condicion.Simple( puntos, OperadorSimple.MENOR )
         )
 
-        return bd.actualizar( TaboaBase.PUNTUACIONS, mapOf( "puntos" to puntos, "unix_rexistro" to Instant.now().epochSecond ), onde )
+        return bd.actualizar( Taboa.PUNTUACIONS, mapOf( "puntos" to puntos, "unix_rexistro" to Instant.now().epochSecond ), onde )
 
     }
 
@@ -48,7 +48,7 @@ object Puntuacions {
             "xogador_id" to Condicion.Simple( xogador.id )
         )
 
-        return bd.eliminar( TaboaBase.PUNTUACIONS, onde )
+        return bd.eliminar( Taboa.PUNTUACIONS, onde )
 
     }
 
@@ -61,14 +61,14 @@ object Puntuacions {
                 "xogador_id",
                 "x",
                 "id",
-                TaboaBase.XOGADORES
+                Taboa.XOGADORES
             )
         )
         val onde = mapOf( "p.actividade_id" to Condicion.Simple( actividade.id ), "p.dificultade" to Condicion.Simple( dificultade.clave ) )
         val ordenar = mapOf( "p.puntos" to Orde.DESC, "p.unix_rexistro" to Orde.ASC )
 
         val datos = SeleccionSQL( colummnas, alias = "p", combinacions = datosCombinacion, onde = onde, ordenar = ordenar)
-        val resultados = bd.seleccionar( TaboaBase.PUNTUACIONS, datos )
+        val resultados = bd.seleccionar( Taboa.PUNTUACIONS, datos )
 
         val listaPuntuacions = resultados.associate { fila ->
             ( fila[ "nome" ] as String ) to mapOf(

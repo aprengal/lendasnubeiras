@@ -108,7 +108,7 @@ function crear_datos_sesion( Usuario $usuario, array $args_sesion ) {
  * @param bool     $recordar   Indica se se quere lembrar a sesión a longo prazo.
  * @return array   Array cos datos de sesión e o rastro cifrado para enviar ao cliente.
  */
-function xerar_autenticado( Usuario $usuario, array $elementos, bool $recordar ) {
+/*function xerar_autenticado( Usuario $usuario, array $elementos, bool $recordar ) {
 
     if ( $recordar ) {
        $caducidade_rastro = $caducidade_sesion = $elementos[ 'data_caducidade' ] ?? time() + 30 * DIA_EN_SEGUNDOS;
@@ -142,4 +142,4 @@ function xerar_autenticado( Usuario $usuario, array $elementos, bool $recordar )
        'token' => $elementos[ 'token' ],
     ];
 
-}
+}*/

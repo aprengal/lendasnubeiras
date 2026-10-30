@@ -8,7 +8,6 @@ data class ActividadeBuscable(
     override val claveTitulo: String,
     override val categoria: Categoria,
     override val destinatario: Destinatario,
-    override val idioma: Idioma,
     override val estado: Estado
 ) : DatosActividade {
 

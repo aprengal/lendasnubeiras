@@ -11,8 +11,6 @@ import androidx.core.database.sqlite.transaction
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.CombinacionSQL
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.SeleccionSQL
-import org.aprengal.lendasnubeiras.data.bd.taboas.Taboa
-import org.aprengal.lendasnubeiras.data.bd.taboas.TaboaBase
 //import org.aprengal.lendasnubeiras.data.bd.taboas.TaboaLectura
 import org.aprengal.lendasnubeiras.data.localizacion.clases.ElementoL10n
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma
@@ -20,7 +18,7 @@ import kotlin.collections.iterator
 
 internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, null, DB_VERSION ) {
 
-    private val taboasPermitidas: Set<Taboa> = TaboaBase.entries.toSet()
+    private val taboasPermitidas: Set<Taboa> = Taboa.entries.toSet()
 
     // Estrutura
     companion object {

@@ -20,7 +20,7 @@ function endpoint_verificar_accion(): void {
 	$id_accion = $_GET[ 'id_accion' ] ?? null;
 	$uuid = $_GET[ 'uuid' ] ?? null;
 
-	if ( !is_string( $id_accion ) || preg_match( '/^[a-zA-Z0-9]{40}$/', $id_accion ) !== 1 || !es_uuid( $uuid ) ) {
+	if ( !is_string( $id_accion ) || preg_match( '/^[a-zA-Z0-9]{40}$/', $id_accion ) !== 1 || !verificar_uuid(( $uuid ) ) {
 		responder( 409 );
 	}
 

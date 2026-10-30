@@ -1,6 +1,6 @@
-package org.aprengal.lendasnubeiras.data.bd.taboas
+package org.aprengal.lendasnubeiras.data.bd.clases
 
-enum class TaboaBase( override val nome: String ) : Taboa {
+enum class Taboa( val nome: String ) {
     ACTIVIDADES( "actividades" ),
     GRUPOS( "grupos" ),
     XOGADORES( "xogadores" ),

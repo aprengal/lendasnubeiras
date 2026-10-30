@@ -22,7 +22,7 @@ function endpoint_actualizar(): void {
     $usuario = usuario_actual();
     $identificador = $usuario->existe() ? (string) $usuario->id : $corpo[ 'uuid' ];
 
-    if ( !reservar_intento( 'actualizar', $identificador, 1, MINUTO_EN_SEGUNDOS ) ) {
+    if ( !revisar_intentos( 'actualizar', $identificador, 1, MINUTO_EN_SEGUNDOS ) ) {
         responder( 429 );
     }
 

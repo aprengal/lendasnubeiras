@@ -22,12 +22,12 @@ function endpoint_limpar(): void {
 
 	$bloqueo = 'limpar_en_curso';
 
-	if ( hai_dato_temporal( $bloqueo ) ) {
+	if ( (int) coller_dato_temporal( $bloqueo ) ) {
 		responder( 409 );
 	}
 
 	//O bloqueo caduca soo aos 5 minutos por se a execución falla a metade
-	crear_dato_temporal( $bloqueo, '1', 5 * MINUTO_EN_SEGUNDOS );
+	crear_dato_temporal( $bloqueo, 1, 5 * MINUTO_EN_SEGUNDOS );
 
 	try {
 

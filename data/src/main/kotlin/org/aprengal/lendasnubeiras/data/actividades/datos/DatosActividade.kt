@@ -10,6 +10,5 @@ internal interface DatosActividade: ElementoBD {
     //val descricion: String
     val categoria: Categoria
     val destinatario: Destinatario
-    val idioma: Idioma
     val estado: Estado
 }

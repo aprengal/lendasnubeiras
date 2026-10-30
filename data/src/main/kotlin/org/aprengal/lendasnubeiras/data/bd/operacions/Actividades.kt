@@ -5,20 +5,15 @@ import org.aprengal.lendasnubeiras.data.actividades.datos.ActividadeBuscable
 import org.aprengal.lendasnubeiras.data.actividades.datos.Categoria.Companion.escollerCategoria
 import org.aprengal.lendasnubeiras.data.actividades.datos.Destinatario.Companion.escollerDestinatario
 import org.aprengal.lendasnubeiras.data.actividades.datos.Estado.Companion.escollerEstado
-import org.aprengal.lendasnubeiras.data.bd.clases.BD.TipoCombinacion
-import org.aprengal.lendasnubeiras.data.bd.clases.BD.OperadorSimple
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.Orde
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.buscarElemento
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.buscarElementos
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.bd
-import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.CombinacionSQL
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.SeleccionSQL
-import org.aprengal.lendasnubeiras.data.bd.taboas.TaboaBase
-//import org.aprengal.lendasnubeiras.data.bd.taboas.TaboaLectura
+import org.aprengal.lendasnubeiras.data.bd.clases.Taboa
 import org.aprengal.lendasnubeiras.data.localizacion.clases.ElementoL10n
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma
-import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma.Companion.escollerIdioma
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeCrear
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeEditarOutras
 import org.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
@@ -40,12 +35,12 @@ object Actividades {
             onde[ campo ] = Condicion.Simple( valor )
         }
 
-        val columnas = setOf( "id", "clave_titulo", "id_categoria", "id_destinatario", "id_idioma", "estado" )
+        val columnas = setOf( "id", "clave_titulo", "id_categoria", "id_destinatario", "estado" )
         //val datosCombinacion = listOf( CombinacionSQL( TipoCombinacion.INNER, "id", "f", "docid", TaboaLectura.BUSCADOR_ACTIVIDADES ) )
         val ordenar = mapOf( colOrdenable to dirOrdenable )
         val datos = SeleccionSQL( columnas, alias = "a", onde = onde, ordenar = ordenar )
 
-        val resultados = bd.seleccionar( TaboaBase.ACTIVIDADES, datos )
+        val resultados = bd.seleccionar( Taboa.ACTIVIDADES, datos )
 
         return resultados.map { actividade -> crearActividadeBuscable( actividade ) }
 
@@ -61,11 +56,11 @@ object Actividades {
     }
 
     fun collerActividades( onde: Map<String, Condicion> = mapOf() ): List<Actividade> {
-        return buscarElementos( TaboaBase.ACTIVIDADES, onde ) { actividade -> crearActividade( actividade ) }
+        return buscarElementos( Taboa.ACTIVIDADES, onde ) { actividade -> crearActividade( actividade ) }
     }
 
     private fun buscarActividade( onde: Map<String, Condicion> ): Actividade? {
-        return buscarElemento( TaboaBase.ACTIVIDADES, onde ) { actividade -> crearActividade( actividade ) }
+        return buscarElemento( Taboa.ACTIVIDADES, onde ) { actividade -> crearActividade( actividade ) }
     }
 
     fun listarActividadesEditables(): List<Actividade> {
@@ -80,7 +75,7 @@ object Actividades {
             onde[ "id_autoria" ] = Condicion.Simple( usuarioActual.id )
         }
 
-        return buscarElementos( TaboaBase.ACTIVIDADES, onde ) { actividade -> crearActividade( actividade ) }
+        return buscarElementos( Taboa.ACTIVIDADES, onde ) { actividade -> crearActividade( actividade ) }
 
     }
 
@@ -92,7 +87,6 @@ object Actividades {
             datos[ "id_autoria" ] as Long,
             escollerCategoria( datos[ "id_categoria" ] as String ),
             escollerDestinatario( datos[ "id_destinatario" ] as String ),
-            escollerIdioma( datos[ "id_idioma" ] as String ),
             escollerEstado( ( datos[ "estado" ] as Long ).toInt() ),
              ( datos[ "duracion" ] as Long ).toInt(),
             //datos[ "descricion" ] as String,
@@ -110,10 +104,8 @@ object Actividades {
         val actividade = ActividadeBuscable(
             datos[ "id" ] as Long,
             datos[ "clave_titulo" ] as String,
-            //datos[ "descricion" ] as String,
             escollerCategoria( datos[ "id_categoria" ] as String ),
             escollerDestinatario( datos[ "id_destinatario" ] as String ),
-            escollerIdioma( datos[ "id_idioma" ] as String ),
             escollerEstado( ( datos[ "estado" ] as Long ).toInt() )
         )
 

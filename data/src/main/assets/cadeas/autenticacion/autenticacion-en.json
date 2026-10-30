@@ -11,6 +11,7 @@
   "volver_acceso": "I already have an account",
 
   "rexistro_correcto": "The registration request has been successfully processed. An email has been sent to your address to validate the action, and we will contact you after reviewing the request. You may close the application.",
+  "rexistro_duplicado": "The specified email already has an account",
   "erro_rexistro": "An unknown error occurred while processing the registration. Please try again later."
 
 }

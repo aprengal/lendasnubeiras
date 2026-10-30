@@ -6,7 +6,6 @@ enum class L10nAutenticacion( internal val clave: String ) : L10nSingular {
 
     BotonAcceso( "boton_acceso" ),
     BotonRexistro( "boton_rexistro" ),
-    BotonXaConta( "boton_xa_conta" ),
     BotonAnonimo( "boton_anonimo" ),
     CorreoElectronico( "correo_electronico" ),
     ComprobandoCorreo( "comprobando_correo" ),

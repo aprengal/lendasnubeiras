@@ -2,3 +2,6 @@
 
 #copia dos arquivos de data
 androidTest/assets
+
+#copia dos arquivos de localización
+test/resources

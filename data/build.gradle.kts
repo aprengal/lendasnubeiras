@@ -59,6 +59,31 @@ android {
 
     }
 
+    buildTypes {
+
+        getByName( "debug" ) {
+            buildConfigField(
+                "String",
+                "DIRECTORIO_ACTIVIDADES",
+                "\"${localProperties.getProperty( "DIRECTORIO_ACTIVIDADES_DEBUG" )}\""
+            )
+        }
+        getByName( "release" ) {
+            buildConfigField(
+                "String",
+                "DIRECTORIO_ACTIVIDADES",
+                "\"${localProperties.getProperty( "DIRECTORIO_ACTIVIDADES_RELEASE" )}\""
+            )
+        }
+
+    }
+
+    packaging {
+        resources {
+            excludes.add( "assets/actividades-probas/**" )
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17

@@ -1,22 +1,3 @@
 {
-  "proba-1": {
-    "titulo": "Título da actividade de proba 1",
-    "descricion": "Esta é a descrición de proba para a actividade 1."
-  },
-  "proba-2": {
-    "titulo": "Título da actividade de proba 2",
-    "descricion": "Esta é a descrición de proba para a actividade 2."
-  },
-  "proba-3": {
-    "titulo": "Título da actividade de proba 3",
-    "descricion": "Esta é a descrición de proba para a actividade 3."
-  },
-  "proba-4": {
-    "titulo": "Título da actividade de proba 4",
-    "descricion": "Esta é a descrición de proba para a actividade 4."
-  },
-  "proba-5": {
-    "titulo": "Título da actividade de proba 5",
-    "descricion": "Esta é a descrición de proba para a actividade 5."
-  }
+
 }

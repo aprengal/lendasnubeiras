@@ -155,18 +155,22 @@ final readonly class Usuario {
      */
     private function buscar_usuario( string $campo, string|int $valor, bool $revisar_cache ) {
 
-       if ( $revisar_cache ) {
-          return coller_usuario( $campo, $valor );
-       }
+        if ( $revisar_cache ) {
+            return coller_usuario( $campo, $valor );
+        }
 
-       // Se o valor está baleiro ou vale menos de 0, non se executa a busca
-       if ( $valor === '' || ( is_int( $valor ) && $valor <= 0 ) ) { return; }
+        // Se o valor está baleiro ou vale menos de 0, non se executa a busca
+        if ( $valor === '' || ( is_int( $valor ) && $valor <= 0 ) ) { return; }
 
-       $busca_usuario = [
-          'columnas' => [ 'id', 'uuid', 'correo', 'estado', 'rol' ],
-          'onde' => [ $campo => $valor ],
-          'limit' => 1
-       ];
+        $busca_usuario = [
+           'columnas' => [ 'u.id', 'u.uuid', 'u.correo', 'u.estado', 'r.clave as rol' ],
+           'alias' => 'u',
+           'join' => [
+               [ 'tipo' => 'INNER', 'principal' => 'id_rol', 'secundaria' => 'r.id', 'taboa-join' => 'roles' ]
+           ],
+           'onde' => [ $campo => $valor ],
+           'limit' => 1
+        ];
 
        $usuario = db()->select( 'usuarios', $busca_usuario );
 

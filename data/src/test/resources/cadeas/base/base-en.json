@@ -5,6 +5,9 @@
   "aceptar": "Accept",
   "cancelar": "Cancel",
   "reintentar_accion": "Retry",
+  "erro_conexion": "Could not connect to the server. Is your internet connection working?",
+  "erro_informacion_confusa": "The provided information is confusing or incomplete. Please review the entered data and try again.",
+  "erro_demasiados_intentos": "You have exceeded the allowed number of attempts. Please try again later.",
 
   "mensaxes_novas": {
     "one": "You have %s new message",

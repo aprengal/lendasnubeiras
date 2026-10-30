@@ -8,6 +8,10 @@
 
   "crear_conta": "¿No tienes cuenta? Regístrate",
   "enlace_crear_conta": "Regístrate",
-  "volver_acceso": "Ya tengo cuenta"
+  "volver_acceso": "Ya tengo cuenta",
+
+  "rexistro_correcto": "La solicitud de registro se ha procesado correctamente. Se ha enviado un mensaje a tu correo para validar la acción y nos pondremos en contacto contigo tras revisar la solicitud. Puede cerrar la aplicación",
+  "rexistro_duplicado": "El correo indicado ya tienr una conta",
+  "erro_rexistro": "Se ha producido un error desconocido al procesar el registro. Por favor, inténtalo de nuevo más tarde."
 
 }

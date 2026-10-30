@@ -177,7 +177,7 @@ function validar_valor( mixed $valor, array $regras ) {
 
        case 'uuid':
 
-          if ( !verificar_uuid( ( $valor ) ) {
+          if ( !verificar_uuid( ( $valor ) ) ) {
              responder( 400 );
           }
 
@@ -196,7 +196,7 @@ function validar_valor( mixed $valor, array $regras ) {
  * @param mixed  $valor  O valor a comprobar.
  * @return bool  True se ten formato UUID válido, false en caso contrario.
  */
-function verificar_uuid(( mixed $valor ): bool {
+function verificar_uuid( mixed $valor ): bool {
     return is_string( $valor ) && preg_match( '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $valor ) === 1;
 }
 
@@ -218,10 +218,10 @@ function nome_dato( string $grupo, string $valor ): string {
  * Cada intento actualiza un contador temporal que dura o tempo indicado. A
  * ventá é móbil: se se alcanza o número máximo de intentos sen caducar, non se permite outro.
  *
- * @param string      $grupo     Grupo de control de intentos.
- * @param int|string  $valor     Identificador único do dispositivo ou do usuario.
- * @param int         $maximo    Número máximo de intentos permitidos na ventá de tempo.
- * @param int         $duracion  Duración en segundos de cada intento temporal.
+ * @param string  $grupo     Grupo de control de intentos.
+ * @param string  $valor     Identificador único do dispositivo ou do usuario.
+ * @param int     $maximo    Número máximo de intentos permitidos na ventá de tempo.
+ * @param int     $duracion  Duración en segundos de cada intento temporal.
  * @return bool   True se o intento está permitido, false se se superou o límite.
  */
 function revisar_intentos( string $grupo, string $valor, int $maximo, int $duracion ): bool {

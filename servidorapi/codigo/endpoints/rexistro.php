@@ -28,8 +28,6 @@ function endpoint_rexistro(): void {
 		responder( 429 );
 	}
 
-    //Bug? É posible solicitar o rexistro aínda que a conta xa esté creada?
-    //Aínda que si se pode realizar, á hora de verificar o rexistro, fallaría porque xa habería unha conta con ese correo
 	if ( coller_usuario( 'correo', $correo )->existe() ) {
 		responder( 409 );
 	}

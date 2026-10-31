@@ -23,13 +23,14 @@ function endpoint_rexistro(): void {
 
 	$correo = $corpo[ 'correo' ];
 
+    //Se o usuario xa existe, descártase o intento
+	if ( coller_usuario( 'correo', $correo )->existe() ) {
+		responder( 409 );
+	}
+
 	//Máximo de 3 intentos en 24 horas por correo
 	if ( !revisar_intentos( 'rexistro', $correo, 3, DIA_EN_SEGUNDOS ) ) {
 		responder( 429 );
-	}
-
-	if ( coller_usuario( 'correo', $correo )->existe() ) {
-		responder( 409 );
 	}
 
 	$ligazon = xerar_token( 40, false );

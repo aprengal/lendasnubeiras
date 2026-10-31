@@ -1,6 +1,9 @@
 package org.aprengal.lendasnubeiras.ui
 
 import org.junit.Test
+
+//Igual se pode eliminar esta clase, pero por agora deixase por se hai que empregar esta parte
+//mentres se desenvolven as pantallas
 class TestRutas {
 
     @Test

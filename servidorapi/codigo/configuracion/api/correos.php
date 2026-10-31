@@ -13,7 +13,8 @@ declare ( strict_types = 1 );
  * O id da acción identifica o dato temporal e o uuid é o do dispositivo que fixo a solicitude.
  */
 function crear_url_verificacion( string $id_accion, string $uuid, string $idioma ): string {
-	return 'https://' . DOMINIO . '/accion/verificacion?id_accion=' . rawurlencode( $id_accion ) . '&uuid=' . rawurlencode( $uuid ) . '&idioma=' . rawurlencode( $idioma );
+    $uuid_cifrada = cifrar_descifrar( $uuid, 'cifrar', 'correos' );
+	return 'https://' . DOMINIO . '/accion/verificacion?id_accion=' . rawurlencode( $id_accion ) . '&uuid=' . rawurlencode( $uuid_cifrada ) . '&idioma=' . rawurlencode( $idioma );
 }
 
 /**

@@ -1,6 +1,9 @@
 package org.aprengal.lendasnubeiras.data.usuarios
 
 import android.util.Log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import org.aprengal.lendasnubeiras.data.api.ConexionApi.MetodoApi
 import org.aprengal.lendasnubeiras.data.api.ConexionApi.procesarPeticion
@@ -18,7 +21,7 @@ object AccionsUsuario {
 
     fun rexistrarse( correo: String, idioma: Idioma, actualizarEstado: (L10nSingular?, Boolean ) -> Unit, rexistroCorrecto: () -> Unit ) {
 
-        corrutina {
+        corrutina( CoroutineScope( SupervisorJob() + Dispatchers.IO ) ) {
 
             actualizarEstado( L10nAutenticacion.ComprobandoCorreo, false )
 
@@ -39,12 +42,14 @@ object AccionsUsuario {
                 when ( resposta.codigo ) {
 
                     200 -> {
+
                         actualizarEstado( L10nAutenticacion.RexistroCorrecto, false )
 
                         delay( 5000.milliseconds )
                         rexistroCorrecto()
 
                     }
+
                     400 -> actualizarEstado( L10nBase.ErroDatosInvalidos, true )
                     409 -> actualizarEstado( L10nAutenticacion.RexistroContaXaExiste, true )
                     429 -> actualizarEstado( L10nBase.ErroLimiteIntentos, true )

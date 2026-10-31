@@ -27,7 +27,7 @@ object Accions {
      * @return O resultado do aviso: [SnackbarResult.ActionPerformed] se o
      * usuario premeu reintentar, ou [SnackbarResult.Dismissed] se non.
      */
-    suspend fun amosarAviso(aviso: SnackbarHostState, claveMensaxe: L10nSingular, repetir: Boolean ): SnackbarResult {
+    suspend fun amosarAviso( aviso: SnackbarHostState, claveMensaxe: L10nSingular, repetir: Boolean ): SnackbarResult {
 
         aviso.currentSnackbarData?.dismiss()
 

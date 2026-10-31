@@ -47,7 +47,7 @@ sealed interface Ruta: NavKey {
      * @property clave Identificador da actividade que se vai mostrar.
      */
     @Serializable
-    data class ActividadeDetalle(val clave: String) : Ruta
+    data class ActividadeDetalle( val clave: String ) : Ruta
 
     /** Pantalla de busca de actividades mediante campos pechados. */
     @Serializable
@@ -59,7 +59,7 @@ sealed interface Ruta: NavKey {
      * @property termo Valor da busca co que se obtén o resultado.
      */
     @Serializable
-    data class BuscaDetalle(val termo: String) : Ruta
+    data class BuscaDetalle( val termo: String ) : Ruta
 
     /*@Serializable
     object Idioma : Ruta*/

@@ -18,7 +18,9 @@ function endpoint_verificar_accion(): void {
 	esixir_metodo( 'GET' );
 
 	$id_accion = $_GET[ 'id_accion' ] ?? null;
-	$uuid = $_GET[ 'uuid' ] ?? null;
+	$uuid = !empty( $_GET[ 'uuid' ] ) ? cifrar_descifrar( $_GET[ 'uuid' ], 'descifrar', 'correos' ) : null;
+
+	error_log( "A uuid ten esta forma: " . $uuid );
 
 	if ( !is_string( $id_accion ) || preg_match( '/^[a-zA-Z0-9]{40}$/', $id_accion ) !== 1 || !verificar_uuid( $uuid ) ) {
 		responder( 409 );
@@ -95,6 +97,9 @@ function verificar_inicio( array $accion ) {
     //En validación non se devolve información, pero o valor do token gardado depende da data de caducidade
     //un valor que se cambia cada 24 horas, polo que tería que enviarse un novo token ou habería que cambiar
     //este valor para que non teña como referencia a data de cadudidade
+
+    //Aquí hai que buscar a sesión do usuario cun dato temporal que se elimina ao realizar a
+    //validación e despois cambiase o valor do campo estado a 1
 
 	//crear_dato_temporal( $accion[ 'activacion' ], '1', DURACION_SESION );
 

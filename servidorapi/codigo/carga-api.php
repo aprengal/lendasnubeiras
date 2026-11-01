@@ -44,13 +44,17 @@ function arrancar_api() {
 	switch ( trim( $ruta, '/' ) ) {
 
 		//Autenticación
-		case 'rexistro':
+		case 'conta/rexistro':
 			endpoint_rexistro();
 			break;
 
-		case 'iniciar-sesion':
+		case 'conta/iniciar-sesion':
 			endpoint_iniciar_sesion();
 			break;
+
+        case 'conta/pechar-sesion':
+            endpoint_pechar_sesion();
+            break;
 
 		case 'accion/verificacion':
 			endpoint_verificar_accion();

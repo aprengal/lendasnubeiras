@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: API de Lendas Nubeiras
-  version: "0.2.1"
+  version: "0.2.2"
   description: >
     API REST que serve de intermediaria entre a aplicación Android Lendas
     Nubeiras e a base de datos do servidor.
@@ -25,7 +25,7 @@ servers:
 
 tags:
   - name: Autenticación
-    description: Rexistro, inicio de sesión e validación da sesión.
+    description: Rexistro, inicio de sesión, validación da sesión e peche de sesión.
   - name: Actividades
     description: Consulta e xestión das actividades.
   - name: Administración
@@ -37,7 +37,7 @@ tags:
 
 paths:
 
-  /rexistro:
+  /conta/rexistro:
     post:
       tags: [Autenticación]
       summary: Rexistrar un usuario novo
@@ -92,7 +92,7 @@ paths:
         default:
           $ref: "#/components/responses/UnexpectedError"
 
-  /iniciar-sesion:
+  /conta/iniciar-sesion:
     post:
       tags: [Autenticación]
       summary: Iniciar sesión
@@ -164,6 +164,28 @@ paths:
           description: O correo non está rexistrado.
         "429":
           description: Xa se enviou unha mensaxe para este usuario hai menos de 60 segundos.
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+        "409":
+          description: Non se puido pechar sesión por un motivo descoñecido.
+        default:
+          $ref: "#/components/responses/UnexpectedError"
+
+  /conta/pechar-sesion:
+    post:
+      tags: [ Conta ]
+      summary: Pechar a sesión de usuario rexistrado
+      description: >
+        Solicitase o peche de sesión activo no dispositivo actual.
+      security:
+        - cookieAuth: [ ]
+      responses:
+        "200":
+          description: A sesión pechouse correctamente.
+        "400":
+          description: JSON mal formado ou idioma ausente ou inválido.
+        "401":
+          description: Sesión non recoñecida. Pódese pechar a nivel local
         "405":
           $ref: "#/components/responses/MethodNotAllowed"
         default:

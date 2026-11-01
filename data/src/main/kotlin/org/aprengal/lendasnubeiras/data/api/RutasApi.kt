@@ -24,7 +24,7 @@ enum class RutasApi ( val ruta: String ) {
      * aplicar este límite, comprobase se xa existe un dato temporal para ese
      * correo dentro do intervalo.
      */
-    REXISTRO( "rexistro" ),
+    REXISTRO( "conta/rexistro" ),
 
     /**
      * Inicia sesión mediante o correo electrónico.
@@ -34,7 +34,24 @@ enum class RutasApi ( val ruta: String ) {
      * límite de reintentos, pero só se pode enviar unha mensaxe cada 60
      * segundos para evitar envíos innecesarios.
      */
-    ACCESO( "iniciar-sesion" ),
+    ACCESO( "conta/iniciar-sesion" ),
+
+    /**
+     * Acción de peche de sesión.
+     *
+     * Execútase de xeito local no dispositivo eliminando as credenciais
+     * e tokens almacenados, sen requirir unha chamada específica a un endpoint
+     * do servidor (a sesión do servidor caducará polo seu propio tempo de vida).
+     */
+    PECHE( "conta/pechar-sesion" ),
+
+    /**
+     * Pide o borrado da propia conta do usuario.
+     *
+     * Envíase unha ligazón de verificación ao correo. Ao confirmala, a conta péchase e bórrase
+     * de forma definitiva pasados 30 días. Os administradores non poden borrar a súa conta.
+     */
+    BORRARCONTA( "conta/borrado" ),
 
     /**
      * Valida a sesión actual.
@@ -69,14 +86,6 @@ enum class RutasApi ( val ruta: String ) {
      * inhabilitar a súa conta se é preciso.
      */
     USUARIOS( "axustar-usuarios" ),
-
-    /**
-     * Pide o borrado da propia conta do usuario.
-     *
-     * Envíase unha ligazón de verificación ao correo. Ao confirmala, a conta péchase e bórrase
-     * de forma definitiva pasados 30 días. Os administradores non poden borrar a súa conta.
-     */
-    BORRARCONTA( "conta/borrado" ),
 
     /**
      * Executa as tarefas programadas do servidor.

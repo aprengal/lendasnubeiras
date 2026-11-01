@@ -72,7 +72,7 @@ object ConexionApi {
             RutasApi.ACCESO -> SesionUsuario( datos )
             RutasApi.ACTUALIZAR -> DatosActividades( datos )
             RutasApi.CREARACTIVIDADE -> ActividadeCreada( datos )
-            RutasApi.REXISTRO, RutasApi.VALIDACION, RutasApi.MODIFICARACTIVIDADE,
+            RutasApi.REXISTRO, RutasApi.PECHE, RutasApi.VALIDACION, RutasApi.MODIFICARACTIVIDADE,
             RutasApi.REPORTES, RutasApi.USUARIOS, RutasApi.BORRARCONTA, RutasApi.LIMPAR -> RespostaXenerica( datos )
         }
 

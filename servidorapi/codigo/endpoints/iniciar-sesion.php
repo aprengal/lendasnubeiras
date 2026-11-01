@@ -3,7 +3,7 @@
 declare ( strict_types = 1 );
 
 /**
- * POST /iniciar-sesion
+ * POST /conta/iniciar-sesion
  * 
  * Crea unha sesión e envía ao correo do usuario, no idioma da aplicación, unha ligazón para activala.
  * Devolve o rastro cifrado da sesión, pero non é válido ata que se preme na ligazón.

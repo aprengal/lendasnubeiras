@@ -277,10 +277,6 @@ final readonly class Usuario {
 
        $sesion = [];
 
-       if ( !empty( $_SERVER[ 'HTTP_USER_AGENT' ] ) ) {
-          $sesion[ 'axente' ] = strlen( $_SERVER[ 'HTTP_USER_AGENT' ] ) < 300 ? $_SERVER[ 'HTTP_USER_AGENT' ] : 'demasiado longo';
-       }
-
        $token = xerar_token( 50, false );
 
        $sesion[ 'creada' ] = $agora;
@@ -295,37 +291,34 @@ final readonly class Usuario {
 
     }
 
-    /**
-     * Alónga a duración da sesión actual do usuario se se dan as condicións de tempo requiridas.
-     * A sesión alóngase no momento en que se valida ao abrir a aplicación.
-     */
-    public function alongar_sesion_actual() {
+    /*
+    * Cambia o estado dunha sesión de pendente (0) a activa (1)
+    *
+    * @return bool True se se modificou o estado correctamente. False en caso contrario
+    */
+    public function validar_sesion(): bool {
 
-       if ( $this->existe() && usuario_actual()->id == $this->id ) {
+        $rastro = analizar_rastro_sesion();
+        $token = $rastro[ 'token' ];
+        $datos_sesion = $this->coller_sesion( $token );
 
-          $rastro = analizar_rastro_sesion();
+        if ( !is_array( $datos_sesion ) || $datos_sesion[ 'estado' ] !== 0 ) {
+            return false;
+        }
 
-          if ( !$rastro[ 'alongar_ses' ] ) {
-             return;
-          }
+        $datos_sesion[ 'estado' ] = 1;
+        $sesion = serialize( $datos_sesion );
 
-          if ( $rastro[ 'alongar_ses' ] < time() ) {
+        $this->axustar_sesion( $token, $sesion, 'verificar', 0 );
 
-             $token = $rastro[ 'token' ];
-             $caducidade = $rastro[ 'data_caducidade' ] + DIA_EN_SEGUNDOS;
-
-             $this->axustar_sesion( $token, '', 'alongar_ses_act', $caducidade );
-
-          }
-
-       }
+        return true;
 
     }
 
     /**
      * Comproba e valida o peche da sesión actual comparando os hashes de seguridade.
      *
-     * @return bool|null True se a sesión coincide de forma íntegra.
+     * @return bool True se a sesión coincide de forma íntegra. False se non coincide
      */
     public function pechar_sesion_actual() {
 
@@ -333,14 +326,16 @@ final readonly class Usuario {
 
           $rastro = analizar_rastro_sesion();
           $token = $rastro[ 'token' ];
-          $datos_ses = $this->coller_sesion( $token );
-          $agora = $datos_ses[ 'creada' ];
+          $datos_sesion = $this->coller_sesion( $token );
+          $agora = $datos_sesion[ 'creada' ];
 
           $hash_peche = hash_hmac( 'sha512', $agora . '|' . $this->uuid . '|' . $token, salgado( 'sesion' ) );
 
-          return hash_equals( $hash_peche, $datos_ses[ 'peche' ] );
+          return hash_equals( $hash_peche, $datos_sesion[ 'peche' ] );
 
        }
+
+        return false;
 
     }
 
@@ -367,7 +362,7 @@ final readonly class Usuario {
      *
      * @param string  $token         Token de sesión.
      * @param string  $datos_sesion  Datos serializados da sesión.
-     * @param string  $accion        Tipo de acción ('crear', 'alongar_ses_act', 'destruir_unha', 'destruir_varias').
+     * @param string  $accion        Tipo de acción ('crear', 'verificar', destruir_unha', 'destruir_varias').
      * @param int     $caducidade    Nova data de caducidade.
      * @return mixed  Resultado da xeración de autenticación posterior.
      */
@@ -389,11 +384,7 @@ final readonly class Usuario {
 
              break;
 
-          case 'alongar_ses_act':
-
-             if ( usuario_actual()->id != $this->id ) {
-                throw new LogicException( 'Só se pode alongar a sesión actual do usuario actual' );
-             }
+          case 'verificar':
 
              $accion_db = 'update';
              $datos = [
@@ -402,7 +393,8 @@ final readonly class Usuario {
                 ],
                 'onde' => [
                    'id' => $this->id,
-                   'nome' => 'ses_id_' . $hash
+                   'nome' => 'ses_id_' . $hash,
+                   'valor' => $datos_sesion
                 ]
              ];
 
@@ -446,8 +438,6 @@ final readonly class Usuario {
        }
 
         db()->$accion_db( 'info_temporal', $datos );
-
-        //return xerar_autenticado( $this, [ 'data_caducidade' => $caducidade, 'token' => $token ], true );
 
     }
 

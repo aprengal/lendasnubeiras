@@ -20,8 +20,6 @@ function endpoint_verificar_accion(): void {
 	$id_accion = $_GET[ 'id_accion' ] ?? null;
 	$uuid = !empty( $_GET[ 'uuid' ] ) ? cifrar_descifrar( $_GET[ 'uuid' ], 'descifrar', 'correos' ) : null;
 
-	error_log( "A uuid ten esta forma: " . $uuid );
-
 	if ( !is_string( $id_accion ) || preg_match( '/^[a-zA-Z0-9]{40}$/', $id_accion ) !== 1 || !verificar_uuid( $uuid ) ) {
 		responder( 409 );
 	}
@@ -92,6 +90,17 @@ function verificar_inicio( array $accion ) {
 	if ( !isset( $accion[ 'activacion' ] ) ) {
 		responder( 409 );
 	}
+
+    $datos_usuario = coller_dato_temporal( nome_dato( 'inicio_' . $accion[ 'activacion' ] ) );
+
+    $resultado = $usuario->validar_sesion();
+
+    if ( $resultado ) {
+        responder( 200 );
+    }
+
+    //O ideal é que os erros xa ocorran antes
+    responder( 401 );
 
     //Hai que revisar este sistema de validación de inicio de sesión
     //En validación non se devolve información, pero o valor do token gardado depende da data de caducidade

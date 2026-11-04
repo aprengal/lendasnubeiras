@@ -18,7 +18,7 @@ data class DatosCampoTexto(
     val altura: TextFieldLineLimits = TextFieldLineLimits.SingleLine,
     val teclado: KeyboardOptions = KeyboardOptions.Default,
     val erro: L10nSingular? = null,
-    val icona: Icona? = if ( erro != null ) Icona.Invalido else null,
+    //val icona: Icona? = if ( erro != null ) Icona.Invalido else null,
 ) {
     val sanitizacion: InputTransformation = InputTransformation.maxLength( lonxitudeMax )
 }

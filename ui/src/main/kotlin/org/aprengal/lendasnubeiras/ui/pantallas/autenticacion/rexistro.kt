@@ -1,6 +1,7 @@
 package org.aprengal.lendasnubeiras.ui.pantallas.autenticacion
 
 import android.util.Patterns.EMAIL_ADDRESS
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
@@ -39,29 +40,34 @@ fun PantallaRexistro() {
     var mensaxe by rememberSaveable { mutableStateOf<L10nSingular?>( null ) }
     var activado by rememberSaveable { mutableStateOf( true ) }
 
+    //Para impedir que se poida navegar cara atrás mentres se está procesando a petición
+    BackHandler( enabled = !activado ) {}
+
     val campoCorreo = L10nAutenticacion.CorreoElectronico
-    val botonRexistro = L10nAutenticacion.BotonRexistro // O texto do botón para rexistrarse
+    val botonRexistro = L10nAutenticacion.BotonRexistro
     val correoValido = EMAIL_ADDRESS.matcher( correo.text ).matches()
     val tecladoCorreo = KeyboardOptions( keyboardType = KeyboardType.Email )
 
     val botonAccion = {
-        rexistrarse(
-            correo.text.toString(),
-            idioma,
-            { novaMensaxe, novoEstadoActivado ->
-                mensaxe = novaMensaxe
-                activado = novoEstadoActivado
-            },
-            { navegacion.reiniciar() }
-        )
+
+        if ( correoValido ) {
+            rexistrarse(
+                correo.text.toString(),
+                idioma,
+                { novaMensaxe, novoEstadoActivado ->
+                    mensaxe = novaMensaxe
+                    activado = novoEstadoActivado
+                },
+                { navegacion.reiniciar() }
+            )
+        }
+
     }
 
-    val erro: L10nValidacion? by remember { derivedStateOf { validarCorreo( correo.text.toString() ) } }
-
-    val datos = DatosCampoTexto( correo, campoCorreo, 255, Modifier.fillMaxWidth(), activado, teclado = tecladoCorreo, erro = erro )
-
+    //val erro: L10nValidacion? by remember { derivedStateOf { validarCorreo( correo.text.toString() ) } }
+    val datos = DatosCampoTexto( correo, campoCorreo, 255, Modifier.fillMaxWidth(), activado, teclado = tecladoCorreo/*, erro = erro*/ )
     val atras = L10nAutenticacion.VolverAcceso
-    val enlaceAtras = mapOf( L10nAutenticacion.VolverAcceso to { navegacion.quitarUltimo() } )
+    val enlaceAtras = mapOf( L10nAutenticacion.VolverAcceso to { if ( activado ) navegacion.quitarUltimo() } )
 
     Column {
 

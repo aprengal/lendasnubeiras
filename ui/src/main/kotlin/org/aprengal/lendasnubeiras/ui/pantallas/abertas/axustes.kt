@@ -58,9 +58,9 @@ fun PantallaAxustes() {
 
         if ( usuarioActual().existe ) {
 
-            Card( Modifier.padding( 4.dp ) ) {
+            Card {
 
-                Column( Modifier.fillMaxWidth(), Arrangement.Center, Alignment.CenterHorizontally ) {
+                Column( Modifier.fillMaxWidth().padding( vertical = 10.dp ), Arrangement.Center, Alignment.CenterHorizontally ) {
 
                     Text( "Usuario autenticado", fontWeight = FontWeight.Bold )
                     EspazadorAlto()

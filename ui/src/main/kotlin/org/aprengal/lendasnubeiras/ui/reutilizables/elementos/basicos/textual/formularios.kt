@@ -14,19 +14,16 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldLabelPosition
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.flow.drop
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosCampoTexto
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.Icona
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.Icona.Companion.DebuxarIcona
@@ -38,10 +35,6 @@ fun CampoTexto( datos: DatosCampoTexto ) {
     var perdeuFoco by rememberSaveable { mutableStateOf( false ) }
     val modificador = if ( datos.amosarTexto ) datos.modifier else datos.modifier.semantics { contentDescription = datos.texto.texto() }
     val haiErro = perdeuFoco && !datos.erro?.texto().isNullOrEmpty()
-
-    LaunchedEffect( datos.estado ) {
-        snapshotFlow { datos.estado.text }.drop( 1 ).collect { if ( enfocado ) perdeuFoco = false }
-    }
 
     OutlinedTextField(
         state = datos.estado,
@@ -55,7 +48,7 @@ fun CampoTexto( datos: DatosCampoTexto ) {
         lineLimits = datos.altura,
         keyboardOptions = datos.teclado,
         inputTransformation = datos.sanitizacion,
-        trailingIcon = { datos.icona.takeIf { enfocado }?.let { icona -> DebuxarIcona( icona.clave, icona.nome, 20.sp ) } },
+        //trailingIcon = { datos.icona.takeIf { enfocado }?.let { icona -> DebuxarIcona( icona.clave, icona.nome, 20.sp ) } },
         supportingText = if ( haiErro ) { { Texto( datos.erro ) } } else null
     )
 

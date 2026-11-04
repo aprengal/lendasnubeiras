@@ -1,6 +1,5 @@
 package org.aprengal.lendasnubeiras.data.usuarios
 
-import android.util.Log
 import org.aprengal.lendasnubeiras.data.axustes.Axustes.borrarOpcion
 import org.aprengal.lendasnubeiras.data.axustes.Axustes.borrarSesionsLocais
 import org.aprengal.lendasnubeiras.data.axustes.Axustes.collerOpcion
@@ -82,11 +81,6 @@ object SesionActual {
 
             val idDispositivo = collerOpcion( Opcion.IdDispositivo )
             val datos: SesionUsuario = procesarPeticion( MetodoApi.POST, RutasApi.VALIDACION, mapOf( "uuid" to idDispositivo ) )
-
-            Log.d( "Rachou", "Sesion: $sesionActual" )
-            Log.d( "Rachou", "Dispositivo: $idDispositivo" )
-            Log.d( "Rachou", datos.correo + " " + datos.rol + " " + datos.idUsuario )
-            Log.d( "Rachou", datos.codigo.toString() )
 
             if ( datos.exito ) {
 

@@ -60,21 +60,6 @@ function usuario_legado( Usuario $usuario ): bool {
 }
 
 /**
- * Pecha todas as sesións dun usuario.
- */
-function pechar_sesions( int $id ) {
-
-	if ( $id <= 0 ) {
-		throw new InvalidArgumentException( 'Non se poden pechar as sesións do usuario ' . $id );
-	}
-
-	db()->delete( 'info_temporal', [
-		'onde' => [ 'id' => $id, 'nome' => [ 'operador' => 'LIKE', 'valor' => 'ses_id_%' ] ]
-	] );
-
-}
-
-/**
  * Borra de forma definitiva unha conta de usuario.
  * 
  * - Borradores, pendentes e actividades da papeleira: bórranse.

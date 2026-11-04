@@ -39,12 +39,24 @@ function endpoint_borrar_conta(): void {
 	crear_dato_temporal( nome_dato( 'accion', $ligazon ), [
 		'tipo' => 'borrado',
 		'id' => $usuario->id,
-		'uuid' => $usuario->uuid,
+		'uuid' => $corpo[ 'uuid' ],
 		'idioma' => $corpo[ 'idioma' ]
 	], DURACION_LIGAZON );
 
-	enviar_correo_verificacion( $usuario->correo, 'borrado', crear_url_verificacion( $ligazon, $usuario->uuid, $corpo[ 'idioma' ] ), $corpo[ 'idioma' ] );
+	enviar_correo_verificacion( $usuario->correo, 'borrado', crear_url_verificacion( $ligazon, $corpo[ 'uuid' ], $corpo[ 'idioma' ] ), $corpo[ 'idioma' ] );
 
-	responder( 200 );
+    $resultado = $usuario->pechar_sesion_actual();
+
+	if ( $resultado ) {
+	    $rastro = analizar_rastro_sesion();
+	    $token = $rastro[ 'token' ];
+	    $usuario->destruir_sesion( $token );
+	    responder( 200 );
+	}
+
+    //Este erro nunca debería ocorrer en condicións ordinarias porque se verifica
+    //a sesión antes. Sería un caso moi raro, como que a sesión caduque, pero hai menos
+    //de 1 segundo entre que se realizan estas operacións
+	responder( 409 );
 
 }

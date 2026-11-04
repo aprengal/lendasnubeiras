@@ -162,13 +162,16 @@ final readonly class Usuario {
         // Se o valor está baleiro ou vale menos de 0, non se executa a busca
         if ( $valor === '' || ( is_int( $valor ) && $valor <= 0 ) ) { return; }
 
+        //Para que funcione a join ao buscar por id, é preciso aclarar a táboa co alias escollido
+        $campo_onde = "u.$campo";
+
         $busca_usuario = [
            'columnas' => [ 'u.id', 'u.uuid', 'u.correo', 'u.estado', 'r.clave as rol' ],
            'alias' => 'u',
            'join' => [
                [ 'tipo' => 'INNER', 'principal' => 'id_rol', 'secundaria' => 'r.id', 'taboa-join' => 'roles' ]
            ],
-           'onde' => [ $campo => $valor ],
+           'onde' => [ $campo_onde => $valor ],
            'limit' => 1
         ];
 

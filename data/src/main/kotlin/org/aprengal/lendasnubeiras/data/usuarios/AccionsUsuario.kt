@@ -10,6 +10,8 @@ import org.aprengal.lendasnubeiras.data.api.ConexionApi.procesarPeticion
 import org.aprengal.lendasnubeiras.data.api.RutasApi
 import org.aprengal.lendasnubeiras.data.api.resposta.RespostaXenerica
 import org.aprengal.lendasnubeiras.data.api.resposta.SesionUsuario
+import org.aprengal.lendasnubeiras.data.axustes.Axustes.borrarOpcion
+import org.aprengal.lendasnubeiras.data.axustes.Axustes.borrarSesionsLocais
 import org.aprengal.lendasnubeiras.data.axustes.Axustes.collerIdDispositivo
 import org.aprengal.lendasnubeiras.data.axustes.Axustes.collerOpcion
 import org.aprengal.lendasnubeiras.data.axustes.Axustes.gardarOpcion
@@ -19,9 +21,12 @@ import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nAutenticacion
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nBase
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nSingular
+import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeBorrarConta
 import org.aprengal.lendasnubeiras.data.usuarios.Rol.Companion.buscarRol
 import org.aprengal.lendasnubeiras.data.usuarios.SesionActual.cambiarSesion
+import org.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
 import org.aprengal.lendasnubeiras.data.utilidades.Corrutinas.corrutina
+import org.aprengal.lendasnubeiras.data.utilidades.Corrutinas.corrutinaResposta
 import kotlin.time.Duration.Companion.milliseconds
 
 object AccionsUsuario {
@@ -148,6 +153,34 @@ object AccionsUsuario {
             }
 
         }
+
+    }
+
+    suspend fun borrarConta( idioma: Idioma ): Boolean {
+
+        require( PodeBorrarConta( usuarioActual() ) ) { "Só se pode solicitar o borrado se o usuario actual existe" }
+
+        val resposta = corrutinaResposta {
+
+            val idDispositivo = collerOpcion( Opcion.IdDispositivo )
+            val corpoPeticion = mapOf( "uuid" to idDispositivo, "idioma" to idioma.codigo )
+            val resposta: RespostaXenerica = procesarPeticion( MetodoApi.POST, RutasApi.BORRARCONTA, corpoPeticion )
+
+            if ( resposta.exito ) {
+
+                borrarSesionsLocais()
+                borrarOpcion( Opcion.SesionUsuario )
+                cambiarSesion()
+
+                return@corrutinaResposta true
+
+            }
+
+            return@corrutinaResposta false
+
+        }.await()
+
+        return resposta
 
     }
 

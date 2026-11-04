@@ -22,7 +22,10 @@ function endpoint_verificar_accion(): void {
     $id_accion = $_GET[ 'id_accion' ] ?? "";
     $uuid = !empty( $_GET[ 'uuid' ] ) ? cifrar_descifrar( $_GET[ 'uuid' ], 'descifrar', 'correos' ) : "";
 
+    error_log( "verificando acción" );
+
     if ( !is_string( $id_accion ) || preg_match( '/^[a-zA-Z0-9]{40}$/', $id_accion ) !== 1 || !verificar_uuid( $uuid ) ) {
+        error_log( "EH!3" );
         responder( 409 );
     }
 
@@ -30,6 +33,7 @@ function endpoint_verificar_accion(): void {
     $dato = coller_dato_temporal( $nome );
 
     if ( !is_string( $dato ) || !hai_serializacion( $dato ) ) {
+        error_log( "fas" );
         responder( 409 );
     }
 
@@ -98,19 +102,16 @@ function verificar_rexistro( array $accion ) {
 function verificar_inicio( array $accion ) {
 
     if ( !isset( $accion[ 'usuario' ], $accion[ 'token' ] ) ) {
-        error_log( "Faltaron datos básicos nunha acción: " );
         responder( 409 );
     }
 
     $usuario = coller_usuario( 'uuid', $accion[ 'usuario' ], false );
 
     if ( !$usuario->existe() || $usuario->estado !== ESTADO_USUARIO_ACTIVO ) {
-        error_log( "O usuario non existe" );
         responder( 409 );
     }
 
     if ( !$usuario->activar_sesion( $accion[ 'token' ] ) ) {
-        error_log( "Fallou a activación da sesión" );
         responder( 409 );
     }
 
@@ -142,7 +143,7 @@ function verificar_borrado( array $accion ) {
         'limit' => 1
     ] );
 
-    pechar_sesions( $usuario->id );
+    $usuario->destruir_sesions();
 
 }
 

@@ -26,6 +26,8 @@ import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.cambiar
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.obterTexto
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nOpcions
+import org.aprengal.lendasnubeiras.data.usuarios.AccionsUsuario.borrarConta
+import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeBorrarConta
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodePecharSesion
 import org.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
 import org.aprengal.lendasnubeiras.data.usuarios.SesionActual.pecharSesion
@@ -103,6 +105,22 @@ fun PantallaAxustes() {
             )
 
             ContidoOpcion( datosTema )
+
+        }
+
+        if ( PodeBorrarConta( usuarioActual() ) ) {
+
+            EspazadorAlto( 2 )
+
+            val modificador = Modifier.fillMaxWidth().clickable( onClick = intentoBorrarConta() ).padding( horizontal = 16.dp, vertical = 12.dp )
+
+            Card {
+
+                Column( modificador, Arrangement.Center, Alignment.CenterHorizontally ) {
+                    Texto( L10nOpcions.TituloBorradoConta )
+                }
+
+            }
 
         }
 
@@ -195,6 +213,37 @@ private fun <T> DebuxarAlerta( datos: DatosOpcion<T>, amosar: ( Boolean ) -> Uni
     val datosAlerta = DatosAlerta( titulo, { amosar( false ) }, contido = contido, confirmado = confirmado )
 
     AlertaDialogo( datosAlerta )
+
+}
+
+@Composable
+fun intentoBorrarConta(): () -> Unit {
+
+    var amosarDialogo by rememberSaveable { mutableStateOf( false ) }
+    val idioma = LocalIdioma.current
+    val aviso = LocalAviso.current
+
+    if ( amosarDialogo ) {
+
+        val accion = {
+
+            amosarDialogo = false
+
+            corrutina {
+                val clave = L10nOpcions.BorradoContaFallido
+                val erro: suspend () -> SnackbarResult = { amosarAviso( aviso, clave, true ) }
+                executarAccion( { borrarConta( idioma ) }, erro )
+            }
+
+        }
+
+        val contido = @Composable { Texto( L10nOpcions.ContidoBorradoConta ) }
+        val datosAlerta = DatosAlerta( L10nOpcions.DialogoBorradoConta, { amosarDialogo = false }, confirmado = accion, contido = contido )
+        AlertaDialogo( datosAlerta )
+
+    }
+
+    return { amosarDialogo = true }
 
 }
 

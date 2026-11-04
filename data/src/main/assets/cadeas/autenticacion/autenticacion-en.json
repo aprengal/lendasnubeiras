@@ -17,6 +17,6 @@
   "conta-desactivada": "The account is deactivated. For more information, please contact an administrator.",
   "conta-404": "No account exists with the specified email.",
   "esperando-validacion": "The login request has been processed successfully. An email has been sent to you to activate it.",
-  "sesion-activada": "The session has been successfully activated. Please wait a moment while the app logs you in...",
+  "sesion-activada": "The session has been successfully activated.",
   "erro-acceso": "An unknown error occurred while processing the login. Please try again later."
 }

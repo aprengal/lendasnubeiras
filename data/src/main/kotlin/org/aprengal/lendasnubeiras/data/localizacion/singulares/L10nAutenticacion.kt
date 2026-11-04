@@ -16,7 +16,12 @@ enum class L10nAutenticacion( internal val clave: String ) : L10nSingular {
 
     RexistroCorrecto( "rexistro_correcto" ),
     RexistroContaXaExiste( "rexistro_duplicado" ),
-    ErroRexistro( "erro_rexistro" );
+    ErroRexistro( "erro_rexistro" ),
+    ErroAcceso( "erro-acceso" ),
+    ContaNonAtopada( "conta-404" ),
+    ContaNonActiva( "conta-desactivada" ),
+    AgardandoValidacionSesion( "esperando-validacion" ),
+    SesionValidadaCorrectamente( "sesion-activada" );
 
     internal val dominio: Dominio = Dominio.AUTENTICACION
 

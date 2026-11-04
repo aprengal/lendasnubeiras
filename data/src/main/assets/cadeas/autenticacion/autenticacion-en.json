@@ -12,6 +12,11 @@
 
   "rexistro_correcto": "The registration request has been successfully processed. An email has been sent to your address to validate the action, and we will contact you after reviewing the request. You may close the application.",
   "rexistro_duplicado": "The specified email already has an account",
-  "erro_rexistro": "An unknown error occurred while processing the registration. Please try again later."
+  "erro_rexistro": "An unknown error occurred while processing the registration. Please try again later.",
 
+  "conta-desactivada": "The account is deactivated. For more information, please contact an administrator.",
+  "conta-404": "No account exists with the specified email.",
+  "esperando-validacion": "The login request has been processed successfully. An email has been sent to you to activate it.",
+  "sesion-activada": "The session has been successfully activated. Please wait a moment while the app logs you in...",
+  "erro-acceso": "An unknown error occurred while processing the login. Please try again later."
 }

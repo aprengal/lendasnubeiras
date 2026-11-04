@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: API de Lendas Nubeiras
-  version: "0.2.2"
+  version: "0.2.3"
   description: >
     API REST que serve de intermediaria entre a aplicación Android Lendas
     Nubeiras e a base de datos do servidor.
@@ -68,9 +68,7 @@ paths:
                   format: email
                   description: Correo electrónico co que se quere rexistrar o usuario.
                 uuid:
-                  type: string
-                  format: uuid
-                  description: Identificador único do dispositivo.
+                  $ref: "#/components/parameters/UuidDispositivoSchema"
                 idioma:
                   type: string
                   enum:
@@ -120,9 +118,7 @@ paths:
                   format: email
                   description: Correo electrónico do usuario.
                 uuid:
-                  type: string
-                  format: uuid
-                  description: Identificador único do dispositivo.
+                  $ref: "#/components/parameters/UuidDispositivoSchema"
                 idioma:
                   type: string
                   enum:
@@ -178,12 +174,24 @@ paths:
       description: >
         Solicitase o peche de sesión activo no dispositivo actual.
       security:
-        - cookieAuth: [ ]
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - uuid
+              properties:
+                uuid:
+                  $ref: "#/components/parameters/UuidDispositivoSchema"
       responses:
         "200":
           description: A sesión pechouse correctamente.
         "400":
-          description: JSON mal formado ou idioma ausente ou inválido.
+          description: JSON mal formado ou campos ausentes.
         "401":
           description: Sesión non recoñecida. Pódese pechar a nivel local
         "405":
@@ -250,6 +258,18 @@ paths:
         Se a sesión non é válida, o usuario debe iniciar sesión de novo.
       security:
         - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - uuid
+              properties:
+                uuid:
+                  $ref: "#/components/parameters/UuidDispositivoSchema"
       responses:
         "200":
           description: A sesión foi validada e alongada correctamente.
@@ -290,8 +310,11 @@ paths:
               type: object
               additionalProperties: false
               required:
+                - uuid
                 - idioma
               properties:
+                uuid:
+                  $ref: "#/components/parameters/UuidDispositivoSchema"
                 idioma:
                   type: string
                   enum:
@@ -315,46 +338,44 @@ paths:
         default:
           $ref: "#/components/responses/UnexpectedError"
 
-/actividade/actualizar:
-  post:
-    tags: [Actividades]
-    summary: Actualizar o catálogo de actividades
-    description: >
-      Devolve a lista de actividades dispoñibles que pode ver o usuario.
-      A sesión é opcional (admite uso anónimo). Require un intervalo mínimo de 60 segundos
-      entre solicitudes identificadas pola uuid do dispositivo.
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            additionalProperties: false
-            required:
-              - uuid
-            properties:
-              uuid:
-                type: string
-                format: uuid
-                description: Identificador único do dispositivo para o control de frecuencia (rate limiting).
-    responses:
-      "200":
-        description: O catálogo actualizouse correctamente.
+  /actividade/actualizar:
+    post:
+      tags: [Actividades]
+      summary: Actualizar o catálogo de actividades
+      description: >
+        Devolve a lista de actividades dispoñibles que pode ver o usuario.
+        A sesión é opcional (admite uso anónimo). Require un intervalo mínimo de 60 segundos
+        entre solicitudes identificadas pola uuid do dispositivo.
+      requestBody:
+        required: true
         content:
           application/json:
             schema:
-              type: array
-              items:
-                type: object
-                description: Actividade dispoñible.
-      "400":
-        description: JSON mal formado ou uuid ausente/inválido.
-      "429":
-        description: Superouse o límite de 1 solicitude cada 60 segundos por dispositivo.
-      "405":
-        $ref: "#/components/responses/MethodNotAllowed"
-      default:
-        $ref: "#/components/responses/UnexpectedError"
+              type: object
+              additionalProperties: false
+              required:
+                - uuid
+              properties:
+                uuid:
+                  $ref: "#/components/parameters/UuidDispositivoSchema"
+      responses:
+        "200":
+          description: O catálogo actualizouse correctamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: Actividade dispoñible.
+        "400":
+          description: JSON mal formado ou uuid ausente/inválido.
+        "429":
+          description: Superouse o límite de 1 solicitude cada 60 segundos por dispositivo.
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+        default:
+          $ref: "#/components/responses/UnexpectedError"
 
   /actividade/crear:
     post:
@@ -382,6 +403,7 @@ paths:
               type: object
               additionalProperties: false
               required:
+                - uuid
                 - clave_titulo
                 - id_autoria
                 - id_categoria
@@ -390,6 +412,8 @@ paths:
                 - duracion
                 - data_modificado
               properties:
+                uuid:
+                  $ref: "#/components/parameters/UuidDispositivoSchema"
                 clave_titulo:
                   type: string
                   maxLength: 100
@@ -482,6 +506,7 @@ paths:
               type: object
               additionalProperties: false
               required:
+                - uuid
                 - id
                 - clave_titulo
                 - id_autoria
@@ -491,6 +516,8 @@ paths:
                 - duracion
                 - data_modificado
               properties:
+                uuid:
+                  $ref: "#/components/parameters/UuidDispositivoSchema"
                 id:
                   type: integer
                   minimum: 1
@@ -562,9 +589,12 @@ paths:
               type: object
               additionalProperties: false
               required:
+                - uuid
                 - id_peticion
                 - erro
               properties:
+                uuid:
+                  $ref: "#/components/parameters/UuidDispositivoSchema"
                 id_peticion:
                   type: string
                   format: uuid
@@ -608,8 +638,11 @@ paths:
               type: object
               additionalProperties: false
               required:
+                - uuid
                 - id
               properties:
+                uuid:
+                  $ref: "#/components/parameters/UuidDispositivoSchema"
                 id:
                   type: integer
                   minimum: 1
@@ -681,6 +714,12 @@ components:
       type: apiKey
       in: cookie
       name: sesion_rastro
+
+  parameters:
+    UuidDispositivoSchema:
+      type: string
+      format: uuid
+      description: Identificador único do dispositivo.
 
   responses:
     Unauthenticated:

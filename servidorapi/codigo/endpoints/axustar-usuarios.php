@@ -21,11 +21,12 @@ function endpoint_axustar_usuarios(): void {
 
 	$usuario = esixir_sesion();
 
-	if ( !$usuario->pode( 'administrar' ) ) {
+	if ( !$usuario->pode( 'xestionar_usuarios' ) ) {
 		responder( 403 );
 	}
 
 	$datos = validar_corpo( coller_corpo(), [
+	    'uuid' => [ 'tipo' => 'uuid' ],
 		'id' => [ 'tipo' => 'enteiro', 'min' => 1 ],
 		'correo' => [ 'tipo' => 'correo', 'opcional' => true ],
 		'rol' => [ 'tipo' => 'texto', 'max' => 15, 'opcional' => true ],

@@ -230,23 +230,25 @@ final readonly class Usuario {
 
        return in_array( $permiso, $permisos, true );
 
-    }
+   }
 
     /**
      * Recupera os datos dunha sesión concreta a partir do seu token utilizando un hash HMAC.
      *
      * @param string  $token  Token de sesión.
-     * @return mixed  Array cos datos da sesión ou null se non existe.
+     * @return array|null array cos datos da sesión ou null se non existe.
      */
-    private function coller_sesion( string $token ) {
+    private function coller_sesion( string $token ): ?array {
 
-       $hash = hash_hmac( 'sha512', $token, salgado( 'sesion' ) );
+      $hash = hash_hmac( 'sha512', $token, salgado( 'sesion' ) );
 
-       if ( isset( $this->sesions[ $hash ] ) ) {
-          return $this->sesions[ $hash ];
-       }
+      if ( isset( $this->sesions[ $hash ] ) ) {
+         return $this->sesions[ $hash ];
+      }
 
-    }
+      return null;
+
+   }
 
     /**
      * Valida se un token de sesión é activo e correcto para este usuario.
@@ -275,41 +277,47 @@ final readonly class Usuario {
      */
     public function crear_sesion( int $agora, int $caducidade ) {
 
-       $sesion = [];
+        $sesion = [];
 
-       $token = xerar_token( 50, false );
+        $token = xerar_token( 50, false );
 
-       $sesion[ 'creada' ] = $agora;
-       $sesion[ 'peche' ] = hash_hmac( 'sha512', $agora . '|' . $this->uuid . '|' . $token, salgado( 'sesion' ) );
-       $sesion[ 'estado' ] = 0;
+        $sesion[ 'creada' ] = $agora;
+        $sesion[ 'caducidade' ]= $caducidade;
+        $sesion[ 'peche' ] = hash_hmac( 'sha512', $agora . '|' . $this->uuid . '|' . $token, salgado( 'sesion' ) );
+        $sesion[ 'estado' ] = 0;
 
-       $sesion = serialize( $sesion );
+        $sesion = serialize( $sesion );
 
-       $this->axustar_sesion( $token, $sesion, 'crear', $caducidade );
+        //Este número ponse máis baixo por se a sesión non é activada e se poida borrar antes na base de datos,
+        $caducidade_enlace = $agora + DURACION_LIGAZON;
 
-       return $token;
+        $this->axustar_sesion( $token, $sesion, 'crear', $caducidade_enlace );
+
+        return $token;
 
     }
 
-    /*
-    * Cambia o estado dunha sesión de pendente (0) a activa (1)
-    *
-    * @return bool True se se modificou o estado correctamente. False en caso contrario
-    */
-    public function validar_sesion(): bool {
+   /**
+     * Cambia o estado dunha sesión de pendente (0) a activa (1) 
+     * a partir do token de sesión, serializa os novos datos e actualiza 
+     * o rexistro temporal na base de datos.
+     *
+     * @param string $token Token da sesión que se desexa activar.
+     * @return bool True se se modificou o estado correctamente. False en caso contrario.
+     */
+    public function activar_sesion( string $token ): bool {
 
-        $rastro = analizar_rastro_sesion();
-        $token = $rastro[ 'token' ];
         $datos_sesion = $this->coller_sesion( $token );
 
         if ( !is_array( $datos_sesion ) || $datos_sesion[ 'estado' ] !== 0 ) {
             return false;
         }
 
+        $caducidade = $datos_sesion[ 'caducidade' ];
         $datos_sesion[ 'estado' ] = 1;
         $sesion = serialize( $datos_sesion );
 
-        $this->axustar_sesion( $token, $sesion, 'verificar', 0 );
+        $this->axustar_sesion( $token, $sesion, 'verificar', $caducidade );
 
         return true;
 
@@ -389,12 +397,12 @@ final readonly class Usuario {
              $accion_db = 'update';
              $datos = [
                 'nova_info' => [
+                   'valor' => $datos_sesion,
                    'data_caducidade' => $caducidade
                 ],
                 'onde' => [
                    'id' => $this->id,
-                   'nome' => 'ses_id_' . $hash,
-                   'valor' => $datos_sesion
+                   'nome' => 'ses_id_' . $hash
                 ]
              ];
 

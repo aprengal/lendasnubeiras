@@ -69,10 +69,10 @@ object ConexionApi {
         val datos = peticion( metodoApi, rutaApi, campos )
 
         val saida = when( rutaApi ) {
-            RutasApi.ACCESO -> SesionUsuario( datos )
+            RutasApi.ACCESO, RutasApi.VALIDACION -> SesionUsuario( datos )
             RutasApi.ACTUALIZAR -> DatosActividades( datos )
             RutasApi.CREARACTIVIDADE -> ActividadeCreada( datos )
-            RutasApi.REXISTRO, RutasApi.PECHE, RutasApi.VALIDACION, RutasApi.MODIFICARACTIVIDADE,
+            RutasApi.REXISTRO, RutasApi.PECHE, RutasApi.MODIFICARACTIVIDADE,
             RutasApi.REPORTES, RutasApi.USUARIOS, RutasApi.BORRARCONTA, RutasApi.LIMPAR -> RespostaXenerica( datos )
         }
 
@@ -150,7 +150,7 @@ object ConexionApi {
                     conexion.requestMethod = metodoApi.clave
                     conexion.instanceFollowRedirects = false
 
-                    if ( sesion.isNotBlank() ) conexion.setRequestProperty( "acceso_rastro", "Bearer $sesion" )
+                    if ( sesion.isNotBlank() ) conexion.setRequestProperty( "sesion_rastro", "Bearer $sesion" )
 
                     val haiCorpo = metodoApi != MetodoApi.GET && corpo.isNotBlank()
 

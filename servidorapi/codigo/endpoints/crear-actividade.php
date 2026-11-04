@@ -14,7 +14,14 @@ function endpoint_crear_actividade(): void {
 	esixir_metodo( 'POST' );
 
 	$usuario = esixir_sesion();
-	$datos = validar_corpo( coller_corpo(), regras_actividade( false ) );
+
+	//Que permiso mínimo fai falta para empregar este endpoint??
+    if ( !$usuario->pode( 'crear_actividade' ) ) {
+        responder( 403 );
+    }
+
+	$campos = regras_actividade( false ) + [ 'uuid' => [ 'tipo' => 'uuid' ] ];
+	$datos = validar_corpo( coller_corpo(), $campos );
 
 	/*
 	 * Conversión de estados temporais do cliente aos estados definitivos do servidor:

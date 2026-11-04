@@ -38,8 +38,7 @@ function endpoint_rexistro(): void {
 	crear_dato_temporal( nome_dato( 'accion', $ligazon ), [
 		'tipo' => 'rexistro',
 		'correo' => $correo,
-		'uuid' => $corpo[ 'uuid' ],
-		'idioma' => $corpo[ 'idioma' ]
+		'uuid' => $corpo[ 'uuid' ]
 	], DURACION_LIGAZON );
 
 	enviar_correo_verificacion( $correo, 'rexistro', crear_url_verificacion( $ligazon, $corpo[ 'uuid' ], $corpo[ 'idioma' ] ), $corpo[ 'idioma' ] );

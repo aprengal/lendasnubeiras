@@ -68,7 +68,7 @@ function validar_campo_busca( string $campo, string $grupo ) {
  * Constrúe e cifra os datos de sesión basada en dobre hash HMAC para un usuario.
  *
  * @param Usuario  $usuario      O obxecto Usuario asociado á sesión.
- * @param array    $args_sesion  Array cos argumentos necesarios (caducidade_sesion, esquema, token, alongar_ses).
+ * @param array    $args_sesion  Array cos argumentos necesarios (caducidade_sesion, esquema, token, id_dispositivo).
  * @return string  O valor cifrado e listo para enviar no corpo da resposta JSON ao cliente Android.
  * @throws LogicException Se o usuario non existe.
  * @throws InvalidArgumentException Se faltan detalles básicos no array de argumentos.
@@ -79,21 +79,21 @@ function crear_datos_sesion( Usuario $usuario, array $args_sesion ) {
        throw new LogicException( 'Só se poden crear datos de sesión para usuarios que existen' );
     }
 
-    if ( !isset( $args_sesion[ 'caducidade_sesion' ], $args_sesion[ 'esquema' ], $args_sesion[ 'token' ], $args_sesion[ 'alongar_ses' ] ) ) {
+    if ( !isset( $args_sesion[ 'caducidade_sesion' ], $args_sesion[ 'esquema' ], $args_sesion[ 'token' ], $args_sesion[ 'id_dispositivo' ] ) ) {
        throw new InvalidArgumentException( 'Faltan detalles básicos para crear un rastro' );
     }
 
     $caducidade_sesion = $args_sesion[ 'caducidade_sesion' ];
+    $id_dispositivo = $args_sesion[ 'id_dispositivo' ];
     $esquema = $args_sesion[ 'esquema' ];
     $token = $args_sesion[ 'token' ];
-    $alongar_ses = $args_sesion[ 'alongar_ses' ];
 
     $uuid_frag = mb_substr( $usuario->uuid, 8, 5 );
 
-    $key = hash_hmac( 'sha256', $uuid_frag . '|' . $token . '|' . $usuario->correo . '|' . $alongar_ses . '|' . $caducidade_sesion, salgado( $esquema ) );
-    $hash = hash_hmac( 'sha256', $token . '|' . $usuario->correo . '|' . $alongar_ses . '|' . $caducidade_sesion, $key );
+    $key = hash_hmac( 'sha256', $uuid_frag . '|' . $token . '|' . $usuario->correo . '|' . $id_dispositivo . '|' . $caducidade_sesion, salgado( $esquema ) );
+    $hash = hash_hmac( 'sha256', $token . '|' . $usuario->correo . '|' . $id_dispositivo . '|' . $caducidade_sesion, $key );
 
-    $datos = cifrar_descifrar( $caducidade_sesion . '|' . $token . '|' . $usuario->uuid . '|' . $hash . '|' . $alongar_ses, 'cifrar', $esquema ) ;
+    $datos = cifrar_descifrar( $caducidade_sesion . '|' . $token . '|' . $usuario->uuid . '|' . $id_dispositivo . '|' . $hash, 'cifrar', $esquema ) ;
 
     return $datos;
 

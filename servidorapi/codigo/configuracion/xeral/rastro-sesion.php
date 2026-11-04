@@ -8,56 +8,59 @@ declare ( strict_types = 1 );
  *
  * @return Usuario|null O obxecto Usuario se a autenticación é correcta, ou null en caso contrario.
  */
-function validar_rastro_sesion() {
+function validar_rastro_sesion(): ?Usuario {
 
     $rastro = analizar_rastro_sesion();
 
     if ( !$rastro ) {
-       return;
+       return null;
     }
 
     $caducidade_rastro = $caducidade_sesion = $rastro[ 'data_caducidade' ];
     $token   = $rastro[ 'token' ];
-    $uuid    = $rastro[ 'uuid' ];
+    $uuid    = $rastro[ 'usuario' ];
+    $dispositivo_rastro = $rastro[ 'dispositivo' ];
     $hmac    = $rastro[ 'hmac' ];
-    $alongar_ses = $rastro[ 'alongar_ses' ];
     $esquema = $rastro[ 'esquema' ];
 
-    // AJAX e solicitudes POST no caso de rastros de sesión (que non caducan)
-    if ( !$alongar_ses && ( 'POST' === $_SERVER[ 'REQUEST_METHOD' ] ) ) {
-       $caducidade_rastro += HORA_EN_SEGUNDOS;
-    }
-
-    // 2ª Comprobación - Caducou o rastro?
+    // 1ª Comprobación - Caducou o rastro?
     if ( $caducidade_rastro < time() ) {
        reautenticar();
-       return;
+       return null;
+    }
+
+    $id_dispositivo = id_dispositivo();
+
+    // 2ª Comprobación - Faise dende o mesmo dispositivo no que se iniciou sesión?
+    if ( $dispositivo_rastro != $id_dispositivo ) {
+        reautenticar();
+        return null;
     }
 
     $usuario = coller_usuario( 'uuid', $uuid );
 
     // 3ª Comprobación - Existe o usuario?
     if ( !$usuario->existe() ) {
-       return;
+       return null;
     }
 
     $uuid_frag = mb_substr( $usuario->uuid, 8, 5 );
 
     $algo = 'sha256';
 
-    $key = hash_hmac( $algo, $uuid_frag . '|' . $token . '|' . $usuario->correo . '|' . $alongar_ses . '|' . $caducidade_sesion, salgado( $esquema ) );
-    $hash = hash_hmac( $algo, $token . '|' . $usuario->correo . '|' . $alongar_ses . '|' . $caducidade_sesion, $key );
+    $key = hash_hmac( $algo, $uuid_frag . '|' . $token . '|' . $usuario->correo . '|' . $id_dispositivo . '|' . $caducidade_sesion, salgado( $esquema ) );
+    $hash = hash_hmac( $algo, $token . '|' . $usuario->correo . '|' . $id_dispositivo . '|' . $caducidade_sesion, $key );
 
     // 4ª Comprobación - Coinciden os hashes (cambio de datos de usuario)
     if ( !hash_equals( $hash, $hmac ) ) {
        reautenticar();
-       return;
+       return null;
     }
 
     // 5ª Comprobación - A sesión é correcta e está activa?
     if ( !$usuario->verificar_sesion( $token ) ) {
        reautenticar();
-       return;
+       return null;
     }
 
     return $usuario;
@@ -67,49 +70,56 @@ function validar_rastro_sesion() {
 /**
  * Responde cun código HTTP 401 (Unauthorized) cando falla a reautenticación.
  */
-function reautenticar() {
+function reautenticar(): void {
     responder( 401 );
 }
 
 /**
- * Analiza o rastro de sesión da cookie e devolve os seus elementos. Se non hai rastro ou non é válido, non devolve nada.
+ * Analiza o rastro de sesión da cabecera HTTP ou cookie e devolve os seus elementos.
+ * Se non hai rastro ou non é válido, devolve null.
  *
- * O resultado gárdase durante a petición: consúltase varias veces (usuario, token...) e descifrar o rastro ten custo.
+ * O resultado gárdase nunha caché estática durante a petición para evitar
+ * descifrar o rastro varias veces.
  *
  * @return array|null Array asociativo cos datos extraídos do rastro ou null se non é válido.
  */
-function analizar_rastro_sesion() {
+function analizar_rastro_sesion(): ?array {
 
     static $analizados = [];
 
-    if ( empty( $_COOKIE[ RASTRO_SESION ] ) ) {
-       return;
+    $cabeceiras = getallheaders();
+    $sesion = $cabeceiras[ RASTRO_SESION ] ?? $_COOKIE[ RASTRO_SESION ] ?? '';
+
+    if ( str_starts_with( $sesion, 'Bearer ' ) ) {
+        $sesion = substr( $sesion, 7 );
     }
 
-    $rastro = $_COOKIE[ RASTRO_SESION ];
+    if ( empty( $sesion ) ) {
+        return null;
+    }
+
+    $rastro = $sesion;
     $esquema = 'sesion';
 
     if ( array_key_exists( $rastro, $analizados ) ) {
-       return $analizados[ $rastro ];
+        return $analizados[ $rastro ];
     }
 
     $info_rastro = cifrar_descifrar( $rastro, 'descifrar', $esquema );
-
-    // Cada campo do rastro está separado por un '|'
     $lista = explode( '|', $info_rastro );
 
     if ( count( $lista ) != 5 ) {
-       $analizados[ $rastro ] = null;
-       return;
+        $analizados[ $rastro ] = null;
+        return null;
     }
 
     $elementos = [
-       'data_caducidade' => $lista[ 0 ],
-       'token'           => $lista[ 1 ],
-       'uuid'            => $lista[ 2 ],
-       'hmac'            => $lista[ 3 ],
-       'alongar_ses'     => $lista[ 4 ],
-       'esquema'         => $esquema
+        'data_caducidade' => $lista[ 0 ],
+        'token'           => $lista[ 1 ],
+        'usuario'         => $lista[ 2 ],
+        'dispositivo'     => $lista[ 3 ],
+        'hmac'            => $lista[ 4 ],
+        'esquema'         => $esquema
     ];
 
     return $analizados[ $rastro ] = $elementos;
@@ -121,7 +131,7 @@ function analizar_rastro_sesion() {
  *
  * @return string O token de sesión ou unha cadea baleira se non existe.
  */
-function coller_token_sesion() {
+function coller_token_sesion(): string {
     $rastro = analizar_rastro_sesion();
     return $rastro[ 'token' ] ?? '';
 }

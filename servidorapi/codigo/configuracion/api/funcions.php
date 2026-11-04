@@ -73,6 +73,10 @@ function coller_corpo(): array {
        responder( 400 );
     }
 
+    if ( !empty( $corpo[ 'uuid' ] ) ) {
+        id_dispositivo( $corpo[ 'uuid' ] );
+    }
+
     return $corpo;
 
 }
@@ -97,6 +101,7 @@ function validar_corpo( array $corpo, array $campos ): array {
        if ( !isset( $corpo[ $nome ] ) ) {
 
           if ( empty( $regras[ 'opcional' ] ) ) {
+             error_log( "Falta o valor para o campo $nome" );
              responder( 400 );
           }
 
@@ -181,7 +186,7 @@ function validar_valor( mixed $valor, array $regras ) {
              responder( 400 );
           }
 
-          return strtolower( $valor );
+          return $valor;
 
        default:
           throw new InvalidArgumentException( 'Tipo de campo descoñecido: ' . $regras[ 'tipo' ] );
@@ -237,4 +242,25 @@ function revisar_intentos( string $grupo, string $valor, int $maximo, int $durac
 
     return true;
 
+}
+
+/**
+ * Obtén o ID do dispositivo almacenado estaticamente.
+ * Na primeira chamada pódese pasar un valor opcional para inicializalo;
+ * nas seguintes chamadas ignorarase calquera novo valor e devolverá o xa gardado.
+ *
+ * @param string $novo_valor Valor inicial opcional (só se aplica a primeira vez).
+ * @return string O UUID do dispositivo.
+ */
+function id_dispositivo( string $novo_valor = '' ): string {
+
+    static $id_dispositivo = '';
+
+    if ( $id_dispositivo ) {
+        return $id_dispositivo;
+    }
+
+    $id_dispositivo = $novo_valor;
+
+    return $id_dispositivo;
 }

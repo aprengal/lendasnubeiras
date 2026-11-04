@@ -32,7 +32,7 @@ function usuario_actual( string $accion = 'coller' ) {
        }
 
        $rastro = analizar_rastro_sesion();
-       $uuid = $rastro[ 'uuid' ];
+       $uuid = $rastro[ 'usuario' ];
 
        if ( $usuario->uuid == $uuid ) {
           return $usuario = coller_usuario( 'uuid', $uuid, false ); // Sen memoria: hai que ler o usuario de novo

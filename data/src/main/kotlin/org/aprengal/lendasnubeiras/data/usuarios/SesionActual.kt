@@ -31,7 +31,7 @@ object SesionActual {
     val sesionAnonima: Boolean
         get() = collerOpcion( Opcion.SesionAnonima )
 
-    fun arrancar() {
+    suspend fun arrancar() {
 
         if ( _idSesion.value.isNotBlank() ) return
 
@@ -47,7 +47,7 @@ object SesionActual {
         return _idSesion.asStateFlow()
     }
 
-    private fun cambiarSesion( id: Long = 0L, correo: String = "", rol: Rol = Rol.NADA ) {
+    internal fun cambiarSesion( id: Long = 0L, correo: String = "", rol: Rol = Rol.NADA ) {
         usuario = Usuario( id, correo, rol )
         _idSesion.value = UUID.randomUUID().toString()
     }
@@ -59,31 +59,36 @@ object SesionActual {
         corrutina {
             borrarSesionsLocais()
             gardarOpcion( Opcion.SesionAnonima, true )
-            cambiarSesion( 1L, "", Rol.AUTOR )//Rol.LECTOR ) //TODO cambiar a lector
+            cambiarSesion( 1L, "", Rol.MONITOR )
         }
 
     }
 
-    private fun validarSesion() {
+    private suspend fun validarSesion() {
 
-        if ( sesionAnonima ) {  //TODO cambiar a lector
-            cambiarSesion( 1L, "", Rol.AUTOR )//Rol.LECTOR )
+        if ( sesionAnonima ) {
+            cambiarSesion( 1L, "", Rol.MONITOR )
             return
         }
 
         val sesionActual = collerOpcion( Opcion.SesionUsuario )
-        if ( sesionActual.isBlank() ) return //Baleiro = descartado
+        if ( sesionActual.isBlank() ) return
 
-        corrutina {
+        val ( id, correo, rol ) = corrutinaResposta {
 
             var id = 1L
             var correo = ""
             var rol = Rol.MONITOR
 
             val idDispositivo = collerOpcion( Opcion.IdDispositivo )
-            val datos: SesionUsuario = procesarPeticion( MetodoApi.GET, RutasApi.VALIDACION, mapOf( "id" to idDispositivo ) )
+            val datos: SesionUsuario = procesarPeticion( MetodoApi.POST, RutasApi.VALIDACION, mapOf( "uuid" to idDispositivo ) )
 
-            if ( datos.exito ) { //Usuario atopado
+            Log.d( "Rachou", "Sesion: $sesionActual" )
+            Log.d( "Rachou", "Dispositivo: $idDispositivo" )
+            Log.d( "Rachou", datos.correo + " " + datos.rol + " " + datos.idUsuario )
+            Log.d( "Rachou", datos.codigo.toString() )
+
+            if ( datos.exito ) {
 
                 gardarOpcion( Opcion.SesionUsuario, datos.sesion )
                 gardarSesionLocal( datos.sesion, datos.info )
@@ -96,7 +101,7 @@ object SesionActual {
 
                 borrarOpcion( Opcion.SesionUsuario )
 
-            } else { //Outros: servidor de vacacións, non hai internet ou a saber, pero non se puido chegar ao servidor
+            } else { //Outros: servidor fóra de servizo, non hai internet ou a saber, pero non se puido chegar ao servidor
 
                 val datosAlmacenados = collerSesionLocal( sesionActual )
 
@@ -120,9 +125,11 @@ object SesionActual {
 
             }
 
-            cambiarSesion( id, correo, rol )
+            return@corrutinaResposta Triple( id, correo, rol )
 
-        }
+        }.await()
+
+        cambiarSesion( id, correo, rol )
 
     }
 
@@ -139,26 +146,23 @@ object SesionActual {
                     return@corrutinaResposta true
                 }
 
-                Log.i( "Sesion", "Fallou o peche de sesión anónimo" )
                 return@corrutinaResposta false
 
             }
 
-            val resposta: RespostaXenerica = procesarPeticion( MetodoApi.DELETE, RutasApi.VALIDACION )
+            val idDispositivo = collerOpcion( Opcion.IdDispositivo )
+            val resposta: RespostaXenerica = procesarPeticion( MetodoApi.POST, RutasApi.PECHE, mapOf( "uuid" to idDispositivo ) )
 
-            if ( resposta.exito ) {
+            if ( resposta.exito || resposta.codigo == 401 ) {
 
-                if ( borrarSesionsLocais() ) {
-                    cambiarSesion()
-                    return@corrutinaResposta true
-                }
+                borrarSesionsLocais()
+                borrarOpcion( Opcion.SesionUsuario )
+                cambiarSesion()
 
-                Log.i( "Sesion", "Fallou o peche de sesión a nivel local, pero si se fixo no servidor" )
-                return@corrutinaResposta false
+                return@corrutinaResposta true
 
             }
 
-            Log.w( "Sesion", "Non se puido pechar a sesión no servidor" )
             return@corrutinaResposta false
 
         }.await()

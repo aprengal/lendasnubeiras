@@ -121,7 +121,7 @@ object Axustes {
 
     }
 
-    suspend fun borrarSesionsLocais(): Boolean {
+    suspend fun borrarSesionsLocais() {
 
         val nome = Opcion.SesionUsuario.nome
 
@@ -132,13 +132,9 @@ object Axustes {
                     .forEach { clave -> opcions.remove( stringPreferencesKey( clave.name ) ) }
             }
 
-            return true
-
         } catch ( e: IOException ) {
             Log.i( "OPCIONS", "Non se puideron borrar as sesións locais: ${ e.message }" )
         }
-
-        return false
 
     }
 

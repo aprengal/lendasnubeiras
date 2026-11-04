@@ -20,18 +20,17 @@ declare ( strict_types = 1 );
  *
  * A sesión queda creada pero inactiva ata que se cree o dato de activación.
  */
-function crear_sesion_api( Usuario $usuario ): array {
+function crear_sesion_api( Usuario $usuario, string $id_dispositivo ): array {
 
     $agora = time();
     $caducidade = $agora + DURACION_SESION;
-
-    $token = $usuario->crear_sesion( $agora, $caducidade );
+    $token = $usuario->crear_sesion( $agora, $caducidade, $id_dispositivo );
 
     $datos_sesion = crear_datos_sesion( $usuario, [
        'caducidade_sesion' => $caducidade,
+       'id_dispositivo' => $id_dispositivo,
        'esquema' => 'sesion',
        'token' => $token,
-       'alongar_ses' => $agora + DIA_EN_SEGUNDOS
     ] );
 
     if ( !$datos_sesion ) {
@@ -39,8 +38,8 @@ function crear_sesion_api( Usuario $usuario ): array {
     }
 
     return [
-       'sesion' => $datos_sesion,
-       'activacion' => nome_dato( 'sesion_activa', $token )
+      'sesion' => $datos_sesion,
+      'token' => $token
     ];
 
 }

@@ -18,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.aprengal.lendasnubeiras.data.axustes.DatosTema.escollerVarianteImaxe
 import org.aprengal.lendasnubeiras.data.axustes.DatosTema.Variante
@@ -52,6 +53,24 @@ import org.aprengal.lendasnubeiras.ui.utilidades.Accions.executarAccion
 fun PantallaAxustes() {
 
     Column( modifier = Modifier.fillMaxWidth().padding( 10.dp ) ) {
+
+        if ( usuarioActual().existe ) {
+
+            Card( Modifier.padding( 4.dp ) ) {
+
+                Column( Modifier.fillMaxWidth(), Arrangement.Center, Alignment.CenterHorizontally ) {
+
+                    Text( "Usuario autenticado", fontWeight = FontWeight.Bold )
+                    EspazadorAlto()
+                    Text( usuarioActual().correo )
+
+                }
+
+            }
+
+            EspazadorAlto( 2 )
+
+        }
 
         Card {
 

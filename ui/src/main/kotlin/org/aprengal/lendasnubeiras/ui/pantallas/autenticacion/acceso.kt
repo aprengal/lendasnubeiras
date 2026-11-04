@@ -15,8 +15,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nAutenticacion
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nSingular
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nValidacion
+import org.aprengal.lendasnubeiras.data.usuarios.AccionsUsuario.iniciarSesion
 import org.aprengal.lendasnubeiras.data.utilidades.Validacion.validarCorreo
+import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalIdioma
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalNavegacion
 import org.aprengal.lendasnubeiras.ui.navegacion.Ruta
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosCampoTexto
@@ -30,10 +33,11 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.Esp
 fun PantallaAcceso() {
 
     val navegacion = LocalNavegacion.current
+    val idioma = LocalIdioma.current
     val correo = rememberTextFieldState()
 
-    var mensaxe by rememberSaveable { mutableStateOf<L10nAutenticacion?>( null ) }
-    var activado = rememberSaveable { true }
+    var mensaxe by rememberSaveable { mutableStateOf<L10nSingular?>( null ) }
+    var activado by rememberSaveable { mutableStateOf( true ) }
 
     val campoCorreo = L10nAutenticacion.CorreoElectronico
     val botonAcceso = L10nAutenticacion.BotonAcceso
@@ -41,8 +45,11 @@ fun PantallaAcceso() {
     val tecladoCorreo = KeyboardOptions( keyboardType = KeyboardType.Email )
 
     val botonAccion = {
-        mensaxe = L10nAutenticacion.ComprobandoCorreo
-        activado = false
+        iniciarSesion( correo.text.toString(), idioma ) {
+            novaMensaxe, novoEstadoActivado ->
+            mensaxe = novaMensaxe
+            activado = novoEstadoActivado
+        }
     }
 
     val erro: L10nValidacion? by remember { derivedStateOf { validarCorreo( correo.text.toString() ) } }
@@ -62,7 +69,7 @@ fun PantallaAcceso() {
         CampoTexto( datos )
 
         EspazadorAlto()
-        BotonPrincipal( botonAcceso, botonAccion, Modifier.fillMaxWidth(), correoValido )
+        BotonPrincipal( botonAcceso, botonAccion, Modifier.fillMaxWidth(), correoValido && activado )
         EspazadorAlto()
         TextoEnlazado( textoRexistro, enlace )
 

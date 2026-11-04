@@ -15,9 +15,14 @@ function endpoint_modificar_actividade(): void {
 	esixir_metodo( 'POST' );
 
 	$usuario = esixir_sesion();
-	$datos = validar_corpo( coller_corpo(), regras_actividade( true ) );
 
-	$actual = coller_actividade( $datos[ 'id' ] );
+	//Que permiso mínimo fai falta para empregar este endpoint??
+    if ( !$usuario->pode( 'editar_actividade' ) ) {
+        responder( 403 );
+    }
+
+	$campos = regras_actividade( true ) + [ 'uuid' => [ 'tipo' => 'uuid' ] ];
+	$datos = validar_corpo( coller_corpo(), $campos );
 
 	if ( !$actual ) {
 		responder( 404 );

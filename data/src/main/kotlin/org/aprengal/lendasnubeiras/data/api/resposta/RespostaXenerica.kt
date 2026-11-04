@@ -8,4 +8,4 @@ import org.json.JSONObject
  * [RutasApi.REPORTES], [RutasApi.USUARIOS], [RutasApi.BORRARCONTA], e [RutasApi.LIMPAR]),
  * limitándose a manexar o código de estado HTTP e o éxito da operación.
  */
-class RespostaXenerica( datos: JSONObject) : RespostaApi( datos.optInt( "codigo" ) )
+class RespostaXenerica( datos: JSONObject ) : RespostaApi( datos.optInt( "codigo" ) )

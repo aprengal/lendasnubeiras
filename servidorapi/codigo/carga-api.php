@@ -18,6 +18,7 @@ require_once "codigo/endpoints/validar-sesion.php";
 require_once "codigo/endpoints/actualizar.php";
 require_once "codigo/endpoints/crear-actividade.php";
 require_once "codigo/endpoints/modificar-actividade.php";
+require_once "codigo/endpoints/pechar-sesion.php";
 require_once "codigo/endpoints/reportar-erros.php";
 require_once "codigo/endpoints/axustar-usuarios.php";
 require_once "codigo/endpoints/limpar.php";

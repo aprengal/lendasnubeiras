@@ -12,11 +12,12 @@ declare ( strict_types = 1 );
  * Os administradores non poden borrar a súa conta. Non fai falta que un administrador aprobe o
  * borrado: a seguridade ven da sesión activa máis a ligazón do correo.
  * 
- * Respostas: 200, 400, 403, 409, 429
+ * Respostas: 200, 400, 409, 429
  */
 function endpoint_borrar_conta(): void {
 
 	esixir_metodo( 'POST' );
+    validar_corpo( coller_corpo(), [ 'uuid' => [ 'tipo' => 'uuid' ] ] );
 
 	$usuario = esixir_sesion();
 
@@ -25,6 +26,7 @@ function endpoint_borrar_conta(): void {
 	}
 
 	$corpo = validar_corpo( coller_corpo(), [
+        'uuid' => [ 'tipo' => 'uuid' ],
 		'idioma' => [ 'tipo' => 'texto', 'max' => 2, 'valores' => IDIOMAS_API ]
 	] );
 

@@ -17,6 +17,6 @@
   "conta-desactivada": "La cuenta está desactivada. Para obtener más información, contacte con un administrador.",
   "conta-404": "No existe ninguna cuenta con el correo indicado.",
   "esperando-validacion": "La solicitud de inicio de sesión se procesó correctamente. Se ha enviado un mensaje a tu correo para activarla.",
-  "sesion-activada": "La sesión se ha activado correctamente. Espere unos instantes mientras se inicia sesión en la aplicación...",
+  "sesion-activada": "La sesión se ha activado correctamente.",
   "erro-acceso": "Se ha producido un error desconocido al procesar el inicio de sesión. Por favor, inténtalo de nuevo más tarde."
 }

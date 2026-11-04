@@ -9,8 +9,8 @@ declare ( strict_types = 1 );
  * 
  * Tarefas:
  * - Elimina os datos temporais caducados.
- * - Borra de forma definitiva as contas que pediron o borrado hai máis de DIAS_BORRADO_CONTA días.
- * - Baleira a papeleira: elimina de forma definitiva as actividades que levan máis de DIAS_PAPELEIRA días no estado borrado.
+ * - Borra de forma definitiva as contas que pediron o borrado hai máis de 30 días.
+ * - Baleira a papeleira: elimina de forma definitiva as actividades que levan máis de 30 días no estado borrado.
  *
  * Respostas: 204, 409
  */
@@ -43,14 +43,7 @@ function endpoint_limpar(): void {
         ] );
 
         // 3. Borra de forma definitiva as contas caducadas baseándose no estado e no tempo
-        $limiteTempoContas = time() - ( DIAS_BORRADO_CONTA * DIA_EN_SEGUNDOS );
-
-        db()->delete( 'usuarios', [
-            'onde' => [
-                'estado' => ESTADO_USUARIO_BORRADO,
-                'data_modificado' => [ 'operador' => '<', 'valor' => $limiteTempoContas ]
-            ]
-        ] );
+        borrar_contas_caducadas();
 
     } finally {
         borrar_dato_temporal( $bloqueo );

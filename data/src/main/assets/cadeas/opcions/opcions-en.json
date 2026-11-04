@@ -2,12 +2,15 @@
 
   "dialogo_cambio_idioma": "Menu language",
   "dialogo_cambio_tema": "Application theme",
+  "dialogo_borrado_conta": "Delete account?",
   "dialogo_peche_sesion": "Log out?",
   "titulo_cambio_idioma": "Language",
   "titulo_cambio_tema": "Theme",
+  "boton_borrado_conta": "Delete account",
   "boton_peche_sesion": "Log out",
 
   "reinicio_cambio_idioma": "The application will restart after changing the language",
+  "contido_borrado_conta": "An email will be sent to confirm account deletion and your current session will be closed.",
 
   "tema_claro": "Light",
   "tema_escuro": "Dark",
@@ -15,6 +18,7 @@
 
   "gardado_fallido_cambio_idioma": "Could not change the language",
   "gardado_fallido_cambio_tema": "Could not change the theme",
+  "borrado_conta_fallido": "Could not delete the account",
   "peche_sesion_fallido": "Could not log out"
 
 }

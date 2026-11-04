@@ -22,10 +22,7 @@ function endpoint_verificar_accion(): void {
     $id_accion = $_GET[ 'id_accion' ] ?? "";
     $uuid = !empty( $_GET[ 'uuid' ] ) ? cifrar_descifrar( $_GET[ 'uuid' ], 'descifrar', 'correos' ) : "";
 
-    error_log( "verificando acción" );
-
     if ( !is_string( $id_accion ) || preg_match( '/^[a-zA-Z0-9]{40}$/', $id_accion ) !== 1 || !verificar_uuid( $uuid ) ) {
-        error_log( "EH!3" );
         responder( 409 );
     }
 
@@ -33,7 +30,6 @@ function endpoint_verificar_accion(): void {
     $dato = coller_dato_temporal( $nome );
 
     if ( !is_string( $dato ) || !hai_serializacion( $dato ) ) {
-        error_log( "fas" );
         responder( 409 );
     }
 

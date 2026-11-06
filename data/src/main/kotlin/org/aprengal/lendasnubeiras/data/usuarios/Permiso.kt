@@ -4,7 +4,6 @@ import org.aprengal.lendasnubeiras.data.axustes.Axustes.collerOpcion
 import org.aprengal.lendasnubeiras.data.axustes.Opcion.SesionAnonima
 import org.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
 
-//Isto só valida o rol. A acción debe revisarse a nivel de servidor
 /**
  * Clase sellada que define o sistema de control de permisos baseado en roles de usuario.
  * Cada obxecto contén a súa propia lóxica de validación mediante a sobrecarga do operador `invoke`.

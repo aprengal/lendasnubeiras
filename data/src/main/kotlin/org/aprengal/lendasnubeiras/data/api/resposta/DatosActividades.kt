@@ -8,7 +8,7 @@ import org.json.JSONObject
  *
  * @property lista Colección de mapas que representan os datos de cada actividade.
  */
-class DatosActividades( datos: JSONObject) : RespostaApi( datos.optInt( "codigo" ) ) {
+class DatosActividades( datos: JSONObject ) : RespostaApi( datos.optInt( "codigo" ) ) {
 
     val lista = collerActividades( datos )
 

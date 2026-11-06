@@ -5,8 +5,15 @@ import android.content.Context
 import android.content.Intent
 import android.view.accessibility.AccessibilityManager
 
+/**
+ * Obxecto de utilidades para xestionar aspectos globais do contexto e do sistema,
+ * como a accesibilidade e o reinicio da aplicación.
+ */
 object Contexto {
 
+    /**
+     * Comproba se hai algún servizo de accesibilidade de lectura de pantalla (lector de voz) activo.
+     */
     fun haiLector( contexto: Context ): Boolean {
 
         val xestor = contexto.getSystemService( Context.ACCESSIBILITY_SERVICE ) as AccessibilityManager
@@ -16,6 +23,9 @@ object Contexto {
 
     }
 
+    /**
+     * Reinicia por completo a aplicación lanzando a actividade principal e pechando o proceso actual.
+     */
     fun reiniciarAplicacion( contexto: Context ) {
 
         val intento = contexto.packageManager.getLaunchIntentForPackage( contexto.packageName )

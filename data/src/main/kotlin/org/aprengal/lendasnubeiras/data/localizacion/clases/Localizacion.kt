@@ -28,35 +28,47 @@ import java.util.Locale
 import kotlin.math.abs
 
 /**
- * Obxecto encargado da internacionalización (i18n) e localización da aplicación.
- * Xestiona a carga de recursos JSON de idioma desde os assets, o cambio dinámico de idioma,
- * as regras gramaticais de plurais (cardinais e ordinais) e variantes.
+ * Xestor centralizado do sistema de internacionalización e localización da aplicación.
+ *
+ * Encárgase de determinar o idioma activo, cargar os recursos de tradución
+ * desde os arquivos JSON incluídos nos assets e proporcionar os textos
+ * correspondentes aos distintos elementos localizables.
+ *
+ * Organiza as traducións por dominios e mantén unha caché independente para
+ * textos singulares, plurais e variantes numéricas, evitando cargar
+ * repetidamente os mesmos recursos.
+ *
+ * Tamén xestiona as regras gramaticais de pluralización mediante ICU,
+ * adaptándoas ás particularidades dos idiomas dispoñibles na aplicación.
+ * O idioma activo exponse mediante un fluxo reactivo que permite observar
+ * os cambios de configuración.
  */
 object Localizacion {
 
-    /** Contexto global da aplicación. */
+    /** Contexto global da aplicación, empregado para acceder aos recursos incluídos nos assets. */
     private lateinit var appContext: Context
 
-    /** Almacén en caché das traducións singulares organizadas por dominio. */
+    /** Caché das traducións singulares, organizadas por dominio e clave de localización. */
     private val traducions = mutableMapOf<Dominio, Map<L10nSingular, String>>()
 
-    /** Almacén en caché das traducións plurais organizadas por dominio. */
+    /** Caché das traducións plurais, organizadas por dominio, clave e categoría gramatical. */
     private val traducionsPlurais = mutableMapOf<Dominio, Map<L10nPlural, Map<String, String>>>()
 
-    /** Almacén en caché das traducións de variantes organizadas por dominio. */
+    /** Caché das traducións de variantes, organizadas por dominio, clave e valor numérico. */
     private val traducionsVariantes = mutableMapOf<Dominio, Map<L10nVariante, Map<String, String>>>()
 
-    /** Fluxo de estado reactivo que emite o idioma actual da aplicación. */
+    /** Fluxo de estado interno que almacena e comunica o idioma activo da aplicación. */
     private val idiomaActual = MutableStateFlow( Idioma.Nada )
 
-    /** Regras de plurais cardinais para a factoría ICU. */
+    /** Regras ICU de pluralización cardinal do idioma activo, cargadas baixo demanda. */
     private var pluraisCardinais: PluralRules? = null
 
-    /** Regras de plurais ordinais para a factoría ICU. */
+    /** Regras ICU de pluralización ordinal do idioma activo, cargadas baixo demanda. */
     private var pluraisOrdinarios: PluralRules? = null
 
     /**
-     * Obtén a clave de texto dun elemento singular, delegando segundo a súa implementación de dominio.
+     * Obtén a clave identificativa dun elemento de localización singular,
+     * delegando na implementación do dominio ao que pertence.
      */
     internal val L10nSingular.clave: String
 
@@ -71,7 +83,8 @@ object Localizacion {
         }
 
     /**
-     * Obtén o dominio ao que pertence un elemento singular.
+     * Obtén o dominio de localización ao que pertence un elemento singular,
+     * delegando na implementación correspondente.
      */
     internal val L10nSingular.dominio: Dominio
 
@@ -86,10 +99,20 @@ object Localizacion {
         }
 
     /**
-     * Inicializa o sistema de localización se non estivese xa arrancado.
+     * Inicializa o sistema de localización e determina o idioma activo da aplicación.
      *
-     * @param contexto O contexto actual da aplicación.
-     * @return Un [StateFlow] co fluxo do idioma actual.
+     * Utiliza, por orde de preferencia, o idioma configurado especificamente
+     * para a aplicación e o idioma establecido no sistema operativo.
+     * Se ningún deles está dispoñible, selecciona o idioma predeterminado.
+     *
+     * Se o sistema xa foi inicializado e dispón dun idioma activo, devolve
+     * o fluxo existente sen repetir o proceso.
+     *
+     * O contexto recibido substitúese polo contexto global da aplicación
+     * para evitar manter referencias innecesarias a contextos de menor duración.
+     *
+     * @param contexto Contexto empregado para acceder aos recursos da aplicación.
+     * @return Fluxo de só lectura que comunica o idioma activo e os seus cambios.
      */
     fun arrancar( contexto: Context ): StateFlow<Idioma> {
 
@@ -106,10 +129,17 @@ object Localizacion {
     }
 
     /**
-     * Cambia o idioma activo da aplicación, limpa a caché de traducións e reinicia a app se é preciso.
+     * Establece un novo idioma activo para a aplicación.
      *
-     * @param novoIdioma O novo [Idioma] que se desexa aplicar.
-     * @return `true` se se procesou correctamente.
+     * Actualiza o fluxo do idioma actual, reinicia a aplicación se existe
+     * un lector activo e invalida todas as cachés de traducións e regras
+     * gramaticais para que os recursos posteriores se carguen no novo idioma.
+     *
+     * Se o idioma solicitado xa está activo, non realiza ningunha operación.
+     *
+     * @param novoIdioma Idioma que se quere establecer como activo.
+     * @return true se a operación se procesa, incluído o caso no que o idioma
+     * xa estaba seleccionado.
      */
     fun cambiarIdioma( novoIdioma: Idioma ): Boolean {
 
@@ -129,7 +159,13 @@ object Localizacion {
     }
 
     /**
-     * Devolve a lista de claves singulares asociadas a un dominio concreto.
+     * Obtén todas as claves de localización singular pertencentes a un dominio.
+     *
+     * Selecciona as entradas da enumeración correspondente en función
+     * do dominio indicado.
+     *
+     * @param dominio Dominio do que se queren obter as claves.
+     * @return Lista de claves singulares asociadas ao dominio.
      */
     private fun collerClavesSingular( dominio: Dominio): List<L10nSingular> {
 
@@ -148,7 +184,16 @@ object Localizacion {
     }
 
     /**
-     * Lê o arquivo JSON de traducións correspondente ao dominio e ao idioma actual desde os assets.
+     * Le o contido do arquivo JSON de traducións correspondente a un dominio
+     * e ao idioma actualmente seleccionado.
+     *
+     * Busca primeiro un arquivo específico do código lingüístico e,
+     * se non existe, utiliza o arquivo correspondente ao código lingüístico
+     * combinado co código de rexión.
+     *
+     * @param dominio Dominio cuxos recursos de tradución se queren cargar.
+     * @return Contido íntegro do arquivo JSON seleccionado.
+     * @throws FileNotFoundException Se non se atopa o arquivo correspondente.
      */
     private fun collerArquivoIdioma( dominio: Dominio): String {
 
@@ -167,7 +212,19 @@ object Localizacion {
     }
 
     /**
-     * Carga e parsea un dominio de traducións se non estivese previamente en caché.
+     * Carga e procesa os recursos JSON dun dominio se aínda non están almacenados
+     * na caché.
+     *
+     * Identifica as entradas do arquivo segundo o tipo de elemento ao que
+     * pertencen: textos singulares, plurais ou variantes numéricas.
+     *
+     * As claves JSON que non teñen correspondencia cun elemento definido
+     * no código rexístranse como advertencias e ignóranse.
+     *
+     * Unha vez procesado o arquivo, almacena os resultados nas cachés
+     * correspondentes para evitar lecturas e conversións posteriores.
+     *
+     * @param dominio Dominio cuxos recursos de localización se queren cargar.
      */
     private fun cargarDominio( dominio: Dominio ) {
 
@@ -265,7 +322,15 @@ object Localizacion {
     }
 
     /**
-     * Obtén o texto correspondente a calquera elemento localizable ou obxecto xenérico.
+     * Obtén o texto que se debe utilizar para representar un elemento.
+     *
+     * Se o elemento é unha clave de localización singular, recupera a súa
+     * tradución no idioma activo. Se é un idioma, devolve o seu nome.
+     * Para calquera outro tipo de obxecto, utiliza a súa representación textual
+     * proporcionada mediante toString().
+     *
+     * @param elemento Elemento cuxo texto se quere obter.
+     * @return Texto correspondente ao elemento.
      */
     fun <T> obterTexto( elemento: T ): String {
 
@@ -280,7 +345,15 @@ object Localizacion {
     }
 
     /**
-     * Recupera un obxecto JSON específico dunha actividade desde os assets do idioma actual.
+     * Obtén os recursos textuais dunha actividade a partir do seu identificador
+     * de localización no arquivo JSON correspondente ao idioma activo.
+     *
+     * Busca primeiro o arquivo específico do código lingüístico e,
+     * se non existe, utiliza o correspondente ao código lingüístico e rexión.
+     *
+     * @param clave Clave identificativa da actividade dentro do arquivo JSON.
+     * @return Obxecto JSON cos recursos da actividade ou un obxecto baleiro
+     * se a clave non está presente.
      */
     internal fun collerTextoActividade( clave: String ): JSONObject {
 
@@ -295,12 +368,21 @@ object Localizacion {
         val textoJson = appContext.assets.open( ruta ).bufferedReader().use { arquivo -> arquivo.readText() }
         val json = JSONObject( textoJson )
 
-        return json.getJSONObject( clave )
+        return json.optJSONObject( clave ) ?: JSONObject()
 
     }
 
     /**
-     * Traduce un elemento singular cargando previamente o seu dominio.
+     * Obtén a tradución correspondente a un elemento singular no idioma activo.
+     *
+     * Carga previamente os recursos do dominio ao que pertence o elemento,
+     * se aínda non están dispoñibles na caché.
+     *
+     * Se non existe unha tradución para a clave solicitada, devolve o texto
+     * identificativo de tradución pendente correspondente ao idioma activo.
+     *
+     * @param elemento Elemento singular cuxa tradución se quere obter.
+     * @return Texto traducido ou indicador de tradución pendente.
      */
     internal fun l10n( elemento: L10nSingular ): String {
         cargarDominio( elemento.dominio )
@@ -308,7 +390,22 @@ object Localizacion {
     }
 
     /**
-     * Xera unha cadea traducida manexando regras plurais (cardinais ou ordinais).
+     * Obtén unha tradución plural aplicando as regras gramaticais do idioma activo.
+     *
+     * Determina a categoría plural correspondente ao número recibido,
+     * diferenciando entre pluralización cardinal e ordinal.
+     *
+     * O número tamén se formatea segundo a configuración rexional do idioma
+     * e incorpórase ao texto traducido mediante un marcador de formato.
+     *
+     * Se non existe a tradución correspondente á categoría gramatical obtida,
+     * devolve o indicador de tradución pendente do idioma activo.
+     *
+     * @param elemento Elemento de localización plural que se quere traducir.
+     * @param num Número utilizado para determinar a categoría plural e completar o texto.
+     * @param cardinal Indica se se deben aplicar regras cardinais (true) ou ordinais (false).
+     * Por defecto, utilízanse as regras cardinais.
+     * @return Texto traducido coa representación formateada do número ou indicador de tradución pendente.
      */
     internal fun l10nPlural( elemento: L10nPlural, num: Number, cardinal: Boolean = true ): String {
 
@@ -324,7 +421,18 @@ object Localizacion {
     }
 
     /**
-     * Traduce un elemento en base a unha variante numérica específica.
+     * Obtén unha tradución correspondente a unha variante numérica concreta.
+     *
+     * Selecciona o texto asociado ao valor recibido e incorpora a súa
+     * representación numérica, formateada segundo a configuración rexional
+     * do idioma activo.
+     *
+     * Se non existe unha tradución para o valor indicado, devolve o indicador
+     * de tradución pendente correspondente ao idioma activo.
+     *
+     * @param elemento Elemento de localización que contén as distintas variantes.
+     * @param num Valor numérico cuxa variante se quere obter.
+     * @return Texto correspondente á variante ou indicador de tradución pendente.
      */
     internal fun l10nVariante( elemento: L10nVariante, num: Int ): String {
 
@@ -340,7 +448,16 @@ object Localizacion {
     }
 
     /**
-     * Determina a categoría de plural (ordinal ou cardinal) empregando a librería ICU.
+     * Determina a categoría gramatical correspondente a un número,
+     * utilizando as regras de pluralización cardinais ou ordinais de ICU.
+     *
+     * As regras ordinais almacénanse en caché para evitar a súa creación
+     * repetida durante as consultas posteriores.
+     *
+     * @param numAbs Valor numérico absoluto empregado para determinar a categoría.
+     * @param local Configuración rexional correspondente ao idioma activo.
+     * @param cardinal Indica se se deben aplicar regras cardinais ou ordinais.
+     * @return Identificador textual da categoría plural correspondente.
      */
     private fun categoriaPlurais( numAbs: Double, local: Locale, cardinal: Boolean ): String {
 
@@ -357,7 +474,18 @@ object Localizacion {
     }
 
     /**
-     * Aplica regras gramaticais específicas para plurais cardinais (con soporte para Galego e Castelán).
+     * Determina a categoría gramatical dos plurais cardinais.
+     *
+     * Para o galego e o castelán aplica regras específicas: utiliza a categoría
+     * one para o valor absoluto igual a un e many para os múltiplos non nulos
+     * dun millón.
+     *
+     * Para os demais casos utiliza as regras cardinais proporcionadas por ICU,
+     * cuxo resultado se almacena en caché para evitar a súa creación repetida.
+     *
+     * @param numAbs Valor numérico absoluto empregado para determinar a categoría.
+     * @param local Configuración rexional correspondente ao idioma activo.
+     * @return Identificador textual da categoría plural correspondente.
      */
     private fun categoriaCardinal( numAbs: Double, local: Locale ): String {
 

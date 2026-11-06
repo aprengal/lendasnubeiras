@@ -3,7 +3,7 @@ package org.aprengal.lendasnubeiras.data.utilidades
 import android.util.Patterns.EMAIL_ADDRESS
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nValidacion
 
-object Validacion {
+/*object Validacion {
 
     fun validarCorreo( texto: String ): L10nValidacion? {
 
@@ -18,4 +18,4 @@ object Validacion {
 
     }
 
-}
+}*/

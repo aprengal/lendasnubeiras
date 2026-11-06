@@ -41,7 +41,7 @@ A documentación completa do proxecto atópase en pdf no directorio de documento
 
 🔧 En desenvolvemento — Proxecto Final de Ciclo (2026).
 
-Falta crear a API e o sistema que permite cargar información das actividades sen ter que cargalas en memoria como os textos da interface.
+Falta crear o sistema que permite cargar as actividades na interface sen ter que cargalas en memoria como os textos da interface.
 
 ## ✍️ Autor
 

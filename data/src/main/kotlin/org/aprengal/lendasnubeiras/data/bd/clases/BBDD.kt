@@ -16,6 +16,10 @@ import org.aprengal.lendasnubeiras.data.localizacion.clases.ElementoL10n
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma
 import kotlin.collections.iterator
 
+/**
+ * Xestor da base de datos SQLite local que herda de SQLiteOpenHelper para controlar
+ * a creación, actualización e acceso ás táboas da aplicación.
+ */
 internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, null, DB_VERSION ) {
 
     private val taboasPermitidas: Set<Taboa> = Taboa.entries.toSet()
@@ -26,31 +30,60 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
         const val DB_VERSION = 1
     }
 
+    /**
+     * Crea a estrutura inicial da base de datos cando se executa por primeira vez.
+     */
     override fun onCreate( db: SQLiteDatabase ) {
         EstruturaDB().crear( db )
     }
 
+    /**
+     * Actualiza a base de datos cando cambia a versión establecida.
+     */
     override fun onUpgrade( db: SQLiteDatabase, oldVersion: Int, newVersion: Int ) {
         EstruturaDB().actualizar( db, oldVersion, newVersion )
     }
 
+    /**
+     * Configura propiedades de SQLite, activando as restricións de claves foráneas.
+     */
     override fun onConfigure( db: SQLiteDatabase ) {
         super.onConfigure( db )
         db.setForeignKeyConstraintsEnabled( true )
     }
 
-    private fun verificarTaboa( taboa: Taboa/*, modo: Modo = Modo.ESCRITURA*/ ) {
-
-        val permitidas = taboasPermitidas.toMutableSet()
-        //if ( modo == Modo.LECTURA ) permitidas.addAll( TaboaLectura.entries.toSet() )
-
-        require( taboa in permitidas ) { "A táboa $taboa non está na lista de táboas permitidas" }
-
+    /**
+     * Verifica que a táboa indicada pertence ao conxunto de táboas permitidas para
+     * realizar operacións na base de datos.
+     *
+     * @param taboa Táboa que se quere verificar antes de realizar unha operación.
+     * @throws IllegalArgumentException Se a táboa non está incluída no conxunto de táboas permitidas.
+     */
+    private fun verificarTaboa( taboa: Taboa ) {
+        require( taboa in taboasPermitidas ) { "A táboa $taboa non está na lista de táboas permitidas" }
     }
 
     // Operacións
+
+    /**
+     * Converte un mapa de valores nun obxecto ContentValues para utilizalo
+     * nas operacións de escritura de SQLite.
+     *
+     * Delega a conversión na sobrecarga que procesa listas de mapas e devolve
+     * o primeiro elemento resultante.
+     *
+     * @param datos Mapa que contén os nomes das columnas e os valores correspondentes.
+     * @return Obxecto ContentValues cos valores preparados para SQLite.
+     */
     private fun crearValores( datos: Map<String, Any> ): ContentValues = crearValores( listOf( datos ) )[ 0 ]
 
+    /**
+     * Converte unha lista de mapas de valores nunha lista de obxectos ContentValues
+     * para permitir a inserción de varios rexistros na base de datos.
+     *
+     * @param listaValores Lista de mapas cos nomes das columnas e os seus valores.
+     * @return Lista de obxectos ContentValues preparados para as operacións de SQLite.
+     */
     private fun crearValores( listaValores: List<Map<String, Any>> ): List<ContentValues> {
 
         val valores = mutableListOf<ContentValues>()
@@ -65,6 +98,16 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
 
     }
 
+    /**
+     * Converte un valor admitido pola aplicación nunha representación textual
+     * compatible co tratamento de valores de SQLite.
+     *
+     * Admite cadeas de texto, valores numéricos, elementos de localización e idiomas.
+     *
+     * @param valor Valor que se quere procesar.
+     * @return Representación textual do valor procesado.
+     * @throws IllegalStateException Se o tipo do valor non está soportado.
+     */
     private fun procesarValor( valor: Any ): String {
 
         val procesado = when ( valor ) {
@@ -78,10 +121,16 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
 
     }
 
+    /**
+     * Insire un único rexistro nunha táboa a partir dun mapa de valores.
+     */
     fun insertar( taboa: Taboa, listaValores: Map<String, Any> ): Long {
         return insertar( taboa, listOf( listaValores ) )[ 0 ]
     }
 
+    /**
+     * Insire unha lista de rexistros nunha táboa, xestionándoo mediante transacción se son varios.
+     */
     fun insertar( taboa: Taboa, listaValores: List<Map<String, Any>> ): List<Long> {
 
         require( listaValores.isNotEmpty() ) { "Non se pode insertar unha lista baleira" }
@@ -109,9 +158,12 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
 
     }
 
-    fun seleccionar( taboa: Taboa, datos: SeleccionSQL): List<Map<String, Any>> {
+    /**
+     * Executa unha consulta de selección (SELECT) aplicando condicións, ordenacións e límites.
+     */
+    fun seleccionar( taboa: Taboa, datos: SeleccionSQL ): List<Map<String, Any>> {
 
-        verificarTaboa( taboa/*, Modo.LECTURA*/ )
+        verificarTaboa( taboa )
         require( datos.columnas.isNotEmpty() ) { "Deben indicarse as columnas nunha consulta select" }
 
         val ( condicions, argumentos ) = if ( datos.onde.isEmpty() ) "" to emptyArray() else establecerCondicions( datos.onde )
@@ -128,7 +180,7 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
 
             if ( datos.ordenar.isNotEmpty() ) {
                 append( " ORDER BY " )
-                append( datos.ordenar.entries.joinToString( ", " ) { ( columna, orde ) ->  "$columna ${ orde.clave }" } )
+                append( datos.ordenar.entries.joinToString( ", " ) { ( columna, orde ) -> "$columna ${ orde.clave }" } )
             }
 
             if ( datos.limite.isNotEmpty() ) {
@@ -151,7 +203,18 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
 
     }
 
-    private fun procesarResultados( resultados: Cursor): List<Map<String, Any>> {
+    /**
+     * Procesa os resultados dunha consulta SQLite e converte cada fila do Cursor
+     * nun mapa que relaciona os nomes das columnas cos seus respectivos valores.
+     *
+     * Os valores enteiros convértense en Long, os decimais en Double e os textos
+     * en String. O Cursor péchase automaticamente ao finalizar o procesamento.
+     *
+     * @param resultados Cursor que contén os resultados da consulta executada.
+     * @return Lista de mapas cos datos correspondentes a cada fila obtida.
+     * @throws IllegalStateException Se aparece un tipo de dato SQLite non soportado.
+     */
+    private fun procesarResultados( resultados: Cursor ): List<Map<String, Any>> {
 
         val saida = resultados.use { cursor ->
 
@@ -184,7 +247,10 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
 
     }
 
-    fun actualizar(taboa: Taboa, valores: Map<String, Any>, onde: Map<String, Condicion> ): Int {
+    /**
+     * Actualiza rexistros nunha táboa baseándose nun conxunto de condicións.
+     */
+    fun actualizar( taboa: Taboa, valores: Map<String, Any>, onde: Map<String, Condicion> ): Int {
 
         verificarTaboa( taboa )
 
@@ -203,7 +269,10 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
 
     }
 
-    fun eliminar(taboa: Taboa, onde: Map<String, Condicion> ): Int {
+    /**
+     * Elimina rexistros dunha táboa baseándose nun conxunto de condicións.
+     */
+    fun eliminar( taboa: Taboa, onde: Map<String, Condicion> ): Int {
 
         verificarTaboa( taboa )
 
@@ -220,6 +289,18 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
 
     }
 
+    /**
+     * Constrúe a expresión SQL correspondente a un conxunto de condicións
+     * e prepara os argumentos necesarios para substituír os marcadores de posición.
+     *
+     * Admite condicións simples, condicións IN e intervalos BETWEEN.
+     * As diferentes condicións combínanse mediante o operador AND.
+     *
+     * @param datos Mapa que relaciona as columnas coas condicións que se deben aplicar.
+     * @return Par composto pola expresión SQL das condicións e o array cos argumentos correspondentes.
+     * @throws IllegalArgumentException Se non se especifican condicións, unha condición IN está baleira
+     * ou os límites dunha condición BETWEEN non están na orde esperada.
+     */
     private fun establecerCondicions( datos: Map<String, Condicion> ): Pair<String, Array<String>> {
 
         val partes = mutableListOf<String>()
@@ -258,7 +339,7 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
                 is Condicion.Entre -> {
 
                     val valor1 = procesarValor( condicion.minimo )
-                    val valor2 = procesarValor ( condicion.maximo )
+                    val valor2 = procesarValor( condicion.maximo )
 
                     require( valor1 < valor2 ) { "BETWEEN require que o primeiro valor sexa menor que o segundo" }
 
@@ -278,13 +359,25 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
 
     }
 
+    /**
+     * Constrúe as cláusulas JOIN necesarias para combinar a táboa principal
+     * coas táboas secundarias indicadas.
+     *
+     * Para cada combinación verifica que a táboa secundaria estea permitida
+     * e establece a relación entre as columnas correspondentes mediante ON
+     * ou USING, segundo coincidan ou non os nomes das columnas.
+     *
+     * @param aliasPrincipal Alias asignado á táboa principal da consulta.
+     * @param datos Lista de configuracións coas táboas secundarias e as condicións de combinación.
+     * @return Cadea SQL coas cláusulas JOIN construídas.
+     */
     private fun combinarTaboas( aliasPrincipal: String, datos: List<CombinacionSQL> ): String {
 
         val combinacions = buildString {
 
             datos.forEach { info ->
 
-                verificarTaboa( info.taboaCombinacion/*, Modo.LECTURA*/ )
+                verificarTaboa( info.taboaCombinacion )
 
                 val principal = "$aliasPrincipal.${ info.colPrincipal }"
                 val secundaria = "${ info.aliasSecundario }.${ info.colSecundaria }"

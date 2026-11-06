@@ -1,6 +1,7 @@
 package org.aprengal.lendasnubeiras.data
 
 import androidx.test.platform.app.InstrumentationRegistry
+import kotlinx.coroutines.runBlocking
 import org.aprengal.lendasnubeiras.data.actividades.datos.Categoria
 import org.aprengal.lendasnubeiras.data.bd.clases.BBDD
 import org.aprengal.lendasnubeiras.data.bd.clases.BD
@@ -37,7 +38,7 @@ class SQLITEOperacionsBasicas {
         @BeforeClass
         fun preparar() {
             val contexto = InstrumentationRegistry.getInstrumentation().targetContext
-            db.arrancar( contexto )
+            runBlocking { db.arrancar( contexto, false ) }
             Localizacion.arrancar( contexto )
             bd = db.bd
         }
@@ -59,14 +60,14 @@ class SQLITEOperacionsBasicas {
     @Test
     fun inserirActividade() {
 
-        val datos = datosCompletos(mapOf("id" to "101", "clave_titulo" to "proba-1"))
+        val datos = datosCompletos(mapOf("id" to "101", "clave_titulo" to "dados-historiosos"))
         val id = bd.insertar( Taboa.ACTIVIDADES, datos )
 
         assertTrue( id > 0 )
 
         val resultado = collerActividade( id )!!
 
-        assertEquals( "proba-1", resultado.claveTitulo )
+        assertEquals( "dados-historiosos", resultado.claveTitulo )
         //assertEquals( "Descrición de proba abondo longa", resultado.descricion )
 
     }
@@ -75,9 +76,9 @@ class SQLITEOperacionsBasicas {
     fun inserirVariasActividades() {
 
         val datos = listOf(
-            datosCompletosAny(mapOf("id" to 1L, "clave_titulo" to "proba-1")),
-            datosCompletosAny(mapOf("id" to 2L, "clave_titulo" to "proba-2")),
-            datosCompletosAny(mapOf("id" to 3L, "clave_titulo" to "proba-3"))
+            datosCompletosAny(mapOf("id" to 1L, "clave_titulo" to "dados-historiosos")),
+            datosCompletosAny(mapOf("id" to 2L, "clave_titulo" to "pasa-palabra")),
+            datosCompletosAny(mapOf("id" to 3L, "clave_titulo" to "palabras-encadenadas"))
         )
 
         val ids = bd.insertar( Taboa.ACTIVIDADES, datos )
@@ -95,23 +96,23 @@ class SQLITEOperacionsBasicas {
     @Test
     fun actualizarActividade() {
 
-        val datos = datosCompletos( mapOf( "id" to "102", "clave_titulo" to "proba-1" ) )
+        val datos = datosCompletos( mapOf( "id" to "102", "clave_titulo" to "dados-historiosos" ) )
         val id = bd.insertar( Taboa.ACTIVIDADES, datos )
 
-        val cambios = mapOf( "clave_titulo" to "proba-2" )
+        val cambios = mapOf( "clave_titulo" to "pasa-palabra" )
         val onde = mapOf( "id" to Condicion.Simple( id ) )
         val actualizadas = bd.actualizar( Taboa.ACTIVIDADES, cambios, onde )
 
         assertEquals( 1, actualizadas )
-        assertEquals( "proba-2", collerActividade( id )!!.claveTitulo )
-        assertEquals( "proba-2", collerActividade( "proba-2" )!!.claveTitulo )
+        assertEquals( "pasa-palabra", collerActividade( id )!!.claveTitulo )
+        assertEquals( "pasa-palabra", collerActividade( "pasa-palabra" )!!.claveTitulo )
 
     }
 
     @Test
     fun eliminarActividade() {
 
-        val datos = datosCompletos( mapOf( "id" to "103", "clave_titulo" to "proba-1", "estado" to "-1" ) )
+        val datos = datosCompletos( mapOf( "id" to "103", "clave_titulo" to "dados-historiosos", "estado" to "-1" ) )
         val id = bd.insertar( Taboa.ACTIVIDADES, datos )
 
         val onde = mapOf( "id" to Condicion.Simple( id ) )
@@ -130,7 +131,7 @@ class SQLITEOperacionsBasicas {
         for ( estado in estadosProhibidos ) {
 
             val id = 800L + estado.toInt()
-            val datos = datosCompletos(mapOf("id" to id.toString(), "estado" to estado))
+            val datos = datosCompletos( mapOf( "id" to id.toString(), "estado" to estado ) )
             bd.insertar( Taboa.ACTIVIDADES, datos )
 
             val onde = mapOf( "id" to Condicion.Simple( id ) )
@@ -155,10 +156,10 @@ class SQLITEOperacionsBasicas {
     @Test
     fun idActividadeDuplicadaRexeitada() {
 
-        val datos1 = datosCompletos(mapOf("id" to "500", "clave_titulo" to "proba-1"))
+        val datos1 = datosCompletos(mapOf("id" to "500", "clave_titulo" to "dados-historiosos"))
         bd.insertar( Taboa.ACTIVIDADES, datos1 )
 
-        val datos2 = datosCompletos(mapOf("id" to "500", "clave_titulo" to "proba-2"))
+        val datos2 = datosCompletos(mapOf("id" to "500", "clave_titulo" to "pasa-palabra"))
         assertEquals( -1, bd.insertar( Taboa.ACTIVIDADES, datos2 ) )
 
     }
@@ -196,10 +197,10 @@ class SQLITEOperacionsBasicas {
     @Test
     fun actualizarIdExistente() {
 
-        val datos1 = datosCompletos( mapOf( "id" to "600", "clave_titulo" to "proba-1", "estado" to "-1" ) )
+        val datos1 = datosCompletos( mapOf( "id" to "600", "clave_titulo" to "dados-historiosos", "estado" to "-1" ) )
         bd.insertar( Taboa.ACTIVIDADES, datos1 )
 
-        val datos2 = datosCompletos( mapOf( "id" to "601", "clave_titulo" to "proba-2", "estado" to "-1" ) )
+        val datos2 = datosCompletos( mapOf( "id" to "601", "clave_titulo" to "pasa-palabra", "estado" to "-1" ) )
         bd.insertar( Taboa.ACTIVIDADES, datos2 )
 
         val cambios = mapOf( "id" to 600L )
@@ -212,7 +213,7 @@ class SQLITEOperacionsBasicas {
     @Test
     fun actualizarIdActividadeEnviada() {
 
-        val datos = datosCompletos(mapOf("id" to "602", "clave_titulo" to "proba-1", "estado" to "0"))
+        val datos = datosCompletos(mapOf("id" to "602", "clave_titulo" to "dados-historiosos", "estado" to "0"))
         bd.insertar( Taboa.ACTIVIDADES, datos )
 
         val cambios = mapOf( "id" to 999L )
@@ -228,7 +229,7 @@ class SQLITEOperacionsBasicas {
     @Test
     fun actualizarIdActividadeNonEnviada() {
 
-        val datos = datosCompletos( mapOf("id" to "603", "clave_titulo" to "proba-1", "estado" to "-1" ) )
+        val datos = datosCompletos( mapOf("id" to "603", "clave_titulo" to "dados-historiosos", "estado" to "-1" ) )
         bd.insertar( Taboa.ACTIVIDADES, datos )
 
         val cambios = mapOf( "id" to 604L )
@@ -356,7 +357,7 @@ class SQLITEOperacionsBasicas {
             datosCompletosAny(
                 mapOf(
                     "id" to 801L,
-                    "clave_titulo" to "proba-1",
+                    "clave_titulo" to "dados-historiosos",
                     //"descricion" to "Sesión práctica de percusión para principiantes",
                     "id_categoria" to "musica",
                     "estado" to 2
@@ -365,7 +366,7 @@ class SQLITEOperacionsBasicas {
             datosCompletosAny(
                 mapOf(
                     "id" to 802L,
-                    "clave_titulo" to "proba-2",
+                    "clave_titulo" to "pasa-palabra",
                     //"descricion" to "Ritmos tradicionais con percusión",
                     "id_categoria" to "musica",
                     "estado" to 2
@@ -374,7 +375,7 @@ class SQLITEOperacionsBasicas {
             datosCompletosAny(
                 mapOf(
                     "id" to 803L,
-                    "clave_titulo" to "proba-3",
+                    "clave_titulo" to "palabras-encadenadas",
                     //"descricion" to "Técnicas básicas de acuarela",
                     "id_categoria" to "arte",
                     "estado" to 1
@@ -387,9 +388,9 @@ class SQLITEOperacionsBasicas {
         val resultados = collerActividadesBuscables( /*"percusión",*/ "data_modificado" )
 
         assertEquals( 2, resultados.size )
-        assertTrue( resultados.any { it.claveTitulo == "proba-1" } )
-        assertTrue( resultados.any { it.claveTitulo == "proba-2" } )
-        assertTrue( resultados.none { it.claveTitulo == "proba-3" } )
+        assertTrue( resultados.any { it.claveTitulo == "dados-historiosos" } )
+        assertTrue( resultados.any { it.claveTitulo == "pasa-palabra" } )
+        assertTrue( resultados.none { it.claveTitulo == "palabras-encadenadas" } )
 
         bd.actualizar( Taboa.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.En( setOf( 801L, 802L, 803L ) ) ) )
 
@@ -402,7 +403,7 @@ class SQLITEOperacionsBasicas {
             datosCompletosAny(
                 mapOf(
                     "id" to 804L,
-                    "clave_titulo" to "proba-1",
+                    "clave_titulo" to "dados-historiosos",
                     //"descricion" to "Ritmo sen instrumentos",
                     "id_categoria" to Categoria.Interior,
                     "estado" to 2
@@ -411,7 +412,7 @@ class SQLITEOperacionsBasicas {
             datosCompletosAny(
                 mapOf(
                     "id" to 805L,
-                    "clave_titulo" to "proba-2",
+                    "clave_titulo" to "pasa-palabra",
                     //"descricion" to "Percusión aplicada ao movemento",
                     "id_categoria" to Categoria.Outros,
                     "estado" to 1
@@ -424,7 +425,7 @@ class SQLITEOperacionsBasicas {
         val resultados = collerActividadesBuscables( "data_modificado", filtros = mapOf( "id_categoria" to Categoria.Interior ) )
 
         assertEquals( 1, resultados.size )
-        assertEquals( "proba-1", resultados[ 0 ].claveTitulo )
+        assertEquals( "dados-historiosos", resultados[ 0 ].claveTitulo )
 
         bd.actualizar( Taboa.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.En( setOf( 804L, 805L ) ) ) )
 
@@ -467,11 +468,11 @@ class SQLITEOperacionsBasicas {
         )
 
         val datos = listOf(
-            datosCompletosAny( mapOf( "id" to 1L, "id_autoria" to 30L, "clave_titulo" to "proba-1" ) ),
-            datosCompletosAny( mapOf( "id" to 2L, "id_autoria" to 20L, "clave_titulo" to "proba-2" ) ),
-            datosCompletosAny( mapOf( "id" to 3L, "id_autoria" to 30L, "clave_titulo" to "proba-3" ) ),
-            datosCompletosAny( mapOf( "id" to 4L, "id_autoria" to 30L, "clave_titulo" to "proba-4" ) ),
-            datosCompletosAny( mapOf( "id" to 5L, "id_autoria" to 50L, "clave_titulo" to "proba-5" ) ),
+            datosCompletosAny( mapOf( "id" to 1L, "id_autoria" to 30L, "clave_titulo" to "dados-historiosos" ) ),
+            datosCompletosAny( mapOf( "id" to 2L, "id_autoria" to 20L, "clave_titulo" to "pasa-palabra" ) ),
+            datosCompletosAny( mapOf( "id" to 3L, "id_autoria" to 30L, "clave_titulo" to "palabras-encadenadas" ) ),
+            datosCompletosAny( mapOf( "id" to 4L, "id_autoria" to 30L, "clave_titulo" to "simon-di" ) ),
+            datosCompletosAny( mapOf( "id" to 5L, "id_autoria" to 50L, "clave_titulo" to "baul-recordos" ) ),
         )
 
         bd.insertar( Taboa.ACTIVIDADES, datos )

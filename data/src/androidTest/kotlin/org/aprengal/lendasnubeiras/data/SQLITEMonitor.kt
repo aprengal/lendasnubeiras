@@ -1,6 +1,7 @@
 package org.aprengal.lendasnubeiras.data
 
 import androidx.test.platform.app.InstrumentationRegistry
+import kotlinx.coroutines.runBlocking
 import org.aprengal.lendasnubeiras.data.actividades.dixitais.datos.Grupo
 import org.aprengal.lendasnubeiras.data.actividades.dixitais.datos.Dificultade
 import org.aprengal.lendasnubeiras.data.bd.clases.BBDD
@@ -51,7 +52,7 @@ class SQLITEMonitor {
         @BeforeClass
         fun preparar() {
             val contexto = InstrumentationRegistry.getInstrumentation().targetContext
-            db.arrancar( contexto )
+            runBlocking { db.arrancar( contexto, false ) }
             Localizacion.arrancar( contexto )
             bd = db.bd
         }
@@ -146,7 +147,7 @@ class SQLITEMonitor {
 
         val idActividade = 900L
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "proba-1"))
+            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "dados-historiosos"))
         )
         val actividade = collerActividade( idActividade )!!
 
@@ -323,7 +324,7 @@ class SQLITEMonitor {
 
         val idActividade = 901L
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "proba-1"))
+            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "dados-historiosos"))
         )
 
         val actividade = collerActividade( idActividade )!!
@@ -349,7 +350,7 @@ class SQLITEMonitor {
 
         val idActividade = 902L
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "proba-1"))
+            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "dados-historiosos"))
         )
         val actividade = collerActividade( idActividade )!!
 
@@ -453,7 +454,7 @@ class SQLITEMonitor {
 
         val idActividade = 917L
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "proba-1"))
+            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "dados-historiosos"))
         )
         val actividade = collerActividade( idActividade )!!
 
@@ -495,7 +496,7 @@ class SQLITEMonitor {
 
         val idActividade = 903L
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "proba-1"))
+            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "dados-historiosos"))
         )
         val actividade = collerActividade( idActividade )!!
 
@@ -518,7 +519,7 @@ class SQLITEMonitor {
 
         val idActividade = 904L
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "proba-1"))
+            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "dados-historiosos"))
         )
         val actividade = collerActividade( idActividade )!!
 
@@ -541,7 +542,7 @@ class SQLITEMonitor {
 
         val idActividade = 905L
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "proba-1"))
+            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "dados-historiosos"))
         )
         val actividade = collerActividade( idActividade )!!
 
@@ -564,7 +565,7 @@ class SQLITEMonitor {
 
         val idActividade = 906L
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "proba-1"))
+            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "dados-historiosos"))
         )
         val actividade = collerActividade( idActividade )!!
 
@@ -593,7 +594,7 @@ class SQLITEMonitor {
 
         val idActividade = 907L
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "proba-1"))
+            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "dados-historiosos"))
         )
         val actividade = collerActividade( idActividade )!!
 
@@ -619,7 +620,7 @@ class SQLITEMonitor {
 
         val idActividade = 908L
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "proba-1"))
+            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "dados-historiosos"))
         )
         val actividade = collerActividade( idActividade )!!
 
@@ -664,7 +665,7 @@ class SQLITEMonitor {
 
         val clasificacion = collerClasificacion( actividade, Dificultade.Facil )
 
-        assertEquals( "proba-1", clasificacion.claveActividade )
+        assertEquals( "dados-historiosos", clasificacion.claveActividade )
         assertEquals( Dificultade.Facil, clasificacion.dificultade )
         assertEquals( 3, clasificacion.listaPuntuacions.size )
 
@@ -688,13 +689,13 @@ class SQLITEMonitor {
 
         val idActividade = 909L
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "proba-1"))
+            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "dados-historiosos"))
         )
         val actividade = collerActividade( idActividade )!!
 
         val clasificacion = collerClasificacion( actividade, Dificultade.Facil )
 
-        assertEquals( "proba-1", clasificacion.claveActividade )
+        assertEquals( "dados-historiosos", clasificacion.claveActividade )
         assertTrue( clasificacion.listaPuntuacions.isEmpty() )
 
         bd.actualizar( Taboa.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
@@ -706,7 +707,7 @@ class SQLITEMonitor {
 
         val idActividade = 910L
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "proba-1"))
+            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "dados-historiosos"))
         )
         val actividade = collerActividade( idActividade )!!
 
@@ -734,7 +735,7 @@ class SQLITEMonitor {
 
         val idActividade = 911L
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "proba-1"))
+            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "dados-historiosos"))
         )
         val actividade = collerActividade( idActividade )!!
 
@@ -794,22 +795,22 @@ class SQLITEMonitor {
         val id3 = 914L
 
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to id1.toString(), "clave_titulo" to "proba-1", "id_autoria" to "40"))
+            datosCompletos(mapOf("id" to id1.toString(), "clave_titulo" to "dados-historiosos", "id_autoria" to "40"))
         )
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to id2.toString(), "clave_titulo" to "proba-2", "id_autoria" to "40"))
+            datosCompletos(mapOf("id" to id2.toString(), "clave_titulo" to "pasa-palabra", "id_autoria" to "40"))
         )
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to id3.toString(), "clave_titulo" to "proba-3", "id_autoria" to "41"))
+            datosCompletos(mapOf("id" to id3.toString(), "clave_titulo" to "palabras-encadenadas", "id_autoria" to "41"))
         )
 
         val onde = mapOf( "id_autoria" to Condicion.Simple( 40L ) )
         val resultado = collerActividades( onde )
 
         assertEquals( 2, resultado.size )
-        assertTrue( resultado.any { it.claveTitulo == "proba-1" } )
-        assertTrue( resultado.any { it.claveTitulo == "proba-2" } )
-        assertTrue( resultado.none { it.claveTitulo == "proba-3" } )
+        assertTrue( resultado.any { it.claveTitulo == "dados-historiosos" } )
+        assertTrue( resultado.any { it.claveTitulo == "pasa-palabra" } )
+        assertTrue( resultado.none { it.claveTitulo == "palabras-encadenadas" } )
 
         bd.actualizar( Taboa.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.En( setOf( id1, id2, id3 ) ) ) )
 
@@ -821,13 +822,13 @@ class SQLITEMonitor {
         val id1 = 915L
         val id2 = 916L
 
-        bd.insertar( Taboa.ACTIVIDADES, datosCompletos(mapOf("id" to id1.toString(), "clave_titulo" to "proba-1")))
-        bd.insertar( Taboa.ACTIVIDADES, datosCompletos(mapOf("id" to id2.toString(), "clave_titulo" to "proba-2")))
+        bd.insertar( Taboa.ACTIVIDADES, datosCompletos(mapOf("id" to id1.toString(), "clave_titulo" to "dados-historiosos")))
+        bd.insertar( Taboa.ACTIVIDADES, datosCompletos(mapOf("id" to id2.toString(), "clave_titulo" to "pasa-palabra")))
 
         val resultado = collerActividades()
 
-        assertTrue( resultado.any { it.claveTitulo == "proba-1" } )
-        assertTrue( resultado.any { it.claveTitulo == "proba-2" } )
+        assertTrue( resultado.any { it.claveTitulo == "dados-historiosos" } )
+        assertTrue( resultado.any { it.claveTitulo == "pasa-palabra" } )
 
         bd.actualizar( Taboa.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.En( setOf( id1, id2 ) ) ) )
 

@@ -1,6 +1,5 @@
 package org.aprengal.lendasnubeiras.data.actividades.datos
 
-import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.collerTextoActividade
 
 data class ActividadeBuscable(

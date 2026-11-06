@@ -85,9 +85,9 @@ class Entrada : AppCompatActivity() {
         runBlocking {
             Axustes.arrancar( contexto )
             ConexionApi.arrancar( contexto )
-            BD.arrancar( contexto )
             idioma = Localizacion.arrancar( contexto )
             Tema.arrancar()
+            BD.arrancar( contexto )
             SesionActual.arrancar()
         }
 

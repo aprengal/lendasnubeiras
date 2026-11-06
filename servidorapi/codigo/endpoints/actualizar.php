@@ -14,10 +14,7 @@ declare ( strict_types = 1 );
 function endpoint_actualizar(): void {
 
     esixir_metodo( 'POST' );
-
-    $corpo = validar_corpo( coller_corpo(), [
-        'uuid' => [ 'tipo' => 'uuid' ]
-    ] );
+    $corpo = validar_corpo( coller_corpo(), [ 'uuid' => [ 'tipo' => 'uuid' ] ] );
 
     $usuario = usuario_actual();
     $identificador = $usuario->existe() ? (string) $usuario->id : $corpo[ 'uuid' ];

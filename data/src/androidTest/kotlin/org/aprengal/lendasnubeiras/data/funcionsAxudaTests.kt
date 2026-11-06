@@ -106,7 +106,7 @@ fun datosCompletos( datos: Map<String, String> = emptyMap() ): Map<String, Strin
 
     val base = mapOf(
         "id" to System.currentTimeMillis().toString(),
-        "clave_titulo" to "Actividade de proba",
+        "clave_titulo" to "actividade-proba",
         "id_autoria" to "1",
         "id_categoria" to "nada",
         "id_destinatario" to "xeral",

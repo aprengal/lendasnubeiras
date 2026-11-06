@@ -4,8 +4,31 @@ import android.database.sqlite.SQLiteDatabase
 import org.aprengal.lendasnubeiras.data.actividades.datos.Estado
 import org.aprengal.lendasnubeiras.data.actividades.dixitais.datos.Dificultade
 
+/**
+ * Xestor encargado de definir e manter a estrutura da base de datos SQLite.
+ *
+ * Centraliza a creación das táboas, índices, restricións de integridade e disparadores
+ * necesarios para o funcionamento da aplicación, así como a xestión das actualizacións
+ * da estrutura entre diferentes versións da base de datos.
+ */
 internal class EstruturaDB {
 
+    /**
+     * Crea a estrutura inicial da base de datos, incluíndo todas as táboas,
+     * índices, claves foráneas, restricións e disparadores necesarios.
+     *
+     * As táboas creadas son:
+     * - ACTIVIDADES: almacena as actividades, o seu estado de sincronización
+     *   e os seus datos de identificación e modificación.
+     * - GRUPOS: almacena os grupos de xogadores.
+     * - XOGADORES: almacena os xogadores asociados aos seus respectivos grupos.
+     * - PUNTUACIONS: almacena as puntuacións obtidas polos xogadores nas actividades.
+     *
+     * Tamén se crean índices para optimizar as consultas máis habituais e disparadores
+     * para protexer a integridade dos datos e impedir modificacións non permitidas.
+     *
+     * @param db Base de datos SQLite na que se creará a estrutura.
+     */
     fun crear( db: SQLiteDatabase ) {
 
         val dificultades = Dificultade.entries.joinToString( "," ) { dificultade -> "'${ dificultade.clave }'" }
@@ -38,8 +61,6 @@ internal class EstruturaDB {
         db.execSQL( "CREATE INDEX idx_actividades_destinatario ON $actividades( id_destinatario )" )
         db.execSQL( "CREATE INDEX idx_actividades_estado ON $actividades( estado )" )
         db.execSQL( "CREATE INDEX idx_actividades_data_modificado ON $actividades( data_modificado )" )
-
-        //db.execSQL( "CREATE VIRTUAL TABLE $buscador USING fts4( claveTitulo, descricion )" ) //, obxectivo, materiais ) )
 
         db.execSQL(
             """
@@ -123,15 +144,24 @@ internal class EstruturaDB {
 
     }
 
-    // Hai cambios. O importante igual sería ver se hai borradores no dispositivo.
-    // Se non os hai, igual é mellor borrar a DB e creala de novo
+    /**
+     * Xestiona a actualización da estrutura da base de datos cando cambia a súa versión.
+     *
+     * Comproba a versión anterior e a nova para executar as operacións de migración
+     * correspondentes. As modificacións deben preservar os datos existentes sempre
+     * que sexa posible e garantir a compatibilidade coa nova estrutura.
+     *
+     * @param db Base de datos SQLite sobre a que se aplicarán as modificacións.
+     * @param oldVersion Número da versión anterior da base de datos.
+     * @param newVersion Número da nova versión da base de datos.
+     */
     fun actualizar( db: SQLiteDatabase, oldVersion: Int, newVersion: Int ) {
 
-        if ( oldVersion < 2 && newVersion == 3 ) {
+        /*if ( oldVersion < 2 && newVersion == 3 ) {
 
             db.execSQL( "SELECT VERSION()" )
 
-        }
+        }*/
 
     }
 

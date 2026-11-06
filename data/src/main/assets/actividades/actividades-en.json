@@ -1,3 +1,48 @@
 {
-
+  "dados-historiosos": {
+    "titulo": "Story Dice",
+    "descripcion": [
+      "The game randomly selects several images depending on the number of dice you choose.",
+      "The participant must tell a story to the other person by connecting all the images that appeared."
+    ],
+    "resumo": "Tell a story by connecting the random images rolled on the dice.",
+    "textos": []
+  },
+  "pasa-palabra": {
+    "titulo": "Pass the Word",
+    "descripcion": [
+      "The monitor reads a word and the teams must answer it.",
+      "If correct, they move to the next word; if they don't know it, they can say 'Pass the Word' to pass their turn.",
+      "It features three levels: Twelve words with ascending random letters, and in the hard level, all letters of the alphabet are included."
+    ],
+    "resumo": "Answer in alphabetical order or say 'Pass the Word' to skip your turn.",
+    "textos": []
+  },
+  "palabras-encadenadas": {
+    "titulo": "Word Chain",
+    "descripcion": [
+      "Starting from an initial letter displayed on the screen, each player must say a word starting with the letter the previous word ended with.",
+      "In advanced levels, players are required to repeat previous words or avoid repeating words across sessions, under a strict time limit."
+    ],
+    "resumo": "Chain words based on the last letter of the previous word within the time limit.",
+    "textos": []
+  },
+  "simon-di": {
+    "titulo": "The App Signals",
+    "descripcion": [
+      "The app gives commands and actions based on body movements, gestures, or short movements that participants must execute within a tight time limit.",
+      "Commands range from simple individual actions to chained sequences of two movements."
+    ],
+    "resumo": "Perform body movements and actions guided by the app before time runs out.",
+    "textos": []
+  },
+  "baul-recordos": {
+    "titulo": "Trunk of Shared Memories",
+    "descripcion": [
+      "The app introduces a topic from the past (such as old toys, school back then, or traditional crafts).",
+      "Seniors share experiences, memories, or how life was in their time, while youth listen, ask questions, and compare with the present to create an intergenerational dialogue."
+    ],
+    "resumo": "Share memories from the past and engage in intergenerational dialogue on various topics.",
+    "textos": []
+  }
 }

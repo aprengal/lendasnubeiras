@@ -1,3 +1,48 @@
 {
-
+  "dados-historiosos": {
+    "titulo": "Dados historiosos",
+    "descripcion": [
+      "O xogo escolle aleatoriamente varias imaxes segundo a cantidade de dados que escolles.",
+      "O participante debe contarlle unha historia á outra persoa conectando todas as imaxes que saíron."
+    ],
+    "resumo": "Conta unha historia conectando as imaxes aleatorias que saian nos dados.",
+    "textos": []
+  },
+  "pasa-palabra": {
+    "titulo": "Pasa a palabra",
+    "descripcion": [
+      "O monitor le unha palabra e os equipos deben respondela.",
+      "Se acerta, chégase á seguinte; se non o sabe, pódese dicir 'Pasa a palabra' para ceder a quenda.",
+      "Conta con tres niveis: Doce palabras con letras aleatorias ascendentes, e no difícil entran todas as letras do abecedario."
+    ],
+    "resumo": "Responde por orde alfabética ou di 'Pasa a palabra' para ceder a quenda.",
+    "textos": []
+  },
+  "palabras-encadenadas": {
+    "titulo": "Palabras encadeadas",
+    "descripcion": [
+      "Partindo dunha letra inicial mostrada na pantalla, cada xogador debe dicir unha palabra que comece coa letra coa que rematou a anterior.",
+      "Nos niveis avanzados exíxese repetir as palabras anteriores ou evitar repetilas entre sesións, cun límite de tempo estrito."
+    ],
+    "resumo": "Encadea palabras baseándote na letra final da anterior dentro do tempo límite.",
+    "textos": []
+  },
+  "simon-di": {
+    "titulo": "A aplicación sinala",
+    "descripcion": [
+      "A aplicación indica ordes e accións baseadas en movementos corporais, xestos ou desprazamentos que os participantes deben executar nun tempo límite axustado.",
+      "As ordes van dende accións sinxelas individuais ata secuencias encadenadas de dous movementos."
+    ],
+    "resumo": "Realiza movementos corporais e accións guiadas pola aplicación antes de que esgote o tempo.",
+    "textos": []
+  },
+  "baul-recordos": {
+    "titulo": "Baúl dos recordos compartidos",
+    "descripcion": [
+      "A aplicación lanza unha temática do pasado (como xoguetes antigos, a escola ou os oficios).",
+      "Os maiores comparten vivencias, recordos ou como se vivía na súa época, mentres os mozos escoitan, fan preguntas e comparan co presente para xerar un diálogo interxeracional."
+    ],
+    "resumo": "Comparte vivencias do pasado e dialoga entre xeracións sobre diferentes temáticas.",
+    "textos": []
+  }
 }

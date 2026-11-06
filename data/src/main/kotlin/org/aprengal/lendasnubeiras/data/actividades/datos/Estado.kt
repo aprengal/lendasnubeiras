@@ -3,7 +3,7 @@ package org.aprengal.lendasnubeiras.data.actividades.datos
 import org.aprengal.lendasnubeiras.data.localizacion.clases.ElementoL10n
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nActividades
 
-enum class Estado(val estado: Int, override val nome: L10nActividades): ElementoL10n {
+enum class Estado( val estado: Int, override val nome: L10nActividades ): ElementoL10n {
 
     //Só existen no dispositivo onde se garde
     BorradorLocal( -1, L10nActividades.EstadoBorradorLocal ),

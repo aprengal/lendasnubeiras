@@ -63,7 +63,7 @@ fun AmosarTitulo() {
     val ruta = LocalRuta.current
 
     val titulo = when ( ruta ) {
-        is Ruta.ActividadeDetalle -> collerActividade( ruta.clave )?.claveTitulo
+        is Ruta.ActividadeDetalle -> collerActividade( ruta.clave )?.titulo
         else -> LocalTitulo.current!!.texto()
     }
 

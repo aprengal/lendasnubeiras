@@ -13,7 +13,8 @@ enum class L10nBase( internal val clave: String ) : L10nSingular {
     ErroConexion( "erro_conexion" ),
     ErroDatosInvalidos( "erro_informacion_confusa" ),
     ErroLimiteIntentos( "erro_demasiados_intentos" ),
-    ErroServidor( "erro_servidor" );
+    ErroServidor( "erro_servidor" ),
+    CargarMais( "cargar_mais" );
 
     internal val dominio: Dominio = Dominio.BASE
 

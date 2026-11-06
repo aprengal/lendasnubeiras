@@ -1,9 +1,11 @@
 package org.aprengal.lendasnubeiras.data.bd.operacions
 
+import android.util.Log
 import org.aprengal.lendasnubeiras.data.actividades.datos.Actividade
 import org.aprengal.lendasnubeiras.data.actividades.datos.ActividadeBuscable
 import org.aprengal.lendasnubeiras.data.actividades.datos.Categoria.Companion.escollerCategoria
 import org.aprengal.lendasnubeiras.data.actividades.datos.Destinatario.Companion.escollerDestinatario
+import org.aprengal.lendasnubeiras.data.actividades.datos.Estado
 import org.aprengal.lendasnubeiras.data.actividades.datos.Estado.Companion.escollerEstado
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.Orde
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.buscarElemento
@@ -90,14 +92,54 @@ object Actividades {
     /**
      * Obtén as actividades que cumpren as condicións especificadas.
      *
-     * Se non se indican condicións, devolve todas as actividades almacenadas.
+     * Non aplica ningunha condición por defecto: se o mapa está baleiro,
+     * devolve todas as actividades.
      *
      * @param onde Mapa coas condicións que deben cumprir as actividades.
-     * Por defecto, non se aplica ningún filtro.
-     * @return Lista de actividades que cumpren as condicións indicadas.
+     * @return Lista de actividades que cumpren todas as condicións indicadas.
      */
-    fun collerActividades( onde: Map<String, Condicion> = mapOf() ): List<Actividade> {
+    fun collerActividades( onde: Map<String, Condicion> ): List<Actividade> {
         return buscarElementos( Taboa.ACTIVIDADES, onde ) { actividade -> crearActividade( actividade ) }
+    }
+
+    /**
+     * Obtén as actividades públicas almacenadas de forma paxinada ordenadas de maneira descendente.
+     *
+     * @param limite Número máximo de actividades a devolver.
+     * @param posicion Desprazamento (offset) para a paginación.
+     * @return Lista de actividades públicas.
+     */
+    fun collerActividadesPublicas( posicion: Int = 10, limite: Int = 0 ): List<ActividadeBuscable> {
+
+        val columnas = setOf( "id", "clave_titulo", "id_autoria", "id_categoria", "id_destinatario", "estado", "duracion", "data_modificado" )
+        val onde = mapOf( "estado" to Condicion.Simple( Estado.Publicado.estado ) )
+        val ordenar = mapOf( "id" to Orde.DESC )
+        val datosLimite = listOf( posicion, limite )
+        val datos = SeleccionSQL( columnas = columnas, onde = onde, ordenar = ordenar, limite = datosLimite )
+        val resultados = bd.seleccionar( Taboa.ACTIVIDADES, datos )
+
+        return resultados.map { actividade -> crearActividadeBuscable( actividade ) }
+
+    }
+
+    /**
+     * Conta o número de actividades que se atopan publicadas.
+     *
+     * Realiza unha consulta á base de datos para obter o total de actividades
+     * cuxo estado é [Estado.Publicado].
+     *
+     * @return Número de actividades publicadas. Devolve 0 se non se obteñen
+     * resultados ou se non é posible converter o valor a un enteiro.
+     */
+    fun contarActividadesPublicas(): Int {
+
+        val columnas = setOf( "COUNT( * ) as total" )
+        val onde = mapOf( "estado" to Condicion.Simple( Estado.Publicado.estado ) )
+        val datos = SeleccionSQL( columnas = columnas, onde = onde )
+        val resultados = bd.seleccionar( Taboa.ACTIVIDADES, datos )
+
+        return resultados.firstOrNull()?.get( "total" )?.toString()?.toIntOrNull() ?: 0
+
     }
 
     /**

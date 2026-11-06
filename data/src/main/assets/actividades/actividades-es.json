@@ -1,7 +1,7 @@
 {
   "dados-historiosos": {
     "titulo": "Dados historiosos",
-    "descripcion": [
+    "descricion": [
       "El juego elige aleatoriamente varias imágenes según la cantidad de dados que escojas.",
       "El participante debe contarle una historia a la otra persona conectando todas las imágenes que salieron."
     ],
@@ -10,7 +10,7 @@
   },
   "pasa-palabra": {
     "titulo": "Pasa la palabra",
-    "descripcion": [
+    "descricion": [
       "El monitor lee una palabra y los equipos deben responderla.",
       "Si aciertan, se pasa a la siguiente; si no lo saben, se puede decir 'Pasapalabra' para ceder el turno.",
       "Cuenta con tres niveles: Doce palabras con letras aleatorias ascendentes, y en el difícil entran todas las letras del abecedario."
@@ -18,9 +18,9 @@
     "resumo": "Responde por orden alfabético o di 'Pasapalabra' para ceder el turno.",
     "textos": []
   },
-  "palabras-encadenadas": {
+  "palabras-encadeadas": {
     "titulo": "Palabras encadenadas",
-    "descripcion": [
+    "descricion": [
       "Partiendo de una letra inicial mostrada en la pantalla, cada jugador debe decir una palabra que comience por la letra con la que terminó la anterior.",
       "En los niveles avanzados se exige repetir las palabras anteriores o evitar repetirlas entre sesiones, con un límite de tiempo estricto."
     ],
@@ -29,7 +29,7 @@
   },
   "simon-di": {
     "titulo": "La aplicación señala",
-    "descripcion": [
+    "descricion": [
       "La aplicación indica órdenes y acciones basadas en movimientos corporales, gestos o desplazamientos que los participantes deben ejecutar en un límite de tiempo ajustado.",
       "Las órdenes van desde acciones sencillas individuales hasta secuencias encadenadas de dos movimientos."
     ],
@@ -37,8 +37,8 @@
     "textos": []
   },
   "baul-recordos": {
-    "titulo": "Baúl de los recuerdos compartidos",
-    "descripcion": [
+    "titulo": "Baúl de los recuerdos",
+    "descricion": [
       "La aplicación lanza una temática del pasado (como juguetes antiguos, la escuela o los oficios).",
       "Los mayores comparten vivencias, recuerdos o cómo se vivía en su época, mientras los jóvenes escuchan, hacen preguntas y comparan con el presente para generar un diálogo intergeneracional."
     ],

@@ -18,7 +18,7 @@ data class ActividadeBuscable(
         val datos = collerTextoActividade( claveTitulo )
 
         titulo = datos.optString( "titulo" )
-        resumo = datos.optString( "descricion" )
+        resumo = datos.optString( "resumo" )
 
     }
 

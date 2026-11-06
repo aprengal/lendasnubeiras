@@ -86,7 +86,7 @@ class SQLITEOperacionsBasicas {
         assertEquals( 3, ids.size )
         assertTrue( ids.all { it > 0 } )
 
-        val consulta = SeleccionSQL( columnas = setOf( "*" ) )
+        val consulta = SeleccionSQL( columnas = setOf( "id", "clave_titulo", "id_autoria", "id_categoria", "id_destinatario", "estado", "duracion", "data_modificado" ) )
         val resultados = bd.seleccionar( Taboa.ACTIVIDADES, consulta )
 
         assertEquals( 3, resultados.size )
@@ -240,115 +240,6 @@ class SQLITEOperacionsBasicas {
         assertEquals( 1, actualizadas )
 
     }
-
-    /*@Test
-    fun inserirActividadeNoBuscador() {
-
-        val id = 700L
-        val datos = datosCompletos(mapOf("id" to id.toString(), "clave_titulo" to "Busca Proba", "estado" to "2"))
-        bd.insertar( TaboaBase.ACTIVIDADES, datos )
-
-        val onde = mapOf( "docid" to Condicion.Simple( id ) )
-        val consulta = SeleccionSQL( columnas = setOf( "*" ), onde = onde )
-        val resultado = bd.seleccionar( TaboaLectura.BUSCADOR_ACTIVIDADES, consulta )
-
-        assertEquals( 1, resultado.size )
-        assertEquals( "Busca Proba", resultado[ 0 ][ "clave_titulo" ] )
-
-    }
-
-    @Test
-    fun actualizarActividadeBuscador() {
-
-        val id = 701L
-        val datos = datosCompletos(mapOf("id" to id.toString(), "clave_titulo" to "Título orixinal", "estado" to "2"))
-        bd.insertar( TaboaBase.ACTIVIDADES, datos )
-
-        val cambios = mapOf( "clave_titulo" to "Título actualizado" )
-        val onde = mapOf( "id" to Condicion.Simple( id ) )
-        bd.actualizar( TaboaBase.ACTIVIDADES, cambios, onde )
-
-        val consulta = SeleccionSQL( columnas = setOf( "clave_titulo" ), onde = mapOf( "docid" to Condicion.Simple( id ) ) )
-        val resultado = bd.seleccionar( TaboaLectura.BUSCADOR_ACTIVIDADES, consulta )
-
-        assertEquals( "Título actualizado", resultado[ 0 ][ "clave_titulo" ] )
-
-    }
-
-    @Test
-    fun eliminarActividadeBuscador() {
-
-        val id = 702L
-        val datos = datosCompletos(mapOf("id" to id.toString(), "estado" to "-1"))
-        bd.insertar( TaboaBase.ACTIVIDADES, datos )
-
-        val onde = mapOf( "id" to Condicion.Simple( id ) )
-        bd.eliminar( TaboaBase.ACTIVIDADES, onde )
-
-        val consulta = SeleccionSQL( columnas = setOf( "*" ), onde = mapOf( "docid" to Condicion.Simple( id ) ) )
-        val resultado = bd.seleccionar( TaboaLectura.BUSCADOR_ACTIVIDADES, consulta )
-
-        assertTrue( resultado.isEmpty() )
-
-    }
-
-    @Test
-    fun insertarActividadeNonBuscable() {
-
-        val id = 703L
-        val datos = datosCompletos(mapOf("id" to id.toString(), "estado" to "0"))
-        bd.insertar( TaboaBase.ACTIVIDADES, datos )
-
-        val onde = mapOf( "docid" to Condicion.Simple( id ) )
-        val consulta = SeleccionSQL( columnas = setOf( "*" ), onde = onde )
-        val resultado = bd.seleccionar( TaboaLectura.BUSCADOR_ACTIVIDADES, consulta )
-
-        assertTrue( resultado.isEmpty() )
-
-        // Axuste a estado 3 para permitir o borrado en limpar()
-        val ondeActividade = mapOf( "id" to Condicion.Simple( id ) )
-        bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 3 ), ondeActividade )
-
-    }
-
-    @Test
-    fun actualizarActividadeBuscable() {
-
-        val id = 704L
-        val datos = datosCompletos(mapOf("id" to id.toString(), "estado" to "0", "clave_titulo" to "Pendente"))
-        bd.insertar( TaboaBase.ACTIVIDADES, datos )
-
-        val onde = mapOf( "id" to Condicion.Simple( id ) )
-        bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 2 ), onde )
-
-        val ondeBuscador = mapOf( "docid" to Condicion.Simple( id ) )
-        val consulta = SeleccionSQL( columnas = setOf( "*" ), onde = ondeBuscador )
-        val resultado = bd.seleccionar( TaboaLectura.BUSCADOR_ACTIVIDADES, consulta )
-
-        assertEquals( 1, resultado.size )
-
-        // Axuste a estado 3 para permitir o borrado en limpar()
-        bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 3 ), onde )
-
-    }
-
-    @Test
-    fun actualizarActividadeNonBuscable() {
-
-        val id = 705L
-        val datos = datosCompletos(mapOf("id" to id.toString(), "estado" to "2", "clave_titulo" to "Para retirar"))
-        bd.insertar( TaboaBase.ACTIVIDADES, datos )
-
-        val onde = mapOf( "id" to Condicion.Simple( id ) )
-        bd.actualizar( TaboaBase.ACTIVIDADES, mapOf( "estado" to 3 ), onde )
-
-        val ondeBuscador = mapOf( "docid" to Condicion.Simple( id ) )
-        val consulta = SeleccionSQL( columnas = setOf( "*" ), onde = ondeBuscador )
-        val resultado = bd.seleccionar( TaboaLectura.BUSCADOR_ACTIVIDADES, consulta )
-
-        assertTrue( resultado.isEmpty() )
-
-    }*/
 
     @Test
     fun buscarActividades() {

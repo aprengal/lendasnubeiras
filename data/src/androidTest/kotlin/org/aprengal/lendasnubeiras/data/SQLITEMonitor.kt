@@ -825,7 +825,7 @@ class SQLITEMonitor {
         bd.insertar( Taboa.ACTIVIDADES, datosCompletos(mapOf("id" to id1.toString(), "clave_titulo" to "dados-historiosos")))
         bd.insertar( Taboa.ACTIVIDADES, datosCompletos(mapOf("id" to id2.toString(), "clave_titulo" to "pasa-palabra")))
 
-        val resultado = collerActividades()
+        val resultado = collerActividades( emptyMap() )
 
         assertTrue( resultado.any { it.claveTitulo == "dados-historiosos" } )
         assertTrue( resultado.any { it.claveTitulo == "pasa-palabra" } )

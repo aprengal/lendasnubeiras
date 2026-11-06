@@ -30,7 +30,7 @@
     "10": "You handed in a blank page with a dried-out slice of ham and a shiny pony sticker. The faculty has gone up in flames."
   },
   "mensaxes_cambiantes": {
-    "0": "\"When is the retake exam?\" Go get an acceptable grade instead. You know, anything above a 9.",
+    "0": "\"When's the retake?\" Just get an acceptable grade instead. You know, anything above an A. Like, a 99%.",
     "1": "C's application is still not working. Who is \"C\" anyway?",
     "2": "We are looking for \"N\". Word is they went out partying.",
     "3": "Almost dropped out, came back strong, scored the highest grades in the school, and coded this tool. Now that's a comeback.",
@@ -38,7 +38,7 @@
     "5": "The hardest part of coding is understanding the bug AI just introduced because you didn't check the code it gave you.",
     "6": "If the catalog shows no activities, it might mean someone hit the self-destruct button.",
     "7": "Special thanks to whoever had patience when the code was defying the laws of physics.",
-    "8": "If an activity doesn't show up, the JSON probably decided to step out for a stroll without telling anyone.",
+    "8": "If an activity doesn't show up, the text probably decided to step out for a stroll without telling anyone.",
     "9": "A simple user interface is one where you don't need an instruction manual... unless you get lost in the catalog.",
     "10": "If you made it to the end of this message list, thanks for testing the app. Enjoy the experience!"
   }

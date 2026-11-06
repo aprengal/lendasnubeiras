@@ -96,22 +96,22 @@ object BD {
             val campos = mutableMapOf( "uuid" to collerIdDispositivo() )
             val actividadesServidor: DatosActividades = procesarPeticion( MetodoApi.POST, RutasApi.ACTUALIZAR, campos )
 
-            if ( !actividadesServidor.exito ) {
-                Log.d( "OPS", "Que narices pasou?" )
-                return@corrutinaResposta false
-            }
+            if ( !actividadesServidor.exito ) return@corrutinaResposta false
 
             val ondeLocal = mapOf( "id" to Condicion.Simple( 0, OperadorSimple.MAIOR_IGUAL ) )
             val actividadesLocais = Actividades.collerActividades( ondeLocal ).associateBy { elemento -> elemento.id }
             val actividadesObsoletas = actividadesLocais.toMutableMap()
 
             actividadesServidor.lista.forEach { actServidor ->
+
                 try {
+
                     val id = ( actServidor[ "id" ] as Number ).toLong()
                     val dataModificadoServidor = ( actServidor[ "dataModificado" ] as? Number )?.toLong() ?: 0L
                     val actLocal = actividadesLocais[ id ]
 
                     when {
+
                         actLocal == null -> bd.insertar( Taboa.ACTIVIDADES, actServidor )
 
                         dataModificadoServidor > actLocal.dataModificado -> {
@@ -120,7 +120,9 @@ object BD {
                         }
 
                         else -> actividadesObsoletas.remove( id )
+
                     }
+
                 } catch ( e: ClassCastException ) {
                     val mensaxe = "Actividade con formato inesperado do servidor: $actServidor"
                     Log.wtf( "ActualizarCatalogo", mensaxe, e )
@@ -129,6 +131,7 @@ object BD {
                     val mensaxe = "Actividade con valor nulo inesperado: $actServidor"
                     problemas.add( mensaxe )
                 }
+
             }
 
             if ( problemas.isNotEmpty() ) {

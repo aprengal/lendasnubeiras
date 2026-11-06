@@ -49,7 +49,7 @@ internal fun EstruturaBase( navegacion: Navegacion, contido: @Composable () -> U
         floatingActionButton = { if ( amosarAccion ) BotonCrearActividade( navegacion ) }
     ) { recheoInterno ->
 
-        Column( modifier = Modifier.fillMaxSize().padding( recheoInterno ).padding( 10.dp ) ) {
+        Column( modifier = Modifier.fillMaxSize().padding( recheoInterno ).padding( horizontal = 10.dp ) ) {
             contido()
         }
 

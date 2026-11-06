@@ -1,4 +1,5 @@
 {
+
   "nome_app": "Lendas Nubeiras",
   "si": "Si",
   "non": "Non",
@@ -15,7 +16,8 @@
     "other": "Tes %s mensaxes novas",
     "many": "Tes %s de mensaxes novas"
   },
-  "mensaxe_fallos": {
+
+  "mensaxes_fallos": {
     "0": "Entregaches a tese sobre a aerodinámica das croquetas. Doutoramento honoris causa intergaláctico.",
     "1": "Esqueche a bibliografía. A túa única fonte era un tuit dun gato DJ ás tres da mañá.",
     "2": "Napoleón perdeu en Waterloo porque se lle enfriou a sopa de letras. Sabroso pero falso.",
@@ -27,6 +29,19 @@
     "8": "Afirmaches que Madrid está dentro dunha sandía xigante e Murcia é unha colonia de elfos.",
     "9": "Tocaches a táboa periódica cos morros coma se fose unha harmónica. Catástrofe en escala Richter.",
     "10": "Entregaches a folla en branco cunha lonxa de xamón curado reseco e un poni brillante. O claustro ardeu."
+  },
+  "mensaxes_cambiantes": {
+    "0": "\"Cando é a recuperación?\" Vai é saca unha nota aceptable. O que está por encima do 9.",
+    "1": "A aplicación de C segue sen funcionar. Quen é \"C\"?",
+    "2": "Estamos buscando a \"N\". Dixeron que marchou de festa.",
+    "3": "Case deixa o curso, volveu con forza, sacou as mellores notas do centro e programou esta ferramenta. Iso si que é unha remontada.",
+    "4": "Seguro que unha persoa vai a un centro de FP a aprobar ou a aguantar outras cousas inesperadas?",
+    "5": "O máis complicado de programar é entender o problema que che acaba de xerar a intelixencia artificial por non mirar o código que che deu.",
+    "6": "Se o catálogo non amosa actividades, igual significa que se premeu o botón de autodestrución",
+    "7": "Un agradecemento especial a quen tivo paciencia cando o código facía cousas que desafiaban as leis da física.",
+    "8": "Se unha actividade non aparece, o máis probable é que o JSON decidise saír a dar unha volta sen avisar.",
+    "9": "Unha interface sinxela é aquela na que non precisas manual de instrucións... a menos que te perdas no catálogo.",
+    "10": "Se chegaches ata o final desta lista de mensaxes, grazas por probar a aplicación. Goza da experiencia!"
   }
 
 }

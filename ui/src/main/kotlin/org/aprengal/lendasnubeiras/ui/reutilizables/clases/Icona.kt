@@ -37,7 +37,8 @@ enum class Icona( override val clave: String, override val nome: L10nIconas ): E
 
     Valido( "\uDB80\uDD2C", L10nIconas.Valido ),
     Invalido( "\uDB80\uDD56", L10nIconas.Invalido ),
-    Correo( "\uDB80\uDDF0", L10nIconas.Correo );
+    Correo( "\uDB80\uDDF0", L10nIconas.Correo ),
+    Catalogo( "\uDB82\uDC2E", L10nIconas.Catalogo );
 
 
     companion object {

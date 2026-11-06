@@ -21,6 +21,7 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.collerActividade
 import org.aprengal.lendasnubeiras.data.localizacion.cantidades.L10nPlural
+import org.aprengal.lendasnubeiras.data.localizacion.cantidades.L10nVariante
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nSingular
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalRuta
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalTitulo
@@ -39,6 +40,11 @@ fun TextoAnunciable( elemento: L10nSingular, modifier: Modifier = Modifier ) {
 
 @Composable
 fun TextoPlural( elemento: L10nPlural, cantidade: Number, modifier: Modifier = Modifier, estilo: TextStyle = LocalTextStyle.current ) {
+    Text( elemento.texto( cantidade ), modifier, style = estilo )
+}
+
+@Composable
+fun TextoVariante( elemento: L10nVariante, cantidade: Int, modifier: Modifier = Modifier, estilo: TextStyle = LocalTextStyle.current ) {
     Text( elemento.texto( cantidade ), modifier, style = estilo )
 }
 

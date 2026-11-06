@@ -145,8 +145,8 @@ object ConexionApi {
                 while ( true ) {
 
                     conexion = URL( urlActual ).openConnection() as HttpURLConnection
-                    conexion.connectTimeout = 5000
-                    conexion.readTimeout = 5000
+                    conexion.connectTimeout = 10000
+                    conexion.readTimeout = 10000
                     conexion.requestMethod = metodoApi.clave
                     conexion.instanceFollowRedirects = false
 

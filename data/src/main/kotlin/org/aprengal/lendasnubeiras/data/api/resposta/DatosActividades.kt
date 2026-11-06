@@ -15,7 +15,7 @@ class DatosActividades( datos: JSONObject ) : RespostaApi( datos.optInt( "codigo
     /**
      * Extrae e transforma o JSONArray de actividades nunha lista plana de atributos.
      */
-    private fun collerActividades( datos: JSONObject): List<Map<String, Any>> {
+    private fun collerActividades( datos: JSONObject ): List<Map<String, Any>> {
 
         val actividades = datos.optJSONArray( "actividades" ) ?: return emptyList()
 

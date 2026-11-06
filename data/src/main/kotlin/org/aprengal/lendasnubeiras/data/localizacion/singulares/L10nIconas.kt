@@ -22,7 +22,8 @@ enum class L10nIconas( internal val clave: String ) : L10nSingular {
 
     Valido( "valido" ),
     Invalido( "invalido" ),
-    Correo( "correo" );
+    Correo( "correo" ),
+    Catalogo( "catalogo" );
 
     internal val dominio: Dominio = Dominio.ICONAS
 

@@ -1,15 +1,21 @@
 {
 
-  "dialogo_cambio_idioma": "Idioma de los menús",
-  "dialogo_cambio_tema": "Tema de la aplicación",
-  "dialogo_borrado_conta": "¿Borrar la cuenta?",
-  "dialogo_peche_sesion": "¿Cerrar sesión?",
+  "usuario_autenticado": "Usuario autenticado",
+
   "titulo_cambio_idioma": "Idioma",
   "titulo_cambio_tema": "Tema",
-  "boton_borrado_conta": "Borrar cuenta",
-  "boton_peche_sesion": "Cerrar sesión",
+  "titulo_actualizacion_catalogo": "Actualizar catálogo",
+  "titulo_borrado_conta": "Borrar cuenta",
+  "titulo_peche_sesion": "Cerrar sesión",
+
+  "dialogo_cambio_idioma": "Idioma de los menús",
+  "dialogo_cambio_tema": "Tema de la aplicación",
+  "dialogo_actualizacion_catalogo": "¿Actualizar catálogo?",
+  "dialogo_borrado_conta": "¿Borrar la cuenta?",
+  "dialogo_peche_sesion": "¿Cerrar sesión?",
 
   "reinicio_cambio_idioma": "La aplicación se reiniciará tras cambiar el idioma",
+  "contido_actualizacion_catalogo": "Si la actualización es correcta, no se mostrará ningún texto.",
   "contido_borrado_conta": "Se enviará un correo para confirmar el borrado de cuenta y la sesión actual se cerrará.",
 
   "tema_claro": "Claro",
@@ -18,7 +24,8 @@
 
   "gardado_fallido_cambio_idioma": "No se ha podido cambiar el idioma",
   "gardado_fallido_cambio_tema": "No se ha podido cambiar el tema",
+  "actualizado_catalogo_fallido": "Ha habido un problema con la actualización del catálogo",
   "borrado_conta_fallido": "No se ha podido borrar la cuenta",
-  "peche_sesion_fallido": "No se ha podido cerrar la sesión"
+  "peche_sesion_fallido": "No se ha podido cerrar la sesión",
 
 }

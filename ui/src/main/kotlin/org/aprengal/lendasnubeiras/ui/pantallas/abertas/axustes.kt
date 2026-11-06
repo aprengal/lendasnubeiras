@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,10 +19,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import org.aprengal.lendasnubeiras.data.axustes.DatosTema.escollerVarianteImaxe
 import org.aprengal.lendasnubeiras.data.axustes.DatosTema.Variante
+import org.aprengal.lendasnubeiras.data.bd.clases.BD.actualizarCatalogo
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.cambiarIdioma
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.obterTexto
@@ -54,6 +58,8 @@ import org.aprengal.lendasnubeiras.ui.utilidades.Accions.executarAccion
 @Composable
 fun PantallaAxustes() {
 
+    val idiomaActual = LocalIdioma.current
+
     Column( modifier = Modifier.fillMaxWidth().padding( 10.dp ) ) {
 
         if ( usuarioActual().existe ) {
@@ -61,11 +67,9 @@ fun PantallaAxustes() {
             Card {
 
                 Column( Modifier.fillMaxWidth().padding( vertical = 10.dp ), Arrangement.Center, Alignment.CenterHorizontally ) {
-
-                    Text( "Usuario autenticado", fontWeight = FontWeight.Bold )
+                    Texto( L10nOpcions.UsuarioAutenticado, estilo = MaterialTheme.typography.titleLarge )
                     EspazadorAlto()
                     Text( usuarioActual().correo )
-
                 }
 
             }
@@ -82,7 +86,7 @@ fun PantallaAxustes() {
                 gardadoFallido = L10nOpcions.GardadoFallidoCambioIdioma,
                 tipo = TipoOpcion.ALERTA,
                 icona = Icona.Idioma,
-                valorInicial = LocalIdioma.current,
+                valorInicial = idiomaActual,
                 accion = { novoIdioma -> cambiarIdioma( novoIdioma ) },
                 tituloAlerta = L10nOpcions.DialogoCambioIdioma,
                 opcions = Idioma.entries.filter { idioma -> idioma != Idioma.Nada },
@@ -108,11 +112,44 @@ fun PantallaAxustes() {
 
         }
 
-        if ( PodeBorrarConta( usuarioActual() ) ) {
+        //A seguinte funcionalidade púxose en opcións, pero igual sería mellor que estivese
+        //na pantalla de edición de actividades, pero como non se vai implementar, deixase aquí como mostra.
+        //Cando se abre a aplicación xa se realiza unha actualización do catálog
+        //Non ten sentido que o usuario poida volver actualizar isto
+        if ( usuarioActual().existe ) {
+
+            val ambito = CoroutineScope( SupervisorJob() + Dispatchers.IO )
+            val accionCatalogo = intentarAccion(
+                L10nOpcions.DialogoActualizacionCatalogo,
+                L10nOpcions.ContidoActualizacionCatalogo,
+                L10nOpcions.ActualizacionCatalogoFallido
+            ) { actualizarCatalogo( ambito ) }
+
+            val modificadorCatalogo = Modifier.fillMaxWidth().clickable( onClick = accionCatalogo ).padding( vertical = 12.dp )
 
             EspazadorAlto( 2 )
 
-            val modificador = Modifier.fillMaxWidth().clickable( onClick = intentoBorrarConta() ).padding( horizontal = 16.dp, vertical = 12.dp )
+            Card {
+
+                Column( modificadorCatalogo, Arrangement.Center, Alignment.CenterHorizontally ) {
+                    Texto( L10nOpcions.TituloActualizacionCatalogo )
+                }
+
+            }
+
+        }
+
+        if ( PodeBorrarConta( usuarioActual() ) ) {
+
+            val accionBorrado = intentarAccion(
+                L10nOpcions.DialogoBorradoConta,
+                L10nOpcions.ContidoBorradoConta,
+                L10nOpcions.BorradoContaFallido,
+            ) { borrarConta( idiomaActual ) }
+
+            val modificador = Modifier.fillMaxWidth().clickable( onClick = accionBorrado ).padding( horizontal = 16.dp, vertical = 12.dp )
+
+            EspazadorAlto( 2 )
 
             Card {
 
@@ -128,7 +165,13 @@ fun PantallaAxustes() {
 
             EspazadorAlto( 2 )
 
-            val modificador = Modifier.fillMaxWidth().clickable( onClick = intentoPecheSesion() ).padding( horizontal = 16.dp, vertical = 12.dp )
+            val accionPeche = intentarAccion(
+                titulo = L10nOpcions.DialogoPecheSesion,
+                erro   = L10nOpcions.PecheSesionFallido,
+                accion = { pecharSesion() }
+            )
+
+            val modificador = Modifier.fillMaxWidth().clickable( onClick = accionPeche ).padding( horizontal = 16.dp, vertical = 12.dp )
 
             Card {
 
@@ -217,57 +260,27 @@ private fun <T> DebuxarAlerta( datos: DatosOpcion<T>, amosar: ( Boolean ) -> Uni
 }
 
 @Composable
-fun intentoBorrarConta(): () -> Unit {
-
-    var amosarDialogo by rememberSaveable { mutableStateOf( false ) }
-    val idioma = LocalIdioma.current
-    val aviso = LocalAviso.current
-
-    if ( amosarDialogo ) {
-
-        val accion = {
-
-            amosarDialogo = false
-
-            corrutina {
-                val clave = L10nOpcions.BorradoContaFallido
-                val erro: suspend () -> SnackbarResult = { amosarAviso( aviso, clave, true ) }
-                executarAccion( { borrarConta( idioma ) }, erro )
-            }
-
-        }
-
-        val contido = @Composable { Texto( L10nOpcions.ContidoBorradoConta ) }
-        val datosAlerta = DatosAlerta( L10nOpcions.DialogoBorradoConta, { amosarDialogo = false }, confirmado = accion, contido = contido )
-        AlertaDialogo( datosAlerta )
-
-    }
-
-    return { amosarDialogo = true }
-
-}
-
-@Composable
-fun intentoPecheSesion(): () -> Unit {
+fun intentarAccion( titulo: L10nOpcions, contido: L10nOpcions? = null, erro: L10nOpcions, accion: suspend () -> Boolean ): () -> Unit {
 
     var amosarDialogo by rememberSaveable { mutableStateOf( false ) }
     val aviso = LocalAviso.current
 
     if ( amosarDialogo ) {
 
-        val accion = {
+        val confirmar = {
 
             amosarDialogo = false
 
             corrutina {
-                val clave = L10nOpcions.PecheSesionFallido
-                val erro: suspend () -> SnackbarResult = { amosarAviso( aviso, clave, true ) }
-                executarAccion( { pecharSesion() }, erro )
+                val mostrarErro: suspend () -> SnackbarResult = { amosarAviso( aviso, erro, true ) }
+                executarAccion( accion, mostrarErro )
             }
 
         }
 
-        val datosAlerta = DatosAlerta( L10nOpcions.DialogoPecheSesion, { amosarDialogo = false }, confirmado = accion )
+        val contidoDialogo = contido?.let { clave -> @Composable { Texto( clave ) } }
+        val datosAlerta = DatosAlerta( titulo, { amosarDialogo = false }, confirmado = confirmar, contido = contidoDialogo )
+
         AlertaDialogo( datosAlerta )
 
     }

@@ -56,6 +56,7 @@ object BD {
      * Inicializa a base de datos e lanza opcionalmente a actualización do catálogo en segundo plano.
      */
     suspend fun arrancar( contexto: Context, actualizar: Boolean = true ) {
+
         if ( ::bd.isInitialized ) return
         bd = BBDD( contexto.applicationContext )
 
@@ -63,6 +64,7 @@ object BD {
         if ( actualizar ) {
             actualizarCatalogo( ambito )
         }
+
     }
 
     internal fun <T: ElementoBD> buscarElemento( taboa: Taboa, onde: Map<String, Condicion>, accion: (Map<String, Any> ) -> T ): T? {
@@ -87,13 +89,17 @@ object BD {
      * Sincroniza o catálogo local de actividades co servidor mediante peticions en segundo plano.
      */
     suspend fun actualizarCatalogo( ambito: CoroutineScope ): Boolean {
+
         val resposta = Corrutinas.corrutinaResposta( ambito ) {
 
             val problemas = mutableListOf<String>()
             val campos = mutableMapOf( "uuid" to collerIdDispositivo() )
             val actividadesServidor: DatosActividades = procesarPeticion( MetodoApi.POST, RutasApi.ACTUALIZAR, campos )
 
-            if ( !actividadesServidor.exito ) return@corrutinaResposta false
+            if ( !actividadesServidor.exito ) {
+                Log.d( "OPS", "Que narices pasou?" )
+                return@corrutinaResposta false
+            }
 
             val ondeLocal = mapOf( "id" to Condicion.Simple( 0, OperadorSimple.MAIOR_IGUAL ) )
             val actividadesLocais = Actividades.collerActividades( ondeLocal ).associateBy { elemento -> elemento.id }
@@ -139,6 +145,7 @@ object BD {
         }.await()
 
         return resposta
+
     }
 
 }

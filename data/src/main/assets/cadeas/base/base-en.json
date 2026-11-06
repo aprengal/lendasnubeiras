@@ -1,4 +1,5 @@
 {
+
   "nome_app": "Lendas Nubeiras",
   "si": "Yes",
   "non": "No",
@@ -14,6 +15,7 @@
     "one": "You have %s new message",
     "other": "You have %s new messages"
   },
+
   "mensaxe_fallos": {
     "0": "You submitted your thesis on the aerodynamics of croquettes. Intergalactic honorary doctorate.",
     "1": "You forgot the bibliography. Your only source was a tweet from a DJ cat at three in the morning.",
@@ -26,6 +28,19 @@
     "8": "You claimed Madrid sits inside a giant watermelon and Murcia is an elf colony.",
     "9": "You played the periodic table with your lips like a harmonica. Catastrophe on the Richter scale.",
     "10": "You handed in a blank page with a dried-out slice of ham and a shiny pony sticker. The faculty has gone up in flames."
+  },
+  "mensaxes_cambiantes": {
+    "0": "\"When is the retake exam?\" Go get an acceptable grade instead. You know, anything above a 9.",
+    "1": "C's application is still not working. Who is \"C\" anyway?",
+    "2": "We are looking for \"N\". Word is they went out partying.",
+    "3": "Almost dropped out, came back strong, scored the highest grades in the school, and coded this tool. Now that's a comeback.",
+    "4": "Are you sure someone joins a vocational college just to pass, or to deal with unexpected plot twists?",
+    "5": "The hardest part of coding is understanding the bug AI just introduced because you didn't check the code it gave you.",
+    "6": "If the catalog shows no activities, it might mean someone hit the self-destruct button.",
+    "7": "Special thanks to whoever had patience when the code was defying the laws of physics.",
+    "8": "If an activity doesn't show up, the JSON probably decided to step out for a stroll without telling anyone.",
+    "9": "A simple user interface is one where you don't need an instruction manual... unless you get lost in the catalog.",
+    "10": "If you made it to the end of this message list, thanks for testing the app. Enjoy the experience!"
   }
 
 }

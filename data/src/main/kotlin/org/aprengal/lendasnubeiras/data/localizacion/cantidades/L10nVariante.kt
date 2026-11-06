@@ -6,7 +6,8 @@ import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion
 
 enum class L10nVariante( internal val clave: String, internal val dominio: Dominio ) : L10n {
 
-    MensaxesFallos( "mensaxe_fallos", Dominio.BASE );
+    MensaxesFallos( "mensaxes_fallos", Dominio.BASE ),
+    MensaxesCambiantes( "mensaxes_cambiantes", Dominio.BASE );
 
     fun texto( num: Int ): String = Localizacion.l10nVariante( this, num )
 

@@ -1,21 +1,33 @@
 package org.aprengal.lendasnubeiras.ui.pantallas.monitor
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.aprengal.lendasnubeiras.data.localizacion.cantidades.L10nPlural
+import androidx.compose.ui.unit.sp
+import org.aprengal.lendasnubeiras.data.localizacion.cantidades.L10nVariante
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nIconas
+import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalNavegacion
+import org.aprengal.lendasnubeiras.ui.navegacion.Ruta
+import org.aprengal.lendasnubeiras.ui.reutilizables.clases.Icona
+import org.aprengal.lendasnubeiras.ui.reutilizables.clases.Icona.Companion.DebuxarIcona
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.AmosarTituloCentrado
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.CampoBuscador
-import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.TextoPlural
+import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.Texto
+import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.TextoVariante
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.EspazadorAlto
+import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.EspazadorAncho
+import kotlin.random.Random
 
 @Composable
 fun PantallaBuscador() {
@@ -64,27 +76,62 @@ fun PantallaCatalogo() {
 @Composable
 fun PantallaInicio() {
 
-    val scrollState = rememberScrollState()
-    val modificadorCol = Modifier.fillMaxSize().verticalScroll( scrollState )
+    val navegacion = LocalNavegacion.current
+    val numeroAleatorio = Random.nextInt( 0, 11 )
 
-    Column( modificadorCol ) {
+    val modificadorTarxeta = Modifier.fillMaxWidth()
+    val modificadorContido = Modifier.fillMaxWidth().padding( vertical = 20.dp, horizontal = 16.dp )
 
-        Text( "F por todas as veces que apareceu Carla e Natasha nesta pantalla." )
-        Text( "A aplicación segue sen funcionar e Natasha aínda non volveu de festa." )
-        /*Texto( L10nXeral.Carla )
-        Texto( L10nXeral.Natasha )*/
-        TextoPlural( L10nPlural.MensaxesNovas, 1 )
-        TextoPlural( L10nPlural.MensaxesNovas, 5 )
-        TextoPlural( L10nPlural.MensaxesNovas, 0 )
-        TextoPlural( L10nPlural.MensaxesNovas, 100 )
-        TextoPlural( L10nPlural.MensaxesNovas, 10000000 )
+    Column( Modifier.fillMaxWidth().padding( 10.dp ), horizontalAlignment = Alignment.CenterHorizontally ) {
 
-        HorizontalDivider( modifier = Modifier.padding( top = 10.dp ) )
+        Card( modifier = modificadorTarxeta.clickable( onClick = { navegacion.engadir( Ruta.Catalogo ) } ) ) {
 
-        repeat( 30 ) { indice ->
-            EspazadorAlto( 2 )
-            TextoPlural( L10nPlural.MensaxesNovas, indice + 1 )
-            HorizontalDivider( modifier = Modifier.padding( top = 10.dp ) )
+            Column( modificadorContido, Arrangement.Center, Alignment.CenterHorizontally ) {
+
+                Row( modifier = Modifier.fillMaxWidth(), Arrangement.Start, Alignment.CenterVertically ) {
+
+                    val iconaCatalogo = Icona.Catalogo
+
+                    //Non se indica o texto descritivo para lectores porque xa se emprega no texto e iso faría que se lese o mesmo dúas veces
+                    DebuxarIcona( iconaCatalogo.clave, dimension = 36.sp )
+                    EspazadorAncho( 2 )
+                    Texto( L10nIconas.Catalogo, estilo = MaterialTheme.typography.titleLarge )
+
+                }
+
+            }
+
+        }
+
+        EspazadorAlto( 2 )
+
+        Card( modificadorTarxeta.clickable( onClick = { navegacion.engadir( Ruta.Buscar ) } ) ) {
+
+            Column( modificadorContido, Arrangement.Center, Alignment.CenterHorizontally ) {
+
+                Row( modifier = Modifier.fillMaxWidth(), Arrangement.Start, Alignment.CenterVertically ) {
+
+                    val iconaCatalogo = Icona.Buscar
+
+                    //Non se indica o texto descritivo para lectores porque xa se emprega no texto e iso faría que se lese o mesmo dúas veces
+                    DebuxarIcona( iconaCatalogo.clave, iconaCatalogo.nome, 36.sp )
+                    EspazadorAncho( 2 )
+                    Texto( L10nIconas.Buscar, estilo = MaterialTheme.typography.titleLarge )
+
+                }
+
+            }
+
+        }
+
+        EspazadorAlto( 3 )
+
+        Card( modifier = modificadorTarxeta ) {
+
+            Column( Modifier.fillMaxWidth().padding( 16.dp ), Arrangement.Center, Alignment.CenterHorizontally ) {
+                TextoVariante( L10nVariante.MensaxesCambiantes, numeroAleatorio, estilo = MaterialTheme.typography.bodyLarge )
+            }
+
         }
 
     }

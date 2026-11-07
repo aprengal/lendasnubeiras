@@ -64,10 +64,9 @@ enum class Icona( override val clave: String, override val nome: L10nIconas ): E
 
         private val iconas = mapOf(
             Ruta.Axustes::class to Axustes,
-            Ruta.Catalogo::class to Invalido,
+            Ruta.Catalogo::class to Catalogo,
             Ruta.Inicio::class to Inicio,
-            //Ruta.Idioma::class to Idioma,
-            Ruta.Buscar::class to Buscar,
+            Ruta.Buscador::class to Buscar,
             Ruta.CrearActividade::class to Engadir
         )
 

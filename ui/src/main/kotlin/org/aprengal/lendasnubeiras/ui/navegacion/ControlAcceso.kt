@@ -52,7 +52,7 @@ internal object ControlAcceso {
             Ruta.Inicio::class -> PodeLer
             Ruta.Catalogo::class -> PodeLer
             Ruta.ActividadeDetalle::class -> PodeLer
-            Ruta.Buscar::class -> PodeLer
+            Ruta.Buscador::class -> PodeLer
             //Ruta.Idioma::class -> PodeLer
 
             // Creación

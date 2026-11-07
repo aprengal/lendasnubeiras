@@ -8,7 +8,7 @@ enum class L10nTitulos( internal val clave: String ) : L10nSingular {
     Acceso( "acceso" ),
     Rexistro( "rexistro" ),
     Axustes( "axustes" ),
-    Actividades( "actividades" ),
+    Catalogo( "catalogo" ),
     CrearActividade( "crear_actividade" );
 
     internal val dominio: Dominio = Dominio.TITULOS

@@ -28,7 +28,6 @@ import org.aprengal.lendasnubeiras.ui.pantallas.monitor.PantallaBuscador
 import org.aprengal.lendasnubeiras.ui.pantallas.monitor.PantallaInicio
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalRuta
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalTitulo
-import org.aprengal.lendasnubeiras.ui.pantallas.monitor.PantallaResultadoBusca
 import org.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaApertura
 import org.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaBase
 import org.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaSuperior
@@ -72,7 +71,7 @@ internal class DatosNavegacion {
      * Rexistra as pantallas por grupos segundo o permiso necesario:
      * - Sempre: [Ruta.Axustes].
      * - [PodeRexistrarse]: [Ruta.Benvida], [Ruta.Acceso] e [Ruta.Rexistro].
-     * - [PodeLer]: [Ruta.Catalogo], [Ruta.Inicio], [Ruta.Buscar],
+     * - [PodeLer]: [Ruta.Catalogo], [Ruta.Inicio], [Ruta.Buscador],
      *   [Ruta.ActividadeDetalle] e [Ruta.BuscaDetalle].
      * - [PodeCrear]: [Ruta.ListarActividades], [Ruta.CrearActividade] e
      *   [Ruta.ModificarActividade].
@@ -97,26 +96,18 @@ internal class DatosNavegacion {
 
         if ( PodeLer() ) {
 
-            val actividades = DatosPantalla( COMPLETA, L10nTitulos.Actividades )
+            val actividades = DatosPantalla( COMPLETA, L10nTitulos.Catalogo )
             val inicio = DatosPantalla( COMPLETA )
             val buscar = DatosPantalla( COMPLETA )
 
             ruta<Ruta.Catalogo>( actividades ) { PantallaCatalogo() }
             ruta<Ruta.Inicio>( inicio ) { PantallaInicio() }
-            ruta<Ruta.Buscar>( buscar ) { PantallaBuscador() }
+            ruta<Ruta.Buscador>( buscar ) { PantallaBuscador() }
 
             //Con argumentos
-
             val actividadeDetalle = DatosPantalla( TITULO_SUPERIOR )
-            val buscaDetalle = DatosPantalla( COMPLETA )
 
-            //Pantalla Actividade pasa a conter a clave do título en lugar da clave como parámetro
-            //Detalle pasaría a ser /actividade/claveTitulo
-            // a descrición estaría despregada ou amosaríase sempre?
-            //Os datos da configuración irían antes de arrancar a actividade
-            //A actividade desenvolveríase en /actividade/claveTitulo/xogo
             ruta<Ruta.ActividadeDetalle>( actividadeDetalle ) { datos -> PantallaActividadeDetalle( datos.clave ) }
-            ruta<Ruta.BuscaDetalle>( buscaDetalle ) { datos -> PantallaResultadoBusca( datos.termo ) }
 
         }
 

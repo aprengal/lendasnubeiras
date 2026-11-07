@@ -87,8 +87,7 @@ private fun NavegacionInferior( navegacion: Navegacion ) {
 
     val elementos = listOf(
         Ruta.Inicio,
-        Ruta.Buscar,
-        //Ruta.Idioma,
+        Ruta.Buscador,
         Ruta.Catalogo
     )
 

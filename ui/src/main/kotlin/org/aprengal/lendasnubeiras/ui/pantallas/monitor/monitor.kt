@@ -8,19 +8,7 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.Ca
 @Composable
 fun PantallaBuscador() {
 
-    //Esta páxina serviría para realizar as buscas e configuralas?
-    //Igual Atributo e os seus fillos precisan de clave externo traducido
-
     val busca = rememberTextFieldState()
-
-    CampoBuscador( busca )
-
-}
-
-@Composable
-fun PantallaResultadoBusca( termo: String ) {
-
-    val busca = rememberTextFieldState( termo )
 
     CampoBuscador( busca )
 

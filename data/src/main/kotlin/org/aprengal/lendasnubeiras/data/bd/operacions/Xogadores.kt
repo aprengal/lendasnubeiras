@@ -1,7 +1,7 @@
 package org.aprengal.lendasnubeiras.data.bd.operacions
 
-import org.aprengal.lendasnubeiras.data.actividades.dixitais.datos.Grupo
-import org.aprengal.lendasnubeiras.data.actividades.dixitais.datos.Xogador
+import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Grupo
+import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Xogador
 import org.aprengal.lendasnubeiras.data.bd.clases.BD
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.bd
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion

@@ -28,7 +28,7 @@ import kotlin.reflect.KClass
  * @property traza Pila de rutas visitadas. A última é a pantalla actual.
  * @param seleccionada Clase da última ruta escollida no menú inferior, se a hai.
  */
-class Navegacion ( private val traza: NavBackStack<Ruta>, seleccionada: KClass<out Ruta>? = null ) {
+class Navegacion( private val traza: NavBackStack<Ruta>, seleccionada: KClass<out Ruta>? = null ) {
 
     /** Lista de rutas da pila, da máis antiga á pantalla actual. */
     val lista: List<Ruta> get() = traza
@@ -49,6 +49,25 @@ class Navegacion ( private val traza: NavBackStack<Ruta>, seleccionada: KClass<o
 
         if ( traza.lastOrNull() != elemento ) {
             traza.add( elemento )
+        }
+
+    }
+
+    /**
+     * Engade varias rutas á pila de navegación nunha única operación.
+     *
+     * Omite as rutas iniciais que xa coincidan coa última ruta da pila,
+     * evitando engadir pantallas que xa están abertas.
+     *
+     * @param elementos Lista de rutas que se queren engadir, ordenadas
+     *  desde a primeira pantalla ata a pantalla de destino.
+     */
+    fun engadirVarias( lista: List<Ruta> ) {
+
+        val novas = lista.dropWhile { elemento -> elemento == traza.lastOrNull() }
+
+        if ( novas.isNotEmpty() ) {
+            traza.addAll( novas )
         }
 
     }

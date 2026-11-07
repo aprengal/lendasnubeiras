@@ -14,7 +14,12 @@ enum class L10nBase( internal val clave: String ) : L10nSingular {
     ErroDatosInvalidos( "erro_informacion_confusa" ),
     ErroLimiteIntentos( "erro_demasiados_intentos" ),
     ErroServidor( "erro_servidor" ),
-    CargarMais( "cargar_mais" );
+    CargarMais( "cargar_mais" ),
+
+    //Buscador
+    FiltroCampoTitulo( "filto_campo_titulo" ),
+    FiltroCampoDescricion( "filto_campo_descricion" ),
+    FiltroCampoAmbos( "filto_campo_ambos" );
 
     internal val dominio: Dominio = Dominio.BASE
 

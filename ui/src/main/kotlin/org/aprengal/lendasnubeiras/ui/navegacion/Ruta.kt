@@ -1,5 +1,6 @@
 package org.aprengal.lendasnubeiras.ui.navegacion
 
+import android.annotation.SuppressLint
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 
@@ -10,6 +11,7 @@ import kotlinx.serialization.Serializable
  * gardarse na pila de navegación de Navigation 3 e serializarse para
  * conservar o estado (por exemplo, ao rotar a pantalla).
  */
+@SuppressLint( "UnsafeOptInUsageError" )
 @Serializable
 sealed interface Ruta: NavKey {
 

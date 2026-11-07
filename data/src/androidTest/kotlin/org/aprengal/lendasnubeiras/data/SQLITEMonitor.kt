@@ -2,8 +2,8 @@ package org.aprengal.lendasnubeiras.data
 
 import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.runBlocking
-import org.aprengal.lendasnubeiras.data.actividades.dixitais.datos.Grupo
-import org.aprengal.lendasnubeiras.data.actividades.dixitais.datos.Dificultade
+import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Grupo
+import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Dificultade
 import org.aprengal.lendasnubeiras.data.bd.clases.BBDD
 import org.aprengal.lendasnubeiras.data.bd.clases.BD
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.eliminarPuntuacionActividade

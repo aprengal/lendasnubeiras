@@ -1,9 +1,10 @@
 package org.aprengal.lendasnubeiras.data.api.resposta
 
 import org.json.JSONObject
+import org.aprengal.lendasnubeiras.data.api.RutasApi.ACCESO
 
 /**
- * Resposta específica para a xestión de sesións de usuario ([RutasApi.ACCESO]).
+ * Resposta específica para a xestión de sesións de usuario ([ACCESO]).
  *
  * @property sesion Token de rastro cifrado para as peticións autenticadas.
  * @property idUsuario Identificador único do usuario na base de datos.

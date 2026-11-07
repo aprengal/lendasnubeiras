@@ -2,7 +2,7 @@ package org.aprengal.lendasnubeiras.data.bd.clases
 
 import android.content.Context
 import android.util.Log
-import org.aprengal.lendasnubeiras.data.actividades.datos.Actividade
+import org.aprengal.lendasnubeiras.data.actividades.datos.base.Actividade
 import org.aprengal.lendasnubeiras.data.api.ConexionApi.MetodoApi
 import org.aprengal.lendasnubeiras.data.api.RutasApi
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion

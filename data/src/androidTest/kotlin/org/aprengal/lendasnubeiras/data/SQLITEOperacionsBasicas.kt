@@ -2,7 +2,8 @@ package org.aprengal.lendasnubeiras.data
 
 import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.runBlocking
-import org.aprengal.lendasnubeiras.data.actividades.datos.Categoria
+import org.aprengal.lendasnubeiras.data.actividades.datos.base.Categoria
+import org.aprengal.lendasnubeiras.data.actividades.datos.buscador.CriteriosBusca
 import org.aprengal.lendasnubeiras.data.bd.clases.BBDD
 import org.aprengal.lendasnubeiras.data.bd.clases.BD
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
@@ -10,7 +11,6 @@ import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.SeleccionSQL
 import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.collerActividade
 import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.collerActividadesBuscables
 import org.aprengal.lendasnubeiras.data.bd.clases.Taboa
-//import org.aprengal.lendasnubeiras.data.bd.taboas.TaboaLectura
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeCrear
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeEditarOutras
@@ -60,7 +60,7 @@ class SQLITEOperacionsBasicas {
     @Test
     fun inserirActividade() {
 
-        val datos = datosCompletos(mapOf("id" to "101", "clave_titulo" to "dados-historiosos"))
+        val datos = datosCompletos( mapOf( "id" to "101", "clave_titulo" to "dados-historiosos" ) )
         val id = bd.insertar( Taboa.ACTIVIDADES, datos )
 
         assertTrue( id > 0 )
@@ -68,7 +68,6 @@ class SQLITEOperacionsBasicas {
         val resultado = collerActividade( id )!!
 
         assertEquals( "dados-historiosos", resultado.claveTitulo )
-        //assertEquals( "Descrición de proba abondo longa", resultado.descricion )
 
     }
 
@@ -249,7 +248,6 @@ class SQLITEOperacionsBasicas {
                 mapOf(
                     "id" to 801L,
                     "clave_titulo" to "dados-historiosos",
-                    //"descricion" to "Sesión práctica de percusión para principiantes",
                     "id_categoria" to "musica",
                     "estado" to 2
                 )
@@ -258,7 +256,6 @@ class SQLITEOperacionsBasicas {
                 mapOf(
                     "id" to 802L,
                     "clave_titulo" to "pasa-palabra",
-                    //"descricion" to "Ritmos tradicionais con percusión",
                     "id_categoria" to "musica",
                     "estado" to 2
                 )
@@ -267,7 +264,6 @@ class SQLITEOperacionsBasicas {
                 mapOf(
                     "id" to 803L,
                     "clave_titulo" to "palabras-encadenadas",
-                    //"descricion" to "Técnicas básicas de acuarela",
                     "id_categoria" to "arte",
                     "estado" to 1
                 )
@@ -276,14 +272,18 @@ class SQLITEOperacionsBasicas {
 
         bd.insertar( Taboa.ACTIVIDADES, datos )
 
-        val resultados = collerActividadesBuscables( /*"percusión",*/ "data_modificado" )
+        val resultados = collerActividadesBuscables( CriteriosBusca( colOrdenable = "data_modificado" ) )
 
         assertEquals( 2, resultados.size )
         assertTrue( resultados.any { it.claveTitulo == "dados-historiosos" } )
         assertTrue( resultados.any { it.claveTitulo == "pasa-palabra" } )
         assertTrue( resultados.none { it.claveTitulo == "palabras-encadenadas" } )
 
-        bd.actualizar( Taboa.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.En( setOf( 801L, 802L, 803L ) ) ) )
+        bd.actualizar(
+            Taboa.ACTIVIDADES,
+            mapOf( "estado" to 3 ),
+            mapOf( "id" to Condicion.En( setOf( 801L, 802L, 803L ) ) )
+        )
 
     }
 
@@ -295,8 +295,7 @@ class SQLITEOperacionsBasicas {
                 mapOf(
                     "id" to 804L,
                     "clave_titulo" to "dados-historiosos",
-                    //"descricion" to "Ritmo sen instrumentos",
-                    "id_categoria" to Categoria.Interior,
+                    "id_categoria" to "interior",
                     "estado" to 2
                 )
             ),
@@ -304,21 +303,24 @@ class SQLITEOperacionsBasicas {
                 mapOf(
                     "id" to 805L,
                     "clave_titulo" to "pasa-palabra",
-                    //"descricion" to "Percusión aplicada ao movemento",
-                    "id_categoria" to Categoria.Outros,
-                    "estado" to 1
+                    "id_categoria" to "outros",
+                    "estado" to 2
                 )
             )
         )
 
         bd.insertar( Taboa.ACTIVIDADES, datos )
 
-        val resultados = collerActividadesBuscables( "data_modificado", filtros = mapOf( "id_categoria" to Categoria.Interior ) )
+        val resultados = collerActividadesBuscables( CriteriosBusca( "data_modificado", filtros = mapOf( "id_categoria" to Categoria.Interior ) ) )
 
         assertEquals( 1, resultados.size )
         assertEquals( "dados-historiosos", resultados[ 0 ].claveTitulo )
 
-        bd.actualizar( Taboa.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.En( setOf( 804L, 805L ) ) ) )
+        bd.actualizar(
+            Taboa.ACTIVIDADES,
+            mapOf( "estado" to 3 ),
+            mapOf( "id" to Condicion.En( setOf( 804L, 805L ) ) )
+        )
 
     }
 

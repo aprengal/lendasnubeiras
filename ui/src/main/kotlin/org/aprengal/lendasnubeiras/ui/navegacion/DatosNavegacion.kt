@@ -71,8 +71,8 @@ internal class DatosNavegacion {
      * Rexistra as pantallas por grupos segundo o permiso necesario:
      * - Sempre: [Ruta.Axustes].
      * - [PodeRexistrarse]: [Ruta.Benvida], [Ruta.Acceso] e [Ruta.Rexistro].
-     * - [PodeLer]: [Ruta.Catalogo], [Ruta.Inicio], [Ruta.Buscador],
-     *   [Ruta.ActividadeDetalle] e [Ruta.BuscaDetalle].
+     * - [PodeLer]: [Ruta.Catalogo], [Ruta.Inicio], [Ruta.Buscador] e
+     *   [Ruta.ActividadeDetalle].
      * - [PodeCrear]: [Ruta.ListarActividades], [Ruta.CrearActividade] e
      *   [Ruta.ModificarActividade].
      * - [PodeAdministrar]: [Ruta.Administrar].

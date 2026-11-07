@@ -1,6 +1,7 @@
 package org.aprengal.lendasnubeiras.data.api.resposta
 
 import org.json.JSONObject
+import org.aprengal.lendasnubeiras.data.api.RutasApi
 
 /**
  * Resposta xenérica empregada para endpoints que non requiren un procesamento de datos complexo

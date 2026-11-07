@@ -101,8 +101,10 @@ class Entrada : AppCompatActivity() {
      * 1. Aplica o tema ([TemaNubeiro]) e a cor da barra de navegación do sistema.
      * 2. Observa a sesión e o idioma actuais.
      * 3. Cando cambia a sesión, reconstrúe a navegación cun fundido gradual.
-     * 4. Elixe a pantalla inicial: a da ligazón directa, se a hai, ou
-     *    [rutaInicial] en caso contrario. A ligazón úsase só unha vez.
+     * 4. Constrúe a traza inicial de navegación: utiliza as rutas
+     *    correspondentes á ligazón directa, se existe, ou unha traza
+     *    cunicamente coa ruta devolta por [rutaInicial] en caso contrario.
+     *    A ligazón directa procésase unha soa vez.
      * 5. Rexistra a navegación ([RexistrarNavegacion]).
      *
      * @param savedInstanceState Estado gardado, ou `null` se é a primeira vez.
@@ -114,7 +116,9 @@ class Entrada : AppCompatActivity() {
         enableEdgeToEdge()
         super.onCreate( savedInstanceState )
 
-        var rutaEnlace: Ruta? = if ( savedInstanceState == null ) Enlaces( intent ).confirmar() else null
+        var trazaInicial = if ( savedInstanceState == null ) {
+            Enlaces( intent ).let { enlaces -> enlaces.confirmar()?.let { ruta -> enlaces.crearTraza( ruta ) } }
+        } else null
 
         setContent {
 
@@ -130,10 +134,10 @@ class Entrada : AppCompatActivity() {
 
                     AnimatedContent( targetState = sesion, transitionSpec = { fadeIn() togetherWith fadeOut() } ) {
 
-                        val ruta = remember { rutaEnlace.also { rutaEnlace = null } ?: rutaInicial() }
+                        val rutas = remember { trazaInicial.also { trazaInicial = null } ?: listOf( rutaInicial() ) }
 
                         @Suppress( "UNCHECKED_CAST" )
-                        val traza = rememberNavBackStack( ruta ) as NavBackStack<Ruta>
+                        val traza = rememberNavBackStack( *rutas.toTypedArray() ) as NavBackStack<Ruta>
                         navegacion = rememberSaveable( saver = gardarNavegacion( traza ) ) { Navegacion( traza ) }
 
                         RexistrarNavegacion( idiomaActual, navegacion )
@@ -151,13 +155,19 @@ class Entrada : AppCompatActivity() {
     /**
      * Xestiona unha ligazón directa recibida mentres a aplicación xa está aberta.
      *
-     * Se a ligazón é válida, engade a súa pantalla á pila de navegación.
+     * Se a ligazón é válida, constrúe a traza de navegación necesaria para
+     * acceder á pantalla solicitada e engade as rutas correspondentes á pila
+     * de navegación, evitando duplicar as que xa coincidan coas existentes.
      *
-     * @param intent Intent coa ligazón recibida.
+     * @param intent Intent que contén a ligazón recibida.
      */
     override fun onNewIntent( intent: Intent ) {
+
         super.onNewIntent( intent )
-        Enlaces( intent ).confirmar()?.let { enlace -> navegacion.engadir( enlace ) }
+
+        val enlaces = Enlaces( intent )
+        enlaces.confirmar()?.let { ruta -> navegacion.engadirVarias( enlaces.crearTraza( ruta ) ) }
+
     }
 
     /**

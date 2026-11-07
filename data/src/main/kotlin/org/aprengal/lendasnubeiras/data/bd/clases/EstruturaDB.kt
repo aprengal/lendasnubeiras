@@ -1,8 +1,8 @@
 package org.aprengal.lendasnubeiras.data.bd.clases
 
 import android.database.sqlite.SQLiteDatabase
-import org.aprengal.lendasnubeiras.data.actividades.datos.Estado
-import org.aprengal.lendasnubeiras.data.actividades.dixitais.datos.Dificultade
+import org.aprengal.lendasnubeiras.data.actividades.datos.base.Estado
+import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Dificultade
 
 /**
  * Xestor encargado de definir e manter a estrutura da base de datos SQLite.

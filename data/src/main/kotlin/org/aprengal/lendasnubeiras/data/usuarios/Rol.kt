@@ -1,5 +1,7 @@
 package org.aprengal.lendasnubeiras.data.usuarios
 
+import org.aprengal.lendasnubeiras.data.localizacion.clases.ElementoL10n
+
 /**
  * Enum que define os diferentes roles de usuario dispoñibles no sistema e as súas claves asociadas.
  *

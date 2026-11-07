@@ -28,8 +28,39 @@ import org.aprengal.lendasnubeiras.data.utilidades.Corrutinas.corrutina
 import org.aprengal.lendasnubeiras.data.utilidades.Corrutinas.corrutinaResposta
 import kotlin.time.Duration.Companion.milliseconds
 
+/**
+ * Agrupa as operacións de autenticación e xestión da conta de usuario.
+ *
+ * Centraliza os procesos de rexistro, inicio de sesión e borrado de conta,
+ * comunicándose co servidor mediante a API e xestionando as sesións locais
+ * cando corresponde.
+ *
+ * As operacións de rexistro e inicio de sesión executanse en corrutinas
+ * independentes, permitindo informar do progreso e dos posibles erros
+ * mediante funcións de actualización de estado.
+ */
 object AccionsUsuario {
 
+    /**
+     * Solicita o rexistro dunha nova conta de usuario.
+     *
+     * Envía ao servidor o enderezo de correo electrónico, o identificador
+     * do dispositivo e o idioma seleccionado.
+     *
+     * Actualiza o estado da operación segundo a resposta recibida, permitindo
+     * informar do progreso, dos erros de validación ou dos problemas de conexión.
+     *
+     * Cando o rexistro se completa correctamente, informa do resultado e,
+     * tras unha pequena espera, executa a función de confirmación.
+     *
+     * @param correo Enderezo de correo electrónico asociado á conta que se
+     * quere rexistrar.
+     * @param idioma Idioma seleccionado para a comunicación co servidor.
+     * @param actualizarEstado Función utilizada para comunicar o estado da
+     * operación e indicar se representa un erro.
+     * @param rexistroCorrecto Función executada cando o rexistro se completa
+     * correctamente.
+     */
     fun rexistrarse( correo: String, idioma: Idioma, actualizarEstado: (L10nSingular?, Boolean ) -> Unit, rexistroCorrecto: () -> Unit ) {
 
         corrutina( CoroutineScope( SupervisorJob() + Dispatchers.IO ) ) {
@@ -74,6 +105,31 @@ object AccionsUsuario {
 
     }
 
+    /**
+     * Solicita o inicio de sesión dunha conta de usuario.
+     *
+     * Envía ao servidor o enderezo de correo electrónico, o identificador
+     * do dispositivo e o idioma seleccionado.
+     *
+     * Se a solicitude inicial é correcta, garda os datos da sesión e inicia
+     * un proceso de comprobación periódica para verificar a súa validación
+     * no servidor.
+     *
+     * A comprobación realízase cun máximo de 225 intentos, separados por
+     * intervalos de catro segundos, o que permite agardar ata quince minutos
+     * pola validación da sesión.
+     *
+     * Unha vez validada, actualiza a sesión local cos datos do usuario,
+     * incluíndo o seu identificador, correo electrónico e rol.
+     *
+     * Durante o proceso informa do progreso e dos posibles erros mediante
+     * a función de actualización de estado.
+     *
+     * @param correo Enderezo de correo electrónico da conta.
+     * @param idioma Idioma seleccionado para a comunicación co servidor.
+     * @param actualizarEstado Función utilizada para comunicar o estado da
+     * operación e indicar se representa un erro.
+     */
     fun iniciarSesion( correo: String, idioma: Idioma, actualizarEstado: ( L10nSingular?, Boolean ) -> Unit ) {
 
         corrutina( CoroutineScope( SupervisorJob() + Dispatchers.IO ) ) {
@@ -132,7 +188,7 @@ object AccionsUsuario {
 
                                 401 -> reintentos++
 
-                                400, 404,  -> {
+                                400, 404  -> {
                                     actualizarEstado( L10nAutenticacion.ErroAcceso, true )
                                     break
                                 }
@@ -171,6 +227,22 @@ object AccionsUsuario {
 
     }
 
+    /**
+     * Solicita o borrado da conta do usuario actual.
+     *
+     * Comproba previamente que existe un usuario actual e que se permite
+     * solicitar o borrado da súa conta.
+     *
+     * Envía ao servidor o identificador do dispositivo e o idioma seleccionado.
+     * Se a solicitude se completa correctamente, elimina as sesións locais,
+     * borra os datos de sesión almacenados e restablece a sesión actual.
+     *
+     * @param idioma Idioma seleccionado para a comunicación co servidor.
+     * @return `true` se o servidor acepta a solicitude e se completa a limpeza
+     * da sesión local; `false` se a solicitude non ten éxito.
+     * @throws IllegalArgumentException Se non existe un usuario actual ou non
+     * se permite solicitar o borrado da conta.
+     */
     suspend fun borrarConta( idioma: Idioma ): Boolean {
 
         require( PodeBorrarConta( usuarioActual() ) ) { "Só se pode solicitar o borrado se o usuario actual existe" }

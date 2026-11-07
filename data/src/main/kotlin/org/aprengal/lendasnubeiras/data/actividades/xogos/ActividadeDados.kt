@@ -1,4 +1,4 @@
-package org.aprengal.lendasnubeiras.data.actividades.dixitais.clases
+package org.aprengal.lendasnubeiras.data.actividades.xogos
 
 class ActividadeDados {
 

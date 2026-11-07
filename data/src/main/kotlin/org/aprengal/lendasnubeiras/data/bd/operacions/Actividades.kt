@@ -1,12 +1,13 @@
 package org.aprengal.lendasnubeiras.data.bd.operacions
 
-import android.util.Log
-import org.aprengal.lendasnubeiras.data.actividades.datos.Actividade
-import org.aprengal.lendasnubeiras.data.actividades.datos.ActividadeBuscable
-import org.aprengal.lendasnubeiras.data.actividades.datos.Categoria.Companion.escollerCategoria
-import org.aprengal.lendasnubeiras.data.actividades.datos.Destinatario.Companion.escollerDestinatario
-import org.aprengal.lendasnubeiras.data.actividades.datos.Estado
-import org.aprengal.lendasnubeiras.data.actividades.datos.Estado.Companion.escollerEstado
+import org.aprengal.lendasnubeiras.data.actividades.datos.base.Actividade
+import org.aprengal.lendasnubeiras.data.actividades.datos.buscador.ActividadeBuscable
+import org.aprengal.lendasnubeiras.data.actividades.datos.buscador.CampoBusca
+import org.aprengal.lendasnubeiras.data.actividades.datos.base.Categoria.Companion.escollerCategoria
+import org.aprengal.lendasnubeiras.data.actividades.datos.buscador.CriteriosBusca
+import org.aprengal.lendasnubeiras.data.actividades.datos.base.Destinatario.Companion.escollerDestinatario
+import org.aprengal.lendasnubeiras.data.actividades.datos.base.Estado
+import org.aprengal.lendasnubeiras.data.actividades.datos.base.Estado.Companion.escollerEstado
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.Orde
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.buscarElemento
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.buscarElementos
@@ -15,7 +16,6 @@ import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.SeleccionSQL
 import org.aprengal.lendasnubeiras.data.bd.clases.Taboa
 import org.aprengal.lendasnubeiras.data.localizacion.clases.ElementoL10n
-import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeCrear
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeEditarOutras
 import org.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
@@ -33,38 +33,59 @@ object Actividades {
 
     /**
      * Obtén as actividades dispoñibles para o buscador, permitindo aplicar
-     * filtros sobre os seus campos e establecer a ordenación dos resultados.
+     * filtros pechados, ordenación e filtrado por texto libre.
      *
-     * Só se inclúen actividades publicadas no servidor (estado 2) ou borradas
-     * localmente que xa foran publicadas (estado -3).
+     * Só se inclúen actividades en estado publicado: xa enviadas ao servidor
+     * ou creadas/modificadas en local aínda pendentes de enviar.
      *
      * Os filtros están limitados a campos con valores pechados, admitindo
-     * exclusivamente elementos de tipo ElementoL10n ou Idioma. Isto permite
+     * exclusivamente elementos de tipo ElementoL10n. Isto permite
      * filtrar por categorías, destinatarios e outros campos equivalentes,
      * evitando a introdución de valores arbitrarios.
      *
-     * @param colOrdenable Nome da columna pola que se ordenarán os resultados.
-     * @param dirOrdenable Sentido da ordenación. Por defecto, descendente.
-     * @param filtros Mapa cos campos e valores polos que se filtrarán as actividades.
-     * @return Lista de actividades adaptadas para o buscador.
-     * @throws IllegalArgumentException Se algún dos valores dos filtros non é de tipo ElementoL10n ou Idioma.
+     * O filtrado por texto libre (`termo`) aplícase en memoria sobre os resultados
+     * de SQLite segundo o campo indicado en `campoBusca` (título, resumo ou ambos).
+     *
+     * @param criterios Obxecto [CriteriosBusca] que contén os parámetros de ordenación,
+     *                  filtros pechados, termo de busca e campo sobre o que buscar.
+     * @return Lista de actividades adaptadas para o buscador que cumpren os criterios.
+     * @throws IllegalArgumentException Se algún dos valores dos filtros non é de tipo ElementoL10n.
      */
-    fun collerActividadesBuscables( colOrdenable: String, dirOrdenable: Orde = Orde.DESC, filtros: Map<String, Any> = emptyMap() ): List<ActividadeBuscable> {
+    fun collerActividadesBuscables( criterios: CriteriosBusca ): List<ActividadeBuscable> {
 
         val onde = mutableMapOf<String, Condicion>()
-        onde[ "estado" ] = Condicion.En( setOf( 2, -3 ) )
+        onde[ "estado" ] = Condicion.En( setOf( Estado.Publicado.estado, Estado.PublicadoLocal.estado ) )
 
-        for ( ( campo, valor ) in filtros ) {
-            require( valor is ElementoL10n || valor is Idioma ) { "Tipo non soportado: ${ valor::class }" }
+        for ( ( campo, valor ) in criterios.filtros ) {
+            require( valor is ElementoL10n ) { "Tipo non soportado: ${ valor::class }" }
             onde[ campo ] = Condicion.Simple( valor )
         }
 
         val columnas = setOf( "id", "clave_titulo", "id_categoria", "id_destinatario", "estado" )
-        val ordenar = mapOf( colOrdenable to dirOrdenable )
+        val ordenar = mapOf( criterios.colOrdenable to criterios.dirOrdenable )
         val datos = SeleccionSQL( columnas, alias = "a", onde = onde, ordenar = ordenar )
         val resultados = bd.seleccionar( Taboa.ACTIVIDADES, datos )
 
-        return resultados.map { actividade -> crearActividadeBuscable( actividade ) }
+        val actividadesBuscables = resultados.map { actividade -> crearActividadeBuscable( actividade ) }
+
+        if ( criterios.termo.isNullOrBlank() || actividadesBuscables.isEmpty() ) {
+            return actividadesBuscables
+        }
+
+        val termoNormalizado = criterios.termo.trim().lowercase()
+
+        val actividadesFiltradas = actividadesBuscables.filter { act ->
+
+            when ( criterios.campoBusca ) {
+                CampoBusca.Titulo -> act.titulo.lowercase().contains( termoNormalizado )
+                CampoBusca.Descricion -> act.resumo.lowercase().contains( termoNormalizado )
+                CampoBusca.Ambos -> act.titulo.lowercase().contains( termoNormalizado ) ||
+                        act.resumo.lowercase().contains( termoNormalizado )
+            }
+
+        }
+
+        return actividadesFiltradas
 
     }
 
@@ -112,7 +133,7 @@ object Actividades {
     fun collerActividadesPublicas( posicion: Int = 10, limite: Int = 0 ): List<ActividadeBuscable> {
 
         val columnas = setOf( "id", "clave_titulo", "id_autoria", "id_categoria", "id_destinatario", "estado", "duracion", "data_modificado" )
-        val onde = mapOf( "estado" to Condicion.Simple( Estado.Publicado.estado ) )
+        val onde = mapOf( "estado" to Condicion.En( setOf( Estado.Publicado.estado, Estado.PublicadoLocal.estado ) ) )
         val ordenar = mapOf( "id" to Orde.DESC )
         val datosLimite = listOf( posicion, limite )
         val datos = SeleccionSQL( columnas = columnas, onde = onde, ordenar = ordenar, limite = datosLimite )

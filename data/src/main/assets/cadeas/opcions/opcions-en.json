@@ -26,6 +26,6 @@
   "gardado_fallido_cambio_tema": "Could not change the theme",
   "actualizado_catalogo_fallido": "There was a problem updating the catalog",
   "borrado_conta_fallido": "Could not delete the account",
-  "peche_sesion_fallido": "Could not log out",
+  "peche_sesion_fallido": "Could not log out"
 
 }

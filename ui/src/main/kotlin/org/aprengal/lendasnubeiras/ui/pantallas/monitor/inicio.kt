@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
@@ -12,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import org.aprengal.lendasnubeiras.data.localizacion.cantidades.L10nVariante
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nIconas
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalNavegacion
@@ -41,7 +43,11 @@ fun PantallaInicio() {
         EspazadorAlto( 3 )
 
         Card( Modifier.fillMaxWidth() ) {
-            TextoVariante( L10nVariante.MensaxesCambiantes, numeroAleatorio, estilo = MaterialTheme.typography.bodyLarge )
+
+            Column( Modifier.fillMaxWidth().padding( 16.dp ) ) {
+                TextoVariante( L10nVariante.MensaxesCambiantes, numeroAleatorio, estilo = MaterialTheme.typography.bodyLarge )
+            }
+
         }
 
     }

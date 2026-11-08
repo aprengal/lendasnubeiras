@@ -5,16 +5,23 @@ import org.aprengal.lendasnubeiras.data.axustes.Opcion.SesionAnonima
 import org.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
 
 /**
- * Clase sellada que define o sistema de control de permisos baseado en roles de usuario.
- * Cada obxecto contén a súa propia lóxica de validación mediante a sobrecarga do operador `invoke`.
+ * Clase selada que define o sistema de permisos da aplicación.
+ *
+ * Cada obxecto derivado representa un permiso concreto e implementa a súa
+ * propia lóxica de validación en función do usuario e, cando corresponda,
+ * doutras condicións da aplicación.
  */
 sealed class Permiso {
 
     /**
-     * Comproba se o usuario actual cumpre coas condicións para este permiso.
+     * Comproba se o usuario indicado cumpre as condicións necesarias para
+     * dispoñer deste permiso.
      *
-     * @param usuario O [Usuario] a avaliar (por defecto emprega o usuario actual da sesión).
-     * @return `true` se ten permisos, `false` en caso contrario.
+     * Debe ser implementado por cada clase derivada mediante a definición
+     * da súa propia lóxica de validación.
+     *
+     * @param usuario Usuario que se quere avaliar. Por defecto, utiliza o usuario actual da sesión.
+     * @return `true` se se cumpren as condicións do permiso ou `false` en caso contrario.
      */
     abstract operator fun invoke( usuario: Usuario = usuarioActual() ): Boolean
 

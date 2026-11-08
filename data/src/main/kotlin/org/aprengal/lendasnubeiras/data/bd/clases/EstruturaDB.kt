@@ -142,6 +142,8 @@ internal class EstruturaDB {
             """
         )
 
+        //TODO: Insertar manualmente as actividades porque a API vai deixar de funcionar
+
     }
 
     /**

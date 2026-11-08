@@ -36,6 +36,19 @@ import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalAviso
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.Icona.Companion.DebuxarIconaMenu
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.Logo
 
+/**
+ * Estrutura principal das páxinas da aplicación mediante [Scaffold].
+ *
+ * Integra as barras de navegación superior e inferior, o sistema de avisos
+ * mediante [SnackbarHost] e o botón flotante para crear actividades cando
+ * o usuario actual dispón do permiso correspondente.
+ *
+ * O contido da páxina colócase na área central, respectando os espazos
+ * reservados polos compoñentes do [Scaffold].
+ *
+ * @param navegacion Controlador de navegación empregado polas barras e accións da interface.
+ * @param contido Contido composable específico da páxina.
+ */
 @Composable
 internal fun EstruturaBase( navegacion: Navegacion, contido: @Composable () -> Unit ) {
 
@@ -57,6 +70,14 @@ internal fun EstruturaBase( navegacion: Navegacion, contido: @Composable () -> U
 
 }
 
+/**
+ * Debuxa a cabeceira superior da navegación principal.
+ *
+ * Amosa o logotipo da aplicación e a icona de acceso aos axustes,
+ * respectando os espazos do sistema na parte superior da pantalla.
+ *
+ * @param navegacion Controlador de navegación empregado para acceder aos axustes.
+ */
 @Composable
 private fun NavegacionSuperior( navegacion: Navegacion ) {
 
@@ -78,6 +99,14 @@ private fun NavegacionSuperior( navegacion: Navegacion ) {
 
 }
 
+/**
+ * Debuxa a barra de navegación inferior coas rutas principais da aplicación.
+ *
+ * Inclúe os accesos ao inicio, ao buscador e ao catálogo, indicando
+ * visualmente a ruta seleccionada e permitindo cambiar de sección.
+ *
+ * @param navegacion Controlador de navegación empregado para seleccionar as rutas.
+ */
 @Composable
 private fun NavegacionInferior( navegacion: Navegacion ) {
 
@@ -107,6 +136,13 @@ private fun NavegacionInferior( navegacion: Navegacion ) {
 
 }
 
+/**
+ * Debuxa o botón flotante para acceder á creación dunha actividade.
+ *
+ * Ao premelo, engade a ruta de creación de actividades á navegación.
+ *
+ * @param navegacion Controlador de navegación empregado para abrir a pantalla de creación.
+ */
 @Composable
 private fun BotonCrearActividade( navegacion: Navegacion ) {
 

@@ -16,6 +16,15 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.Am
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.EspazadorAncho
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.Logo
 
+/**
+ * Estrutura visual das páxinas que amosan o título na cabeceira superior.
+ *
+ * Dispón o logotipo e o título da aplicación nunha cabeceira horizontal,
+ * separada do contido principal mediante unha liña divisoria.
+ * O contido proporcionado colócase debaixo da cabeceira cunha marxe interior.
+ *
+ * @param contido Contido composable específico da páxina que se amosará baixo a cabeceira.
+ */
 @Composable
 fun EstruturaSuperior( contido: @Composable () -> Unit ) {
 
@@ -25,7 +34,6 @@ fun EstruturaSuperior( contido: @Composable () -> Unit ) {
 
         Column( Modifier.fillMaxSize() ) {
 
-            //Igual isto se pode mover a unha nova función
             Row( modificador, horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically ) {
                 Logo()
                 EspazadorAncho()

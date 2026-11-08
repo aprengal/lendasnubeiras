@@ -11,10 +11,10 @@ import androidx.compose.ui.unit.sp
 import org.aprengal.lendasnubeiras.ui.R
 
 /**
- * Tipografías da aplicación.
+ * Define as familias tipográficas e os estilos de texto empregados na aplicación.
  *
- * Define as dúas familias de letra empregadas e o conxunto de estilos de texto
- * de Material 3 ([Typography]) que se aplican en toda a interface.
+ * Configura as fontes Expletus Sans e Ubuntu e establece os estilos de
+ * [Typography] de Material 3 utilizados polos compoñentes da interface.
  */
 internal object Tipografias {
 
@@ -29,9 +29,9 @@ internal object Tipografias {
     )
 
     /**
-     * Familia Ubuntu, empregada nos parágrafos e nas etiquetas.
+     * Familia Ubuntu, empregada nos textos do corpo e nas etiquetas.
      *
-     * Ten ficheiros propios para o estilo normal, a negriña e a cursiva.
+     * Dispón de ficheiros independentes para os estilos normal, negriña e cursiva.
      */
     private val ubuntu = FontFamily(
         Font( R.font.ubuntu_regular, FontWeight.Normal ),
@@ -40,14 +40,17 @@ internal object Tipografias {
     )
 
     /**
-     * Estilos de texto da aplicación.
+     * Configura os estilos tipográficos da aplicación mediante [Typography] de Material 3.
      *
      * - Cabeceiras e títulos: Expletus Sans en negriña, con tamaños de 14 sp a 26 sp.
-     * - Parágrafos: Ubuntu en peso normal, con 18 sp para o texto principal e 12 sp para anotacións.
+     * - Texto do corpo: Ubuntu en peso normal, con tamaños de 12 sp e 18 sp.
      * - Etiquetas: Ubuntu en negriña, con tamaños de 11 sp a 16 sp.
+     *
+     * Os estilos establecen tamén a altura de liña e, nos títulos, o espazamento
+     * entre caracteres.
      */
     private val tipografias = Typography(
-        // Cabeceira 1
+        // Cabeceiras
         headlineLarge = TextStyle(
             fontFamily = expletusSans,
             fontWeight = FontWeight.Bold,
@@ -55,7 +58,6 @@ internal object Tipografias {
             lineHeight = 40.sp,
             letterSpacing = (-0.0415625).em
         ),
-        // Cabeceira 2
         headlineMedium = TextStyle(
             fontFamily = expletusSans,
             fontWeight = FontWeight.Bold,
@@ -63,7 +65,6 @@ internal object Tipografias {
             lineHeight = 35.sp,
             letterSpacing = (-0.0415625).em
         ),
-        // Cabeceira 3
         headlineSmall = TextStyle(
             fontFamily = expletusSans,
             fontWeight = FontWeight.Bold,
@@ -72,7 +73,7 @@ internal object Tipografias {
             letterSpacing = (-0.0415625).em
         ),
 
-        // Títulos de secciones principais e compoñentes importantes
+        // Títulos de seccións e compoñentes
         titleLarge = TextStyle(
             fontFamily = expletusSans,
             fontWeight = FontWeight.Bold,
@@ -80,7 +81,6 @@ internal object Tipografias {
             lineHeight = 28.sp,
             letterSpacing = (-0.0415625).em
         ),
-        // Títulos de componentes
         titleMedium = TextStyle(
             fontFamily = expletusSans,
             fontWeight = FontWeight.Bold,
@@ -88,7 +88,6 @@ internal object Tipografias {
             lineHeight = 24.sp,
             letterSpacing = (-0.0415625).em
         ),
-        // Títulos pequenos e secundarios
         titleSmall = TextStyle(
             fontFamily = expletusSans,
             fontWeight = FontWeight.Bold,
@@ -97,21 +96,19 @@ internal object Tipografias {
             letterSpacing = (-0.0415625).em
         ),
 
-        // Parágrafo (corpo de texto normal)
+        // Texto de corpo
         bodyLarge = TextStyle(
             fontFamily = ubuntu,
             fontWeight = FontWeight.Normal,
             fontSize = 18.sp,
             lineHeight = 26.sp
         ),
-        // Parágrafo (antes tiña negriña, pero aplicarase no propio compoñente)
         bodyMedium = TextStyle(
             fontFamily = ubuntu,
             fontWeight = FontWeight.Normal,
-            fontSize = 18.sp,
-            lineHeight = 26.sp
+            fontSize = 16.sp,
+            lineHeight = 24.sp
         ),
-        // Anotacións
         bodySmall = TextStyle(
             fontFamily = ubuntu,
             fontWeight = FontWeight.Normal,
@@ -119,21 +116,19 @@ internal object Tipografias {
             lineHeight = 16.sp
         ),
 
-        // Texto de botóns / etiquetas
+        // Texto de botóns e etiquetas
         labelLarge = TextStyle(
             fontFamily = ubuntu,
             fontWeight = FontWeight.Bold,
             fontSize = 16.sp,
             lineHeight = 22.sp
         ),
-        // Etiquetas de controis compactos, tabs e chips
         labelMedium = TextStyle(
             fontFamily = ubuntu,
             fontWeight = FontWeight.Bold,
             fontSize = 12.sp,
             lineHeight = 16.sp
         ),
-        // Etiquetas auxiliares e de tamaño reducido
         labelSmall = TextStyle(
             fontFamily = ubuntu,
             fontWeight = FontWeight.Bold,
@@ -143,9 +138,9 @@ internal object Tipografias {
     )
 
     /**
-     * Devolve os estilos de texto da aplicación.
+     * Obtén a configuración tipográfica da aplicación.
      *
-     * @return O conxunto de [Typography] que se pasa ao tema da aplicación.
+     * @return Configuración de [Typography] utilizada polo tema da aplicación.
      */
     fun collerTipografias(): Typography {
         return tipografias

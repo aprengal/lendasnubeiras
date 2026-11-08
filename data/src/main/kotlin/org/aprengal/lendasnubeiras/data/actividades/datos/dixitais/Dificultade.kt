@@ -15,7 +15,7 @@ import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nActividades
  *
  * @property clave Identificador único do nivel de dificultade.
  * @property nome Recurso de localización co nome da dificultade que se
- *                amosará na interface de usuario.
+ * amosará na interface de usuario.
  */
 enum class Dificultade( override val clave: String, override val nome: L10nActividades ): ElementoL10n {
 

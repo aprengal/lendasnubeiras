@@ -6,7 +6,6 @@ import androidx.compose.material3.SnackbarResult
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nBase
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nSingular
 
-
 /**
  * Acciones comúns da interface relacionadas cos avisos e a repetición de
  * operacións que poden fallar.

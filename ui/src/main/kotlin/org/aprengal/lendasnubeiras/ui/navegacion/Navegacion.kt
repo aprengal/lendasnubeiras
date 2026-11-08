@@ -59,7 +59,7 @@ class Navegacion( private val traza: NavBackStack<Ruta>, seleccionada: KClass<ou
      * Omite as rutas iniciais que xa coincidan coa última ruta da pila,
      * evitando engadir pantallas que xa están abertas.
      *
-     * @param elementos Lista de rutas que se queren engadir, ordenadas
+     * @param lista Lista de rutas que se queren engadir, ordenadas
      *  desde a primeira pantalla ata a pantalla de destino.
      */
     fun engadirVarias( lista: List<Ruta> ) {

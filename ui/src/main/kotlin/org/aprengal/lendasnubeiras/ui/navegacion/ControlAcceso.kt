@@ -22,8 +22,6 @@ import kotlin.reflect.KClass
  */
 internal object ControlAcceso {
 
-    //Hai que mirar se isto ao final acaba duplicando comportamento en ListaNavegacion
-    //Non se pode navegar á ruta que nunca se rexistrou
     /**
      * Comproba se o usuario actual ten permiso para acceder a unha ruta.
      *

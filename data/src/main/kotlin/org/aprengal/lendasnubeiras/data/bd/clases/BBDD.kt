@@ -11,34 +11,51 @@ import androidx.core.database.sqlite.transaction
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.CombinacionSQL
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.SeleccionSQL
-//import org.aprengal.lendasnubeiras.data.bd.taboas.TaboaLectura
 import org.aprengal.lendasnubeiras.data.localizacion.clases.ElementoL10n
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma
 import kotlin.collections.iterator
 
 /**
- * Xestor da base de datos SQLite local que herda de SQLiteOpenHelper para controlar
+ * Xestor da base de datos SQLite local que herda de [SQLiteOpenHelper] para controlar
  * a creación, actualización e acceso ás táboas da aplicación.
+ *
+ * Defínese como clase en lugar de obxecto porque [SQLiteOpenHelper] require unha instancia
+ * para a súa utilización e debe ser herdada mediante unha clase.
  */
 internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, null, DB_VERSION ) {
 
+    /**
+     * Conxunto de táboas permitidas nas operacións de acceso á base de datos.
+     */
     private val taboasPermitidas: Set<Taboa> = Taboa.entries.toSet()
 
-    // Estrutura
     companion object {
+
+        /** Nome do ficheiro da base de datos SQLite local. */
         const val DB_NOME = "lendas_nubeiras.bd"
+
+        /** Versión actual do esquema da base de datos. */
         const val DB_VERSION = 1
+
     }
 
     /**
      * Crea a estrutura inicial da base de datos cando se executa por primeira vez.
+     *
+     * @param db Base de datos na que se debe crear a estrutura.
      */
     override fun onCreate( db: SQLiteDatabase ) {
         EstruturaDB().crear( db )
     }
 
     /**
-     * Actualiza a base de datos cando cambia a versión establecida.
+     * Actualiza a estrutura da base de datos cando cambia a súa versión.
+     *
+     * Delega a execución das modificacións necesarias na clase [EstruturaDB].
+     *
+     * @param db Base de datos cuxa estrutura se debe actualizar.
+     * @param oldVersion Versión anterior da base de datos.
+     * @param newVersion Nova versión da base de datos.
      */
     override fun onUpgrade( db: SQLiteDatabase, oldVersion: Int, newVersion: Int ) {
         EstruturaDB().actualizar( db, oldVersion, newVersion )
@@ -62,8 +79,6 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
     private fun verificarTaboa( taboa: Taboa ) {
         require( taboa in taboasPermitidas ) { "A táboa $taboa non está na lista de táboas permitidas" }
     }
-
-    // Operacións
 
     /**
      * Converte un mapa de valores nun obxecto ContentValues para utilizalo
@@ -123,13 +138,29 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
 
     /**
      * Insire un único rexistro nunha táboa a partir dun mapa de valores.
+     *
+     * Delega a operación na sobrecarga que permite inserir varios rexistros.
+     *
+     * @param taboa Táboa na que se quere inserir o rexistro.
+     * @param listaValores Mapa que relaciona os nomes das columnas cos valores que se van inserir.
+     * @return Identificador do rexistro inserido, ou `-1` se a inserción falla.
      */
     fun insertar( taboa: Taboa, listaValores: Map<String, Any> ): Long {
         return insertar( taboa, listOf( listaValores ) )[ 0 ]
     }
 
     /**
-     * Insire unha lista de rexistros nunha táboa, xestionándoo mediante transacción se son varios.
+     * Insire varios rexistros nunha táboa da base de datos.
+     *
+     * Cando só se proporciona un rexistro, a inserción realízase directamente.
+     * Se se proporcionan varios, todas as insercións execútanse dentro dunha mesma transacción.
+     *
+     * @param taboa Táboa na que se queren inserir os rexistros.
+     * @param listaValores Lista de mapas que relacionan os nomes das columnas cos valores
+     * correspondentes a cada rexistro.
+     * @return Lista cos identificadores dos rexistros inseridos, ou unha lista que contén
+     * `-1` se se produce un erro de SQLite.
+     * @throws IllegalArgumentException Se a lista de rexistros está baleira.
      */
     fun insertar( taboa: Taboa, listaValores: List<Map<String, Any>> ): List<Long> {
 
@@ -159,7 +190,19 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
     }
 
     /**
-     * Executa unha consulta de selección (SELECT) aplicando condicións, ordenacións e límites.
+     * Executa unha consulta de selección sobre unha táboa da base de datos.
+     *
+     * Permite especificar as columnas que se queren recuperar, aplicar condicións
+     * de filtrado, combinar outras táboas, ordenar os resultados e establecer límites
+     * ao número de rexistros devoltos.
+     *
+     * @param taboa Táboa principal sobre a que se realiza a consulta.
+     * @param datos Configuración da consulta, incluíndo columnas, condicións, combinacións,
+     * ordenación e límites.
+     * @return Lista de mapas que relacionan os nomes das columnas cos seus valores.
+     * Devolve unha lista baleira se a consulta falla ou non produce resultados.
+     * @throws IllegalArgumentException Se non se especifican columnas ou se o límite
+     * contén máis de dous valores.
      */
     fun seleccionar( taboa: Taboa, datos: SeleccionSQL ): List<Map<String, Any>> {
 
@@ -204,11 +247,11 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
     }
 
     /**
-     * Procesa os resultados dunha consulta SQLite e converte cada fila do Cursor
+     * Procesa os resultados dunha consulta SQLite e converte cada fila do [Cursor]
      * nun mapa que relaciona os nomes das columnas cos seus respectivos valores.
      *
-     * Os valores enteiros convértense en Long, os decimais en Double e os textos
-     * en String. O Cursor péchase automaticamente ao finalizar o procesamento.
+     * Os valores enteiros convértense en `Long`, os decimais en `Double` e os textos
+     * en `String`. O [Cursor] péchase automaticamente ao finalizar o procesamento.
      *
      * @param resultados Cursor que contén os resultados da consulta executada.
      * @return Lista de mapas cos datos correspondentes a cada fila obtida.
@@ -248,7 +291,12 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
     }
 
     /**
-     * Actualiza rexistros nunha táboa baseándose nun conxunto de condicións.
+     * Actualiza os valores dos rexistros dunha táboa que cumpran as condicións indicadas.
+     *
+     * @param taboa Táboa na que se queren actualizar os rexistros.
+     * @param valores Mapa que relaciona os nomes das columnas cos novos valores.
+     * @param onde Condicións que deben cumprir os rexistros para seren actualizados.
+     * @return Número de rexistros modificados, ou `-1` se se produce un erro de SQLite.
      */
     fun actualizar( taboa: Taboa, valores: Map<String, Any>, onde: Map<String, Condicion> ): Int {
 
@@ -270,7 +318,11 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
     }
 
     /**
-     * Elimina rexistros dunha táboa baseándose nun conxunto de condicións.
+     * Elimina os rexistros dunha táboa que cumpran as condicións indicadas.
+     *
+     * @param taboa Táboa da que se queren eliminar os rexistros.
+     * @param onde Condicións que deben cumprir os rexistros para seren eliminados.
+     * @return Número de rexistros eliminados, ou `-1` se se produce un erro de SQLite.
      */
     fun eliminar( taboa: Taboa, onde: Map<String, Condicion> ): Int {
 

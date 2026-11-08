@@ -115,15 +115,7 @@ object Puntuacions {
     fun collerClasificacion( actividade: Actividade, dificultade: Dificultade ): Clasificacion {
 
         val colummnas = setOf( "x.nome", "p.puntos", "p.unix_rexistro" )
-        val datosCombinacion = listOf(
-            CombinacionSQL(
-                TipoCombinacion.INNER,
-                "xogador_id",
-                "x",
-                "id",
-                Taboa.XOGADORES
-            )
-        )
+        val datosCombinacion = listOf( CombinacionSQL( TipoCombinacion.INNER, "xogador_id", "x", "id", Taboa.XOGADORES ) )
         val onde = mapOf( "p.actividade_id" to Condicion.Simple( actividade.id ), "p.dificultade" to Condicion.Simple( dificultade.clave ) )
         val ordenar = mapOf( "p.puntos" to Orde.DESC, "p.unix_rexistro" to Orde.ASC )
 

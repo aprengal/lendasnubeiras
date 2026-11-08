@@ -20,13 +20,22 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 /**
- * Obxecto singleton encargado de xestionar todas as peticións HTTP/HTTPS coa API do backend.
- * Encargase da serialización en JSON, manexo de cabeceiras, redireccións e tratamento centralizado de erros.
+ * Obxecto singleton encargado de xestionar as peticións HTTP e HTTPS coa API do backend.
+ *
+ * Centraliza a comunicación co servidor, incluíndo a serialización dos datos enviados
+ * en formato JSON, a configuración das cabeceiras, a xestión das redireccións HTTP,
+ * o tratamento das respostas e a conversión dos erros de comunicación.
+ *
+ * As peticións execútanse nun fío de entrada/saída para non bloquear o fío principal.
+ * As respostas procésanse e convértense ao tipo correspondente segundo a ruta da API.
  */
 object ConexionApi {
 
     /**
-     * Define os métodos HTTP soportados polas rutas da API.
+     * Métodos HTTP dispoñibles para realizar peticións á API.
+     *
+     * Cada elemento contén a cadea de texto que se utiliza ao configurar
+     * o método da conexión HTTP.
      */
     enum class MetodoApi( val clave: String ) {
         GET( "GET" ),
@@ -35,34 +44,36 @@ object ConexionApi {
     }
 
     /**
-     * Excepción interna para manexar erros específicos da API que conteñen un código de estado HTTP.
+     * Excepción interna utilizada para representar erros de comunicación coa API.
+     *
+     * Permite asociar unha mensaxe descritiva a un código que posteriormente
+     * se incorpora á resposta JSON devolta pola capa de peticións.
+     *
+     * @param mensaxe Descrición do erro producido.
+     * @param codigo Código asociado ao erro.
      */
     private class ApiException( mensaxe: String, val codigo: Int ) : Exception( mensaxe )
 
-    /** URL base da API obtida desde a configuración do proxecto. */
+    /** URL base do servidor, obtida da configuración de compilación do proxecto. */
     private const val URL_BASE = BuildConfig.API_URL
 
-    /** Contexto global da aplicación necesario para operacións internas se se require. */
-    private lateinit var appContext: Context
-
     /**
-     * Inicializa o contexto global da aplicación de forma segura.
+     * Realiza unha petición á API e converte a resposta ao tipo correspondente á ruta solicitada.
      *
-     * @contexto O contexto actual da aplicación.
-     */
-    fun arrancar( contexto: Context ) {
-        if ( ::appContext.isInitialized ) return
-        appContext = contexto.applicationContext
-    }
-
-    /**
-     * Realiza unha petición á API e converte o resultado ao tipo de resposta correspondente.
+     * A conversión depende da ruta indicada:
+     * - [RutasApi.ACCESO] e [RutasApi.VALIDACION]: [SesionUsuario].
+     * - [RutasApi.ACTUALIZAR]: [DatosActividades].
+     * - [RutasApi.CREARACTIVIDADE]: [ActividadeCreada].
+     * - O resto das rutas: [RespostaXenerica].
      *
-     * @param T O tipo de obxecto que herda de RespostaApi que se vai devolver.
-     * @param metodoApi O método HTTP empregado (GET, POST, DELETE).
-     * @param rutaApi A ruta específica da API a consultar.
-     * @param campos O mapa de parámetros que se enviarán no corpo da petición.
-     * @return Unha instancia tipada coa resposta da API.
+     * Delega a comunicación HTTP en [peticion] e devolve o resultado
+     * como unha instancia do tipo solicitado.
+     *
+     * @param T Tipo de resposta que se espera obter, derivado de [RespostaApi].
+     * @param metodoApi Método HTTP que se empregará na petición.
+     * @param rutaApi Ruta da API á que se realizará a petición.
+     * @param campos Datos que se enviarán no corpo da petición, se corresponde.
+     * @return Instancia da clase de resposta correspondente á ruta solicitada.
      */
     suspend fun <T : RespostaApi> procesarPeticion( metodoApi: MetodoApi, rutaApi: RutasApi, campos: Map<String, Any> = emptyMap() ): T {
 
@@ -82,7 +93,18 @@ object ConexionApi {
     }
 
     /**
-     * Capa intermediaria que intercepta excepcións da API, rexistra o erro e devolve un JSON de emerxencia co código.
+     * Intercepta os erros de comunicación representados mediante [ApiException].
+     *
+     * Delega a petición en [realizarPeticion]. Se esta produce unha [ApiException],
+     * rexistra a súa mensaxe no rexistro da aplicación e devolve un obxecto JSON
+     * que contén o código asociado ao erro.
+     *
+     * As demais excepcións non se interceptan neste método.
+     *
+     * @param metodoApi Método HTTP que se empregará na petición.
+     * @param rutaApi Ruta da API á que se realizará a petición.
+     * @param campos Datos que se enviarán no corpo da petición, se corresponde.
+     * @return Obxecto JSON coa resposta do servidor ou co código do erro producido.
      */
     private suspend fun peticion( metodoApi: MetodoApi, rutaApi: RutasApi, campos: Map<String, Any> ): JSONObject {
 
@@ -96,10 +118,13 @@ object ConexionApi {
     }
 
     /**
-     * Converte un mapa de clave-valor nunha cadea de texto en formato JSON puro.
+     * Converte un mapa de datos nunha cadea de texto en formato JSON.
      *
-     * @param campos O mapa cos datos a serializar.
-     * @return Unha cadea JSON válida.
+     * Cada entrada do mapa engádese ao obxecto JSON utilizando a súa clave
+     * e o valor correspondente.
+     *
+     * @param campos Mapa cos datos que se queren serializar.
+     * @return Cadea de texto que representa o obxecto JSON resultante.
      */
     private fun crearCorpo( campos: Map<String, Any> ): String {
         val jsonObject = JSONObject()
@@ -110,7 +135,17 @@ object ConexionApi {
     }
 
     /**
-     * Procesa a resposta de texto bruto recibida do servidor e inxecta o código HTTP no JSON.
+     * Converte o texto recibido do servidor nun obxecto JSON e incorpora o código HTTP.
+     *
+     * Se o servidor devolve contido, interprétase como un obxecto JSON e engádeselle
+     * o código de resposta HTTP. Se a resposta non contén texto, créase un obxecto
+     * JSON que inclúe unicamente ese código.
+     *
+     * O código HTTP engadido substitúe calquera valor previo asociado á clave `codigo`.
+     *
+     * @param texto Contido textual recibido na resposta do servidor.
+     * @param codigo Código de estado HTTP devolto polo servidor.
+     * @return Obxecto JSON co contido da resposta e o código HTTP correspondente.
      */
     private fun procesarResposta( texto: String, codigo: Int ): JSONObject {
 
@@ -125,7 +160,30 @@ object ConexionApi {
     }
 
     /**
-     * Núcleo de comunicación HTTP que manexa conexións, timeouts, redireccións e cabeceras.
+     * Executa a petición HTTP e procesa a resposta recibida do servidor.
+     *
+     * Obtén a sesión actual do usuario e configura a conexión coa URL correspondente
+     * á ruta solicitada. A comunicación realízase en [Dispatchers.IO] e establece
+     * tempos máximos de espera de 10 segundos tanto para a conexión como para a lectura.
+     *
+     * Se existe unha sesión, engade a súa credencial á cabeceira `sesion_rastro`.
+     * Cando a petición contén datos e o método HTTP non é GET, serializa os campos
+     * en JSON e envíaos no corpo da petición, configurando as cabeceiras correspondentes.
+     *
+     * As redireccións HTTP xestiónanse manualmente, seguindo un máximo de cinco saltos.
+     * Finalmente, le o contido da resposta: utiliza o fluxo normal para respostas
+     * satisfactorias e o fluxo de erro para o resto dos códigos HTTP.
+     *
+     * Os erros de tempo de espera, conexión e formato JSON convértense en [ApiException]
+     * cos seguintes códigos:
+     * - `408`: tempo de espera esgotado.
+     * - `0`: erro de conexión ou ausencia de resposta do servidor.
+     * - `1`: resposta recibida cun formato JSON non válido.
+     *
+     * @param metodoApi Método HTTP que se empregará na petición.
+     * @param ruta Ruta da API á que se realizará a petición.
+     * @param campos Datos que se enviarán no corpo da petición, se corresponde.
+     * @return Obxecto JSON procesado a partir da resposta recibida do servidor.
      */
     private suspend fun realizarPeticion( metodoApi: MetodoApi, ruta: RutasApi, campos: Map<String, Any> ): JSONObject {
 

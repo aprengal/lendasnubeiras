@@ -16,8 +16,12 @@ import java.util.UUID
 
 /**
  * Xestor das opcións e preferencias locais da aplicación mediante DataStore.
- * Mantén unha caché en memoria para facilitar o acceso aos valores e xestiona
- * o almacenamento de información auxiliar relacionada coas sesións e co dispositivo.
+ *
+ * Mantén unha caché en memoria dos valores almacenados para facilitar o seu acceso
+ * sen necesidade de consultar DataStore en cada lectura.
+ *
+ * Tamén xestiona información auxiliar relacionada coas sesións e co identificador
+ * do dispositivo, permitindo conservar estes datos entre execucións da aplicación.
  */
 object Axustes {
 
@@ -66,6 +70,7 @@ object Axustes {
      * @param opcion Definición da opción que se desexa almacenar.
      * @param valor Novo valor da opción.
      * @return `true` se o almacenamento se completou correctamente.
+     * @throws IllegalArgumentException Se o tipo do valor non está soportado.
      */
     internal suspend fun <T : Any> gardarOpcion( opcion: Opcion<T>, valor: T ): Boolean {
 
@@ -103,6 +108,7 @@ object Axustes {
      *
      * @param opcion Definición da opción que se desexa eliminar.
      * @return `true` se a eliminación se completou correctamente.
+     * @throws IllegalArgumentException Se o tipo do valor non está soportado.
      */
     internal suspend fun <T : Any> borrarOpcion( opcion: Opcion<T> ): Boolean {
 
@@ -170,8 +176,10 @@ object Axustes {
     }
 
     /**
-     * Elimina de DataStore e da caché toda a información auxiliar almacenada
-     * para as sesións locais.
+     * Elimina de DataStore e da caché toda a información auxiliar das sesións locais.
+     *
+     * Para identificala, utiliza o prefixo formado polo nome da opción
+     * [Opcion.SesionUsuario] seguido dun guión baixo.
      */
     suspend fun borrarSesionsLocais() {
 
@@ -195,9 +203,11 @@ object Axustes {
 
     /**
      * Obtén o identificador único do dispositivo ou xera un novo se aínda non existe.
-     * O identificador xerado gárdase nas opcións locais para reutilizalo posteriormente.
      *
-     * @return Identificador único do dispositivo.
+     * Se non hai ningún identificador almacenado, xera un UUID e inicia o seu
+     * almacenamento nas opcións locais para reutilizalo en posteriores execucións.
+     *
+     * @return Identificador do dispositivo, almacenado previamente ou xerado nesta chamada.
      */
     internal fun collerIdDispositivo(): String {
 

@@ -9,9 +9,12 @@ import androidx.compose.ui.graphics.compositeOver
 /**
  * Cores da aplicación.
  *
- * Define as paletas dos temas claro e escuro como esquemas de cor de
- * Material 3 ([ColorScheme]). Ambos parten de só catro cores base, e as
- * superficies obtéñense mesturando o fondo oposto cunha opacidade baixa.
+ * Define os esquemas de cor dos temas claro e escuro mediante
+ * [ColorScheme] de Material 3.
+ *
+ * Ambos esquemas parten de catro cores base: fondo e texto para
+ * cada tema. As superficies constrúense mesturando o fondo do tema
+ * oposto co fondo actual mediante unha opacidade reducida.
  */
 internal object Cores {
 
@@ -30,9 +33,9 @@ internal object Cores {
     /**
      * Esquema de cores do tema claro.
      *
-     * Organízase en tres capas: o fondo xeral, os elementos elevados
-     * (superficies) e os elementos de contraste forte (botóns, indicadores
-     * e bordos). Cada propiedade indica nun comentario o compoñente ao que se aplica.
+     * Emprega o fondo claro como base, con texto escuro e elementos
+     * de realce en azul escuro. As superficies utilizan diferentes
+     * niveis de mestura para establecer a xerarquía visual.
      */
     private val coresClaras = lightColorScheme(
 
@@ -80,8 +83,9 @@ internal object Cores {
     /**
      * Esquema de cores do tema escuro.
      *
-     * Ten a mesma estrutura que [coresClaras], pero coas cores invertidas:
-     * fondo escuro, texto claro e realces en gris claro.
+     * Emprega o fondo escuro como base, con texto claro e elementos
+     * de realce en gris claro. Mantén a mesma distribución de cores
+     * que o tema claro, adaptada á súa paleta.
      */
     private val coresEscuras = darkColorScheme(
 

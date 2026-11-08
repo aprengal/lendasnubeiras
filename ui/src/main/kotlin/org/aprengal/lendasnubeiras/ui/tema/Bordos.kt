@@ -6,19 +6,19 @@ import androidx.compose.ui.unit.dp
 
 
 /**
- * Bordos da aplicación.
+ * Formas dos compoñentes da aplicación.
  *
- * Define os radios de curvatura dos cantos dos compoñentes, segundo os
- * tamaños de [Shapes] de Material 3.
+ * Define os radios de curvatura das esquinas mediante os tamaños
+ * de [Shapes] de Material 3.
  */
 internal object Bordos {
 
     /**
-     * Formas dos compoñentes, de máis pequena a máis grande.
+     * Formas dos compoñentes, ordenadas de menor a maior tamaño:
      *
      * - `extraSmall`: 4 dp.
      * - `small`: 6 dp.
-     * - `medium`: 8 dp (empregado nos botóns principal e secundario).
+     * - `medium`: 8 dp, empregado nos botóns principal e secundario.
      * - `large`: 12 dp.
      * - `extraLarge`: 50 dp.
      */

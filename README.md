@@ -35,13 +35,13 @@ lendasnubeiras/           (privado)
 
 ## 📖 Documentación
 
-A documentación completa do proxecto atópase en pdf no directorio de documentos: https://github.com/aprengal/lendasnubeiras/tree/main/docs
+A documentación do proxecto atópase en varios pdf en https://github.com/aprengal/lendasnubeiras/tree/main/docs
 
 ## 🚀 Estado do proxecto
 
 🔧 En desenvolvemento — Proxecto Final de Ciclo (2026).
 
-Falta crear o sistema que permite cargar as actividades na interface sen ter que cargalas en memoria como os textos da interface.
+Faltan crear varias pantallas pantallas en compose e realizar a mostra de cinco actividades.
 
 ## ✍️ Autor
 

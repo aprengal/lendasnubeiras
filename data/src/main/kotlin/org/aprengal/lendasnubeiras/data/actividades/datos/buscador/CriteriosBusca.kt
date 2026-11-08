@@ -22,12 +22,12 @@ import org.aprengal.lendasnubeiras.data.localizacion.clases.ElementoL10n
  * @property colOrdenable Nome da columna pola que se ordenarán os resultados.
  * @property dirOrdenable Sentido da ordenación. Por defecto, descendente ([Orde.DESC]).
  * @property filtros Mapa de filtros por campo, onde cada clave identifica o campo
- *                   da actividade e cada valor debe ser un elemento de tipo
- *                   [ElementoL10n]. Por defecto, non se aplica ningún filtro.
+ * da actividade e cada valor debe ser un elemento de tipo [ElementoL10n].
+ * Por defecto, non se aplica ningún filtro.
  * @property termo Texto libre empregado para buscar nas actividades. Se é null,
- *                 non se aplica ningún filtrado por texto.
+ * non se aplica ningún filtrado por texto.
  * @property campoBusca Indica os campos de texto nos que se buscará o termo:
- *                      título, descrición ou ambos. Por defecto, [CampoBusca.Ambos].
+ * título, descrición ou ambos. Por defecto, [CampoBusca.Ambos].
  */
 data class CriteriosBusca(
     val colOrdenable: String,

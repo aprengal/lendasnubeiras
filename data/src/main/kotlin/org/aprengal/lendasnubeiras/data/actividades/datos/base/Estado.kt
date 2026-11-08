@@ -16,6 +16,7 @@ import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nActividades
  *
  * Os estados locais permiten representar actividades que aínda non se
  * sincronizaron, conservando a súa situación real dentro do fluxo de publicación.
+ * As actividades con estes estados non se amosan no catálogo nin no buscador.
  *
  * Ademais de implementar [ElementoL10n], este enumerado dispón dun identificador
  * numérico ([estado]), xa que o seu valor se corresponde cun campo numérico
@@ -68,7 +69,7 @@ enum class Estado( val estado: Int, override val nome: L10nActividades ): Elemen
          *
          * @param indice Identificador numérico do estado que se quere obter.
          * @return O estado correspondente ao identificador ou [BorradorLocal]
-         *         se non existe.
+         * se non existe.
          */
         fun escollerEstado( indice: Int ): Estado {
             return entries.find { estado -> estado.estado == indice } ?: BorradorLocal

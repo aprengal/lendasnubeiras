@@ -74,9 +74,11 @@ class Entrada : AppCompatActivity() {
     /**
      * Inicializa os servizos que a aplicación necesita antes de mostrar nada.
      *
-     * Arranca, por orde: axustes, conexión coa API, base de datos,
-     * localización (obtendo o fluxo do idioma), tema e sesión actual.
-     * Execútase con [runBlocking], así que bloquea o fío ata que remata.
+     * Arranca, por orde, os axustes, a localización (obtendo o fluxo
+     * do idioma), o tema, a base de datos e a sesión actual.
+     *
+     * A inicialización execútase mediante [runBlocking], polo que bloquea o fío chamador
+     * ata que rematan todas as operacións.
      *
      * @param contexto Contexto co que se inicializan os servizos que o precisan.
      */
@@ -84,7 +86,6 @@ class Entrada : AppCompatActivity() {
 
         runBlocking {
             Axustes.arrancar( contexto )
-            ConexionApi.arrancar( contexto )
             idioma = Localizacion.arrancar( contexto )
             Tema.arrancar()
             BD.arrancar( contexto )
@@ -171,9 +172,14 @@ class Entrada : AppCompatActivity() {
     }
 
     /**
-     * Sincroniza o idioma da aplicación co do sistema cando a actividade deixa de ser visible.
+     * Sincroniza o idioma da aplicación co do sistema cando a actividade pasa a segundo plano.
      *
-     * Se o idioma actual da aplicación é distinto do rexistrado en [AppCompatDelegate], actualízao.
+     * A actualización realízase neste momento para evitar que os cambios de idioma afecten
+     * á experiencia de usuario durante o uso normal da aplicación.
+     *
+     * Se o idioma actual da aplicación é distinto do rexistrado en [AppCompatDelegate],
+     * actualízao mediante [AppCompatDelegate.setApplicationLocales]. Este cambio provoca
+     * habitualmente que Android recree a actividade para aplicar o novo idioma.
      */
     override fun onStop() {
 

@@ -21,8 +21,7 @@ import org.json.JSONObject
  * nas distintas implementacións da interface.
  *
  * @property id Identificador único da actividade.
- * @property claveTitulo Clave que identifica os recursos textuais asociados
- *                      á actividade.
+ * @property claveTitulo Clave que identifica os recursos textuais asociados á actividade.
  * @property titulo Título da actividade.
  * @property descricion Lista de parágrafos que compoñen a descrición da actividade.
  * @property categoria Categoría na que se clasifica a actividade.

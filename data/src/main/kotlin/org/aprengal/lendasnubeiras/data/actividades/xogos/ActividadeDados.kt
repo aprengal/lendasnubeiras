@@ -1,7 +1,18 @@
 package org.aprengal.lendasnubeiras.data.actividades.xogos
 
+/**
+ * Proporciona os identificadores dos iconas dispoñibles para representar actividades.
+ *
+ * Contén un mapa que relaciona os nomes dos iconas cos seus caracteres correspondentes
+ * da fonte de iconas utilizada pola aplicación.
+ *
+ * Actualmente emprégase para seleccionar iconas aleatorias na actividade dos dados.
+ */
 class ActividadeDados {
 
+    /**
+     * Mapa que relaciona os identificadores dos iconas cos caracteres que os representan.
+     */
     val iconasActividades = mapOf(
         "account" to "\uDB80\uDC04",
         "account_cowboy_hat_outline" to "\uDB85\uDFF3",
@@ -162,7 +173,19 @@ class ActividadeDados {
         "wizard_hat" to "\uDB85\uDC77"
     )
 
+    /**
+     * Selecciona unha cantidade determinada de iconas aleatorias sen repeticións.
+     *
+     * A selección realízase a partir dos valores de [iconasActividades].
+     * Se a cantidade solicitada supera o número de iconas dispoñibles,
+     * devólvense todos os iconas existentes.
+     *
+     * @param cantidad Número de iconas que se queren seleccionar, debe ser maior que cero.
+     * @return Lista cos caracteres correspondentes aos iconas seleccionados.
+     * @throws IllegalArgumentException Se a cantidade solicitada é menor ca un.
+     */
     fun lanzarDados( cantidad: Int ): List<String> {
+        require( cantidad > 0 ) { "A cantidade de iconas debe ser maior que cero" }
         return iconasActividades.values.shuffled().take( cantidad )
     }
 

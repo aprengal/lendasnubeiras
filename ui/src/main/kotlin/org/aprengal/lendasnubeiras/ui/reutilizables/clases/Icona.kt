@@ -17,6 +17,15 @@ import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nIconas
 import org.aprengal.lendasnubeiras.ui.R
 import org.aprengal.lendasnubeiras.ui.navegacion.Ruta
 
+/**
+ * Enumerado das iconas dispoñibles na aplicación.
+ *
+ * Cada elemento define un carácter da fonte de iconas empregada pola interface
+ * e o recurso de localización asociado, utilizado como descrición accesible.
+ *
+ * Implementa [ElementoL10n] para identificar cada icona mediante a súa clave
+ * e proporcionar o nome localizado correspondente.
+ */
 enum class Icona( override val clave: String, override val nome: L10nIconas ): ElementoL10n {
 
     //Poderían volver
@@ -43,8 +52,23 @@ enum class Icona( override val clave: String, override val nome: L10nIconas ): E
 
     companion object {
 
+        /**
+         * Familia tipográfica que contén os glifos das iconas da aplicación.
+         */
         private val fonteIconas = FontFamily( Font( R.font.ubuntu_iconas_nerd, FontWeight.Bold ) )
 
+        /**
+         * Debuxa unha icona empregando a fonte específica da aplicación.
+         *
+         * Aplica a cor de contido actual e, se se proporciona unha descrición,
+         * engádea á semántica do elemento para facilitar a súa identificación
+         * mediante tecnoloxías de asistencia. Se non hai descrición, oculta
+         * o elemento da árbore semántica.
+         *
+         * @param contido Carácter ou glifo que representa a icona.
+         * @param descricion Recurso de localización coa descrición accesible da icona.
+         * @param dimension Tamaño da icona expresado como unidade tipográfica.
+         */
         @Composable
         fun DebuxarIcona( contido: String, descricion: L10nIconas? = null, dimension: TextUnit ) {
 
@@ -62,6 +86,12 @@ enum class Icona( override val clave: String, override val nome: L10nIconas ): E
 
         }
 
+        /**
+         * Relaciona os tipos de ruta coas iconas que os representan no menú
+         * principal da aplicación.
+         *
+         * As rutas sen unha icona asignada non aparecen nesta correspondencia.
+         */
         private val iconas = mapOf(
             Ruta.Axustes::class to Axustes,
             Ruta.Catalogo::class to Catalogo,
@@ -70,6 +100,17 @@ enum class Icona( override val clave: String, override val nome: L10nIconas ): E
             Ruta.CrearActividade::class to Engadir
         )
 
+        /**
+         * Debuxa a icona asociada a unha ruta da aplicación.
+         *
+         * Consulta a correspondencia de rutas e iconas e delega o debuxado
+         * en [DebuxarIcona]. Se a ruta non ten unha icona asignada, lanza
+         * unha excepción.
+         *
+         * @param ruta Ruta da aplicación á que se lle quere asociar unha icona.
+         * @param dimension Tamaño da icona expresado como unidade tipográfica.
+         * @throws IllegalArgumentException Se a ruta non ten unha icona asignada.
+         */
         @Composable
         internal fun DebuxarIconaMenu( ruta: Ruta, dimension: TextUnit ) {
 

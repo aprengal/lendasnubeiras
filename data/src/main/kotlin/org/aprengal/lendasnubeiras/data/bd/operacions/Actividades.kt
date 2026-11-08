@@ -35,9 +35,6 @@ object Actividades {
      * Obtén as actividades dispoñibles para o buscador, permitindo aplicar
      * filtros pechados, ordenación e filtrado por texto libre.
      *
-     * Só se inclúen actividades en estado publicado: xa enviadas ao servidor
-     * ou creadas/modificadas en local aínda pendentes de enviar.
-     *
      * Os filtros están limitados a campos con valores pechados, admitindo
      * exclusivamente elementos de tipo ElementoL10n. Isto permite
      * filtrar por categorías, destinatarios e outros campos equivalentes,
@@ -47,14 +44,14 @@ object Actividades {
      * de SQLite segundo o campo indicado en `campoBusca` (título, resumo ou ambos).
      *
      * @param criterios Obxecto [CriteriosBusca] que contén os parámetros de ordenación,
-     *                  filtros pechados, termo de busca e campo sobre o que buscar.
+     * filtros pechados, termo de busca e campo sobre o que buscar.
      * @return Lista de actividades adaptadas para o buscador que cumpren os criterios.
      * @throws IllegalArgumentException Se algún dos valores dos filtros non é de tipo ElementoL10n.
      */
     fun collerActividadesBuscables( criterios: CriteriosBusca ): List<ActividadeBuscable> {
 
         val onde = mutableMapOf<String, Condicion>()
-        onde[ "estado" ] = Condicion.En( setOf( Estado.Publicado.estado, Estado.PublicadoLocal.estado ) )
+        onde[ "estado" ] = Condicion.Simple( Estado.Publicado.estado )
 
         for ( ( campo, valor ) in criterios.filtros ) {
             require( valor is ElementoL10n ) { "Tipo non soportado: ${ valor::class }" }
@@ -133,7 +130,7 @@ object Actividades {
     fun collerActividadesPublicas( posicion: Int = 10, limite: Int = 0 ): List<ActividadeBuscable> {
 
         val columnas = setOf( "id", "clave_titulo", "id_autoria", "id_categoria", "id_destinatario", "estado", "duracion", "data_modificado" )
-        val onde = mapOf( "estado" to Condicion.En( setOf( Estado.Publicado.estado, Estado.PublicadoLocal.estado ) ) )
+        val onde = mapOf( "estado" to Condicion.Simple( Estado.Publicado.estado ) )
         val ordenar = mapOf( "id" to Orde.DESC )
         val datosLimite = listOf( posicion, limite )
         val datos = SeleccionSQL( columnas = columnas, onde = onde, ordenar = ordenar, limite = datosLimite )

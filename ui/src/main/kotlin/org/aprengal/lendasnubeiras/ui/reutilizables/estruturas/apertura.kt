@@ -19,6 +19,15 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.Am
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.EspazadorAlto
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.Logo
 
+/**
+ * Estrutura visual das páxinas de apertura da aplicación.
+ *
+ * Dispón a icona de acceso aos axustes na parte superior dereita e centra
+ * o logotipo, o título da aplicación e o contido proporcionado.
+ *
+ * @param navegacion Controlador de navegación empregado para acceder aos axustes.
+ * @param contido Contido composable específico da páxina que se amosará baixo o título.
+ */
 @Composable
 fun EstruturaApertura( navegacion: Navegacion, contido: @Composable () -> Unit ) {
 
@@ -43,6 +52,13 @@ fun EstruturaApertura( navegacion: Navegacion, contido: @Composable () -> Unit )
 
 }
 
+/**
+ * Debuxa o botón de acceso á configuración na cabeceira das páxinas de apertura.
+ *
+ * Ao premelo, engade a ruta de axustes á navegación.
+ *
+ * @param navegacion Controlador de navegación empregado para abrir os axustes.
+ */
 @Composable
 fun IconaAxustes( navegacion: Navegacion ) {
 

@@ -5,17 +5,19 @@
   "titulo_cambio_idioma": "Language",
   "titulo_cambio_tema": "Theme",
   "titulo_actualizacion_catalogo": "Update catalog",
+  "titulo_limpeza_datos": "Clear temporary data",
   "titulo_borrado_conta": "Delete account",
   "titulo_peche_sesion": "Log out",
 
   "dialogo_cambio_idioma": "Menu language",
   "dialogo_cambio_tema": "Application theme",
   "dialogo_actualizacion_catalogo": "Update catalog?",
+  "dialogo_limpeza_datos": "Clear temporary data?",
   "dialogo_borrado_conta": "Delete account?",
   "dialogo_peche_sesion": "Log out?",
 
   "reinicio_cambio_idioma": "The application will restart after changing the language",
-  "contido_actualizacion_catalogo": "If the update is successful, no text will be displayed",
+  "contido_actualizacion_catalogo": "If the update is successful, no text will be displayed.",
   "contido_borrado_conta": "An email will be sent to confirm account deletion and your current session will be closed.",
 
   "tema_claro": "Light",
@@ -25,6 +27,7 @@
   "gardado_fallido_cambio_idioma": "Could not change the language",
   "gardado_fallido_cambio_tema": "Could not change the theme",
   "actualizado_catalogo_fallido": "There was a problem updating the catalog",
+  "limpeza_datos_fallido": "Failed to clear temporary data",
   "borrado_conta_fallido": "Could not delete the account",
   "peche_sesion_fallido": "Could not log out"
 

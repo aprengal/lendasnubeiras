@@ -1,6 +1,5 @@
 package org.aprengal.lendasnubeiras.ui.pantallas.monitor
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -52,13 +51,11 @@ fun PantallaCatalogo() {
 
         items( actividades ) { actividade ->
 
-            Card( Modifier.fillMaxWidth().padding( vertical = 4.dp ) ) {
+            val accion = { navegacion.engadir( Ruta.ActividadeDetalle( actividade.claveTitulo ) ) }
 
-                val modificadorActividade = Modifier.fillMaxWidth().clickable {
-                    navegacion.engadir( Ruta.ActividadeDetalle( actividade.claveTitulo ) )
-                }.padding( horizontal = 16.dp, vertical = 12.dp )
+            Card( onClick = accion, Modifier.fillMaxWidth().padding( vertical = 4.dp ) ) {
 
-                Column( modificadorActividade )  {
+                Column( Modifier.fillMaxWidth().padding( horizontal = 16.dp, vertical = 12.dp ) )  {
                     Text( text = actividade.titulo, style = MaterialTheme.typography.titleLarge )
                     EspazadorAlto()
                     Text( text = actividade.resumo, style = MaterialTheme.typography.bodySmall )

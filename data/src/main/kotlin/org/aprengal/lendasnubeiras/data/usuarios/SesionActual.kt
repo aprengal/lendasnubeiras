@@ -170,6 +170,9 @@ object SesionActual {
             } else if ( datos.codigo in setOf( 401, 403 ) ) { //Usuario non atopado ou denegouse a entrada
 
                 borrarOpcion( Opcion.SesionUsuario )
+                id = 0L
+                correo = ""
+                rol = Rol.NADA
 
             } else { //Outros: servidor fóra de servizo, non hai internet ou a saber, pero non se puido chegar ao servidor
 

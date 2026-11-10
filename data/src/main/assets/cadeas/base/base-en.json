@@ -11,12 +11,18 @@
   "erro_demasiados_intentos": "You have exceeded the allowed number of attempts. Please try again later.",
   "erro_servidor": "The server had trouble processing your last request. Please try again later.",
 
+  "cargar_mais": "Load more",
+
+  "filto_campo_titulo": "Title",
+  "filto_campo_descricion": "Description",
+  "filto_campo_ambos": "Both",
+
   "mensaxes_novas": {
     "one": "You have %s new message",
     "other": "You have %s new messages"
   },
 
-  "mensaxe_fallos": {
+  "mensaxes_fallos": {
     "0": "You submitted your thesis on the aerodynamics of croquettes. Intergalactic honorary doctorate.",
     "1": "You forgot the bibliography. Your only source was a tweet from a DJ cat at three in the morning.",
     "2": "Napoleon lost at Waterloo because his alphabet soup went cold. Tasty but false.",

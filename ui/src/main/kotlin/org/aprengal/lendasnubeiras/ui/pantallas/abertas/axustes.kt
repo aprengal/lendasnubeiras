@@ -1,6 +1,5 @@
 package org.aprengal.lendasnubeiras.ui.pantallas.abertas
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,6 +22,10 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import org.aprengal.lendasnubeiras.data.api.ConexionApi.MetodoApi
+import org.aprengal.lendasnubeiras.data.api.ConexionApi.procesarPeticion
+import org.aprengal.lendasnubeiras.data.api.RutasApi
+import org.aprengal.lendasnubeiras.data.api.resposta.RespostaXenerica
 import org.aprengal.lendasnubeiras.data.axustes.DatosTema.escollerVarianteImaxe
 import org.aprengal.lendasnubeiras.data.axustes.DatosTema.Variante
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.actualizarCatalogo
@@ -125,14 +128,31 @@ fun PantallaAxustes() {
                 L10nOpcions.ActualizacionCatalogoFallido
             ) { actualizarCatalogo( ambito ) }
 
-            val modificadorCatalogo = Modifier.fillMaxWidth().clickable( onClick = accionCatalogo ).padding( vertical = 12.dp )
+            val modificador = Modifier.fillMaxWidth().padding( vertical = 12.dp )
 
             EspazadorAlto( 2 )
 
-            Card {
+            Card( onClick = accionCatalogo ) {
 
-                Column( modificadorCatalogo, Arrangement.Center, Alignment.CenterHorizontally ) {
+                Column( modificador, Arrangement.Center, Alignment.CenterHorizontally ) {
                     Texto( L10nOpcions.TituloActualizacionCatalogo )
+                }
+
+            }
+
+            EspazadorAlto( 2 )
+
+            val limpezaDatos: suspend () -> Boolean = {
+                val resposta = procesarPeticion( MetodoApi.GET, RutasApi.LIMPAR, emptyMap() ) as RespostaXenerica
+                resposta.exito
+            }
+
+            val accionLimpeza = intentarAccion( L10nOpcions.DialogoLimpezaDatos, erro = L10nOpcions.LimpezaDatosFallido ) { limpezaDatos() }
+
+            Card( onClick = accionLimpeza ) {
+
+                Column( modificador, Arrangement.Center, Alignment.CenterHorizontally ) {
+                    Texto( L10nOpcions.TituloLimpezaDatos )
                 }
 
             }
@@ -147,11 +167,11 @@ fun PantallaAxustes() {
                 L10nOpcions.BorradoContaFallido,
             ) { borrarConta( idiomaActual ) }
 
-            val modificador = Modifier.fillMaxWidth().clickable( onClick = accionBorrado ).padding( horizontal = 16.dp, vertical = 12.dp )
+            val modificador = Modifier.fillMaxWidth().padding( horizontal = 16.dp, vertical = 12.dp )
 
             EspazadorAlto( 2 )
 
-            Card {
+            Card( onClick = accionBorrado ) {
 
                 Column( modificador, Arrangement.Center, Alignment.CenterHorizontally ) {
                     Texto( L10nOpcions.TituloBorradoConta )
@@ -171,9 +191,9 @@ fun PantallaAxustes() {
                 accion = { pecharSesion() }
             )
 
-            val modificador = Modifier.fillMaxWidth().clickable( onClick = accionPeche ).padding( horizontal = 16.dp, vertical = 12.dp )
+            val modificador = Modifier.fillMaxWidth().padding( horizontal = 16.dp, vertical = 12.dp )
 
-            Card {
+            Card( onClick = accionPeche ) {
 
                 Column( modificador, Arrangement.Center, Alignment.CenterHorizontally ) {
                     Texto( L10nOpcions.TituloPecheSesion )

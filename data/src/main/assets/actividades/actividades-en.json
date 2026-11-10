@@ -15,7 +15,7 @@
       "If correct, they move to the next word; if they don't know it, they can say 'Pass the Word' to pass their turn.",
       "It features three levels: Twelve words with ascending random letters, and in the hard level, all letters of the alphabet are included."
     ],
-    "resumo": "Answer in alphabetical order or say 'Pass the Word' to skip your turn.",
+    "resumo": "Answer the questions or say 'Pass the Word' to skip your turn.",
     "textos": []
   },
   "palabras-encadeadas": {

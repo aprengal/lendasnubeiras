@@ -1,6 +1,5 @@
 package org.aprengal.lendasnubeiras.data.api
 
-import android.content.Context
 import android.util.Log
 import org.aprengal.lendasnubeiras.data.axustes.Axustes.collerOpcion
 import kotlinx.coroutines.Dispatchers

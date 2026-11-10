@@ -1,4 +1,5 @@
 {
+
   "nome_app": "Lendas Nubeiras",
   "si": "Sí",
   "non": "No",
@@ -10,12 +11,19 @@
   "erro_demasiados_intentos": "Has superado el límite de intentos permitidos. Por favor, inténtalo de nuevo más tarde.",
   "erro_servidor": "El servidor ha tenido problemas para procesar la última petición. Por favor, inténtalo de nuevo más tarde.",
 
+  "cargar_mais": "Cargar más",
+
+  "filto_campo_titulo": "Título",
+  "filto_campo_descricion": "Descripción",
+  "filto_campo_ambos": "Ambos",
+
   "mensaxes_novas": {
     "one": "Tienes %s mensaje nuevo",
     "other": "Tienes %s mensajes nuevos",
     "many": "Tienes %s de mensajes nuevos"
   },
-  "mensaxe_fallos": {
+
+  "mensaxes_fallos": {
     "0": "Has entregado la tesis sobre la aerodinámica de las croquetas. Doctorado honoris causa intergaláctico.",
     "1": "Olvidaste la bibliografía. Tu única fuente era un tuit de un gato DJ a las tres de la mañana.",
     "2": "Napoleón perdió en Waterloo porque se le enfrió la sopa de letras. Sabroso pero falso.",
@@ -27,6 +35,19 @@
     "8": "Afirmaste que Madrid está dentro de una sandía gigante y Murcia es una colonia de elfos.",
     "9": "Tocaste la tabla periódica con los morros como si fuera una armónica. Catástrofe en escala Richter.",
     "10": "Entregaste la hoja en blanco con una loncha de jamón york reseca y un pony brillante. El claustro ha ardido."
+  },
+  "mensaxes_cambiantes": {
+    "0": "\"¿Cuándo es la recuperación?\" Ve y saca una nota aceptable, lo que viene siendo más de un 9.",
+    "1": "La aplicación de C sigue sin funcionar. ¿Quién es \"C\"?",
+    "2": "Estamos buscando a \"N\". Dijeron que se fue de fiesta.",
+    "3": "Casi deja el curso, volvió con fuerza, sacó las mejores notas del centro y programó esta herramienta. Eso sí que es una remontada.",
+    "4": "¿Seguro que una persona va a un centro de FP a aprobar o a aguantar otras cosas inesperadas?",
+    "5": "Lo más complicado de programar es entender el problema que te acaba de generar la inteligencia artificial por no mirar el código que te dio.",
+    "6": "Si el catálogo no muestra actividades, igual significa que se pulsó el botón de autodestrucción.",
+    "7": "Un agradecimiento especial a quien tuvo paciencia cuando el código hacía cosas que desafiaban las leyes de la física.",
+    "8": "Si una actividad no aparece, lo más probable es que el texto decidiera salir a dar una vuelta sin avisar.",
+    "9": "Una interfaz sencilla es aquella en la que no necesitas manual de instrucciones... a menos que te pierdas en el catálogo.",
+    "10": "Si has llegado hasta el final de esta lista de mensajes, gracias por probar la aplicación. ¡Disfruta de la experiencia!"
   }
 
 }

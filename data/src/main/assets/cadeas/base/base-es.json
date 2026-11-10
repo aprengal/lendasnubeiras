@@ -11,13 +11,19 @@
   "erro_demasiados_intentos": "Has superado el límite de intentos permitidos. Por favor, inténtalo de nuevo más tarde.",
   "erro_servidor": "El servidor ha tenido problemas para procesar la última petición. Por favor, inténtalo de nuevo más tarde.",
 
+  "cargar_mais": "Cargar más",
+
+  "filto_campo_titulo": "Título",
+  "filto_campo_descricion": "Descripción",
+  "filto_campo_ambos": "Ambos",
+
   "mensaxes_novas": {
     "one": "Tienes %s mensaje nuevo",
     "other": "Tienes %s mensajes nuevos",
     "many": "Tienes %s de mensajes nuevos"
   },
 
-  "mensaxe_fallos": {
+  "mensaxes_fallos": {
     "0": "Has entregado la tesis sobre la aerodinámica de las croquetas. Doctorado honoris causa intergaláctico.",
     "1": "Olvidaste la bibliografía. Tu única fuente era un tuit de un gato DJ a las tres de la mañana.",
     "2": "Napoleón perdió en Waterloo porque se le enfrió la sopa de letras. Sabroso pero falso.",

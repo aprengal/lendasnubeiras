@@ -5,12 +5,14 @@
   "titulo_cambio_idioma": "Idioma",
   "titulo_cambio_tema": "Tema",
   "titulo_actualizacion_catalogo": "Actualizar catálogo",
+  "titulo_limpeza_datos": "Limpiar datos temporales",
   "titulo_borrado_conta": "Borrar cuenta",
   "titulo_peche_sesion": "Cerrar sesión",
 
   "dialogo_cambio_idioma": "Idioma de los menús",
   "dialogo_cambio_tema": "Tema de la aplicación",
   "dialogo_actualizacion_catalogo": "¿Actualizar catálogo?",
+  "dialogo_limpeza_datos": "¿Limpiar datos temporales?",
   "dialogo_borrado_conta": "¿Borrar la cuenta?",
   "dialogo_peche_sesion": "¿Cerrar sesión?",
 
@@ -25,6 +27,7 @@
   "gardado_fallido_cambio_idioma": "No se ha podido cambiar el idioma",
   "gardado_fallido_cambio_tema": "No se ha podido cambiar el tema",
   "actualizado_catalogo_fallido": "Ha habido un problema con la actualización del catálogo",
+  "limpeza_datos_fallido": "No se pudieron borrar los datos temporales",
   "borrado_conta_fallido": "No se ha podido borrar la cuenta",
   "peche_sesion_fallido": "No se ha podido cerrar la sesión"
 

@@ -43,11 +43,7 @@ fun PantallaInicio() {
         EspazadorAlto( 3 )
 
         Card( Modifier.fillMaxWidth() ) {
-
-            Column( Modifier.fillMaxWidth().padding( 16.dp ) ) {
-                TextoVariante( L10nVariante.MensaxesCambiantes, numeroAleatorio, estilo = MaterialTheme.typography.bodyLarge )
-            }
-
+            TextoVariante( L10nVariante.MensaxesCambiantes, numeroAleatorio, Modifier.padding( 16.dp ), estilo = MaterialTheme.typography.bodyLarge )
         }
 
     }

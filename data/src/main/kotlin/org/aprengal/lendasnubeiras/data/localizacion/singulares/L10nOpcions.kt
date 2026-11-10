@@ -8,12 +8,15 @@ enum class L10nOpcions( internal val clave: String ) : L10nSingular {
     TituloCambioIdioma( "titulo_cambio_idioma" ),
     TituloCambioTema( "titulo_cambio_tema" ),
     TituloActualizacionCatalogo( "titulo_actualizacion_catalogo" ),
+    TituloLimpezaDatos( "titulo_limpeza_datos" ),
     TituloBorradoConta( "titulo_borrado_conta" ),
     TituloPecheSesion( "titulo_peche_sesion" ),
     SubtituloCambioIdioma( "reinicio_cambio_idioma" ),
     DialogoCambioIdioma( "dialogo_cambio_idioma" ),
     DialogoCambioTema( "dialogo_cambio_tema" ),
     DialogoActualizacionCatalogo( "dialogo_actualizacion_catalogo" ),
+
+    DialogoLimpezaDatos( "dialogo_limpeza_datos" ),
     DialogoBorradoConta( "dialogo_borrado_conta" ),
     DialogoPecheSesion( "dialogo_peche_sesion" ),
     ContidoActualizacionCatalogo( "contido_actualizacion_catalogo" ),
@@ -21,6 +24,7 @@ enum class L10nOpcions( internal val clave: String ) : L10nSingular {
     GardadoFallidoCambioIdioma( "gardado_fallido_cambio_idioma" ),
     GardadoFallidoCambioTema( "gardado_fallido_cambio_tema" ),
     ActualizacionCatalogoFallido( "actualizado_catalogo_fallido" ),
+    LimpezaDatosFallido( "limpeza_datos_fallido" ),
     BorradoContaFallido( "borrado_conta_fallido" ),
     PecheSesionFallido( "peche_sesion_fallido" ),
 

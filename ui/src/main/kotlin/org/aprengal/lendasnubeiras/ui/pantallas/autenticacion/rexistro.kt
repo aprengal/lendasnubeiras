@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.KeyboardType
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nAutenticacion
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nSingular
@@ -30,6 +31,7 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.Esp
 fun PantallaRexistro() {
 
     val navegacion = LocalNavegacion.current
+    val teclado = LocalSoftwareKeyboardController.current
     val idioma = LocalIdioma.current
     val correo = rememberTextFieldState()
 
@@ -47,6 +49,7 @@ fun PantallaRexistro() {
     val botonAccion = {
 
         if ( correoValido ) {
+            teclado?.hide()
             rexistrarse(
                 correo.text.toString(),
                 idioma,

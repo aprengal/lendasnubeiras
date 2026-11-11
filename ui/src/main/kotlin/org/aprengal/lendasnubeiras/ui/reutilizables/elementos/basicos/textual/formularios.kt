@@ -1,6 +1,12 @@
 package org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual
 
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
@@ -8,9 +14,9 @@ import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.maxLength
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldLabelPosition
 import androidx.compose.runtime.Composable
@@ -18,15 +24,25 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.aprengal.lendasnubeiras.data.localizacion.clases.ElementoL10n
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nSingular
+import org.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosAlerta
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosCampoTexto
+import org.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosElementoLista
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.Icona
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.Icona.Companion.DebuxarIcona
+import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.EspazadorAncho
+import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.AlertaDialogo
+import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.ElementoLista
 
 @Composable
 fun CampoTexto( datos: DatosCampoTexto ) {
@@ -55,11 +71,10 @@ fun CampoTexto( datos: DatosCampoTexto ) {
 }
 
 @Composable
-fun CampoBuscador( estado: TextFieldState ) {
+fun CampoBuscador( estado: TextFieldState, buscar: () -> Unit ) {
 
-    val buscar = Icona.Buscar
+    val iconaBuscar = Icona.Buscar
     val limpar = Icona.Limpar
-    var amosar by rememberSaveable { mutableStateOf( false ) }
 
     val reiniciar = @Composable {
         if ( estado.text.isNotEmpty() ) {
@@ -75,33 +90,69 @@ fun CampoBuscador( estado: TextFieldState ) {
         lineLimits = TextFieldLineLimits.SingleLine,
         keyboardOptions = KeyboardOptions( imeAction = ImeAction.Search ),
         inputTransformation = InputTransformation.maxLength( 100 ),
-        onKeyboardAction = { amosar = true }, //Aquí igual habería que cambiar isto pola acción que actualizaría a pantalla?
-        leadingIcon = { DebuxarIcona( buscar.clave, buscar.nome, 20.sp ) },
-        placeholder = { Text( "Buscar" ) }, //Cambio por Texto_busca o valorar outro
+        onKeyboardAction = { buscar() },
+        leadingIcon = { DebuxarIcona( iconaBuscar.clave, iconaBuscar.nome, 20.sp ) },
+        placeholder = { Text( "Buscar" ) },
         trailingIcon = reiniciar,
         shape = CircleShape
     )
 
-    if ( amosar ) {
-        Buscar( estado.text.toString() ) {
-            amosar = false
+}
+
+@Composable
+internal fun <T : ElementoL10n> SelectorFiltro( titulo: L10nSingular, opcions: List<T>, escollido: T?, textoTodas: L10nSingular?, escoller: ( T? ) -> Unit ) {
+
+    var aberto by rememberSaveable { mutableStateOf( false ) }
+    var temporal by rememberSaveable( escollido ) { mutableStateOf( escollido ) }
+
+    val valor = escollido?.nome?.texto() ?: textoTodas?.texto().orEmpty()
+    val accion = {
+        temporal = escollido
+        aberto = true
+    }
+
+    ElementoLista( DatosElementoLista( titulo = titulo, accion = accion, contido = { Text( valor ) } ) )
+
+    if ( aberto ) {
+
+        val pechar = { aberto = false }
+        val confirmado = {
+            escoller( temporal )
+            pechar()
         }
+
+        val contidoAlerta = @Composable { ListaFiltro( opcions, temporal, textoTodas ) { opcion -> temporal = opcion } }
+        val datosAlerta = DatosAlerta( titulo = titulo, cancelado = pechar, confirmado = confirmado, contido = contidoAlerta )
+
+        AlertaDialogo( datosAlerta )
+
     }
 
 }
 
 @Composable
-fun Buscar( termo: String, accion: () -> Unit ) {
+private fun <T : ElementoL10n> ListaFiltro( opcions: List<T>, escollido: T?, textoTodas: L10nSingular?, escoller: ( T? ) -> Unit ) {
 
-    val titulo = @Composable { Text( "Simulouse unha busca e atopouse..." ) }
-    val contido = @Composable { Text( "Nada con $termo" ) }
+    val elementos = if ( textoTodas != null ) listOf<T?>( null ) + opcions else opcions
 
-    AlertDialog(
-        title = titulo,
-        text = contido,
-        onDismissRequest = accion,
-        confirmButton = {}
-    )
+    LazyColumn( Modifier.selectableGroup() ) {
+
+        items( elementos ) { opcion ->
+
+            val texto = opcion?.nome?.texto() ?: textoTodas?.texto().orEmpty()
+            val seleccionado = escollido == opcion
+
+            val modificador = Modifier.fillMaxWidth().selectable( seleccionado, onClick = { escoller( opcion ) }, role = Role.RadioButton ).padding( vertical = 8.dp )
+
+            Row( modifier = modificador, verticalAlignment = Alignment.CenterVertically ) {
+                RadioButton( seleccionado, null )
+                EspazadorAncho()
+                Text( texto )
+            }
+
+        }
+
+    }
 
 }
 

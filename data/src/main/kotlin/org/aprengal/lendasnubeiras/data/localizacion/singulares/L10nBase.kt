@@ -19,7 +19,16 @@ enum class L10nBase( internal val clave: String ) : L10nSingular {
     //Buscador
     FiltroCampoTitulo( "filto_campo_titulo" ),
     FiltroCampoDescricion( "filto_campo_descricion" ),
-    FiltroCampoAmbos( "filto_campo_ambos" );
+    FiltroCampoAmbos( "filto_campo_ambos" ),
+    OcultarBuscaAvanzada( "ocultar_busca_avanzada" ),
+    BuscaAvanzada( "busca_avanzada" ),
+    SenResultados( "sen_resultados" ),
+    BotonBuscar( "boton_buscar" ),
+    FiltroTodos( "filtro_todos" ),
+    FiltroTodas( "filtro_todas" ),
+    FiltroDestinatario( "filtro_destinatario" ),
+    FiltroCategoria( "filtro_categoria" ),
+    FiltroBuscarEn( "filtro_buscar_en" );
 
     internal val dominio: Dominio = Dominio.BASE
 

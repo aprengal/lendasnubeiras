@@ -58,6 +58,21 @@ import org.aprengal.lendasnubeiras.ui.tema.Tema.temaActual
 import org.aprengal.lendasnubeiras.ui.utilidades.Accions.amosarAviso
 import org.aprengal.lendasnubeiras.ui.utilidades.Accions.executarAccion
 
+/**
+ * Mostra a pantalla de configuración da aplicación.
+ *
+ * Permite consultar e modificar distintas preferencias, como o idioma
+ * e o tema visual da aplicación, mediante as opcións correspondentes.
+ *
+ * Cando existe unha sesión de usuario activa, mostra tamén información
+ * da conta e habilita funcionalidades adicionais relacionadas coa
+ * actualización do catálogo, a limpeza de datos, o borrado da conta
+ * e o peche de sesión, segundo os permisos e condicións establecidos
+ * para cada operación.
+ *
+ * As operacións que requiren confirmación ou poden producir erros
+ * execútanse mediante diálogos de confirmación e avisos.
+ */
 @Composable
 fun PantallaAxustes() {
 
@@ -207,6 +222,25 @@ fun PantallaAxustes() {
 
 }
 
+/**
+ * Mostra o contido visual dunha opción de configuración.
+ *
+ * Presenta o título, a icona e o valor actual da opción mediante
+ * [ElementoLista], adaptando o seu comportamento ao tipo de opción.
+ *
+ * No caso das opcións de tipo [TipoOpcion.INTERRUPTOR], permite
+ * alternar o seu estado.
+ *
+ * No caso das opcións de tipo [TipoOpcion.ALERTA], permite abrir
+ * un diálogo no que seleccionar un novo valor. A descrición adicional
+ * só se mostra cando o dispositivo dispón dun lector compatible.
+ *
+ * O valor actual e o estado de activación consérvanse mediante
+ * [rememberSaveable].
+ *
+ * @param datos Datos da opción de configuración, incluíndo o seu título,
+ *              icona, tipo, valor inicial, acción e información adicional.
+ */
 @Composable
 private fun <T> ContidoOpcion( datos: DatosOpcion<T> ) {
 
@@ -247,6 +281,29 @@ private fun <T> ContidoOpcion( datos: DatosOpcion<T> ) {
 
 }
 
+/**
+ * Mostra un diálogo de selección para modificar o valor dunha opción.
+ *
+ * Presenta as opcións dispoñibles mediante [ListaOpcions], permitindo
+ * seleccionar un novo valor antes de confirmar o cambio.
+ *
+ * Esixe que [DatosOpcion.opcions] conteña polo menos dous elementos.
+ *
+ * Ao confirmar, péchase o diálogo e execútase a acción asociada á opción
+ * co valor seleccionado. Se a operación se realiza correctamente,
+ * actualízase o valor seleccionado mediante o callback recibido.
+ *
+ * Se a operación falla, móstrase un aviso mediante [amosarAviso],
+ * mantendo sen cambios o valor actual.
+ *
+ * @param datos Datos da opción que se vai modificar, incluíndo as opcións
+ *              dispoñibles, o título do diálogo, a acción que se executará
+ *              e a mensaxe de erro correspondente.
+ * @param amosar Función que permite controlar a visibilidade do diálogo.
+ * @param actual Valor actualmente establecido para a opción.
+ * @param seleccionar Función encargada de actualizar o valor da opción
+ *                    tras completar correctamente a operación.
+ */
 @Composable
 private fun <T> DebuxarAlerta( datos: DatosOpcion<T>, amosar: ( Boolean ) -> Unit, actual: T, seleccionar: ( T ) -> Unit ) {
 
@@ -279,8 +336,30 @@ private fun <T> DebuxarAlerta( datos: DatosOpcion<T>, amosar: ( Boolean ) -> Uni
 
 }
 
+/**
+ * Prepara unha acción que require confirmación antes da súa execución.
+ *
+ * Devolve unha función que, ao ser invocada, mostra un diálogo de
+ * confirmación co título e o contido opcionais proporcionados.
+ *
+ * Cando o usuario confirma a operación, péchase o diálogo e execútase
+ * a acción nunha corrutina. Se a operación falla, móstrase un aviso
+ * coa mensaxe de erro correspondente.
+ *
+ * A execución da acción e a xestión dos posibles erros realízanse
+ * mediante [executarAccion].
+ *
+ * @param titulo Título do diálogo de confirmación.
+ * @param contido Contido textual opcional que se mostra no diálogo.
+ * @param erro Mensaxe que se mostra se a acción non se completa correctamente.
+ * @param accion Operación suspendida que se vai executar tras a
+ * confirmación e que indica mediante un booleano
+ * se se completou correctamente.
+ *
+ * @return Función que permite solicitar a confirmación e amosar o diálogo correspondente.
+ */
 @Composable
-fun intentarAccion( titulo: L10nOpcions, contido: L10nOpcions? = null, erro: L10nOpcions, accion: suspend () -> Boolean ): () -> Unit {
+private fun intentarAccion( titulo: L10nOpcions, contido: L10nOpcions? = null, erro: L10nOpcions, accion: suspend () -> Boolean ): () -> Unit {
 
     var amosarDialogo by rememberSaveable { mutableStateOf( false ) }
     val aviso = LocalAviso.current

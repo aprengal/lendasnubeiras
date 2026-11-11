@@ -15,7 +15,7 @@
       "Si aciertan, se pasa a la siguiente; si no lo saben, se puede decir 'Pasapalabra' para ceder el turno.",
       "Cuenta con tres niveles: Doce palabras con letras aleatorias ascendentes, y en el difícil entran todas las letras del abecedario."
     ],
-    "resumo": "Responde por a las preguntas o di 'Pasa la palabra' para ceder el turno.",
+    "resumo": "Responde a las preguntas o di 'Pasa la palabra' para ceder el turno.",
     "textos": []
   },
   "palabras-encadeadas": {

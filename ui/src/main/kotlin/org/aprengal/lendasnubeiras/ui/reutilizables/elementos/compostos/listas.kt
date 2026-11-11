@@ -24,6 +24,24 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.clases.Icona.Companion.Debux
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.Texto
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.EspazadorAncho
 
+/**
+ * Mostra unha lista de opcións seleccionables mediante botóns de selección.
+ *
+ * Presenta as opcións contidas en [DatosListaOpcions] nunha lista vertical
+ * desprazable, permitindo seleccionar unha delas.
+ *
+ * Cada opción móstrase acompañada dun botón de selección que indica se
+ * está seleccionada. Ao premer sobre unha opción, actualízase a selección
+ * mediante a función [DatosListaOpcions.escoller].
+ *
+ * O texto mostrado para cada opción obtense mediante [obterTexto].
+ *
+ * Agrupa os elementos mediante [Modifier.selectableGroup] e emprega
+ * [Role.RadioButton] para identificar semanticamente o tipo de selección.
+ *
+ * @param datos Datos que conteñen as opcións dispoñibles, a opción
+ * actualmente seleccionada e a función encargada de actualizar a selección.
+ */
 @Composable
 fun <T> ListaOpcions( datos: DatosListaOpcions<T> ) {
 
@@ -51,6 +69,26 @@ fun <T> ListaOpcions( datos: DatosListaOpcions<T> ) {
 
 }
 
+/**
+ * Mostra un elemento dunha lista mediante un compoñente [ListItem].
+ *
+ * Presenta o título e o contido asociado ao elemento, permitindo executar
+ * unha acción ao premer sobre el.
+ *
+ * Pode incluír unha icona na parte esquerda, un contido adicional na parte
+ * central e un contido complementario na parte dereita.
+ *
+ * A icona móstrase unicamente cando está definida e debúxase mediante
+ * [DebuxarIcona].
+ *
+ * O contido principal e os elementos complementarios obtéñense a partir
+ * dos datos proporcionados, permitindo adaptar a presentación ás
+ * necesidades de cada elemento da lista.
+ *
+ * @param datos Datos do elemento que se vai mostrar, incluíndo o título,
+ * o contido asociado, a acción que se executará ao seleccionalo
+ * e os elementos visuais adicionais.
+ */
 @Composable
 fun ElementoLista( datos: DatosElementoLista ) {
 

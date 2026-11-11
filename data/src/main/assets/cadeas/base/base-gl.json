@@ -16,6 +16,15 @@
   "filto_campo_titulo": "Título",
   "filto_campo_descricion": "Descrición",
   "filto_campo_ambos": "Ambos",
+  "ocultar_busca_avanzada": "Ocultar busca avanzada",
+  "busca_avanzada": "Busca avanzada",
+  "sen_resultados": "Sen resultados",
+  "boton_buscar": "Buscar",
+  "filtro_todos": "Todos",
+  "filtro_todas": "Todas",
+  "filtro_destinatario": "Destinatario",
+  "filtro_categoria": "Categoría",
+  "filtro_buscar_en": "Buscar en",
 
   "mensaxes_novas": {
     "one": "Tes %s mensaxe nova",

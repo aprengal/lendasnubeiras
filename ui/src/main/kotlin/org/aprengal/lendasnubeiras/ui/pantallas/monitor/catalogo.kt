@@ -6,9 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -20,16 +17,13 @@ import androidx.compose.ui.unit.dp
 import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.collerActividadesPublicas
 import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.contarActividadesPublicas
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nBase
-import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalNavegacion
-import org.aprengal.lendasnubeiras.ui.navegacion.Ruta
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.AmosarTituloCentrado
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.BotonPrincipal
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.EspazadorAlto
+import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.TarxetaActividade
 
 @Composable
 fun PantallaCatalogo() {
-
-    val navegacion = LocalNavegacion.current
 
     val limitePorPaxina = 10
     val totalActividades by rememberSaveable { mutableIntStateOf( contarActividadesPublicas() ) }
@@ -49,23 +43,7 @@ fun PantallaCatalogo() {
 
         }
 
-        items( actividades ) { actividade ->
-
-            val accion = { navegacion.engadir( Ruta.ActividadeDetalle( actividade.claveTitulo ) ) }
-
-            Card( onClick = accion, Modifier.fillMaxWidth().padding( vertical = 4.dp ) ) {
-
-                Column( Modifier.fillMaxWidth().padding( horizontal = 16.dp, vertical = 12.dp ) )  {
-                    Text( text = actividade.titulo, style = MaterialTheme.typography.titleLarge )
-                    EspazadorAlto()
-                    Text( text = actividade.resumo, style = MaterialTheme.typography.bodySmall )
-                }
-
-            }
-
-            EspazadorAlto()
-
-        }
+        items( actividades ) { actividade -> TarxetaActividade( actividade ) }
 
         if ( haiMais ) {
 

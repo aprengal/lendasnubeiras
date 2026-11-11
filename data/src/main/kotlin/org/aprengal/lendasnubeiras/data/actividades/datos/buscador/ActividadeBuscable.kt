@@ -7,7 +7,7 @@ import org.aprengal.lendasnubeiras.data.actividades.datos.base.Estado
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.collerTextoActividade
 
 /**
- * Representa unha actividade adaptada para o seu uso no buscador.
+ * Representa unha actividade adaptada para o seu uso no buscador e no catálogo.
  *
  * Contén os datos necesarios para identificar e clasificar unha actividade,
  * así como os seus contidos textuais empregados na busca e presentación
@@ -20,20 +20,19 @@ import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.collerT
  * senón que se cargan automaticamente durante a inicialización a partir
  * de [claveTitulo], utilizando [collerTextoActividade].
  *
- * A descrición extráese mediante [collerDescricion],
- * reutilizando a lóxica común para interpretar os parágrafos almacenados
- * nos datos JSON.
+ * A descrición extráese mediante [collerDescricion], reutilizando a lóxica
+ * común para interpretar os parágrafos almacenados nos datos JSON.
  *
  * @property id Identificador único da actividade.
  * @property claveTitulo Clave utilizada para localizar os recursos textuais
- *                      asociados á actividade.
+ * asociados á actividade.
  * @property categoria Categoría na que se clasifica a actividade.
  * @property destinatario Grupo de persoas ao que vai dirixida a actividade.
  * @property estado Estado actual da actividade.
  * @property titulo Título da actividade, cargado a partir dos seus recursos textuais.
  * @property descricion Lista de parágrafos que compoñen a descrición da actividade.
  * @property resumo Resumo textual da actividade, cargado a partir dos seus
- *                  recursos textuais.
+ * recursos textuais.
  */
 data class ActividadeBuscable(
     override val id: Long,

@@ -130,10 +130,8 @@ fun PantallaAxustes() {
 
         }
 
-        //A seguinte funcionalidade púxose en opcións, pero igual sería mellor que estivese
-        //na pantalla de edición de actividades, pero como non se vai implementar, deixase aquí como mostra.
-        //Cando se abre a aplicación xa se realiza unha actualización do catálog
-        //Non ten sentido que o usuario poida volver actualizar isto
+        //As seguintes funcionalidades puxéronse en opcións, pero igual sería mellor que estivesen
+        //noutras pantallas de xestión, pero como non se van implementar, deixase aquí para verificar que funcionan.
         if ( usuarioActual().existe ) {
 
             val ambito = CoroutineScope( SupervisorJob() + Dispatchers.IO )
@@ -239,7 +237,7 @@ fun PantallaAxustes() {
  * [rememberSaveable].
  *
  * @param datos Datos da opción de configuración, incluíndo o seu título,
- *              icona, tipo, valor inicial, acción e información adicional.
+ * icona, tipo, valor inicial, acción e información adicional.
  */
 @Composable
 private fun <T> ContidoOpcion( datos: DatosOpcion<T> ) {
@@ -297,12 +295,12 @@ private fun <T> ContidoOpcion( datos: DatosOpcion<T> ) {
  * mantendo sen cambios o valor actual.
  *
  * @param datos Datos da opción que se vai modificar, incluíndo as opcións
- *              dispoñibles, o título do diálogo, a acción que se executará
- *              e a mensaxe de erro correspondente.
+ * dispoñibles, o título do diálogo, a acción que se executará
+ * e a mensaxe de erro correspondente.
  * @param amosar Función que permite controlar a visibilidade do diálogo.
  * @param actual Valor actualmente establecido para a opción.
  * @param seleccionar Función encargada de actualizar o valor da opción
- *                    tras completar correctamente a operación.
+ * tras completar correctamente a operación.
  */
 @Composable
 private fun <T> DebuxarAlerta( datos: DatosOpcion<T>, amosar: ( Boolean ) -> Unit, actual: T, seleccionar: ( T ) -> Unit ) {
@@ -323,9 +321,8 @@ private fun <T> DebuxarAlerta( datos: DatosOpcion<T>, amosar: ( Boolean ) -> Uni
 
     }
 
-    val datosLista = DatosListaOpcions( datos.opcions, escollido ) {
-        novoValor -> escollido = novoValor
-    }
+    val escoller: (T) -> Unit = { novoValor -> escollido = novoValor }
+    val datosLista = DatosListaOpcions( datos.opcions, escollido, escoller )
 
     val titulo = datos.tituloAlerta!!
     val contido = @Composable { ListaOpcions( datosLista ) }

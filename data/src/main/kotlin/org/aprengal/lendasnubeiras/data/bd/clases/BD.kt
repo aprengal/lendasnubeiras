@@ -18,6 +18,8 @@ import org.aprengal.lendasnubeiras.data.bd.clases.Taboa.PUNTUACIONS
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import org.aprengal.lendasnubeiras.data.localizacion.clases.ElementoL10n
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nBase
 
 /**
  * Xestor central da base de datos SQLite local e da sincronización do catálogo de actividades
@@ -57,6 +59,17 @@ object BD {
 
         /** Orde descendente, de maior a menor. */
         DESC( "DESC" )
+    }
+
+    /** Orde dos resultados da busca. O id vai en orde de creación das actividades. */
+    enum class OrdeBusca( override val clave: String, override val nome: L10nBase, val orde: Orde ): ElementoL10n {
+
+        /** Primeiro as actividades máis novas. */
+        Recentes( "recentes", L10nBase.OrdeRecentes, Orde.DESC ),
+
+        /** Primeiro as actividades máis antigas. */
+        Antigas( "antigas", L10nBase.OrdeAntigas, Orde.ASC )
+
     }
 
     /**

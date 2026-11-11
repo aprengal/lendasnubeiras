@@ -28,7 +28,10 @@ enum class L10nBase( internal val clave: String ) : L10nSingular {
     FiltroTodas( "filtro_todas" ),
     FiltroDestinatario( "filtro_destinatario" ),
     FiltroCategoria( "filtro_categoria" ),
-    FiltroBuscarEn( "filtro_buscar_en" );
+    FiltroBuscarEn( "filtro_buscar_en" ),
+    OrdeRecentes( "orde_recentes" ),
+    OrdeAntigas( "orde_antigas" ),
+    FiltroOrde( "filtro_orde" );
 
     internal val dominio: Dominio = Dominio.BASE
 

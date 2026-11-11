@@ -38,11 +38,13 @@ import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nSingular
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosAlerta
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosCampoTexto
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosElementoLista
+import org.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosListaOpcions
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.Icona
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.Icona.Companion.DebuxarIcona
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.EspazadorAncho
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.AlertaDialogo
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.ElementoLista
+import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.ListaOpcions
 
 @Composable
 fun CampoTexto( datos: DatosCampoTexto ) {
@@ -121,7 +123,12 @@ internal fun <T : ElementoL10n> SelectorFiltro( titulo: L10nSingular, opcions: L
             pechar()
         }
 
-        val contidoAlerta = @Composable { ListaFiltro( opcions, temporal, textoTodas ) { opcion -> temporal = opcion } }
+        //O null representa a opción "Todas", que só se engade se hai texto para ela
+        val elementos = if ( textoTodas != null ) listOf<T?>( null ) + opcions else opcions
+        val texto = { opcion: T? -> opcion?.nome?.texto() ?: textoTodas?.texto().orEmpty() }
+
+        val datosLista = DatosListaOpcions( elementos, temporal, { opcion -> temporal = opcion }, texto)
+        val contidoAlerta = @Composable { ListaOpcions( datosLista ) }
         val datosAlerta = DatosAlerta( titulo = titulo, cancelado = pechar, confirmado = confirmado, contido = contidoAlerta )
 
         AlertaDialogo( datosAlerta )
@@ -130,7 +137,7 @@ internal fun <T : ElementoL10n> SelectorFiltro( titulo: L10nSingular, opcions: L
 
 }
 
-@Composable
+/*@Composable
 private fun <T : ElementoL10n> ListaFiltro( opcions: List<T>, escollido: T?, textoTodas: L10nSingular?, escoller: ( T? ) -> Unit ) {
 
     val elementos = if ( textoTodas != null ) listOf<T?>( null ) + opcions else opcions
@@ -154,7 +161,7 @@ private fun <T : ElementoL10n> ListaFiltro( opcions: List<T>, escollido: T?, tex
 
     }
 
-}
+}*/
 
 //Igual se podería aplicar nun xogo de amosar ou agochar resposta
 //Funciona o campo de contrasinal, pero igual é innecesario

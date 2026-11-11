@@ -25,6 +25,9 @@
   "filtro_destinatario": "Recipient",
   "filtro_categoria": "Category",
   "filtro_buscar_en": "Search in",
+  "orde_recentes": "Most recent",
+  "orde_antigas": "Oldest",
+  "filtro_orde": "Sort by",
 
   "mensaxes_novas": {
     "one": "You have %s new message",

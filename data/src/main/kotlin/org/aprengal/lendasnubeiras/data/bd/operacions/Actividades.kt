@@ -63,26 +63,30 @@ object Actividades {
         val datos = SeleccionSQL( columnas, alias = "a", onde = onde, ordenar = ordenar )
         val resultados = bd.seleccionar( Taboa.ACTIVIDADES, datos )
 
-        val actividadesBuscables = resultados.map { actividade -> crearActividadeBuscable( actividade ) }
+        //Sequence: convértense e fíltranse unha a unha e, se hai límite, para ao alcanzalo
+        val actividadesBuscables = resultados.asSequence().map { actividade -> crearActividadeBuscable( actividade ) }
+        val termoNormalizado = criterios.termo?.trim()?.lowercase()
 
-        if ( criterios.termo.isNullOrBlank() || actividadesBuscables.isEmpty() ) {
-            return actividadesBuscables
-        }
+        val actividadesFiltradas = if ( termoNormalizado.isNullOrEmpty() ) {
+            actividadesBuscables
+        } else {
 
-        val termoNormalizado = criterios.termo.trim().lowercase()
+            actividadesBuscables.filter { act ->
 
-        val actividadesFiltradas = actividadesBuscables.filter { act ->
+                when ( criterios.campoBusca ) {
+                    CampoBusca.Titulo -> act.titulo.lowercase().contains( termoNormalizado )
+                    CampoBusca.Descricion -> act.resumo.lowercase().contains( termoNormalizado )
+                    CampoBusca.Ambos -> act.titulo.lowercase().contains( termoNormalizado ) ||
+                            act.resumo.lowercase().contains( termoNormalizado )
+                }
 
-            when ( criterios.campoBusca ) {
-                CampoBusca.Titulo -> act.titulo.lowercase().contains( termoNormalizado )
-                CampoBusca.Descricion -> act.resumo.lowercase().contains( termoNormalizado )
-                CampoBusca.Ambos -> act.titulo.lowercase().contains( termoNormalizado ) ||
-                        act.resumo.lowercase().contains( termoNormalizado )
             }
 
         }
 
-        return actividadesFiltradas
+        val actividadesLimitadas = if ( criterios.limite != null ) actividadesFiltradas.take( criterios.limite ) else actividadesFiltradas
+
+        return actividadesLimitadas.toList()
 
     }
 

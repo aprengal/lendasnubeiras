@@ -25,6 +25,9 @@
   "filtro_destinatario": "Destinatario",
   "filtro_categoria": "Categoría",
   "filtro_buscar_en": "Buscar en",
+  "orde_recentes": "Máis recentes",
+  "orde_antigas": "Máis antigas",
+  "filtro_orde": "Ordenar por",
 
   "mensaxes_novas": {
     "one": "Tes %s mensaxe nova",

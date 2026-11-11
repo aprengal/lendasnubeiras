@@ -49,7 +49,7 @@ fun <T> ListaOpcions( datos: DatosListaOpcions<T> ) {
 
         items( datos.opcions ) { opcion ->
 
-            val texto = obterTexto( opcion )
+            val texto = datos.texto( opcion )
             val seleccionado = datos.escollido == opcion
 
             val modificador = Modifier

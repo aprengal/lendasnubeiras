@@ -28,11 +28,14 @@ import org.aprengal.lendasnubeiras.data.localizacion.clases.ElementoL10n
  * non se aplica ningún filtrado por texto.
  * @property campoBusca Indica os campos de texto nos que se buscará o termo:
  * título, descrición ou ambos. Por defecto, [CampoBusca.Ambos].
+ * @property limite Número máximo de resultados que se devolverán na busca.
+ * Se é null, non se establece ningún límite.
  */
 data class CriteriosBusca(
     val colOrdenable: String,
     val dirOrdenable: Orde = Orde.DESC,
     val filtros: Map<String, Any> = emptyMap(),
     val termo: String? = null,
-    val campoBusca: CampoBusca = CampoBusca.Ambos
+    val campoBusca: CampoBusca = CampoBusca.Ambos,
+    val limite: Int? = null
 )

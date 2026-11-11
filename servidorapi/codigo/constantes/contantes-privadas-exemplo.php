@@ -1,6 +1,6 @@
 <?php
 
-declare ( strict_types = 1 );
+declare( strict_types = 1 );
 
 /**
  * Ficheiro de exemplo de configuración global de constantes do sistema.
@@ -21,6 +21,9 @@ const CONTASINAL_DB = "abc123.";
 /** @var string Nome da base de datos principal do sistema. */
 const NOME_DB = "test_db";
 
+/** @var string Prefixo que terán as táboas da base de datos. */
+const PREFIXO_DB = 'test_prefixo';
+
 // Correo electrónico
 /** @var string Enderezo de correo electrónico remitente predeterminado. */
 const DENDE_CORREO = "NON_USAR@gmail.com";
@@ -34,9 +37,9 @@ const USUARIO_CORREO = "NON_USAR@example.com";
 /** @var string Contrasinal ou token de autorización SMTP. */
 const AUTORIZACION_CORREO = "NON_USAR";
 
-// Rastros
-/** @var string Nome identificador da cookie de rastro de sesión. */
-const RASTRO_SESION = "test";
+// Cabeceiras
+/** @var string Nome identificador da cabeceira de sesión. */
+const CABECEIRA_SESION = "test";
 
 // Salgado
 /** @var string Chave base para a xeración de salgados de sesión. */

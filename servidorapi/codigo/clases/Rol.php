@@ -1,26 +1,28 @@
 <?php
 
-declare ( strict_types = 1 );
+declare( strict_types = 1 );
 
 /**
- * Enumerado de tipo string que define os diferentes roles
- * de usuario dispoñibles no sistema.
+ * Enumerado de tipo string que define os roles dispoñibles no sistema.
+ *
+ * Cada rol determina os permisos e as operacións que pode realizar
+ * un usuario dentro da aplicación.
  */
 enum Rol: string {
 
-    /** Rol de monitor. */
+    /** Rol básico de monitor. */
     case MONITOR       = 'monitor';
 
-    /** Rol de colaborador. */
+    /** Rol de colaborador, con permisos limitados de edición. */
     case COLABORADOR   = 'colaborador';
 
-    /** Rol de autor. */
+    /** Rol de autor, con capacidade para xestionar as súas propias actividades. */
     case AUTOR         = 'autor';
 
-    /** Rol de editor. */
+    /** Rol de editor, con permisos de xestión de actividades. */
     case EDITOR        = 'editor';
 
-    /** Rol de administrador. */
+    /** Rol de administrador, con permisos de xestión global do sistema. */
     case ADMINISTRADOR = 'administrador';
 
 }

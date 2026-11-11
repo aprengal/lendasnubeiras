@@ -12,9 +12,10 @@ import org.aprengal.lendasnubeiras.data.axustes.Opcion
 import org.aprengal.lendasnubeiras.data.BuildConfig
 import org.aprengal.lendasnubeiras.data.api.resposta.ActividadeCreada
 import org.aprengal.lendasnubeiras.data.api.resposta.DatosActividades
+import org.aprengal.lendasnubeiras.data.api.resposta.RespostaAcceso
 import org.aprengal.lendasnubeiras.data.api.resposta.RespostaApi
 import org.aprengal.lendasnubeiras.data.api.resposta.RespostaXenerica
-import org.aprengal.lendasnubeiras.data.api.resposta.SesionUsuario
+import org.aprengal.lendasnubeiras.data.api.resposta.RespostaValidacionSesion
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -57,29 +58,32 @@ object ConexionApi {
     private const val URL_BASE = BuildConfig.API_URL
 
     /**
-     * Realiza unha petición á API e converte a resposta ao tipo correspondente á ruta solicitada.
+     * Realiza unha petición á API e transforma a resposta recibida nun obxecto
+     * da clase correspondente á ruta solicitada.
      *
-     * A conversión depende da ruta indicada:
-     * - [RutasApi.ACCESO] e [RutasApi.VALIDACION]: [SesionUsuario].
+     * A conversión realízase segundo a seguinte correspondencia:
+     * - [RutasApi.ACCESO]: [RespostaAcceso].
+     * - [RutasApi.VALIDACION]: [RespostaValidacionSesion].
      * - [RutasApi.ACTUALIZAR]: [DatosActividades].
      * - [RutasApi.CREARACTIVIDADE]: [ActividadeCreada].
-     * - O resto das rutas: [RespostaXenerica].
+     * - Resto de rutas: [RespostaXenerica].
      *
-     * Delega a comunicación HTTP en [peticion] e devolve o resultado
-     * como unha instancia do tipo solicitado.
+     * Delega o envío da petición HTTP na función [peticion] e converte os datos
+     * recibidos na instancia correspondente.
      *
-     * @param T Tipo de resposta que se espera obter, derivado de [RespostaApi].
+     * @param T Tipo de resposta esperado, que debe herdar de [RespostaApi].
      * @param metodoApi Método HTTP que se empregará na petición.
      * @param rutaApi Ruta da API á que se realizará a petición.
-     * @param campos Datos que se enviarán no corpo da petición, se corresponde.
-     * @return Instancia da clase de resposta correspondente á ruta solicitada.
+     * @param campos Parámetros que se enviarán na petición. Por defecto, un mapa baleiro.
+     * @return Obxecto que representa a resposta da API, convertido ao tipo [T].
      */
     suspend fun <T : RespostaApi> procesarPeticion( metodoApi: MetodoApi, rutaApi: RutasApi, campos: Map<String, Any> = emptyMap() ): T {
 
         val datos = peticion( metodoApi, rutaApi, campos )
 
         val saida = when( rutaApi ) {
-            RutasApi.ACCESO, RutasApi.VALIDACION -> SesionUsuario( datos )
+            RutasApi.ACCESO -> RespostaAcceso( datos )
+            RutasApi.VALIDACION -> RespostaValidacionSesion( datos )
             RutasApi.ACTUALIZAR -> DatosActividades( datos )
             RutasApi.CREARACTIVIDADE -> ActividadeCreada( datos )
             RutasApi.REXISTRO, RutasApi.PECHE, RutasApi.MODIFICARACTIVIDADE,
@@ -207,7 +211,7 @@ object ConexionApi {
                     conexion.requestMethod = metodoApi.clave
                     conexion.instanceFollowRedirects = false
 
-                    if ( sesion.isNotBlank() ) conexion.setRequestProperty( "sesion_rastro", "Bearer $sesion" )
+                    if ( sesion.isNotBlank() ) conexion.setRequestProperty( "cabeceira_sesion", "Bearer $sesion" )
 
                     val haiCorpo = metodoApi != MetodoApi.GET && corpo.isNotBlank()
 

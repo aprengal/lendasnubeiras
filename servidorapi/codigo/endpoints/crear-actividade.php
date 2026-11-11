@@ -1,13 +1,30 @@
 <?php
 
-declare ( strict_types = 1 );
+declare( strict_types = 1 );
 
 /**
  * POST /actividade/crear
- * 
- * Crea unha actividade e devolve o seu id, que asigna o servidor.
- * 
- * Respostas: 200, 400, 403
+ *
+ * Crea unha nova actividade na base de datos do servidor.
+ *
+ * Require unha sesión autenticada e os datos necesarios para definir
+ * a actividade. O servidor asigna o identificador definitivo e devolve
+ * o ID e o estado resultante da creación.
+ *
+ * Os estados negativos empregados temporalmente polo cliente convértense
+ * nos estados definitivos do servidor:
+ * - -1: borrador (0).
+ * - -2: pendente (1).
+ * - -3: publicado (2).
+ *
+ * A creación está suxeita aos permisos do usuario e ás restricións
+ * asociadas á autoría e ao estado solicitado.
+ *
+ * Non se permite crear actividades directamente no estado borrado.
+ *
+ * @return void
+ *
+ * Respostas: 201, 400, 401, 403
  */
 function endpoint_crear_actividade(): void {
 

@@ -1,6 +1,6 @@
 <?php
 
-declare ( strict_types = 1 );
+declare( strict_types = 1 );
 
 const MINUTO_EN_SEGUNDOS = 60;
 const HORA_EN_SEGUNDOS = 60 * MINUTO_EN_SEGUNDOS;

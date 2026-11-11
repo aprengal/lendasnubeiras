@@ -1,13 +1,22 @@
 <?php
 
-declare ( strict_types = 1 );
+declare( strict_types = 1 );
 
 /**
  * POST /sesion/validacion
- * 
- * Comproba que a sesión é correcta. Execútase ao abrir a aplicación.
- * 
- * Respostas: 200, 401, 404
+ *
+ * Valida o rastro da sesión recibido na cabeceira da petición e comproba
+ * que o usuario existe e que a sesión continúa activa.
+ *
+ * Execútase ao abrir a aplicación para recuperar unha sesión anterior
+ * e durante o proceso de inicio de sesión, mentres se agarda a que o usuario
+ * verifique a ligazón recibida por correo electrónico.
+ *
+ * Se a sesión é válida, devolve o identificador, o correo electrónico
+ * e o rol do usuario.
+ *
+ * Respostas: 200 (sesión válida), 401 (sesión ausente ou non válida),
+ * 404 (usuario inexistente).
  */
 function endpoint_validar_sesion(): void {
 
@@ -15,7 +24,7 @@ function endpoint_validar_sesion(): void {
 
     validar_corpo( coller_corpo(), [ 'uuid' => [ 'tipo' => 'uuid' ] ] );
 
-    $rastro = analizar_rastro_sesion();
+    $rastro = analizar_cabeceira_sesion();
 
     if ( !$rastro ) {
        responder( 401 );

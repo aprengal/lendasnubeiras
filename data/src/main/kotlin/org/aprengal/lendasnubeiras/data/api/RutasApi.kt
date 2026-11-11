@@ -1,97 +1,178 @@
 package org.aprengal.lendasnubeiras.data.api
 
 /**
- * Rutas da API REST do servidor.
+ * Define as rutas dos endpoints da API REST do servidor.
  *
- * Cada valor representa un punto de acceso (endpoint) e garda a súa ruta
- * relativa. Salvo as tarefas programadas, rexistro e acceso, as accións que
- * non comproban a autenticación directamente requiren ter a sesión iniciada,
- * e a validación da sesión faise automaticamente no servidor.
+ * Cada elemento representa unha operación dispoñible na API e almacena
+ * a súa ruta relativa.
  *
- * @property ruta Ruta relativa do endpoint.
+ * Os endpoints que requiren autenticación validan automaticamente a sesión
+ * mediante a cabeceira HTTP `cabeceira_sesion`, agás que se indique
+ * expresamente o contrario.
+ *
+ * Existen tamén operacións de acceso público ou que empregan mecanismos
+ * propios de verificación.
+ *
+ * @property ruta Ruta relativa do endpoint asociada á operación.
  */
-enum class RutasApi ( val ruta: String ) {
+enum class RutasApi( val ruta: String ) {
 
     /**
-     * Rexistra un usuario novo a partir do seu correo electrónico.
+     * Solicita o rexistro dun novo usuario mediante o seu enderezo de correo
+     * electrónico.
      *
-     * Envíase unha mensaxe ao correo cunha URL que contén un token para
-     * verificar a acción. A ligazón é válida durante 30 minutos. Unha vez
-     * verificada, a solicitude queda en espera ata que un administrador a
-     * aprobe.
+     * Envíase unha mensaxe ao correo indicado cunha ligazón para verificar
+     * a solicitude. O token da ligazón ten unha validez de 15 minutos.
+     * Unha vez verificada, a solicitude queda pendente de aprobación
+     * por parte dun administrador.
      *
-     * Cada usuario ten un máximo de 3 intentos de rexistro en 24 horas. Para
-     * aplicar este límite, comprobase se xa existe un dato temporal para ese
-     * correo dentro do intervalo.
+     * O correo envíase no idioma indicado na petición. Permítense como máximo
+     * 3 intentos de rexistro por correo electrónico nun período de 24 horas.
      */
     REXISTRO( "conta/rexistro" ),
 
     /**
-     * Inicia sesión mediante o correo electrónico.
+     * Solicita o inicio de sesión dun usuario mediante o seu enderezo
+     * de correo electrónico.
      *
-     * Envíase ao correo do usuario unha URL cun token para verificar a
-     * acción. Como o correo xa foi autorizado por un administrador, non hai
-     * límite de reintentos, pero só se pode enviar unha mensaxe cada 60
-     * segundos para evitar envíos innecesarios.
+     * Envíase unha mensaxe ao correo indicado cunha ligazón para verificar
+     * a solicitude. O correo envíase no idioma indicado na petición.
+     *
+     * A resposta inclúe o token cifrado da sesión, que permanece pendente
+     * de activación ata que se verifica a ligazón recibida.
+     *
+     * Establécese un intervalo mínimo de 60 segundos entre envíos
+     * de mensaxes para un mesmo usuario.
      */
     ACCESO( "conta/iniciar-sesion" ),
 
     /**
-     * Acción de peche de sesión.
+     * Solicita o peche da sesión do usuario no dispositivo actual.
      *
-     * Execútase de xeito local no dispositivo eliminando as credenciais
-     * e tokens almacenados, sen requirir unha chamada específica a un endpoint
-     * do servidor (a sesión do servidor caducará polo seu propio tempo de vida).
+     * Require unha sesión autenticada e o identificador do dispositivo.
+     * Se o servidor recoñece a sesión, realiza o peche correspondente.
+     * Se non a recoñece, a aplicación pode completar o peche localmente,
+     * eliminando as credenciais almacenadas no dispositivo.
      */
     PECHE( "conta/pechar-sesion" ),
 
     /**
-     * Pide o borrado da propia conta do usuario.
+     * Solicita o borrado da conta do usuario autenticado.
      *
-     * Envíase unha ligazón de verificación ao correo. Ao confirmala, a conta péchase e bórrase
-     * de forma definitiva pasados 30 días. Os administradores non poden borrar a súa conta.
+     * Envíase unha ligazón de confirmación ao enderezo de correo asociado
+     * á conta. O correo envíase no idioma indicado na petición.
+     *
+     * Unha vez verificada a solicitude, a conta péchase e queda pendente
+     * de eliminación definitiva aos 30 días. Durante ese período,
+     * un administrador pode cancelar o borrado modificando o estado da conta.
+     *
+     * As actividades publicadas polo usuario pasan ao usuario reservado,
+     * mentres que os borradores, as actividades pendentes e as da papeleira
+     * elimínanse definitivamente.
+     *
+     * Os administradores non poden solicitar o borrado da súa propia conta.
+     * Establécese un intervalo mínimo de 60 segundos entre envíos de mensaxes.
      */
     BORRARCONTA( "conta/borrado" ),
 
     /**
-     * Valida a sesión actual.
+     * Comproba a validez da sesión actual e recupera a información
+     * actualizada do usuario autenticado.
      *
-     * Execútase ao abrir a aplicación cando o usuario iniciou sesión con
-     * anterioridade, e comproba que a sesión é correcta e segue activa.
+     * Emprégase ao iniciar a aplicación cando existen credenciais dunha
+     * sesión anterior. A petición require unha sesión válida e o identificador
+     * do dispositivo.
+     *
+     * A resposta inclúe o identificador do usuario, o seu correo electrónico
+     * e o rol asignado.
      */
     VALIDACION( "sesion/validacion" ),
 
-    /** Actualiza o catálogo das actividades dispoñibles. */
+    /**
+     * Recupera o catálogo de actividades dispoñibles para o usuario.
+     *
+     * Permite realizar a consulta tanto con sesión autenticada como
+     * de forma anónima. A petición require o identificador do dispositivo.
+     *
+     * Establécese un intervalo mínimo de 60 segundos entre solicitudes
+     * realizadas desde un mesmo dispositivo.
+     */
     ACTUALIZAR( "actividade/actualizar" ),
 
-    /** Crea unha actividade e engádea á base de datos do servidor. */
+    /**
+     * Crea unha nova actividade e almacénaa na base de datos do servidor.
+     *
+     * Require unha sesión autenticada e os datos necesarios para definir
+     * a actividade. O servidor asigna o identificador definitivo e devolve
+     * tamén o estado resultante da creación.
+     *
+     * Os estados temporais empregados polo cliente transfórmanse
+     * nos estados definitivos do servidor:
+     * - -1: borrador (0).
+     * - -2: pendente (1).
+     * - -3: publicado (2).
+     *
+     * Non se permite crear actividades directamente no estado borrado (3).
+     */
     CREARACTIVIDADE( "actividade/crear" ),
 
-    /** Modifica os datos dunha actividade, ou ben a borra ou a restaura. */
+    /**
+     * Modifica os datos dunha actividade existente ou cambia o seu estado.
+     *
+     * Require unha sesión autenticada e o envío dos datos completos
+     * da actividade, incluído o seu identificador no servidor.
+     *
+     * O campo estado determina a operación realizada:
+     * - 0: borrador.
+     * - 1: pendente.
+     * - 2: publicado.
+     * - 3: borrado.
+     *
+     * Os identificadores dos recursos deben ser válidos e o usuario
+     * debe dispoñer dos permisos necesarios para realizar a modificación.
+     */
     MODIFICARACTIVIDADE( "actividade/modificar" ),
 
     /**
-     * Rexistra os erros producidos a nivel de aplicación.
+     * Envía ao servidor información sobre os erros producidos
+     * durante a execución da aplicación.
      *
-     * Normalmente emprégase unha ferramenta de terceiros para isto, pero,
-     * por falta de tempo e por motivos de privacidade, inténtase primeiro
-     * unha solución que non envíe información a outras plataformas.
+     * Require unha sesión autenticada e inclúe o identificador único
+     * da petición na que se produciu o erro, xunto coa súa descrición.
+     *
+     * Emprega un sistema propio de rexistro para evitar o envío
+     * de información a plataformas externas. As descricións que superan
+     * os 2000 caracteres son truncadas polo servidor.
      */
     REPORTES( "reportar-erros" ),
 
     /**
-     * Xestiona os usuarios (só para administradores).
+     * Xestiona as contas dos usuarios do sistema.
      *
-     * Permite cambiar o rol ou o correo electrónico dun usuario, e mesmo
-     * inhabilitar a súa conta se é preciso.
+     * Esta operación está reservada aos administradores e permite modificar
+     * o rol, o enderezo de correo electrónico ou o estado dunha conta.
+     *
+     * Tamén permite cancelar unha solicitude de borrado modificando
+     * o estado da conta. Non se pode asignar directamente o estado
+     * correspondente ao borrado nin modificar a conta do usuario reservado.
+     *
+     * É obrigatorio indicar polo menos un dos campos que se quere modificar.
      */
     USUARIOS( "axustar-usuarios" ),
 
     /**
-     * Executa as tarefas programadas do servidor.
+     * Executa as tarefas programadas de mantemento do servidor.
      *
-     * Elimina os datos temporais caducados, baleira a papeleira e borra as contas
-     * que pediron o borrado hai máis de 30 días.
+     * Non require unha sesión de usuario autenticada.
+     *
+     * Elimina os datos temporais caducados, as actividades que levan
+     * máis de 30 días borradas e as contas cuxo período de borrado
+     * definitivo xa expirou.
+     *
+     * As actividades publicadas pertencentes ás contas eliminadas
+     * transfírense ao usuario reservado.
+     *
+     * Non permite executar simultaneamente varias instancias destas tarefas.
      */
     LIMPAR( "limpar" );
 

@@ -4,9 +4,14 @@ import org.json.JSONObject
 import org.aprengal.lendasnubeiras.data.api.RutasApi
 
 /**
- * Resposta xenérica empregada para endpoints que non requiren un procesamento de datos complexo
- * (como [RutasApi.REXISTRO], [RutasApi.VALIDACION], [RutasApi.MODIFICARACTIVIDADE],
- * [RutasApi.REPORTES], [RutasApi.USUARIOS], [RutasApi.BORRARCONTA], e [RutasApi.LIMPAR]),
- * limitándose a manexar o código de estado HTTP e o éxito da operación.
+ * Representa unha resposta xenérica da API para operacións que non requiren
+ * un tratamento específico dos datos recibidos.
+ *
+ * Empregada en rutas como [RutasApi.REXISTRO], [RutasApi.PECHE],
+ * [RutasApi.MODIFICARACTIVIDADE], [RutasApi.REPORTES],
+ * [RutasApi.USUARIOS], [RutasApi.BORRARCONTA] e [RutasApi.LIMPAR].
+ *
+ * Herda de [RespostaApi] o código de resposta e a indicación de éxito
+ * da operación, sen engadir propiedades adicionais.
  */
 class RespostaXenerica( datos: JSONObject ) : RespostaApi( datos.optInt( "codigo" ) )

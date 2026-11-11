@@ -1,17 +1,20 @@
 <?php
 
-declare ( strict_types = 1 );
+declare( strict_types = 1 );
 
 /**
- * Funcións comúns dos endpoints das actividades.
- * 
- */
-
-/**
- * Regras de validación dunha actividade[cite: 9].
+ * Devolve as regras de validación dos campos dunha actividade.
  *
- * Ao crear, admítense os estados do servidor (0, 1, 2) e os temporais do cliente (-1, -2, -3).
- * Ao modificar, pídese o id e admítense os estados do 0 ao 3 (incluíndo o 3 de borrada).
+ * As regras varían segundo a operación:
+ *
+ * - Ao crear, admítense os estados definitivos do servidor (0, 1, 2)
+ *   e os estados temporais do cliente (-1, -2, -3).
+ * - Ao modificar, requírese o identificador da actividade e admítense
+ *   os estados do servidor (0, 1, 2, 3).
+ *
+ * @param bool $modificar Indica se a validación corresponde a unha
+ * modificación ou á creación dunha actividade.
+ * @return array Array asociativo coas regras de validación de cada campo.
  */
 function regras_actividade( bool $modificar ): array {
 
@@ -37,10 +40,14 @@ function regras_actividade( bool $modificar ): array {
 }
 
 /**
- * Devolve unha actividade cos tipos de datos que espera o cliente.
- * 
- * A base de datos pode devolver como números textos que parecen números,
- * así que se forzan os tipos para que o JSON sexa sempre igual.
+ * Formata os datos dunha actividade para a súa devolución ao cliente.
+ *
+ * Converte explicitamente os valores aos tipos esperados pola aplicación,
+ * evitando diferenzas no formato da resposta JSON cando a base de datos
+ * devolve valores numéricos como cadeas de texto.
+ *
+ * @param array $fila Fila da actividade obtida da base de datos.
+ * @return array Datos da actividade cos tipos normalizados.
  */
 function formatar_actividade( array $fila ): array {
 
@@ -57,6 +64,15 @@ function formatar_actividade( array $fila ): array {
 
 }
 
+/**
+ * Recupera unha actividade da base de datos mediante o seu identificador.
+ *
+ * Consulta unicamente os campos definidos en COLUMNAS_ACTIVIDADE
+ * e normaliza os seus tipos mediante formatar_actividade().
+ *
+ * @param int $id Identificador da actividade no servidor.
+ * @return array|null Datos da actividade formateados ou null se non existe.
+ */
 function coller_actividade( int $id ): ?array {
 
 	$busca = [
@@ -76,13 +92,27 @@ function coller_actividade( int $id ): ?array {
 }
 
 /**
- * Devolve as actividades que pode recibir un usuario (ou un usuario anónimo se é null).
+ * Recupera as actividades que pode consultar un usuario segundo o seu rol.
  *
- * Todos reciben as publicadas (2). Os editores e administradores reciben todas.
- * Os monitores reciben as publicadas. Os demais usuarios con sesión (autores, colaboradores, etc.)
- * reciben ademais os seus propios borradores (0) e pendentes (1).
- * As actividades borradas (3) non se envían; o cliente xestiona iso pola súa conta
- * para borrar as actividades non enviadas no propio dispositivo.
+ * As actividades borradas (3) nunca se inclúen nos resultados.
+ *
+ * A visibilidade distribúese do seguinte xeito:
+ *
+ * - Usuarios anónimos: actividades publicadas (2).
+ * - Monitores: actividades publicadas (2).
+ * - Autores e colaboradores: actividades publicadas (2) e as súas
+ *   propias actividades en borrador (0) ou pendentes (1).
+ * - Editores e administradores: todas as actividades, agás as borradas.
+ *
+ * Os borradores e as actividades pendentes doutros usuarios non se
+ * mostran a autores nin colaboradores.
+ *
+ * Os resultados devólvense normalizados mediante formatar_actividade()
+ * e ordenados segundo o identificador de la actividad.
+ *
+ * @param Usuario|null $usuario Usuario cuxas actividades visibles
+ * se queren recuperar, ou null para unha consulta anónima.
+ * @return array Lista de actividades visibles cos seus tipos normalizados.
  */
 function coller_actividades_visibles( ?Usuario $usuario ): array {
 
@@ -118,14 +148,24 @@ function coller_actividades_visibles( ?Usuario $usuario ): array {
 }
 
 /**
- * Indica se un usuario pode gardar unha actividade segundo o seu rol.
- * 
- * - Administrador e editor: calquera actividade.
- * - Autor: só as súas propias.
- * - Colaborador: só as súas propias e sen publicar (nin antes nin despois).
- * - Monitor e resto: ningunha.
- * 
- * Ao crear, o estado actual é 0.
+ * Comproba se un usuario pode crear ou modificar unha actividade
+ * segundo o seu rol, a súa autoría e os estados implicados.
+ *
+ * As regras de autorización son:
+ *
+ * - Administradores e editores: poden xestionar calquera actividade.
+ * - Autores: poden xestionar unicamente as súas propias actividades.
+ * - Colaboradores: poden xestionar as súas propias actividades sempre
+ *   que tanto o estado actual como o novo sexan anteriores á publicación.
+ * - Monitores e demais roles: non poden xestionar actividades.
+ *
+ * Ao crear unha actividade, o estado actual debe indicarse como 0.
+ *
+ * @param Usuario $usuario Usuario que solicita a operación.
+ * @param int $id_autoria Identificador do autor da actividade.
+ * @param int $estado_actual Estado actual da actividade.
+ * @param int $estado_novo Estado que se quere establecer.
+ * @return bool True se o usuario ten permisos para realizar a operación.
  */
 function pode_xestionar_actividade( Usuario $usuario, int $id_autoria, int $estado_actual, int $estado_novo ): bool {
 

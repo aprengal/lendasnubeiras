@@ -1,10 +1,10 @@
 <?php
 
-declare ( strict_types = 1 );
+declare( strict_types = 1 );
 
 /**
- * Clase que representa a un usuario do sistema e xestiona tanto
- * os seus datos básicos como o seu ciclo de vida e sesións.
+ * Representa un usuario do sistema e xestiona os seus datos,
+ * permisos, sesións e operacións asociadas á súa conta.
  */
 final readonly class Usuario {
 
@@ -14,38 +14,54 @@ final readonly class Usuario {
     public int $id;
 
     /**
-     * @var string Identificador único do usuario.
+     * @var string Identificador UUID único do usuario.
      */
     public string $uuid;
 
     /**
-     * @var string Enderezo de correo electrónico do usuario.
+     * @var string Enderezo de correo electrónico asociado á conta.
      */
     public string $correo;
 
     /**
-     * @var int Estado actual da conta (ex. 0 = pendente, 1 = activo, 2 = suspendido, etc.).
+     * @var int Estado actual da conta (0 = pendente, 1 = activo, 2 = suspendido, 3 = en proceso de borrado).
      */
     public int $estado;
 
     /**
-     * @var Rol Rol asignado ao usuario dentro do sistema (instancia do enum Rol).
+     * @var Rol Rol asignado ao usuario, representado mediante unha instancia do enum Rol.
      */
     public Rol $rol;
 
     /**
-     * @var array Array asociativo coas sesións activas do usuario cargadas temporalmente.
+     * @var array Array asociativo coas sesións do usuario cargadas durante a petición actual.
+     * As claves identifican os tokens mediante o seu hash HMAC.
      */
     public array $sesions;
 
     /**
      * Construtor da clase Usuario.
-     * Busca os datos do usuario (ou emprega caché) e inicializa as súas propiedades e sesións.
      *
-     * @param string      $campo          Campo polo que se realiza a busca (ex. 'id', 'correo', 'uuid').
-     * @param string|int  $valor          Valor correspondente ao campo de busca.
-     * @param bool        $revisar_cache  Indica se se debe comprobar a caché estática.
-     * @param ?stdClass   $datos          Obxecto opcional con datos precargados para evitar consultas.
+     * Inicializa un usuario a partir dos datos proporcionados ou recuperados
+     * mediante unha busca na base de datos ou na caché estática.
+     *
+     * Se se proporcionan datos precargados, empréganse directamente sen
+     * realizar ningunha consulta adicional.
+     *
+     * Durante a inicialización:
+     * - Convértese o rol recibido como texto na súa correspondente instancia
+     *   do enum Rol.
+     * - As propiedades recibidas asígnanse dinamicamente, permitindo que
+     *   __set() procese e cargue as sesións do usuario.
+     * - Recupéranse as sesións almacenadas na caché estática da petición.
+     * - Se o usuario non existe, consérvase o campo e valor da busca para
+     *   identificar a súa inexistencia na caché.
+     * - As propiedades que non teñan valor reciben os seus valores por defecto.
+     *
+     * @param string     $campo          Campo polo que se realiza a busca (ex. 'id', 'correo' ou 'uuid').
+     * @param string|int $valor          Valor correspondente ao campo de busca.
+     * @param bool       $revisar_cache  Indica se se debe consultar a caché estática de usuarios.
+     * @param ?stdClass  $datos          Datos precargados do usuario. Se se proporcionan, omítese a busca.
      */
     public function __construct( string $campo, string|int $valor, bool $revisar_cache = true, ?stdClass $datos = null ) {
 
@@ -76,152 +92,207 @@ final readonly class Usuario {
     }
 
     /**
-     * Método máxico para asignar propiedades dinamicamente (empregado para cargar sesións).
-     * Se a propiedade comeza por 'ses_id_', deseraliza e engade a sesión correspondente.
+     * Intercepta a asignación de propiedades para cargar sesións do usuario.
      *
-     * @param string  $nome   Nome da propiedade.
-     * @param mixed   $valor  Valor da propiedade.
+     * Só procesa as propiedades cuxo nome comeza polo prefixo 'ses_id_'.
+     * Comproba que o valor recibido conteña datos serializados válidos,
+     * deserialízaos sen permitir a creación de obxectos e incorpora os
+     * datos da sesión á caché estática mediante cargar_sesions().
+     *
+     * As propiedades que non teñan ese prefixo ignóranse.
+     *
+     * @param string $nome  Nome da propiedade que se intenta asignar.
+     * @param mixed  $valor Valor recibido, que debe conter os datos serializados da sesión.
      */
-    public function __set( string $nome, $valor ) {
+    public function __set( string $nome, $valor ): void {
 
-       if ( str_starts_with( $nome, 'ses_id_' ) ) {
+        if ( str_starts_with( $nome, 'ses_id_' ) ) {
 
-          if ( !hai_serializacion( $valor ) ) {
-             return;
-          }
+            if ( !hai_serializacion( $valor ) ) {
+                return;
+            }
 
-          $nome = str_replace( 'ses_id_', '', $nome );
-          $valor = unserialize( $valor, [ 'allowed_classes' => false ] );
-          return $this->cargar_sesions( 'engadir', $nome, $valor );
+            $nome = str_replace( 'ses_id_', '', $nome );
+            $valor = unserialize( $valor, [ 'allowed_classes' => false ] );
 
-       }
+            $this->cargar_sesions( 'engadir', $nome, $valor );
+
+        }
 
     }
 
     /**
-     * Asigna valores por defecto ás propiedades da clase se non viñeron definidos na BD ou caché.
+     * Inicializa as propiedades do usuario cos seus valores por defecto.
+     *
+     * Percorre as propiedades básicas da clase e asigna un valor inicial
+     * a aquelas que non estean definidas ou teñan valor null.
+     *
+     * Non sobrescribe as propiedades que xa teñan un valor asignado,
+     * polo que permite completar os datos dun usuario parcialmente cargado
+     * desde a base de datos ou a caché.
+     *
+     * @return void
      */
-    private function autocubrir_propiedades() {
+    private function autocubrir_propiedades(): void {
 
-       $base = [
-          'id' => -1,
-          'uuid' => '',
-          'correo' => '',
-          'estado' => 0,
-          'rol' => Rol::MONITOR,
-          'sesions' => []
-       ];
+        $base = [
+            'id' => -1,
+            'uuid' => '',
+            'correo' => '',
+            'estado' => 0,
+            'rol' => Rol::MONITOR,
+            'sesions' => []
+        ];
 
-       foreach ( $base as $clave => $valor ) {
+        foreach ( $base as $clave => $valor ) {
 
-          if ( !isset( $this->$clave ) ) {
-             $this->$clave = $valor;
-          }
+            if ( !isset( $this->$clave ) ) {
+                $this->$clave = $valor;
+            }
 
-       }
+        }
 
     }
 
     /**
-     * Xestiona a carga, almacenaxe e limpeza estática das sesións dun usuario na petición actual.
+     * Xestiona a caché estática das sesións dun usuario durante a petición actual.
      *
-     * @param string  $accion  Acción a realizar ('engadir' ou baleiro para recuperar/limpar).
-     * @param string  $nome    Identificador único da sesión.
-     * @param array   $valor   Datos da sesión.
-     * @return array  Devolve o array de sesións almacenadas.
+     * Permite engadir sesións á caché ou recuperar todas as sesións almacenadas
+     * e baleirar a caché nunha única operación.
+     *
+     * Comportamento segundo a acción:
+     *
+     * - 'engadir': almacena os datos de sesión en $valor baixo o identificador
+     *   $nome e devolve os datos engadidos.
+     * - Calquera outro valor: devolve todas as sesións almacenadas e baleira
+     *   a caché para evitar que os datos se reutilicen noutras operacións.
+     *
+     * A caché é estática, polo que se comparte entre todas as instancias da
+     * clase durante a execución da petición actual.
+     *
+     * @param string $accion Acción que se vai realizar ('engadir' ou baleiro para recuperar e limpar).
+     * @param string $nome   Identificador único da sesión que se vai almacenar.
+     * @param array  $valor  Datos da sesión que se van almacenar.
+     * @return array Datos da sesión engadida ou todas as sesións recuperadas.
      */
-    private function cargar_sesions( string $accion = '', string $nome = '', array $valor = [] ) {
+    private function cargar_sesions( string $accion = '', string $nome = '', array $valor = [] ): array {
 
-       static $sesions = [];
+        static $sesions = [];
 
-       if ( $accion == 'engadir' ) {
-          return $sesions[ $nome ] = $valor;
-       }
+        if ( $accion === 'engadir' ) {
+            return $sesions[ $nome ] = $valor;
+        }
 
-       $copia_ses = $sesions;
-       $sesions = [];
+        $copia_ses = $sesions;
+        $sesions = [];
 
-       return $copia_ses;
+        return $copia_ses;
 
     }
 
     /**
-     * Realiza a consulta á base de datos para obter os datos dun usuario e as súas sesións temporais activas.
+     * Recupera un usuario da base de datos e carga as súas sesións temporais vixentes.
      *
-     * @param string      $campo          Campo polo que buscar.
-     * @param string|int  $valor          Valor da busca.
-     * @param bool        $revisar_cache  Indica se se comproba a caché global.
-     * @return mixed      Devolve o resultado da busca ou null se non existe.
+     * Busca o usuario polo campo e valor indicados, obtendo os seus datos
+     * básicos e o rol asociado mediante unha unión coa táboa roles.
+     *
+     * O parámetro $revisar_cache determina como se realiza a busca:
+     * - true: delega en coller_usuario(), que utiliza o mecanismo de caché global.
+     * - false: realiza unha consulta directa á base de datos, sen utilizar a caché.
+     *
+     * Unha vez recuperado o usuario, consulta os seus rexistros temporais para
+     * cargar no obxecto todas as sesións identificadas co prefixo 'ses_id_'
+     * cuxa data de caducidade aínda non se alcanzou.
+     *
+     * Cada sesión incorpórase ao obxecto como unha propiedade identificada
+     * polo nome do seu rexistro temporal e co seu valor correspondente.
+     *
+     * Se o valor de busca está baleiro ou é un enteiro menor ou igual a cero,
+     * non se realiza ningunha consulta.
+     *
+     * @param string $campo Campo da táboa usuarios polo que realizar a busca.
+     * @param string|int $valor Valor que debe coincidir co campo indicado.
+     * @param bool $revisar_cache Indica se se debe utilizar a caché global.
+     * @return stdClass|null Obxecto cos datos e sesións vixentes, ou null se non se atopa.
      */
-    private function buscar_usuario( string $campo, string|int $valor, bool $revisar_cache ) {
+    private function buscar_usuario( string $campo, string|int $valor, bool $revisar_cache ): ?stdClass {
 
         if ( $revisar_cache ) {
             return coller_usuario( $campo, $valor );
         }
 
         // Se o valor está baleiro ou vale menos de 0, non se executa a busca
-        if ( $valor === '' || ( is_int( $valor ) && $valor <= 0 ) ) { return; }
+        if ( $valor === '' || ( is_int( $valor ) && $valor <= 0 ) ) {
+            return null;
+        }
 
-        //Para que funcione a join ao buscar por id, é preciso aclarar a táboa co alias escollido
+        // Para que funcione a JOIN ao buscar por id, cómpre indicar o alias da táboa
         $campo_onde = "u.$campo";
 
         $busca_usuario = [
-           'columnas' => [ 'u.id', 'u.uuid', 'u.correo', 'u.estado', 'r.clave as rol' ],
-           'alias' => 'u',
-           'join' => [
-               [ 'tipo' => 'INNER', 'principal' => 'id_rol', 'secundaria' => 'r.id', 'taboa-join' => 'roles' ]
-           ],
-           'onde' => [ $campo_onde => $valor ],
-           'limit' => 1
+            'columnas' => [ 'u.id', 'u.uuid', 'u.correo', 'u.estado', 'r.clave as rol' ],
+            'alias' => 'u',
+            'join' => [
+                [ 'tipo' => 'INNER', 'principal' => 'id_rol', 'secundaria' => 'r.id', 'taboa-join' => 'roles' ]
+            ],
+            'onde' => [ $campo_onde => $valor ],
+            'limit' => 1
         ];
 
-       $usuario = db()->select( 'usuarios', $busca_usuario );
+        $usuario = db()->select( 'usuarios', $busca_usuario );
 
-       if ( !$usuario ) {
-          return;
-       }
+        if ( !$usuario instanceof stdClass ) {
+            return null;
+        }
 
-       // As sesións gárdanse como datos temporais do usuario (ses_id_[hash])
-       $busca_sesions = [
-          'columnas' => [ 'nome', 'valor' ],
-          'principal' => 'nome',
-          'onde' => [
-             'id' => $usuario->id,
-             'nome' => [
-                'operador' => 'LIKE',
-                'valor' => 'ses_id_%'
-             ],
-             'data_caducidade' => [
-                'operador' => '>=',
-                'valor' => time()
-             ]
-          ]
-       ];
+        // As sesións gárdanse como datos temporais do usuario (ses_id_[hash])
+        $busca_sesions = [
+            'columnas' => [ 'nome', 'valor' ],
+            'principal' => 'nome',
+            'onde' => [
+                'id' => $usuario->id,
+                'nome' => [
+                    'operador' => 'LIKE',
+                    'valor' => 'ses_id_%'
+                ],
+                'data_caducidade' => [
+                    'operador' => '>=',
+                    'valor' => time()
+                ]
+            ]
+        ];
 
-       $sesions = db()->select( 'info_temporal', $busca_sesions, 'array' ) ?? [];
+        $sesions = db()->select( 'info_temporal', $busca_sesions, 'array' ) ?? [];
 
-       foreach ( $sesions as $nome => $fila ) {
-          $usuario->$nome = $fila[ 'valor' ];
-       }
+        foreach ( $sesions as $nome => $fila ) {
+            $usuario->$nome = $fila[ 'valor' ];
+        }
 
-       return $usuario;
+        return $usuario;
 
     }
 
     /**
-     * Comproba se o usuario existe realmente na base de datos e ten un correo válido.
+     * Comproba se o obxecto representa un usuario existente.
      *
-     * @return bool True se existe, false en caso contrario.
+     * Considera que o usuario existe se ten un identificador positivo
+     * e un enderezo de correo electrónico non baleiro.
+     *
+     * @return bool True se o usuario se considera existente; false en caso contrario.
      */
     function existe() {
        return $this->id > 0 && $this->correo !== '';
     }
 
     /**
-     * Comproba se o usuario dispón dun permiso específico en función do seu rol.
+     * Comproba se o rol do usuario ten un permiso determinado.
      *
-     * @param string  $permiso  Nome do permiso que se desexa comprobar.
-     * @return bool   True se posúe o permiso, false en caso contrario.
+     * Recupera os permisos asociados ao rol e comproba se inclúen
+     * o permiso solicitado. Se o usuario non ten un rol asignado,
+     * devolve false.
+     *
+     * @param string $permiso Clave do permiso que se quere comprobar.
+     * @return bool True se o rol ten o permiso; false en caso contrario.
      */
     public function pode( string $permiso ) {
 
@@ -236,10 +307,13 @@ final readonly class Usuario {
    }
 
     /**
-     * Recupera os datos dunha sesión concreta a partir do seu token utilizando un hash HMAC.
+     * Recupera os datos dunha sesión do usuario mediante o seu token.
      *
-     * @param string  $token  Token de sesión.
-     * @return array|null array cos datos da sesión ou null se non existe.
+     * Calcula o HMAC do token e utilízao como índice para buscar a sesión
+     * na caché interna do usuario, sen realizar consultas á base de datos.
+     *
+     * @param string $token Token da sesión que se quere recuperar.
+     * @return array|null Datos da sesión se existe na caché; null en caso contrario.
      */
     private function coller_sesion( string $token ): ?array {
 
@@ -254,12 +328,15 @@ final readonly class Usuario {
    }
 
     /**
-     * Valida se un token de sesión é activo e correcto para este usuario.
+     * Comproba se existe unha sesión activa para este usuario.
      *
-     * @param string  $token  Token de sesión a comprobar.
-     * @return bool   True se a sesión é válida.
+     * Recupera os datos da sesión mediante o seu token e comproba
+     * que o seu estado sexa activo (1).
+     *
+     * @param string $token Token da sesión que se quere comprobar.
+     * @return bool True se a sesión existe e está activa; false en caso contrario.
      */
-    public function verificar_sesion( string $token ) {
+    public function verificar_sesion( string $token ): bool {
 
         $datos = $this->coller_sesion( $token );
 
@@ -272,13 +349,24 @@ final readonly class Usuario {
     }
 
     /**
-     * Crea unha nova sesión activa para o usuario, xerando un token seguro e gardándoa temporalmente.
+     * Crea unha nova sesión pendente de activación para o usuario.
      *
-     * @param int     $agora       Marca de tempo Unix actual.
-     * @param int     $caducidade  Marca de tempo de caducidade da sesión.
-     * @return string O token de sesión xerado.
+     * Xera un token seguro e garda os datos da sesión en info_temporal.
+     * A sesión permanece pendente (estado 0) ata que o usuario abra a
+     * ligazón de activación recibida por correo.
+     *
+     * A sesión ten dúas caducidades:
+     * - A duración propia da sesión, indicada en $caducidade.
+     * - O prazo de activación, limitado por DURACION_LIGAZON (15 minutos).
+     *
+     * Se a sesión non se activa dentro dese prazo, o rexistro temporal
+     * poderá eliminarse sen chegar a activar a sesión.
+     *
+     * @param int $agora      Marca de tempo Unix de creación da sesión.
+     * @param int $caducidade Marca de tempo Unix de caducidade da sesión.
+     * @return string Token seguro xerado para identificar a sesión.
      */
-    public function crear_sesion( int $agora, int $caducidade ) {
+    public function crear_sesion( int $agora, int $caducidade ): string {
 
         $sesion = [];
 
@@ -300,13 +388,16 @@ final readonly class Usuario {
 
     }
 
-   /**
-     * Cambia o estado dunha sesión de pendente (0) a activa (1) 
-     * a partir do token de sesión, serializa os novos datos e actualiza 
-     * o rexistro temporal na base de datos.
+    /**
+     * Activa unha sesión que se atopa en estado pendente (0).
      *
-     * @param string $token Token da sesión que se desexa activar.
-     * @return bool True se se modificou o estado correctamente. False en caso contrario.
+     * Recupera os datos da sesión mediante o seu token, comproba que exista
+     * e que aínda non estea activa, cambia o seu estado a activo (1) e
+     * actualiza o rexistro correspondente en info_temporal.
+     *
+     * @param string $token Token da sesión que se quere activar.
+     * @return bool True se a sesión existe e estaba pendente; false se non
+     *              existe ou xa está activa.
      */
     public function activar_sesion( string $token ): bool {
 
@@ -326,16 +417,20 @@ final readonly class Usuario {
 
     }
 
-    /**
-     * Comproba e valida o peche da sesión actual comparando os hashes de seguridade.
-     *
-     * @return bool True se a sesión coincide de forma íntegra. False se non coincide
-     */
-    public function pechar_sesion_actual() {
+   /**
+    * Verifica a autenticidade da solicitude de peche da sesión actual.
+    *
+    * Comproba que o usuario existe e corresponde co usuario autenticado
+    * na petición. A continuación, calcula o hash de seguridade esperado
+    * e compárao co almacenado na sesión.
+    *
+    * @return bool True se a solicitude de peche é válida, false en caso contrario.
+    */
+    public function verificar_peche_sesion() {
 
        if ( $this->existe() && usuario_actual()->id == $this->id ) {
 
-          $rastro = analizar_rastro_sesion();
+          $rastro = analizar_cabeceira_sesion();
           $token = $rastro[ 'token' ];
           $datos_sesion = $this->coller_sesion( $token );
           $agora = $datos_sesion[ 'creada' ];
@@ -351,102 +446,118 @@ final readonly class Usuario {
     }
 
     /**
-     * Destrúe unha sesión específica do usuario a partir do seu token.
+     * Elimina unha sesión específica do usuario.
      *
-     * @param string  $token  Token da sesión que se desexa destruir.
+     * @param string $token Token da sesión que se vai eliminar.
      */
-    public function destruir_sesion( string $token ) {
-       $this->axustar_sesion( $token, '', 'destruir_unha', 0 );
+    public function destruir_sesion( string $token ): void {
+        $this->axustar_sesion( $token, '', 'destruir_unha', 0 );
     }
 
     /**
-     * Destrúe varias ou todas as sesións dun usuario (opcionalmente mantendo un token concreto).
+     * Elimina as sesións do usuario.
      *
-     * @param string  $token_manter  Token da sesión que se desexa conservar (se procede).
+     * Se se indica un token, elimínanse todas as sesións agás a correspondente
+     * a ese token. Se non se indica, elimínanse todas as sesións.
+     *
+     * @param string $token_manter Token da sesión que se quere conservar.
+     * Se está baleiro, elimínanse todas.
      */
-    public function destruir_sesions( string $token_manter = '' ) {
-       $this->axustar_sesion( $token_manter, '', 'destruir_varias', 0 );
+    public function destruir_sesions( string $token_manter = '' ): void {
+        $this->axustar_sesion( $token_manter, '', 'destruir_varias', 0 );
     }
 
     /**
-     * Método interno para aplicar cambios nas sesións na base de datos (inserir, actualizar, borrar).
+     * Crea, actualiza o elimina os rexistros das sesións dun usuario en info_temporal.
      *
-     * @param string  $token         Token de sesión.
-     * @param string  $datos_sesion  Datos serializados da sesión.
-     * @param string  $accion        Tipo de acción ('crear', 'verificar', destruir_unha', 'destruir_varias').
-     * @param int     $caducidade    Nova data de caducidade.
-     * @return mixed  Resultado da xeración de autenticación posterior.
+     * O nome de cada rexistro constrúese a partir dun hash HMAC do token de sesión,
+     * evitando almacenar o token orixinal como identificador.
+     *
+     * Accións dispoñibles:
+     * - crear: insire unha nova sesión.
+     * - verificar: actualiza os datos e a caducidade dunha sesión.
+     * - destruir_unha: elimina unha sesión concreta.
+     * - destruir_varias: elimina todas as sesións agás a indicada por $token.
+     *   Se $token está baleiro, elimina todas as sesións do usuario.
+     *
+     * @param string $token         Token da sesión afectada. Pode estar baleiro
+     *                              ao eliminar todas as sesións.
+     * @param string $datos_sesion  Datos serializados da sesión.
+     * @param string $accion        Operación que se vai realizar.
+     * @param int    $caducidade    Marca temporal Unix de caducidade da sesión.
+     *
+     * @throws DomainException Se se solicita unha operación non definida.
      */
-    private function axustar_sesion( string $token, string $datos_sesion, string $accion, int $caducidade ) {
+    private function axustar_sesion( string $token, string $datos_sesion, string $accion, int $caducidade ): void {
 
-       $hash = hash_hmac( 'sha512', $token, salgado( 'sesion' ) );
+        $hash = hash_hmac( 'sha512', $token, salgado( 'sesion' ) );
 
-       switch( $accion ) {
+        switch( $accion ) {
 
-          case 'crear':
+            case 'crear':
 
-             $accion_db = 'insert';
-             $datos = [
-                'id' => $this->id,
-                'nome' => 'ses_id_' . $hash,
-                'valor' => $datos_sesion,
-                'data_caducidade' => $caducidade
-             ];
-
-             break;
-
-          case 'verificar':
-
-             $accion_db = 'update';
-             $datos = [
-                'nova_info' => [
-                   'valor' => $datos_sesion,
-                   'data_caducidade' => $caducidade
-                ],
-                'onde' => [
-                   'id' => $this->id,
-                   'nome' => 'ses_id_' . $hash
-                ]
-             ];
-
-             break;
-
-          case 'destruir_unha':
-
-             $accion_db = 'delete';
-             $datos = [
-                'id' => $this->id,
-                'nome' => 'ses_id_' . $hash
-             ];
-
-             break;
-
-          case 'destruir_varias':
-
-             $accion_db = 'delete';
-
-             if ( $token ) { // Destrúense outras sesións
-
+                $accion_db = 'insert';
                 $datos = [
-                   'id' => $this->id,
-                   'nome' => [
-                      'operador' => '!=',
-                      'valor' => 'ses_id_' . $hash
-                   ]
+                    'id' => $this->id,
+                    'nome' => 'ses_id_' . $hash,
+                    'valor' => $datos_sesion,
+                    'data_caducidade' => $caducidade
                 ];
 
                 break;
 
-             }
+            case 'verificar':
 
-             $datos = [ 'id' => $this->id ]; // Destrúense todas as sesións
+                $accion_db = 'update';
+                $datos = [
+                    'nova_info' => [
+                        'valor' => $datos_sesion,
+                        'data_caducidade' => $caducidade
+                    ],
+                    'onde' => [
+                        'id' => $this->id,
+                        'nome' => 'ses_id_' . $hash
+                    ]
+                ];
 
-             break;
+                break;
 
-          default:
-             throw new DomainException( 'Tratouse de realizar unha acción (' . $accion . ') non definida co identificador ' . $hash . ' para o usuario ' . $this->id );
+            case 'destruir_unha':
 
-       }
+                $accion_db = 'delete';
+                $datos = [
+                    'id' => $this->id,
+                    'nome' => 'ses_id_' . $hash
+                ];
+
+                break;
+
+            case 'destruir_varias':
+
+                $accion_db = 'delete';
+
+                if ( $token !== '' ) {
+
+                    $datos = [
+                        'id' => $this->id,
+                        'nome' => [
+                            'operador' => '!=',
+                            'valor' => 'ses_id_' . $hash
+                        ]
+                    ];
+
+                    break;
+
+                }
+
+                $datos = [ 'id' => $this->id ];
+
+                break;
+
+            default:
+                throw new DomainException( 'Tratouse de realizar unha acción (' . $accion . ') non definida co identificador ' . $hash . ' para o usuario ' . $this->id );
+
+        }
 
         db()->$accion_db( 'info_temporal', $datos );
 

@@ -1,6 +1,6 @@
 <?php
 
-declare ( strict_types = 1 );
+declare( strict_types = 1 );
 
 /**
  * Valida e normaliza un enderezo de correo electrónico, comprobando o formato do nome local,
@@ -10,7 +10,7 @@ declare ( strict_types = 1 );
  * @return string O correo electrónico validado e normalizado.
  * @throws Exception Se o correo é demasiado curto, non ten formato válido ou contén caracteres non permitidos.
  */
-function validar_correo( string $correo ) {
+function validar_correo( string $correo ): string {
 
     $correo = trim( $correo );
 
@@ -77,10 +77,10 @@ function validar_correo( string $correo ) {
  * @return int|null 1 se é UTF-8 válida, ou null se está baleira.
  * @throws LogicException Se a cadea contén caracteres non UTF-8.
  */
-function revisar_utf8( string $string ) {
+function revisar_utf8( string $string ): ?int {
 
     if ( strlen( $string ) == 0 ) {
-       return;
+       return null;
     }
 
     if ( preg_match( '/^./us', $string ) ) {
@@ -99,7 +99,7 @@ function revisar_utf8( string $string ) {
  * @param string|int  $clave  A clave ou identificador a sanitizar.
  * @return string A clave sanitizada.
  */
-function sanitizar_clave( string|int $clave ) {
+function sanitizar_clave( string|int $clave ): string {
     return preg_replace( '/[^a-z0-9_-]/', '', $clave );
 }
 
@@ -110,7 +110,7 @@ function sanitizar_clave( string|int $clave ) {
  * @param string  $contido  O texto a sanitizar.
  * @return string O texto limpo e sanitizado.
  */
-function sanitizar_campo( string $contido ) {
+function sanitizar_campo( string $contido ): string {
 
     if ( $contido === '' || !revisar_utf8( $contido ) ) {
        error_log( 'Invalidouse un campo porque estaba baleiro ou contiña carácteres non UTF8' );
@@ -136,7 +136,7 @@ function sanitizar_campo( string $contido ) {
  * @return string A cadea completa de salgado e claves combinadas.
  * @throws OutOfRangeException Se o grupo de salgado indicado non existe.
  */
-function salgado( string $grupo ) {
+function salgado( string $grupo ): string {
 
     $salgados = [ // claves de 64 caracteres
        'sesion' => [
@@ -163,7 +163,7 @@ function salgado( string $grupo ) {
  * @param int  $max  Valor máximo (por defecto 0, que se mapea a PHP_INT_MAX).
  * @return int O número aleatorio xerado.
  */
-function num_rand( int $min = 0, int $max = 0 ) {
+function num_rand( int $min = 0, int $max = 0 ): int {
     $max = $max > 0 ? $max : PHP_INT_MAX;
     return random_int( $min, $max );
 }
@@ -176,7 +176,7 @@ function num_rand( int $min = 0, int $max = 0 ) {
  * @param bool  $especiais  Indica se se deben incluír caracteres especiais (por defecto true).
  * @return string O token alfanumérico xerado.
  */
-function xerar_token( int $lonxitude = 16, bool $especiais = true ) {
+function xerar_token( int $lonxitude = 16, bool $especiais = true ): string {
 
     $lista = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
@@ -238,7 +238,7 @@ function cifrar_descifrar( string $contido, string $modo, string $nome_clave, ?U
  * @return string A clave de cifrado xerada e combinada.
  * @throws OutOfRangeException Se a clave de cifrado co nome indicado non existe.
  */
-function coller_clave_cifrado( string $grupo, ?Usuario $usuario ) {
+function coller_clave_cifrado( string $grupo, ?Usuario $usuario ): string {
 
     $claves = [
        'sesion'    => [

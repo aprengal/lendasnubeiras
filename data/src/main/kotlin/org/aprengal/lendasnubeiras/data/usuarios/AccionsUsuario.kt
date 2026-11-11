@@ -1,5 +1,6 @@
 package org.aprengal.lendasnubeiras.data.usuarios
 
+import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -7,8 +8,9 @@ import kotlinx.coroutines.delay
 import org.aprengal.lendasnubeiras.data.api.ConexionApi.MetodoApi
 import org.aprengal.lendasnubeiras.data.api.ConexionApi.procesarPeticion
 import org.aprengal.lendasnubeiras.data.api.RutasApi
+import org.aprengal.lendasnubeiras.data.api.resposta.RespostaAcceso
 import org.aprengal.lendasnubeiras.data.api.resposta.RespostaXenerica
-import org.aprengal.lendasnubeiras.data.api.resposta.SesionUsuario
+import org.aprengal.lendasnubeiras.data.api.resposta.RespostaValidacionSesion
 import org.aprengal.lendasnubeiras.data.axustes.Axustes.borrarOpcion
 import org.aprengal.lendasnubeiras.data.axustes.Axustes.borrarSesionsLocais
 import org.aprengal.lendasnubeiras.data.axustes.Axustes.collerIdDispositivo
@@ -146,15 +148,14 @@ object AccionsUsuario {
                     "idioma" to idioma.codigo
                 )
 
-                val resposta: SesionUsuario = procesarPeticion( MetodoApi.POST, RutasApi.ACCESO, campos )
+                val sesion: RespostaAcceso = procesarPeticion( MetodoApi.POST, RutasApi.ACCESO, campos )
 
-                when ( resposta.codigo ) {
+                when ( sesion.codigo ) {
 
                     200 -> {
 
                         actualizarEstado( L10nAutenticacion.AgardandoValidacionSesion, false )
-                        gardarOpcion( Opcion.SesionUsuario, resposta.sesion )
-                        gardarSesionLocal( resposta.sesion, resposta.info )
+                        gardarOpcion( Opcion.SesionUsuario, sesion.sesion )
 
                         var reintentos = 0
                         var sesionValidada = false
@@ -166,18 +167,19 @@ object AccionsUsuario {
                             delay( 4000.milliseconds )
 
                             val idDispositivo = collerOpcion( Opcion.IdDispositivo )
-                            val datos: SesionUsuario = procesarPeticion( MetodoApi.POST, RutasApi.VALIDACION, mapOf( "uuid" to idDispositivo ) )
+                            val usuario: RespostaValidacionSesion = procesarPeticion( MetodoApi.POST, RutasApi.VALIDACION, mapOf( "uuid" to idDispositivo ) )
 
-                            when ( datos.codigo ) {
+                            when ( usuario.codigo ) {
 
                                 200 -> {
 
                                     actualizarEstado( L10nAutenticacion.SesionValidadaCorrectamente, false )
+                                    gardarSesionLocal( sesion.sesion, usuario.info )
                                     delay( 1000.milliseconds )
 
-                                    val id = datos.idUsuario
-                                    val correo = datos.correo
-                                    val rol = buscarRol( datos.rol )
+                                    val id = usuario.idUsuario
+                                    val correo = usuario.correo
+                                    val rol = buscarRol( usuario.rol )
 
                                     cambiarSesion( id, correo, rol )
                                     sesionValidada = true
@@ -219,7 +221,8 @@ object AccionsUsuario {
 
                 }
 
-            } catch ( _: Exception ) {
+            } catch ( e: Exception ) {
+                e.message?.let { Log.d( "Ops", it ) }
                 actualizarEstado( L10nBase.ErroConexion, true )
             }
 

@@ -1,16 +1,26 @@
 <?php
 
-declare ( strict_types = 1 );
+declare( strict_types = 1 );
 
 /**
  * GET /limpar
- * 
- * Executa as tarefas programadas. Non require sesión. Se xa hai unha execución en curso, responde cun 409.
- * 
+ *
+ * Executa as tarefas programadas de mantemento do servidor.
+ *
+ * Non require autenticación. Impide a execución simultánea mediante
+ * un bloqueo temporal que caduca automaticamente aos 5 minutos.
+ *
  * Tarefas:
- * - Elimina os datos temporais caducados.
- * - Borra de forma definitiva as contas que pediron o borrado hai máis de 30 días.
- * - Baleira a papeleira: elimina de forma definitiva as actividades que levan máis de 30 días no estado borrado.
+ * - Elimina os datos temporais cuxa data de caducidade xa expirou.
+ * - Elimina definitivamente as actividades que levan máis de 30 días
+ *   no estado borrado.
+ * - Elimina definitivamente as contas cuxo período de borrado
+ *   superou os 30 días.
+ *
+ * O bloqueo elimínase ao finalizar a execución, mesmo se se produce
+ * unha excepción durante as tarefas.
+ *
+ * @return void
  *
  * Respostas: 204, 409
  */

@@ -1,30 +1,44 @@
 <?php
 
-declare ( strict_types = 1 );
+declare( strict_types = 1 );
 
 /**
  * POST /conta/pechar-sesion
  *
- * O usuario solicita pechar sesión. Este é unha das poucas situacións nas que unha resposta 401 ou 403
- * non indicarían un erro como tal, senón que non hai nada que facer porque a sesión xa caducou ou é posible
- * que o usuario estea suspendido.
+ * Solicita o peche da sesión autenticada no dispositivo actual.
  *
- * Respostas: 200, 403, 409
+ * Comproba que a sesión pertence ao usuario autenticado e que se pode
+ * pechar correctamente. Se a comprobación é satisfactoria, destrúe
+ * a sesión correspondente no servidor.
+ *
+ * Se a sesión non se pode verificar, non se realiza ningunha operación
+ * e devólvese un erro de conflito.
+ *
+ * @return void
+ *
+ * Respostas: 200, 401, 409
  */
 function endpoint_pechar_sesion(): void {
 
-	esixir_metodo( 'POST' );
-	validar_corpo( coller_corpo(), [ 'uuid' => [ 'tipo' => 'uuid' ] ] );
+    esixir_metodo( 'POST' );
 
-	$usuario = esixir_sesion();
-	$resultado = $usuario->pechar_sesion_actual();
+    validar_corpo( coller_corpo(), [
+        'uuid' => [ 'tipo' => 'uuid' ]
+    ] );
 
-	if ( $resultado ) {
-	    $rastro = analizar_rastro_sesion();
-	    $token = $rastro[ 'token' ];
-	    $usuario->destruir_sesion( $token );
-	    responder( 200 );
-	}
+    $usuario = esixir_sesion();
+    $resultado = $usuario->verificar_peche_sesion();
+
+    if ( $resultado ) {
+
+        $rastro = analizar_cabeceira_sesion();
+        $token = $rastro[ 'token' ];
+
+        $usuario->destruir_sesion( $token );
+
+        responder( 200 );
+
+    }
 
     responder( 409 );
 

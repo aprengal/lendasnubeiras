@@ -1,14 +1,19 @@
 <?php
 
-declare ( strict_types = 1 );
+declare( strict_types = 1 );
 
 /**
- * Recupera e cachea os permisos asociados a cada rol de usuario
- * mediante unha consulta con xúncota (JOIN) á base de datos.
+ * Obtén os permisos asociados a un rol de usuario.
  *
- * @param Rol     $rol  Instancia do enum Rol do que se queren obter os permisos.
- * @return array  Array plano coas claves dos permisos que posúe o rol.
- * @throws Exception Se se pasa un rol que non existe na caché ou no sistema.
+ * Na primeira chamada, recupera os permisos de todos os roles mediante
+ * unha consulta con unións (JOIN) entre as táboas correspondentes.
+ * Os resultados almacénanse nunha caché estática durante a petición
+ * para evitar repetir a consulta.
+ *
+ * @param Rol $rol Rol do que se queren obter os permisos.
+ * @return array Lista das claves dos permisos asociados ao rol.
+ * @throws Exception Se o rol non aparece entre os roles cargados
+ * desde a base de datos.
  */
 function coller_permisos( Rol $rol ) {
 

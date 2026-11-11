@@ -1,18 +1,26 @@
 <?php
 
-declare ( strict_types = 1 );
+declare( strict_types = 1 );
 
 /**
  * POST /axustar-usuarios
- * 
- * Só para administradores. Cambia o correo, o rol ou o estado dun usuario.
- * Só se envían os campos que se queren cambiar.
- * 
- * Se se cambia o correo, as sesións do usuario deixan de ser válidas,
- * porque o correo forma parte do rastro de sesión.
- * 
- * O usuario reservado non se pode modificar (409). Cambiar o estado dunha conta en proceso de borrado cancela o borrado.
- * 
+ *
+ * Permite aos administradores modificar os datos dunha conta de usuario.
+ * Pódese cambiar o enderezo de correo electrónico, o rol e o estado,
+ * enviando unicamente os campos que se desexan modificar.
+ *
+ * O identificador do usuario é obrigatorio. Tamén se require a UUID
+ * do dispositivo na petición.
+ *
+ * Non se permite modificar a conta do usuario reservado.
+ * Tampouco se pode asignar directamente o estado de borrado.
+ *
+ * Se o correo electrónico xa pertence a outro usuario, a operación
+ * non se realiza.
+ *
+ * Ao modificar o estado dunha conta en proceso de borrado, cancélase
+ * a eliminación definitiva restablecendo a data de borrado.
+ *
  * Respostas: 200, 400, 403, 404, 409
  */
 function endpoint_axustar_usuarios(): void {

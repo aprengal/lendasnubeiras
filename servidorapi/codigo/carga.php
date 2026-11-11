@@ -1,6 +1,6 @@
 <?php
 
-declare ( strict_types = 1 );
+declare( strict_types = 1 );
 
 
 /**
@@ -20,7 +20,6 @@ require_once "codigo/clases/Correo.php";
 
 //Configuración
 require_once "codigo/configuracion/xeral/funcions-base.php";
-require_once "codigo/configuracion/xeral/novas-funcions.php";
 require_once "codigo/configuracion/xeral/depuracion.php";
 require_once "codigo/configuracion/xeral/seguridade.php";
 require_once "codigo/configuracion/xeral/permisos.php";

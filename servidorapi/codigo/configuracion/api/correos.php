@@ -1,16 +1,21 @@
 <?php
 
-declare ( strict_types = 1 );
+declare( strict_types = 1 );
 
 /**
- * Correos que envía a API: textos nos idiomas da aplicación e envío.
- * 
- */
-
-/**
- * Crea a URL da ligazón de verificación que recibe o usuario.
- * 
- * O id da acción identifica o dato temporal e o uuid é o do dispositivo que fixo a solicitude.
+ * Xera a URL da ligazón de verificación que se envía ao usuario por correo.
+ *
+ * Inclúe o identificador da acción, o UUID do dispositivo cifrado
+ * e o idioma no que se mostrará a páxina de verificación.
+ *
+ * Os parámetros codifícanse para incorporalos correctamente á URL.
+ *
+ * @param string $id_accion Identificador do dato temporal asociado
+ * á acción que se quere verificar.
+ * @param string $uuid Identificador do dispositivo desde o que
+ * se solicitou a acción.
+ * @param string $idioma Código do idioma da páxina de verificación.
+ * @return string URL completa da ligazón de verificación.
  */
 function crear_url_verificacion( string $id_accion, string $uuid, string $idioma ): string {
     $uuid_cifrada = cifrar_descifrar( $uuid, 'cifrar', 'correos' );
@@ -18,11 +23,27 @@ function crear_url_verificacion( string $id_accion, string $uuid, string $idioma
 }
 
 /**
- * Devolve o asunto e a mensaxe dun correo no idioma da aplicación.
- * 
- * O tipo é 'rexistro', 'inicio' ou 'borrado'. Se o idioma non existe, envíase en castelán.
- * Hai que usar un único salto de liña entre parágrafos, porque a clase Correo
- * converte cada salto nun parágrafo novo.
+ * Obtén o asunto e o contido dun correo electrónico adaptados ao idioma indicado.
+ *
+ * Xera os textos correspondentes ás operacións de rexistro, inicio de sesión
+ * e borrado de conta, incorporando a URL de verificación e os prazos
+ * de validez ou eliminación que correspondan.
+ *
+ * Se o idioma solicitado non está dispoñible, utilízase o castelán.
+ * Se o tipo de correo non está definido para o idioma seleccionado,
+ * lánzase unha excepción.
+ *
+ * Os saltos de liña da mensaxe deben manterse como separadores de parágrafo,
+ * xa que a clase Correo transforma cada salto de liña nun parágrafo HTML.
+ *
+ * @param string $tipo Tipo de operación: 'rexistro', 'inicio' ou 'borrado'.
+ * @param string $idioma Código do idioma: 'gl', 'es' ou 'en'.
+ * @param string $url URL da ligazón de verificación que se incluirá no correo.
+ * @return array Array asociativo cos elementos:
+ * - asunto: asunto do correo electrónico.
+ * - mensaxe: contido do correo electrónico.
+ * @throws OutOfRangeException Se non existe un texto definido para o tipo
+ * de operación solicitado.
  */
 function coller_texto_correo( string $tipo, string $idioma, string $url ): array {
 
@@ -130,21 +151,30 @@ function coller_texto_correo( string $tipo, string $idioma, string $url ): array
 }
 
 /**
- * Envía ao usuario o correo coa ligazón de verificación.
- * 
- * O tipo indica a acción que se verifica ('rexistro', 'inicio' ou 'borrado'), a URL é a ligazón
- * que recibe o usuario e o idioma ('gl', 'es' ou 'en') é o da aplicación.
- * Se non se pode enviar, lanza unha excepción.
+ * Envía un correo electrónico de verificación ao usuario.
+ *
+ * Obtén o asunto e a mensaxe adaptados ao tipo de operación e ao idioma
+ * indicado, e crea unha instancia da clase Correo para realizar o envío.
+ *
+ * Se o envío non se completa correctamente, lánzase unha excepción.
+ *
+ * @param string $correo Enderezo de correo electrónico do destinatario.
+ * @param string $tipo Tipo de operación: 'rexistro', 'inicio' ou 'borrado'.
+ * @param string $url URL da ligazón de verificación incluída na mensaxe.
+ * @param string $idioma Código do idioma do correo: 'gl', 'es' ou 'en'.
+ * @return void
+ * @throws OutOfRangeException Se non existe un texto para o tipo de operación.
+ * @throws RuntimeException Se non se consegue enviar o correo electrónico.
  */
-function enviar_correo_verificacion( string $correo, string $tipo, string $url, string $idioma ) {
+function enviar_correo_verificacion( string $correo, string $tipo, string $url, string $idioma ): void {
 
-	$texto = coller_texto_correo( $tipo, $idioma, $url );
+    $texto = coller_texto_correo( $tipo, $idioma, $url );
 
-	$envio = new Correo( $correo, $texto[ 'asunto' ], $texto[ 'mensaxe' ] );
+    $envio = new Correo( $correo, $texto[ 'asunto' ], $texto[ 'mensaxe' ] );
 
-	//Se o envío falla, a clase non devolve identificador
-	if ( $envio->boundary === null ) {
-		throw new RuntimeException( 'Non se puido enviar o correo de verificación' );
-	}
+    //Se o envío falla, a clase non devolve identificador
+    if ( $envio->boundary === null ) {
+        throw new RuntimeException( 'Non se puido enviar o correo de verificación' );
+    }
 
 }

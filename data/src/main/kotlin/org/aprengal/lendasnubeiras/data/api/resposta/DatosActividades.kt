@@ -1,13 +1,17 @@
 package org.aprengal.lendasnubeiras.data.api.resposta
 
 import org.json.JSONObject
-import org.aprengal.lendasnubeiras.data.api.RutasApi.ACTUALIZAR
+import org.aprengal.lendasnubeiras.data.api.RutasApi
 
 /**
- * Resposta para o endpoint de actualización e listaxe de actividades ([ACTUALIZAR]).
- * Procesa o vector JSON de actividades e convérteo nunha lista de mapas clave-valor.
+ * Representa a resposta da API que contén información sobre as actividades ([RutasApi.ACTUALIZAR]).
  *
- * @property lista Colección de mapas que representan os datos de cada actividade.
+ * Extrae o array JSON de actividades e transforma cada un dos seus elementos
+ * nun mapa de pares clave-valor, almacenándoos nunha lista.
+ *
+ * @property lista Lista de mapas cos atributos das actividades recibidas.
+ *                 Se a resposta non contén o array de actividades,
+ *                 devolve unha lista baleira.
  */
 class DatosActividades( datos: JSONObject ) : RespostaApi( datos.optInt( "codigo" ) ) {
 

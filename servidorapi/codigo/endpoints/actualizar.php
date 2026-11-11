@@ -1,13 +1,21 @@
 <?php
 
-declare ( strict_types = 1 );
+declare( strict_types = 1 );
 
 /**
  * POST /actividade/actualizar
  *
- * Devolve a lista de actividades dispoñibles que pode ver o usuario (ver coller_actividades_visibles).
- * A sesión é opcional (admite uso anónimo) e requírese enviar a uuid do dispositivo no corpo da petición.
- * Só se pode solicitar unha vez cada 60 segundos por dispositivo (ou usuario, se está autenticado).
+ * Devolve a lista de actividades dispoñibles para o usuario,
+ * segundo os permisos de visibilidade establecidos en coller_actividades_visibles().
+ *
+ * Admite solicitudes autenticadas e anónimas. Require o identificador
+ * único do dispositivo no corpo da petición.
+ *
+ * Establécese un intervalo mínimo de 60 segundos entre solicitudes.
+ * O límite identifícase polo usuario se está autenticado ou polo
+ * dispositivo no caso das solicitudes anónimas.
+ *
+ * @return void
  *
  * Respostas: 200, 400, 429
  */

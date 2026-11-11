@@ -1,6 +1,6 @@
 <?php //Opcións sempre
 
-declare ( strict_types = 1 );
+declare( strict_types = 1 );
 
 /**
  * Devolve o valor dunha opción do sistema, ou false se non existe.

@@ -2,13 +2,13 @@ openapi: 3.0.3
 
 info:
   title: API de Lendas Nubeiras
-  version: "0.2.3"
+  version: "0.3.0"
   description: >
     API REST que serve de intermediaria entre a aplicación Android Lendas
     Nubeiras e a base de datos do servidor.
 
     Os endpoints que requiren autenticación validan automaticamente a sesión
-    mediante o rastro sesion_rastro, salvo que se indique expresamente o contrario.
+    mediante a cabeceira 'cabeceira_sesion', salvo que se indique expresamente o contrario.
 
     A API non devolve mensaxes de erro dependentes do idioma da aplicación.
     Os erros identifícanse mediante códigos HTTP.
@@ -92,12 +92,11 @@ paths:
 
   /conta/iniciar-sesion:
     post:
-      tags: [Autenticación]
+      tags: [ Autenticación ]
       summary: Iniciar sesión
       description: >
         Solicita o inicio de sesión enviando ao correo do usuario unha ligazón
-        de verificación. Devólvese a información da sesión e do usuario, pero
-        a sesión non queda activa ata que se verifica a ligazón.
+        de verificación. Devólvese o rastro da sesión pendente de activación.
 
         Só se pode enviar unha mensaxe cada 60 segundos para o mesmo usuario.
         O correo envíase no idioma indicado no campo idioma.
@@ -128,30 +127,17 @@ paths:
                   description: Idioma no que se envía o correo.
       responses:
         "200":
-          description: Enviouse o correo de verificación e devólvese a información da sesión e do usuario.
+          description: Enviouse o correo de verificación e devólvese o token da sesión.
           content:
             application/json:
               schema:
                 type: object
                 required:
                   - sesion
-                  - id
-                  - correo
-                  - rol
                 properties:
                   sesion:
                     type: string
-                    description: Rastro cifrado da sesión (pendente de activación).
-                  id:
-                    type: integer
-                    description: Identificador único do usuario.
-                  correo:
-                    type: string
-                    format: email
-                    description: Enderezo de correo electrónico do usuario.
-                  rol:
-                    type: string
-                    description: Rol asignado ao usuario.
+                    description: Token cifrado da sesión (pendente de activación).
         "400":
           description: JSON mal formado, campos obrigatorios ausentes ou valores inválidos.
         "403":
@@ -249,38 +235,60 @@ paths:
         default:
           $ref: "#/components/responses/UnexpectedError"
 
-  /sesion/validacion:
-    post:
-      tags: [Autenticación]
-      summary: Validar a sesión actual
-      description: >
-        Comproba que a sesión enviada en sesion_rastro existe e segue activa, alóngaa e actívaa.
-        Se a sesión non é válida, o usuario debe iniciar sesión de novo.
-      security:
-        - cookieAuth: []
-      requestBody:
-        required: true
+/sesion/validacion:
+  post:
+    tags: [ Autenticación ]
+    summary: Validar a sesión actual
+    description: >
+      Comproba que a sesión enviada existe e segue activa, actívaa e devólvese 
+      a información do usuario.
+    security:
+      - cookieAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+              - uuid
+            properties:
+              uuid:
+                $ref: "#/components/parameters/UuidDispositivoSchema"
+    responses:
+      "200":
+        description: A sesión foi validada correctamente e devólvese a información do usuario.
         content:
           application/json:
             schema:
               type: object
-              additionalProperties: false
               required:
-                - uuid
+                - id
+                - correo
+                - rol
               properties:
-                uuid:
-                  $ref: "#/components/parameters/UuidDispositivoSchema"
-      responses:
-        "200":
-          description: A sesión foi validada e alongada correctamente.
-        "401":
-          description: A cookie falta, a sesión é inválida, caducou ou non está activa.
-        "404":
-          description: O usuario asociado á sesión non existe.
-        "405":
-          $ref: "#/components/responses/MethodNotAllowed"
-        default:
-          $ref: "#/components/responses/UnexpectedError"
+                info:
+                  type: string
+                  description: Información adicional.
+                id:
+                  type: integer
+                  description: Identificador único do usuario.
+                correo:
+                  type: string
+                  format: email
+                  description: Enderezo de correo electrónico do usuario.
+                rol:
+                  type: string
+                  description: Rol asignado ao usuario.
+      "401":
+        description: A cabeceira falta, a sesión é inválida, caducou ou non está activa.
+      "404":
+        description: O usuario asociado á sesión non existe.
+      "405":
+        $ref: "#/components/responses/MethodNotAllowed"
+      default:
+        $ref: "#/components/responses/UnexpectedError"
 
   /conta/borrado:
     post:
@@ -712,8 +720,8 @@ components:
   securitySchemes:
     cookieAuth:
       type: apiKey
-      in: cookie
-      name: sesion_rastro
+      in: header
+      name: cabeceira_sesion
 
   parameters:
     UuidDispositivoSchema:

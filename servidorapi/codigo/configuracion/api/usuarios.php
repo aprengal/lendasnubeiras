@@ -1,15 +1,19 @@
 <?php
 
-declare ( strict_types = 1 );
+declare( strict_types = 1 );
 
 /**
- * Funcións da API para crear, protexer e borrar usuarios.
- * 
- */
-
-/**
- * Crea un usuario novo en estado pendente, á espera de que un administrador o aprobe.
- * O rol inicial é o máis básico (monitor).
+ * Crea unha nova conta de usuario en estado pendente, á espera
+ * de que un administrador aprobe a solicitude.
+ *
+ * Asigna inicialmente o rol básico de monitor e xera un identificador
+ * e un UUID únicos para a nova conta.
+ *
+ * Se falla a inserción por un problema de MySQL, realiza ata cinco
+ * intentos para completar a operación. Se non consegue crear a conta,
+ * responde cun HTTP 409.
+ *
+ * @param string $correo Enderezo de correo electrónico da nova conta.
  */
 function crear_usuario_pendente( string $correo ): void {
 
@@ -39,7 +43,7 @@ function crear_usuario_pendente( string $correo ): void {
 
             $inserido = true;
 
-        } catch ( Exception $e ) {
+        } catch ( ProblemaMysqli $e ) {
             error_log( "Intentouse crear un usuario, pero fallou a inserción: " . $e->getMessage() );
         }
 
@@ -52,21 +56,40 @@ function crear_usuario_pendente( string $correo ): void {
 }
 
 /**
- * Indica se un usuario é o usuario reservado (CORREO_USUARIO_LEGADO), ao que pasan as actividades
- * publicadas das contas borradas. Non se pode modificar nin borrar.
+ * Comproba se un usuario corresponde á conta reservada do sistema.
+ *
+ * A identificación realízase comparando o seu enderezo de correo
+ * electrónico con CORREO_USUARIO_LEGADO, sen distinguir maiúsculas
+ * e minúsculas.
+ *
+ * Esta conta recibe as actividades publicadas dos usuarios eliminados
+ * e non pode modificarse nin eliminarse.
+ *
+ * @param Usuario $usuario Usuario que se quere comprobar.
+ * @return bool True se corresponde á conta reservada, false en caso contrario.
  */
 function usuario_legado( Usuario $usuario ): bool {
 	return mb_strtolower( $usuario->correo ) === CORREO_USUARIO_LEGADO;
 }
 
 /**
- * Borra de forma definitiva unha conta de usuario.
- * 
- * - Borradores, pendentes e actividades da papeleira: bórranse.
- * - O resto (as publicadas) pasan ao usuario reservado, para que o catálogo non perda contido.
- * - Bórranse tamén os datos temporais do usuario (sesións...) e, por último, o propio usuario.
- * 
- * Execútase nunha transacción: ou se fai todo ou non se fai nada.
+ * Elimina definitivamente unha conta de usuario e xestiona os seus datos asociados.
+ *
+ * Elimina as actividades que se atopan nos estados de borrador, pendente
+ * ou borrado. As actividades publicadas transfírense á conta reservada,
+ * conservando así o contido do catálogo.
+ *
+ * Tamén elimina os datos temporais asociados ao usuario e, finalmente,
+ * o propio rexistro da conta.
+ *
+ * Todas as operacións execútanse dentro dunha transacción para evitar
+ * que a eliminación quede parcialmente aplicada.
+ *
+ * @param int $id Identificador da conta que se quere eliminar.
+ * @param int $id_legado Identificador da conta reservada que recibirá
+ * as actividades publicadas.
+ * @throws InvalidArgumentException Se o identificador non é válido
+ * ou corresponde á conta reservada.
  */
 function borrar_conta( int $id, int $id_legado ) {
 
@@ -96,9 +119,19 @@ function borrar_conta( int $id, int $id_legado ) {
 }
 
 /**
- * Borra as contas cuxo prazo de borrado (DIAS_BORRADO_CONTA) rematou. Devolve cantas borrou.
- * 
- * Se non existe o usuario reservado non se borra ningunha, porque as actividades publicadas quedarían sen autor.
+ * Elimina definitivamente as contas cuxo prazo de borrado xa rematou.
+ *
+ * Localiza as contas que permanecen no estado de borrado e cuxa data
+ * de eliminación supera o prazo establecido en DIAS_BORRADO_CONTA.
+ *
+ * Antes de eliminar as contas, comproba que existe o usuario reservado,
+ * ao que se transferirán as actividades publicadas. Se non existe,
+ * non se elimina ningunha conta.
+ *
+ * Cada conta elimínase mediante borrar_conta(), que xestiona tamén
+ * as actividades e os datos temporais asociados.
+ *
+ * @return int Número de contas eliminadas definitivamente.
  */
 function borrar_contas_caducadas(): int {
 

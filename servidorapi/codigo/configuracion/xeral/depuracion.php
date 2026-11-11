@@ -1,6 +1,6 @@
 <?php
 
-declare ( strict_types = 1 );
+declare( strict_types = 1 );
 
 /**
  * Emite unha resposta HTTP 503 (Servizo non dispoñible) en formato JSON

@@ -61,15 +61,22 @@ object BD {
         DESC( "DESC" )
     }
 
-    /** Orde dos resultados da busca. O id vai en orde de creación das actividades. */
+    /**
+     * Define as opcións de ordenación dos resultados dunha busca de actividades.
+     * Cada opción establece a orde na que se presentarán as actividades en función
+     * da súa antigüidade.
+     *
+     * @property clave Identificador da opción empregado para a súa representación
+     * e recuperación a partir de datos externos.
+     * @property nome Texto localizado que se amosará ao usuario.
+     * @property orde Sentido da ordenación aplicado aos resultados.
+     */
     enum class OrdeBusca( override val clave: String, override val nome: L10nBase, val orde: Orde ): ElementoL10n {
-
-        /** Primeiro as actividades máis novas. */
+        /** Primeiro as actividades máis novas, segundo a orde de creación (id). */
         Recentes( "recentes", L10nBase.OrdeRecentes, Orde.DESC ),
 
-        /** Primeiro as actividades máis antigas. */
+        /** Primeiro as actividades máis antigas, segundo a orde de creación (id). */
         Antigas( "antigas", L10nBase.OrdeAntigas, Orde.ASC )
-
     }
 
     /**

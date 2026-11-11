@@ -1,6 +1,6 @@
 <?php
 
-declare ( strict_types = 1 );
+declare( strict_types = 1 );
 
 //Carga de configuración
 error_reporting( E_ALL );
@@ -13,6 +13,7 @@ const DOMINIO = 'lendasnubeiras.duckdns.org';
 const BASE = __DIR__;
 define( 'ORIXE', dirname( __DIR__, 1 ) . '/' );
 
+ini_set( 'log_errors', '1' );
 ini_set( "error_log", ORIXE . "error_log" );
 
 header( 'Content-Type: application/json; charset=utf-8' );

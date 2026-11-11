@@ -1,15 +1,26 @@
 <?php
 
-declare ( strict_types = 1 );
+declare( strict_types = 1 );
 
 /**
  * POST /conta/rexistro
- * 
- * Inicia o rexistro dun usuario novo co seu correo. Envíase unha ligazón de verificación
- * que dura 15 minutos, no idioma da aplicación. Os datos do rexistro quedan nun dato temporal ata que se verifique.
- * Despois, a solicitude queda en espera ata que un administrador a aprobe.
- * 
- * Respostas: 200, 400, 409, 429
+ *
+ * Inicia o proceso de rexistro dun usuario novo a partir do seu enderezo
+ * de correo electrónico.
+ *
+ * Comproba que non exista xa unha conta asociada ao correo e que non se
+ * superase o límite de 3 intentos de rexistro nas últimas 24 horas.
+ *
+ * Se as comprobacións son correctas, xera un token de verificación e
+ * almacena temporalmente os datos do rexistro. A continuación, envía
+ * ao correo indicado unha ligazón de verificación cunha validez de
+ * 15 minutos, no idioma seleccionado na aplicación.
+ *
+ * Unha vez verificada a ligazón, créase a conta en estado pendente
+ * de aprobación administrativa.
+ *
+ * Respostas: 200 (solicitude procesada), 400 (datos incorrectos),
+ * 409 (o usuario xa existe), 429 (límite de intentos superado).
  */
 function endpoint_rexistro(): void {
 

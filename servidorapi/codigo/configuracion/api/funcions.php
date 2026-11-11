@@ -1,10 +1,6 @@
 <?php
 
-declare ( strict_types = 1 );
-
-/**
- * Funcións comúns que empregan todos os endpoints da API.
- */
+declare( strict_types = 1 );
 
 /**
  * Envía a resposta da API e remata a execución.

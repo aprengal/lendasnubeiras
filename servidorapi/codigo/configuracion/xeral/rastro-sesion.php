@@ -1,38 +1,50 @@
 <?php
 
-declare ( strict_types = 1 );
+declare( strict_types = 1 );
 
 /**
- * Valida a autenticidade e vixencia do rastro de sesión actual do usuario.
- * Comproba a caducidade, a existencia do usuario, a validez do HMAC e o estado da sesión.
+ * Valida a autenticidade e a vixencia dos datos de sesión recibidos
+ * na cabeceira HTTP.
  *
- * @return Usuario|null O obxecto Usuario se a autenticación é correcta, ou null en caso contrario.
+ * Realiza as seguintes comprobacións:
+ * - Verifica que a sesión non caducase.
+ * - Comproba que a solicitude procede do dispositivo asociado á sesión.
+ * - Verifica que o usuario asociado á sesión existe.
+ * - Comproba a integridade dos datos mediante a validación do HMAC,
+ *   detectando posibles modificacións nos datos do usuario ou da sesión.
+ * - Verifica que o token corresponde a unha sesión activa do usuario.
+ *
+ * Se algunha das comprobacións de validez falla, solicita a
+ * reautenticación mediante unha resposta HTTP 401.
+ *
+ * @return Usuario|null Obxecto [Usuario] se todas as comprobacións son
+ * satisfactorias, ou null se non se pode validar a sesión.
  */
-function validar_rastro_sesion(): ?Usuario {
+function validar_cabeceira_sesion(): ?Usuario {
 
-    $rastro = analizar_rastro_sesion();
+    $datos_sesion = analizar_cabeceira_sesion();
 
-    if ( !$rastro ) {
+    if ( !$datos_sesion ) {
        return null;
     }
 
-    $caducidade_rastro = $caducidade_sesion = $rastro[ 'data_caducidade' ];
-    $token   = $rastro[ 'token' ];
-    $uuid    = $rastro[ 'usuario' ];
-    $dispositivo_rastro = $rastro[ 'dispositivo' ];
-    $hmac    = $rastro[ 'hmac' ];
-    $esquema = $rastro[ 'esquema' ];
+    $caducidade_sesion = $datos_sesion[ 'data_caducidade' ];
+    $token = $datos_sesion[ 'token' ];
+    $uuid = $datos_sesion[ 'usuario' ];
+    $id_dispositivo_sesion = $datos_sesion[ 'dispositivo' ];
+    $hmac = $datos_sesion[ 'hmac' ];
+    $esquema = $datos_sesion[ 'esquema' ];
 
-    // 1ª Comprobación - Caducou o rastro?
-    if ( $caducidade_rastro < time() ) {
+    // 1ª Comprobación - Caducou a sesión?
+    if ( $caducidade_sesion < time() ) {
        reautenticar();
        return null;
     }
 
     $id_dispositivo = id_dispositivo();
 
-    // 2ª Comprobación - Faise dende o mesmo dispositivo no que se iniciou sesión?
-    if ( $dispositivo_rastro != $id_dispositivo ) {
+    // 2ª Comprobación - Coincide o dispositivo?
+    if ( $id_dispositivo_sesion != $id_dispositivo ) {
         reautenticar();
         return null;
     }
@@ -51,13 +63,13 @@ function validar_rastro_sesion(): ?Usuario {
     $key = hash_hmac( $algo, $uuid_frag . '|' . $token . '|' . $usuario->correo . '|' . $id_dispositivo . '|' . $caducidade_sesion, salgado( $esquema ) );
     $hash = hash_hmac( $algo, $token . '|' . $usuario->correo . '|' . $id_dispositivo . '|' . $caducidade_sesion, $key );
 
-    // 4ª Comprobación - Coinciden os hashes (cambio de datos de usuario)
+    // 4ª Comprobación - Coinciden os hashes?
     if ( !hash_equals( $hash, $hmac ) ) {
        reautenticar();
        return null;
     }
 
-    // 5ª Comprobación - A sesión é correcta e está activa?
+    // 5ª Comprobación - A sesión continúa activa?
     if ( !$usuario->verificar_sesion( $token ) ) {
        reautenticar();
        return null;
@@ -68,52 +80,58 @@ function validar_rastro_sesion(): ?Usuario {
 }
 
 /**
- * Responde cun código HTTP 401 (Unauthorized) cando falla a reautenticación.
+ * Devolve unha resposta HTTP 401 (Unauthorized) para indicar que a solicitude
+ * non está autenticada ou que a sesión non é válida.
  */
 function reautenticar(): void {
     responder( 401 );
 }
 
 /**
- * Analiza o rastro de sesión da cabecera HTTP ou cookie e devolve os seus elementos.
- * Se non hai rastro ou non é válido, devolve null.
+ * Obtén e descifra os datos de sesión recibidos na cabeceira HTTP.
  *
- * O resultado gárdase nunha caché estática durante a petición para evitar
- * descifrar o rastro varias veces.
+ * Se o valor da cabeceira inclúe o texto `Bearer`, este elimínase
+ * antes de procesar os datos de sesión.
  *
- * @return array|null Array asociativo cos datos extraídos do rastro ou null se non é válido.
+ * Se a cabeceira non existe, está baleira ou o seu contido non ten
+ * un formato válido, devolve null.
+ *
+ * Os resultados gárdanse nunha caché estática durante a execución
+ * da petición para evitar descifrar varias veces o mesmo valor.
+ *
+ * @return array|null Array asociativo cos datos da sesión ou null
+ * se non se poden obter ou descifrar correctamente.
  */
-function analizar_rastro_sesion(): ?array {
+function analizar_cabeceira_sesion(): ?array {
 
-    static $analizados = [];
+    static $datos_analizados = [];
 
     $cabeceiras = getallheaders();
-    $sesion = $cabeceiras[ RASTRO_SESION ] ?? $_COOKIE[ RASTRO_SESION ] ?? '';
+    $valor_sesion = $cabeceiras[ CABECEIRA_SESION ] ?? '';
 
-    if ( str_starts_with( $sesion, 'Bearer ' ) ) {
-        $sesion = substr( $sesion, 7 );
+    if ( str_starts_with( $valor_sesion, 'Bearer ' ) ) {
+        $valor_sesion = substr( $valor_sesion, 7 );
     }
 
-    if ( empty( $sesion ) ) {
+    if ( empty( $valor_sesion ) ) {
         return null;
     }
 
-    $rastro = $sesion;
     $esquema = 'sesion';
 
-    if ( array_key_exists( $rastro, $analizados ) ) {
-        return $analizados[ $rastro ];
+    if ( array_key_exists( $valor_sesion, $datos_analizados ) ) {
+        return $datos_analizados[ $valor_sesion ];
     }
 
-    $info_rastro = cifrar_descifrar( $rastro, 'descifrar', $esquema );
-    $lista = explode( '|', $info_rastro );
+    $info_sesion = cifrar_descifrar( $valor_sesion, 'descifrar', $esquema );
+    $lista = explode( '|', $info_sesion );
 
     if ( count( $lista ) != 5 ) {
-        $analizados[ $rastro ] = null;
+        $datos_analizados[ $valor_sesion ] = null;
         return null;
     }
 
-    $elementos = [
+    $datos_sesion = [
         'data_caducidade' => $lista[ 0 ],
         'token'           => $lista[ 1 ],
         'usuario'         => $lista[ 2 ],
@@ -122,16 +140,16 @@ function analizar_rastro_sesion(): ?array {
         'esquema'         => $esquema
     ];
 
-    return $analizados[ $rastro ] = $elementos;
+    return $datos_analizados[ $valor_sesion ] = $datos_sesion;
 
 }
 
 /**
- * Recupera o token de sesión contido no rastro actual.
+ * Obtén o token de sesión a partir dos datos de autenticación da cabeceira HTTP.
  *
- * @return string O token de sesión ou unha cadea baleira se non existe.
+ * @return string Token de sesión ou cadea baleira se non existe unha sesión válida.
  */
 function coller_token_sesion(): string {
-    $rastro = analizar_rastro_sesion();
-    return $rastro[ 'token' ] ?? '';
+    $datos_sesion = analizar_cabeceira_sesion();
+    return $datos_sesion[ 'token' ] ?? '';
 }

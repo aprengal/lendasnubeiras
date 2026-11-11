@@ -1,13 +1,23 @@
 <?php
 
-declare ( strict_types = 1 );
+declare( strict_types = 1 );
 
 /**
  * POST /conta/iniciar-sesion
- * 
- * Crea unha sesión e envía ao correo do usuario, no idioma da aplicación, unha ligazón para activala.
- * Devolve o rastro cifrado da sesión, pero non é válido ata que se preme na ligazón.
- * Só se pode enviar un correo cada 60 segundos.
+ *
+ * Solicita o inicio de sesión dun usuario mediante o seu enderezo
+ * de correo electrónico.
+ *
+ * Crea unha sesión pendente de activación e envía ao correo do usuario
+ * unha ligazón de verificación no idioma indicado na petición.
+ *
+ * Devolve o rastro cifrado da sesión, que só será válido unha vez
+ * verificada a ligazón recibida por correo electrónico.
+ *
+ * Establécese un intervalo mínimo de 60 segundos entre solicitudes
+ * de inicio de sesión para un mesmo usuario.
+ *
+ * @return void
  *
  * Respostas: 200, 400, 403, 404, 429
  */
@@ -48,12 +58,7 @@ function endpoint_iniciar_sesion(): void {
 
     enviar_correo_verificacion( $correo, 'inicio', crear_url_verificacion( $token_ligazon, $corpo[ 'uuid' ], $corpo[ 'idioma' ] ), $corpo[ 'idioma' ] );
 
-    $datos_resposta = [
-        'sesion' => $sesion[ 'sesion' ],
-        'id'     => $usuario->id,
-        'correo' => $correo,
-        'rol'    => $usuario->rol->value
-    ];
+    $datos_resposta = [ 'sesion' => $sesion[ 'sesion' ] ];
 
     responder( 200, $datos_resposta );
 

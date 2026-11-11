@@ -11,7 +11,7 @@ import org.aprengal.lendasnubeiras.data.api.ConexionApi.procesarPeticion
 import org.aprengal.lendasnubeiras.data.api.ConexionApi.MetodoApi
 import org.aprengal.lendasnubeiras.data.api.resposta.RespostaXenerica
 import org.aprengal.lendasnubeiras.data.api.RutasApi
-import org.aprengal.lendasnubeiras.data.api.resposta.SesionUsuario
+import org.aprengal.lendasnubeiras.data.api.resposta.RespostaValidacionSesion
 import org.aprengal.lendasnubeiras.data.utilidades.Corrutinas.corrutina
 import org.aprengal.lendasnubeiras.data.utilidades.Corrutinas.corrutinaResposta
 import org.aprengal.lendasnubeiras.data.usuarios.Rol.Companion.buscarRol
@@ -156,12 +156,11 @@ object SesionActual {
             var rol = Rol.MONITOR
 
             val idDispositivo = collerOpcion( Opcion.IdDispositivo )
-            val datos: SesionUsuario = procesarPeticion( MetodoApi.POST, RutasApi.VALIDACION, mapOf( "uuid" to idDispositivo ) )
+            val datos: RespostaValidacionSesion = procesarPeticion( MetodoApi.POST, RutasApi.VALIDACION, mapOf( "uuid" to idDispositivo ) )
 
             if ( datos.exito ) {
 
-                gardarOpcion( Opcion.SesionUsuario, datos.sesion )
-                gardarSesionLocal( datos.sesion, datos.info )
+                gardarSesionLocal( sesionActual, datos.info )
 
                 id = datos.idUsuario
                 correo = datos.correo

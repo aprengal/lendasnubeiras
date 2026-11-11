@@ -1,14 +1,26 @@
 <?php
 
-declare ( strict_types = 1 );
+declare( strict_types = 1 );
 
 /**
  * POST /actividade/modificar
- * 
- * Modifica, borra (estado 3) ou restaura (estado 0 a 2) unha actividade.
- * Envíanse todos os campos da actividade.
- * 
- * Respostas: 200, 400, 403, 404
+ *
+ * Modifica os datos dunha actividade existente ou cambia o seu estado.
+ *
+ * Permite crear borradores, enviar actividades a revisión, publicalas,
+ * borralas ou restauralas, segundo os permisos do usuario autenticado.
+ *
+ * Require unha sesión autenticada e o envío de todos os campos
+ * da actividade, incluído o seu identificador no servidor.
+ *
+ * A modificación está suxeita aos permisos do usuario e ás restricións
+ * asociadas á autoría e ao estado actual da actividade.
+ *
+ * Só os editores e administradores poden cambiar a autoría.
+ *
+ * @return void
+ *
+ * Respostas: 200, 400, 401, 403, 404
  */
 function endpoint_modificar_actividade(): void {
 

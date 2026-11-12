@@ -16,6 +16,18 @@
   "filto_campo_titulo": "Title",
   "filto_campo_descricion": "Description",
   "filto_campo_ambos": "Both",
+  "ocultar_busca_avanzada": "Hide advanced search",
+  "busca_avanzada": "Advanced search",
+  "sen_resultados": "No results",
+  "boton_buscar": "Search",
+  "filtro_todos": "All",
+  "filtro_todas": "All",
+  "filtro_destinatario": "Recipient",
+  "filtro_categoria": "Category",
+  "filtro_buscar_en": "Search in",
+  "orde_recentes": "Most recent",
+  "orde_antigas": "Oldest",
+  "filtro_orde": "Sort by",
 
   "mensaxes_novas": {
     "one": "You have %s new message",

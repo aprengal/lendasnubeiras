@@ -24,19 +24,17 @@ import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.collerT
  * - `textos`: mapa de textos adicionais identificados mediante claves.
  *
  * @property id Identificador único da actividade.
- * @property claveTitulo Clave utilizada para localizar os recursos textuais
- *                      asociados á actividade.
+ * @property claveTitulo Clave utilizada para localizar os recursos textuais asociados á actividade.
  * @property idAutoria Identificador da persoa autora da actividade.
  * @property categoria Categoría na que se clasifica a actividade.
  * @property destinatario Grupo de persoas ao que vai dirixida a actividade.
  * @property estado Estado actual da actividade.
  * @property duracion Duración da actividade, expresada en minutos.
- * @property dataModificado Data da última modificación da actividade,
- *                          expresada como marca temporal Unix.
+ * @property dataModificado Data da última modificación da actividade, expresada como marca temporal Unix.
  * @property titulo Título da actividade, cargado a partir dos seus recursos textuais.
  * @property descricion Lista de parágrafos que forman a descrición da actividade.
- * @property textos Mapa cos textos adicionais da actividade, identificados
- *                  mediante as súas respectivas claves.
+ * @property textos Mapa de textos adicionais da actividade para poder levalas a cabo dentro da aplicación,
+ * identificados mediante as súas respectivas claves.
  */
 data class Actividade(
     override val id: Long,

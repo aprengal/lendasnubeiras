@@ -16,6 +16,18 @@
   "filto_campo_titulo": "Título",
   "filto_campo_descricion": "Descrición",
   "filto_campo_ambos": "Ambos",
+  "ocultar_busca_avanzada": "Ocultar busca avanzada",
+  "busca_avanzada": "Busca avanzada",
+  "sen_resultados": "Sen resultados",
+  "boton_buscar": "Buscar",
+  "filtro_todos": "Todos",
+  "filtro_todas": "Todas",
+  "filtro_destinatario": "Destinatario",
+  "filtro_categoria": "Categoría",
+  "filtro_buscar_en": "Buscar en",
+  "orde_recentes": "Máis recentes",
+  "orde_antigas": "Máis antigas",
+  "filtro_orde": "Ordenar por",
 
   "mensaxes_novas": {
     "one": "Tes %s mensaxe nova",
@@ -25,7 +37,7 @@
 
   "mensaxes_fallos": {
     "0": "Entregaches a tese sobre a aerodinámica das croquetas. Doutoramento honoris causa intergaláctico.",
-    "1": "Esqueche a bibliografía. A túa única fonte era un tuit dun gato DJ ás tres da mañá.",
+    "1": "Esqueciches a bibliografía. A túa única fonte era un tuit dun gato DJ ás tres da mañá.",
     "2": "Napoleón perdeu en Waterloo porque se lle enfriou a sopa de letras. Sabroso pero falso.",
     "3": "Entregaches o exame de cálculo en clase de zarzuela. O decano chorou de emoción cos teus agudos.",
     "4": "En anatomía debuxases o aparato dixestivo saíndo en forma de confeti polo embigo.",
@@ -43,7 +55,7 @@
     "3": "Case deixa o curso, volveu con forza, sacou as mellores notas do centro e programou esta ferramenta. Iso si que é unha remontada.",
     "4": "Seguro que unha persoa vai a un centro de FP a aprobar ou a aguantar outras cousas inesperadas?",
     "5": "O máis complicado de programar é entender o problema que che acaba de xerar a intelixencia artificial por non mirar o código que che deu.",
-    "6": "Se o catálogo non amosa actividades, igual significa que se premeu o botón de autodestrución",
+    "6": "Se o catálogo non amosa actividades, igual significa que se premeu o botón de autodestrución.",
     "7": "Un agradecemento especial a quen tivo paciencia cando o código facía cousas que desafiaban as leis da física.",
     "8": "Se unha actividade non aparece, o máis probable é que o texto decidise saír a dar unha volta sen avisar.",
     "9": "Unha interface sinxela é aquela na que non precisas manual de instrucións... a menos que te perdas no catálogo.",

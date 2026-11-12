@@ -4,6 +4,12 @@ import org.aprengal.lendasnubeiras.data.localizacion.clases.Dominio
 
 enum class L10nActividades( internal val clave: String ) : L10nSingular {
 
+    Categoria( "categoria" ),
+    Destinatario( "destinatario" ),
+    Duracion( "duracion" ),
+    Estado( "estado" ),
+    Dificultade( "dificultade" ),
+
     CategoriaOutros( "categoria_outros" ),
     CategoriaDixital( "categoria_dixital" ),
     CategoriaAireLibre( "categoria_aire_libre" ),
@@ -28,7 +34,9 @@ enum class L10nActividades( internal val clave: String ) : L10nSingular {
     DificultadeFacil( "dificultade_facil" ),
     DificultadeMedia( "dificultade_media" ),
     DificultadeDificil( "dificultade_dificil" ),
-    DificultadePesadelo( "dificultade_pesadelo" );
+    DificultadePesadelo( "dificultade_pesadelo" ),
+    AmosarFicha( "amosar_ficha" ),
+    OcultarFicha( "ocultar_ficha" );
 
     internal val dominio: Dominio = Dominio.META_ACTIVIDADES
 

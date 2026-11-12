@@ -16,6 +16,18 @@
   "filto_campo_titulo": "Título",
   "filto_campo_descricion": "Descripción",
   "filto_campo_ambos": "Ambos",
+  "ocultar_busca_avanzada": "Ocultar búsqueda avanzada",
+  "busca_avanzada": "Búsqueda avanzada",
+  "sen_resultados": "Sin resultados",
+  "boton_buscar": "Buscar",
+  "filtro_todos": "Todos",
+  "filtro_todas": "Todas",
+  "filtro_destinatario": "Destinatario",
+  "filtro_categoria": "Categoría",
+  "filtro_buscar_en": "Buscar en",
+  "orde_recentes": "Más recientes",
+  "orde_antigas": "Más antiguas",
+  "filtro_orde": "Ordenar por",
 
   "mensaxes_novas": {
     "one": "Tienes %s mensaje nuevo",

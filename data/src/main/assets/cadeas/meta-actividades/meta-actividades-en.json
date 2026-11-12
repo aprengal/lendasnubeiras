@@ -1,5 +1,13 @@
 {
 
+  "categoria": "Category",
+  "destinatario": "Audience",
+  "duration": "Duration",
+  "estado": "State",
+  "dificultade": "Dificulty",
+  "amosar_ficha": "Show details",
+  "ocultar_ficha": "Hide details",
+
   "categoria_outros": "Others",
   "categoria_dixital": "Digital",
   "categoria_aire_libre": "Outdoors",

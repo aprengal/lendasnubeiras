@@ -29,9 +29,15 @@
   "orde_antigas": "Oldest",
   "filtro_orde": "Sort by",
 
+  "formato_ficha": "%1$s: %2$s",
+
   "mensaxes_novas": {
     "one": "You have %s new message",
     "other": "You have %s new messages"
+  },
+  "duracion_minutos": {
+    "one": "%s minute",
+    "other": "%s minutes"
   },
 
   "mensaxes_fallos": {

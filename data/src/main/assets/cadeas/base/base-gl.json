@@ -29,10 +29,17 @@
   "orde_antigas": "Máis antigas",
   "filtro_orde": "Ordenar por",
 
+  "formato_ficha": "%1$s: %2$s",
+
   "mensaxes_novas": {
     "one": "Tes %s mensaxe nova",
     "other": "Tes %s mensaxes novas",
     "many": "Tes %s de mensaxes novas"
+  },
+  "duracion_minutos": {
+    "one": "%s minuto",
+    "other": "%s minutos",
+    "many": "%s de minutos"
   },
 
   "mensaxes_fallos": {

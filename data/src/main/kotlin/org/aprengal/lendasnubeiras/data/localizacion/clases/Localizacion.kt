@@ -5,6 +5,7 @@ import android.content.res.Resources
 import android.icu.text.PluralRules
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
+import org.aprengal.lendasnubeiras.data.actividades.datos.base.Actividade
 import org.aprengal.lendasnubeiras.data.utilidades.Contexto.haiLector
 import org.aprengal.lendasnubeiras.data.utilidades.Contexto.reiniciarAplicacion
 import org.aprengal.lendasnubeiras.data.localizacion.cantidades.L10nPlural
@@ -370,6 +371,20 @@ object Localizacion {
 
         return json.optJSONObject( clave ) ?: JSONObject()
 
+    }
+
+    /**
+     * Obtén un texto da interface dun xogo a partir do mapa de textos da actividade.
+     *
+     * Busca o texto correspondente á clave indicada. Se non existe, devolve
+     * o texto de substitución definido para o idioma actual.
+     *
+     * @param textos Mapa de textos da actividade ([Actividade.textos]).
+     * @param clave Clave do texto que se quere obter.
+     * @return O texto asociado á clave ou o texto de substitución se non existe.
+     */
+    fun collerTextoXogo( textos: Map<String, String>, clave: String ): String {
+        return textos[ clave ] ?: idiomaActual.value.pendente
     }
 
     /**

@@ -1,5 +1,7 @@
 package org.aprengal.lendasnubeiras.data.actividades.xogos
 
+import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Dificultade
+
 /**
  * Proporciona os identificadores dos iconas dispoñibles para representar actividades.
  *
@@ -173,7 +175,7 @@ class ActividadeDados {
         "wizard_hat" to "\uDB85\uDC77"
     )
 
-    /**
+    /*/**
      * Selecciona unha cantidade determinada de iconas aleatorias sen repeticións.
      *
      * A selección realízase a partir dos valores de [iconasActividades].
@@ -187,6 +189,129 @@ class ActividadeDados {
     fun lanzarDados( cantidad: Int ): List<String> {
         require( cantidad > 0 ) { "A cantidade de iconas debe ser maior que cero" }
         return iconasActividades.values.shuffled().take( cantidad )
+    }*/
+
+    /** Iconas do nivel fácil: obxectos, animais e comida do día a día. Son as únicas que aparecen nese nivel. */
+    private val nomesFaciles = setOf(
+        "account", "airplane", "baby_face", "bike",
+        "bird", "book_open_outline", "bug", "bus",
+        "cake_variant", "car", "castle", "cat",
+        "coffee", "dog", "earth", "emoticon_happy",
+        "emoticon_sad", "face_man", "face_woman", "fish",
+        "food_apple", "fruit_pineapple", "fruit_watermelon", "heart",
+        "home", "horse", "human_child", "leaf",
+        "pine_tree", "pizza", "rabbit_variant", "sail_boat",
+        "snake", "snowflake", "train", "tree",
+        "weather_cloudy", "white_balance_sunny"
+    )
+
+    /** Iconas que se engaden no nivel medio. */
+    private val nomesMedios = setOf(
+        "alien", "bell_ring", "bowling", "campfire",
+        "cellphone_basic", "clover", "dolphin", "donkey",
+        "eye", "flower_poppy", "food_drumstick", "food_hot_dog",
+        "forest", "ghost", "gift_outline", "guitar_acoustic",
+        "hand_wave", "headphones", "helicopter", "hospital_building",
+        "human_cane", "human_female", "human_male", "human_scooter",
+        "human_wheelchair", "human_white_cane", "island", "ladybug",
+        "lightning_bolt", "moon_waning_crescent", "music", "notebook",
+        "office_building", "palm_tree", "piano", "pirate",
+        "rocket_launch", "school", "sword", "turkey",
+        "violin", "wizard_hat", "weather_rainy"
+    )
+
+    /** Iconas que se engaden no nivel difícil. As que non están en ningún dos tres grupos só aparecen en pesadelo. */
+    private val nomesDificiles = setOf(
+        "account_cowboy_hat_outline", "air_horn", "bike_fast", "bowl_mix",
+        "bullhorn", "cards_playing_heart", "chess_king", "chess_queen",
+        "compass", "drama_masks", "email_outline", "fire_extinguisher",
+        "food_fork_drink", "gamepad_variant", "keyboard", "magic_staff",
+        "magnify", "ninja", "phone_classic", "robot",
+        "robot_angry", "robot_excited", "robot_happy", "ship_wheel",
+        "sunglasses", "trophy_variant", "trumpet", "ufo_outline",
+        "watering_can", "waves", "weather_lightning", "weather_pouring",
+        "weather_windy"
+    )
+
+    private val nomesNivelNormal = nomesFaciles + nomesMedios
+    private val nomesNivelDificil = nomesNivelNormal + nomesDificiles
+
+    init {
+
+        val inexistentes = nomesNivelDificil.filter { nome -> nome !in iconasActividades }
+        require( inexistentes.isEmpty() ) { "Hai nomes de icona que non existen en iconasActividades: $inexistentes" }
+
+    }
+
+    /**
+     * Devolve o rango de dados que se poden lanzar nun nivel de dificultade.
+     *
+     * @param dificultade Nivel de dificultade.
+     * @return Rango co mínimo e o máximo de dados. Pesadelo ten os mesmos que difícil.
+     */
+    fun rangoDados( dificultade: Dificultade ): IntRange {
+
+        return when ( dificultade ) {
+            Dificultade.Facil -> 2..4
+            Dificultade.Normal -> 5..7
+            Dificultade.Dificil, Dificultade.Pesadelo -> 8..10
+        }
+
+    }
+
+    /**
+     * Devolve as iconas dispoñibles nun nivel de dificultade.
+     *
+     * Cada nivel inclúe as iconas do anterior: o fácil usa só as máis sinxelas e o pesadelo
+     * usa todas as de [iconasActividades].
+     *
+     * @param dificultade Nivel de dificultade.
+     * @return Mapa co nome e o carácter das iconas do nivel.
+     */
+    fun iconasDoNivel( dificultade: Dificultade ): Map<String, String> {
+
+        return when ( dificultade ) {
+            Dificultade.Facil -> iconasActividades.filterKeys { nome -> nome in nomesFaciles }
+            Dificultade.Normal -> iconasActividades.filterKeys { nome -> nome in nomesNivelNormal }
+            Dificultade.Dificil -> iconasActividades.filterKeys { nome -> nome in nomesNivelDificil }
+            Dificultade.Pesadelo -> iconasActividades
+        }
+
+    }
+
+    /**
+     * Selecciona unha cantidade determinada de iconas aleatorias sen repeticións,
+     * a partir das iconas do nivel de dificultade indicado.
+     *
+     * @param cantidad Número de iconas que se queren seleccionar. Ten que estar no rango do nivel ([rangoDados]).
+     * @param dificultade Nivel de dificultade.
+     * @return Lista cos caracteres correspondentes ás iconas seleccionadas.
+     * @throws IllegalArgumentException Se a cantidade non está no rango do nivel.
+     */
+    fun lanzarDados( cantidad: Int, dificultade: Dificultade): List<String> {
+
+        require( cantidad in rangoDados( dificultade ) ) { "A cantidade de dados debe estar no rango do nivel $dificultade" }
+
+        return iconasDoNivel( dificultade ).values.shuffled().take( cantidad )
+
+    }
+
+    /**
+     * Devolve un mapa coas iconas estritamente agrupadas por nivel,
+     * sen acumular nin repetir (cada icona pertence a un único nivel).
+     */
+    fun iconasNivel(): Map<Dificultade, Map<String, String>> {
+
+        val nomesPesadelo = iconasActividades.keys - ( nomesFaciles + nomesMedios + nomesDificiles )
+        val mapa = mapOf(
+            Dificultade.Facil to iconasActividades.filterKeys { it in nomesFaciles },
+            Dificultade.Normal to iconasActividades.filterKeys { it in nomesMedios },
+            Dificultade.Dificil to iconasActividades.filterKeys { it in nomesDificiles },
+            Dificultade.Pesadelo to iconasActividades.filterKeys { it in nomesPesadelo }
+        )
+
+        return mapa
+
     }
 
 }

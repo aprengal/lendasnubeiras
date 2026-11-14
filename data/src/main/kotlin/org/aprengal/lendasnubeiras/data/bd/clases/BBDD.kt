@@ -390,10 +390,12 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
 
                 is Condicion.Entre -> {
 
+                    require( condicion.minimo.toDouble() <= condicion.maximo.toDouble() ) {
+                        "BETWEEN require que o límite inferior sexa menor ou igual que o superior"
+                    }
+
                     val valor1 = procesarValor( condicion.minimo )
                     val valor2 = procesarValor( condicion.maximo )
-
-                    require( valor1 < valor2 ) { "BETWEEN require que o primeiro valor sexa menor que o segundo" }
 
                     valores += valor1
                     valores += valor2

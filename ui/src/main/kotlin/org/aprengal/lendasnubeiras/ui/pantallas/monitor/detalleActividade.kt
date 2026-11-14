@@ -21,11 +21,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.aprengal.lendasnubeiras.data.actividades.datos.base.Actividade
+import org.aprengal.lendasnubeiras.data.actividades.datos.base.TipoLista
 import org.aprengal.lendasnubeiras.ui.navegacion.Ruta
 import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.collerActividade
 import org.aprengal.lendasnubeiras.data.localizacion.cantidades.L10nPlural
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nActividades
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nSingular
+import org.aprengal.lendasnubeiras.ui.pantallas.monitor.actividadesDixitais.PrepararXogo
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosElementoLista
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.BotonSecundario
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.EspazadorAlto
@@ -70,6 +72,10 @@ fun PantallaActividadeDetalle( clave: String ) {
             FichaActividade( actividade )
         }
 
+        if ( tenDescricion ) {
+            PrepararXogo( actividade )
+        }
+
     }
 
 }
@@ -111,13 +117,11 @@ private fun FichaActividade( actividade: Actividade ) {
 
                 actividade.lista?.let { lista ->
 
-                    lista.cabeceira?.let { cabeceira ->
-                        Text( cabeceira )
-                        EspazadorAlto( 1 )
-                    }
+                    Text( lista.cabeceira )
+                    EspazadorAlto( 1 )
 
-                    val ordenada = lista.tipo == "ordenada"
-                    ListaTexto( elementos = lista.elementos, ordenada = ordenada )
+                    val ordenada = lista.tipo == TipoLista.ORDENADA
+                    ListaTexto( lista.elementos, ordenada )
 
                 }
 

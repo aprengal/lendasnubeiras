@@ -1,6 +1,7 @@
 package org.aprengal.lendasnubeiras.data.actividades.datos.base
 
 import org.aprengal.lendasnubeiras.data.actividades.datos.DatosActividade
+import org.aprengal.lendasnubeiras.data.actividades.datos.base.TipoLista.Companion.escollerTipoLista
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.collerTextoActividade
 import org.json.JSONArray
 
@@ -66,11 +67,13 @@ data class Actividade(
 
         lista = listaJson?.let { json ->
 
-            val crearElementos: (JSONArray) -> List<String> = { array -> List( array.length() ) { indice -> array.getString( indice ) } }
+            val tipo = escollerTipoLista( json.optString( "tipo" ) )
+            val cabeceira = json.optString( "cabeceira" )
+            val elementos = json.optJSONArray( "elementos" )?.let {
+                arranxo -> List( arranxo.length() ) { indice -> arranxo.getString( indice ) }
+            } ?: emptyList()
 
-            DatosListaActividade( json.optString( "tipo" ), json.optString( "cabeceira" ),
-                json.optJSONArray( "elementos" )?.let( crearElementos ) ?: emptyList()
-            )
+            DatosListaActividade( tipo, cabeceira, elementos )
 
         }
 

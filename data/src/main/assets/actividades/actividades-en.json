@@ -11,7 +11,7 @@
       "media": "A balanced challenge to put your skills to the test.",
       "dificil": "A greater challenge for those looking to test their limits."
     },
-    "textos": []
+    "textos": {}
   },
   "pasa-palabra": {
     "titulo": "Pass the Word",
@@ -20,7 +20,7 @@
       "If a team knows the answer, they can say it. If they don't know it, they can say «Pass the Word» to pass the turn."
     ],
     "resumo": "Guess the words or say «Pass the Word» to pass the turn.",
-    "textos": []
+    "textos": {}
   },
   "palabras-encadeadas": {
     "titulo": "Word Chain",
@@ -28,7 +28,7 @@
       "Starting from an initial letter shown on the screen, each participant must say a word that begins with the same letter the previous word ended with."
     ],
     "resumo": "Chain words starting from the last letter of the previous word.",
-    "textos": []
+    "textos": {}
   },
   "simon-di": {
     "titulo": "The App Signals",
@@ -37,7 +37,7 @@
       "The orders can include individual actions or sequences of multiple movements."
     ],
     "resumo": "Perform body movements and actions guided by the application.",
-    "textos": []
+    "textos": {}
   },
   "baul-recordos": {
     "titulo": "Memory Chest",
@@ -58,6 +58,6 @@
       ]
     },
     "resumo": "Share past experiences and dialogue between generations on different topics.",
-    "textos": []
+    "textos": {}
   }
 }

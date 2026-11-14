@@ -27,11 +27,14 @@ sealed interface Condicion {
     data class En( val valores: Set<Any> ) : Condicion
 
     /**
-     * Representa unha comparación dentro dun intervalo mediante BETWEEN.
+     * Representa unha comparación numérica dentro dun intervalo mediante BETWEEN.
      *
-     * @property minimo Límite inferior do intervalo.
-     * @property maximo Límite superior do intervalo.
+     * Permite comprobar se un valor está comprendido entre dous límites numéricos.
+     *
+     * @property minimo Límite inferior numérico do intervalo.
+     * @property maximo Límite superior numérico do intervalo.
      */
-    data class Entre( val minimo: Any, val maximo: Any ) : Condicion
+    data class Entre( val minimo: Number, val maximo: Number ) : Condicion
+
 
 }

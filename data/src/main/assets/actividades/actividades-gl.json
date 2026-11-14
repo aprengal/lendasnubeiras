@@ -11,7 +11,13 @@
       "media": "Un reto equilibrado para poñer a proba as túas habilidades.",
       "dificil": "Un desafío maior para quen busca poñer a proba os seus límites."
     },
-    "textos": {}
+    "textos": {
+      "lanzar_dados": "Lanzar dados",
+      "ver_lista": "Ver lista completa",
+      "agochar_lista": "Agochar lista completa",
+      "quitar_dado": "Quitar un dado",
+      "engadir_dado": "Engadir un dado"
+    }
   },
   "pasa-palabra": {
     "titulo": "Pasa a palabra",

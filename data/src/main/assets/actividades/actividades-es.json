@@ -11,7 +11,7 @@
       "media": "Un reto equilibrado para poner a prueba tus habilidades.",
       "dificil": "Un desafío mayor para quien busca poner a prueba sus límites."
     },
-    "textos": []
+    "textos": {}
   },
   "pasa-palabra": {
     "titulo": "Pasa la palabra",
@@ -20,7 +20,7 @@
       "Si un equipo sabe la respuesta, puede decirla. Si no la sabe, puede decir «Pasa la palabra» para ceder el turno."
     ],
     "resumo": "Adivina las palabras o di «Pasa la palabra» para ceder el turno.",
-    "textos": []
+    "textos": {}
   },
   "palabras-encadeadas": {
     "titulo": "Palabras encadenadas",
@@ -28,7 +28,7 @@
       "Partiendo de una letra inicial que aparece en la pantalla, cada participante debe decir una palabra que comience por la misma letra con la que terminó la palabra anterior."
     ],
     "resumo": "Encadena palabras a partir de la última letra de la palabra anterior.",
-    "textos": []
+    "textos": {}
   },
   "simon-di": {
     "titulo": "La aplicación señala",
@@ -37,7 +37,7 @@
       "Las órdenes pueden incluir acciones individuales o secuencias de varios movimientos."
     ],
     "resumo": "Realiza movimientos corporales y acciones guiadas por la aplicación.",
-    "textos": []
+    "textos": {}
   },
   "baul-recordos": {
     "titulo": "Baúl de los recuerdos",
@@ -58,6 +58,6 @@
       ]
     },
     "resumo": "Comparte vivencias del pasado y dialoga entre generaciones sobre diferentes temáticas.",
-    "textos": []
+    "textos": {}
   }
 }

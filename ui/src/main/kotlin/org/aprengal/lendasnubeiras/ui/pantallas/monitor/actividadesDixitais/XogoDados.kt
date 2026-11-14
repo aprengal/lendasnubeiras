@@ -28,21 +28,39 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Dificultade
 import org.aprengal.lendasnubeiras.data.actividades.xogos.ActividadeDados
+import org.aprengal.lendasnubeiras.data.actividades.datos.base.Actividade
+import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.collerTextoXogo
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.Icona.Companion.DebuxarIcona
+import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.Texto
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.EspazadorAlto
 
+/**
+ * Mostra o xogo "Dados historiosos": lánzanse varios dados e a persoa ten que contar unha historia
+ * coas iconas que saen.
+ *
+ * A dificultade determina cantos dados se poden lanzar ([ActividadeDados.rangoDados]) e de que
+ * iconas se escolle ([ActividadeDados.iconasDoNivel]). Se cambia a dificultade, reiníciase o xogo.
+ *
+ * @param dificultade Nivel de dificultade do xogo.
+ * @param textos Mapa cos textos da interface, o de [Actividade.textos].
+ */
 @Composable
-fun XogoDados() {
+fun XogoDados( dificultade: Dificultade, textos: Map<String, String> ) {
 
     val tarefaDatos = remember { ActividadeDados() }
-    var listaSeleccionados by rememberSaveable { mutableStateOf<List<String>>( emptyList() ) }
-    var cantidadeDados by rememberSaveable { mutableIntStateOf( 3 ) }
+    val rango = tarefaDatos.rangoDados( dificultade )
 
-    val todasIconas = remember { tarefaDatos.iconasActividades.toList() }
+    var listaSeleccionados by rememberSaveable( dificultade ) { mutableStateOf<List<String>>( emptyList() ) }
+    var cantidadeDados by rememberSaveable( dificultade ) { mutableIntStateOf( rango.first ) }
     var amosarLista by rememberSaveable { mutableStateOf( false ) }
+
+    val texto = { clave: String -> collerTextoXogo( textos, clave ) }
 
     LazyVerticalGrid(
         columns = GridCells.Adaptive( minSize = 64.dp ),
@@ -56,10 +74,13 @@ fun XogoDados() {
         //Modificador de dados
         item( span = { GridItemSpan( maxLineSpan ) } ) {
 
+            val descricionQuitar = Modifier.semantics { contentDescription = texto( "quitar_dado" ) }
+            val descricionEngadir = Modifier.semantics { contentDescription = texto( "engadir_dado" ) }
+
             Row( modifier = Modifier.fillMaxWidth(), Arrangement.SpaceEvenly, Alignment.CenterVertically ) {
-                Button( onClick = { cantidadeDados-- }, enabled = cantidadeDados > 3 ) { Text( "-" ) }//E qué significa para un lector de pantalla?
+                Button( onClick = { cantidadeDados-- }, modifier = descricionQuitar, enabled = cantidadeDados > rango.first ) { Text( "-" ) }
                 Text( cantidadeDados.toString() )
-                Button( onClick = { cantidadeDados++ }, enabled = cantidadeDados < 10 ) { Text( "+" ) }//E qué significa para un lector de pantalla?
+                Button( onClick = { cantidadeDados++ }, modifier = descricionEngadir, enabled = cantidadeDados < rango.last ) { Text( "+" ) }
             }
 
         }
@@ -69,23 +90,23 @@ fun XogoDados() {
 
             val recheoInferior = if ( listaSeleccionados.isEmpty() ) 0.dp else 10.dp
             val modificador = Modifier.fillMaxWidth().padding( bottom = recheoInferior )
-            val accion = { listaSeleccionados = tarefaDatos.lanzarDados( cantidadeDados ) }
+            val accion = { listaSeleccionados = tarefaDatos.lanzarDados( cantidadeDados, dificultade ) }
 
-            Button( onClick = accion, modifier = modificador ) { Text( text = "Lanzar dados" ) }//Localizar isto
+            Button( onClick = accion, modifier = modificador ) { Text( text = texto( "lanzar_dados" ) ) }
 
         }
 
         //Resultados
         items( listaSeleccionados ) { icona -> CasillaIcono( icona ) }
 
-        //Mostra de todas as alternativas posibles
+        //Mostra de todas as alternativas posibles do nivel
         item( span = { GridItemSpan( maxLineSpan ) } ) {
 
             Column( modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally ) {
 
                 val recheoDivisor = Modifier.padding( vertical = 10.dp )
                 val corDivisor = MaterialTheme.colorScheme.primary
-                val textoBoton = if ( amosarLista ) "Tirar lista completa" else "Ver lista completa"
+                val textoBoton = if ( amosarLista ) texto( "agochar_lista" ) else texto( "ver_lista" )
 
                 HorizontalDivider( modifier = recheoDivisor, color = corDivisor )
                 Button( onClick = { amosarLista = !amosarLista } ) { Text( text = textoBoton ) }
@@ -95,7 +116,21 @@ fun XogoDados() {
         }
 
         if ( amosarLista ) {
-            items( todasIconas ) { ( _, icona ) -> ListarTodasIconas( icona ) }
+
+            val iconasPorNivel = tarefaDatos.iconasNivel()
+
+            iconasPorNivel.forEach { ( dificultade, mapaIconas ) ->
+
+                // 1. Cabeceira
+                item( span = { GridItemSpan( maxLineSpan ) } ) {
+                    Texto( dificultade.nome, Modifier.padding( top = 16.dp, bottom = 8.dp ), MaterialTheme.typography.titleMedium )
+                }
+
+                // 2. Os iconos correspondentes a este nivel
+                items( mapaIconas.values.toList() ) { icona -> ListarTodasIconas( icona ) }
+
+            }
+
         }
 
     }

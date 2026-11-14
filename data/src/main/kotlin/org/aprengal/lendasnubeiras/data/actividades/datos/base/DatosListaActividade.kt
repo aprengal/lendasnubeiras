@@ -1,18 +1,21 @@
 package org.aprengal.lendasnubeiras.data.actividades.datos.base
 
 /**
- * Representa unha lista estruturada (ordenada ou non ordenada) asociada a unha actividade,
- * contendo unha cabeceira opcional e unha colección de elementos de texto.
+ * Representa unha lista de elementos de texto, ordenada ou desordenada,
+ * asociada a unha actividade.
  *
- * Emprégase para mostrar contidos informativos complexos ou opcións estruturadas
- * dentro da ficha dunha actividade de forma clara e accesible.
+ * Permite agrupar elementos baixo unha cabeceira opcional, facilitando
+ * a presentación estruturada e accesible de información na ficha
+ * dunha actividade.
  *
- * @property tipo Indica se a lista é ordenada ou non ordenada (por exemplo, "ordenada" ou "desordenada").
- * @property cabeceira Texto opcional que encabeza a lista.
- * @property elementos Lista de elementos de texto que compoñen o contido da lista.
+ * @property tipo Tipo de lista, que determina se os elementos se presentan
+ * de forma ordenada ou desordenada.
+ * @property cabeceira Texto que encabeza a lista. Pode ser unha cadea baleira
+ * se non se precisa unha cabeceira.
+ * @property elementos Lista de textos que constitúen os elementos da lista.
  */
 data class DatosListaActividade(
-    val tipo: String,
-    val cabeceira: String?,
+    val tipo: TipoLista,
+    val cabeceira: String,
     val elementos: List<String>
 )

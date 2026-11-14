@@ -132,7 +132,7 @@ fun PantallaBuscador() {
         if ( busca.text.isNotBlank() ) {
             teclado?.hide()
             avanzada = false
-            parametros = ParametrosBusca(busca.text.toString(), campoBusca, categoria, destinatario, orde)
+            parametros = ParametrosBusca( busca.text.toString(), campoBusca, categoria, destinatario, orde )
         }
 
     }

@@ -397,7 +397,7 @@ final readonly class Usuario {
      *
      * @param string $token Token da sesión que se quere activar.
      * @return bool True se a sesión existe e estaba pendente; false se non
-     *              existe ou xa está activa.
+     * existe ou xa está activa.
      */
     public function activar_sesion( string $token ): bool {
 
@@ -480,8 +480,7 @@ final readonly class Usuario {
      * - destruir_varias: elimina todas as sesións agás a indicada por $token.
      *   Se $token está baleiro, elimina todas as sesións do usuario.
      *
-     * @param string $token         Token da sesión afectada. Pode estar baleiro
-     *                              ao eliminar todas as sesións.
+     * @param string $token         Token da sesión afectada. Pode estar baleiro ao eliminar todas as sesións.
      * @param string $datos_sesion  Datos serializados da sesión.
      * @param string $accion        Operación que se vai realizar.
      * @param int    $caducidade    Marca temporal Unix de caducidade da sesión.

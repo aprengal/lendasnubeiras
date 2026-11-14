@@ -44,7 +44,7 @@ function db(): DB {
  *
  * @param mixed $string Valor que se quere comprobar.
  * @return bool true se o valor coincide co patrón de serialización
- *              dun array; false en caso contrario.
+ * dun array; false en caso contrario.
  */
 function hai_serializacion( mixed $string ): bool {
     return preg_match( '/^a:\d+:{/', $string ) === 1;

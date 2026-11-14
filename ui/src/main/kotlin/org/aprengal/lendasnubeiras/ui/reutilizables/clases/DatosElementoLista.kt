@@ -7,19 +7,22 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.Elemento
 /**
  * Contén os datos necesarios para configurar un elemento de lista [ElementoLista].
  *
- * Permite definir a acción asociada ao elemento, o seu título, unha icona
- * opcional e o contido principal e adicional que se amosará.
+ * Permite definir o título, o contido que se amosa debaixo del, a acción asociada,
+ * unha icona opcional e un contido adicional opcional.
  *
- * @property accion Acción executada ao seleccionar o elemento.
+ * Se non se indica ningunha acción, o elemento só amosa información e non é pulsable.
+ * Se se indica, o elemento é pulsable e identifícase como un botón.
+ *
  * @property titulo Recurso de localización co título do elemento.
- * @property icona Icona opcional que acompaña o título.
- * @property contido Contido composable principal do elemento.
- * @property contidoExtra Contido composable adicional opcional.
+ * @property contido Contido composable que se amosa debaixo do título.
+ * @property accion Acción opcional que se executa ao premer o elemento. Se é null, o elemento non é pulsable.
+ * @property icona Icona opcional que se amosa á esquerda do elemento.
+ * @property contidoExtra Contido composable opcional que se amosa á dereita do elemento.
  */
 data class DatosElementoLista(
-    val accion: () -> Unit,
     val titulo: L10nSingular,
-    val icona: Icona? = null,
     val contido: @Composable () -> Unit,
+    val accion: ( () -> Unit )? = null,
+    val icona: Icona? = null,
     val contidoExtra: ( @Composable () -> Unit )? = null
 )

@@ -12,6 +12,14 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.Bo
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalNavegacion
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.EspazadorAlto
 
+/**
+ * Mostra a pantalla de benvida da aplicación, permitindo ao usuario
+ * escoller entre iniciar sesión cunha conta ou acceder de forma anónima.
+ *
+ * A opción de inicio de sesión permite acceder á pantalla [Ruta.Acceso],
+ * mentres que a opción de acceso anónimo crea unha nova sesión sen
+ * necesidade de rexistro.
+ */
 @Composable
 fun PantallaBenvida() {
 

@@ -24,6 +24,19 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.Esp
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.TarxetaPulsable
 import kotlin.random.Random
 
+/**
+ * Mostra a pantalla principal da aplicación unha vez que o usuario accedeu
+ * á súa conta ou iniciou unha sesión anónima.
+ *
+ * Ofrece acceso directo ao catálogo de actividades ([Ruta.Catalogo]) e
+ * ao buscador ([Ruta.Buscador]) mediante tarxetas seleccionables.
+ *
+ * Ademais, mostra unha mensaxe variable seleccionada aleatoriamente
+ * ao acceder á pantalla, mantendo a mesma mensaxe durante a súa recreación.
+ *
+ * O contido preséntase nunha columna desprazable para adaptarse
+ * ao espazo dispoñible na pantalla.
+ */
 @Composable
 fun PantallaInicio() {
 

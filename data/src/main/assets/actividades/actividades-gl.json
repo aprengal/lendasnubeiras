@@ -6,43 +6,58 @@
       "O participante debe contarlle unha historia á outra persoa conectando todas as imaxes que saíron."
     ],
     "resumo": "Conta unha historia conectando as imaxes aleatorias que saian nos dados.",
-    "textos": []
+    "dificultades": {
+      "facil": "Ideal para comezar e familiarizarse coa dinámica do xogo.",
+      "media": "Un reto equilibrado para poñer a proba as túas habilidades.",
+      "dificil": "Un desafío maior para quen busca poñer a proba os seus límites."
+    },
+    "textos": {}
   },
   "pasa-palabra": {
     "titulo": "Pasa a palabra",
     "descricion": [
-      "O monitor le unha palabra e os equipos deben respondela.",
-      "Se acerta, chégase á seguinte; se non o sabe, pódese dicir 'Pasa a palabra' para ceder a quenda.",
-      "Conta con tres niveis: Doce palabras con letras aleatorias ascendentes, e no difícil entran todas as letras do abecedario."
+      "O monitor le unha palabra que os equipos deben adiviñar.",
+      "Se un equipo sabe a resposta, pode dicila. Se non a sabe, pode dicir «Pasa a palabra» para ceder a quenda."
     ],
-    "resumo": "Responde ás preguntas ou di 'Pasa a palabra' para ceder a quenda.",
-    "textos": []
+    "resumo": "Adiviña as palabras ou di «Pasa a palabra» para ceder a quenda.",
+    "textos": {}
   },
   "palabras-encadeadas": {
     "titulo": "Palabras encadeadas",
     "descricion": [
-      "Partindo dunha letra inicial mostrada na pantalla, cada xogador debe dicir unha palabra que comece coa letra coa que rematou a anterior.",
-      "Nos niveis avanzados exíxese repetir as palabras anteriores ou evitar repetilas entre sesións, cun límite de tempo estrito."
+      "Partindo dunha letra inicial que aparece na pantalla, cada participante debe dicir unha palabra que comece pola mesma letra coa que rematou a palabra anterior."
     ],
-    "resumo": "Encadea palabras baseándote na letra final da anterior dentro do tempo límite.",
-    "textos": []
+    "resumo": "Encadea palabras a partir da última letra da palabra anterior.",
+    "textos": {}
   },
   "simon-di": {
     "titulo": "A aplicación sinala",
     "descricion": [
-      "A aplicación indica ordes e accións baseadas en movementos corporais, xestos ou desprazamentos que os participantes deben executar nun tempo límite axustado.",
-      "As ordes van dende accións sinxelas individuais ata secuencias encadenadas de dous movementos."
+      "A aplicación indica ordes e accións baseadas en movementos corporais, xestos ou desprazamentos que as persoas participantes deben executar.",
+      "As ordes poden incluír accións individuais ou secuencias de varios movementos."
     ],
-    "resumo": "Realiza movementos corporais e accións guiadas pola aplicación antes de que esgote o tempo.",
-    "textos": []
+    "resumo": "Realiza movementos corporais e accións guiadas pola aplicación.",
+    "textos": {}
   },
   "baul-recordos": {
     "titulo": "Baúl dos recordos",
     "descricion": [
-      "A aplicación lanza unha temática do pasado (como xoguetes antigos, a escola ou os oficios).",
-      "Os maiores comparten vivencias, recordos ou como se vivía na súa época, mentres os mozos escoitan, fan preguntas e comparan co presente para xerar un diálogo interxeracional."
+      "A aplicación propón unha temática relacionada co pasado, como os xoguetes antigos, a escola ou os oficios.",
+      "As persoas maiores comparten vivencias e recordos de como se vivía na súa época, mentres as máis novas escoitan, fan preguntas e comparan aquelas experiencias co presente, creando un diálogo entre xeracións."
     ],
+    "lista": {
+      "tipo": "desordenada",
+      "cabeceira": "Posibles temas:",
+      "elementos": [
+        "O xogo na rúa e os nosos antigos xoguetes",
+        "A escola de antes e a de agora",
+        "A música, os bailes e as festas populares",
+        "A vida cotiá e as tarefas do fogar",
+        "Os oficios tradicionais e o traballo",
+        "A moda, a roupa e a estética"
+      ]
+    },
     "resumo": "Comparte vivencias do pasado e dialoga entre xeracións sobre diferentes temáticas.",
-    "textos": []
+    "textos": {}
   }
 }

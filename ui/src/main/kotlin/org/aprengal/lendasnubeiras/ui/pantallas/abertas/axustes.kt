@@ -259,13 +259,13 @@ private fun <T> ContidoOpcion( datos: DatosOpcion<T> ) {
     when( datos.tipo ) {
 
         TipoOpcion.INTERRUPTOR -> {
-            val datosLista = DatosElementoLista( { activo = !activo }, datos.titulo, datos.icona, contido )
+            val datosLista = DatosElementoLista( datos.titulo, contido, { activo = !activo }, datos.icona )
             ElementoLista( datosLista )
         }
 
         TipoOpcion.ALERTA -> {
 
-            val datosLista = DatosElementoLista( { activo = true }, datos.titulo, datos.icona, contido )
+            val datosLista = DatosElementoLista( datos.titulo, contido, { activo = true }, datos.icona )
 
             ElementoLista( datosLista )
 

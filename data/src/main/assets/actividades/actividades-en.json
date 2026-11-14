@@ -6,43 +6,58 @@
       "The participant must tell a story to the other person by connecting all the images that appeared."
     ],
     "resumo": "Tell a story by connecting the random images rolled on the dice.",
+    "dificultades": {
+      "facil": "Ideal to start and get familiar with the game dynamics.",
+      "media": "A balanced challenge to put your skills to the test.",
+      "dificil": "A greater challenge for those looking to test their limits."
+    },
     "textos": []
   },
   "pasa-palabra": {
     "titulo": "Pass the Word",
     "descricion": [
-      "The monitor reads a word and the teams must answer it.",
-      "If correct, they move to the next word; if they don't know it, they can say 'Pass the Word' to pass their turn.",
-      "It features three levels: Twelve words with ascending random letters, and in the hard level, all letters of the alphabet are included."
+      "The game host reads a word that the teams must guess.",
+      "If a team knows the answer, they can say it. If they don't know it, they can say «Pass the Word» to pass the turn."
     ],
-    "resumo": "Answer the questions or say 'Pass the Word' to skip your turn.",
+    "resumo": "Guess the words or say «Pass the Word» to pass the turn.",
     "textos": []
   },
   "palabras-encadeadas": {
     "titulo": "Word Chain",
     "descricion": [
-      "Starting from an initial letter displayed on the screen, each player must say a word starting with the letter the previous word ended with.",
-      "In advanced levels, players are required to repeat previous words or avoid repeating words across sessions, under a strict time limit."
+      "Starting from an initial letter shown on the screen, each participant must say a word that begins with the same letter the previous word ended with."
     ],
-    "resumo": "Chain words based on the last letter of the previous word within the time limit.",
+    "resumo": "Chain words starting from the last letter of the previous word.",
     "textos": []
   },
   "simon-di": {
     "titulo": "The App Signals",
     "descricion": [
-      "The app gives commands and actions based on body movements, gestures, or short movements that participants must execute within a tight time limit.",
-      "Commands range from simple individual actions to chained sequences of two movements."
+      "The application gives orders and actions based on body movements, gestures, or displacements that the participants must execute.",
+      "The orders can include individual actions or sequences of multiple movements."
     ],
-    "resumo": "Perform body movements and actions guided by the app before time runs out.",
+    "resumo": "Perform body movements and actions guided by the application.",
     "textos": []
   },
   "baul-recordos": {
-    "titulo": "Trunk of Memories",
+    "titulo": "Memory Chest",
     "descricion": [
-      "The app introduces a topic from the past (such as old toys, school back then, or traditional crafts).",
-      "Seniors share experiences, memories, or how life was in their time, while youth listen, ask questions, and compare with the present to create an intergenerational dialogue."
+      "The application proposes a theme related to the past, such as old toys, school, or professions.",
+      "Older adults share experiences and memories of what life was like in their time, while younger ones listen, ask questions, and compare those experiences with the present, creating a dialogue between generations."
     ],
-    "resumo": "Share memories from the past and engage in intergenerational dialogue on various topics.",
+    "lista": {
+      "tipo": "desordenada",
+      "cabeceira": "Possible topics:",
+      "elementos": [
+        "Street play and our old toys",
+        "School back then and now",
+        "Music, dances, and popular festivals",
+        "Daily life and household chores",
+        "Traditional crafts and work",
+        "Fashion, clothing, and aesthetics"
+      ]
+    },
+    "resumo": "Share past experiences and dialogue between generations on different topics.",
     "textos": []
   }
 }

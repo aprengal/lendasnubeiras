@@ -18,7 +18,7 @@ import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nActividades
  *
  * @property clave Identificador único da categoría.
  * @property nome Recurso de localización co nome da categoría que se amosará
- *                na interface de usuario.
+ * na interface de usuario.
  */
 enum class Categoria( override val clave: String, override val nome: L10nActividades ): ElementoL10n {
 

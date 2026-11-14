@@ -2,6 +2,7 @@ package org.aprengal.lendasnubeiras.data.actividades.datos.base
 
 import org.aprengal.lendasnubeiras.data.actividades.datos.DatosActividade
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.collerTextoActividade
+import org.json.JSONArray
 
 /**
  * Representa unha actividade cos seus datos xerais e contidos textuais.
@@ -21,6 +22,7 @@ import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.collerT
  *
  * - `titulo`: título da actividade.
  * - `descricion`: lista de parágrafos que compoñen a descrición.
+ * - `lista`: estrutura opcional de lista estruturada (ordenada ou non).
  * - `textos`: mapa de textos adicionais identificados mediante claves.
  *
  * @property id Identificador único da actividade.
@@ -33,6 +35,7 @@ import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.collerT
  * @property dataModificado Data da última modificación da actividade, expresada como marca temporal Unix.
  * @property titulo Título da actividade, cargado a partir dos seus recursos textuais.
  * @property descricion Lista de parágrafos que forman a descrición da actividade.
+ * @property lista Estrutura opcional de lista con cabeceira e elementos para a actividade.
  * @property textos Mapa de textos adicionais da actividade para poder levalas a cabo dentro da aplicación,
  * identificados mediante as súas respectivas claves.
  */
@@ -49,15 +52,28 @@ data class Actividade(
 
     override val titulo: String
     override val descricion: List<String>
+    val lista: DatosListaActividade?
     val textos: Map<String, String>
 
     init {
 
         val datos = collerTextoActividade( claveTitulo )
         val textosJson = datos.optJSONObject( "textos" )
+        val listaJson = datos.optJSONObject( "lista" )
 
         titulo = datos.optString( "titulo" )
         descricion = collerDescricion( datos )
+
+        lista = listaJson?.let { json ->
+
+            val crearElementos: (JSONArray) -> List<String> = { array -> List( array.length() ) { indice -> array.getString( indice ) } }
+
+            DatosListaActividade( json.optString( "tipo" ), json.optString( "cabeceira" ),
+                json.optJSONArray( "elementos" )?.let( crearElementos ) ?: emptyList()
+            )
+
+        }
+
         textos = textosJson?.let { json -> json.keys().asSequence().associateWith { chave -> json.optString( chave ) } } ?: emptyMap()
 
     }

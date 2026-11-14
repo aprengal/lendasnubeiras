@@ -28,8 +28,8 @@
   "orde_recentes": "Most recent",
   "orde_antigas": "Oldest",
   "filtro_orde": "Sort by",
-
-  "formato_ficha": "%1$s: %2$s",
+  "lista_ordenada": "Ordered list",
+  "lista_non_ordenada": "Unordered list",
 
   "mensaxes_novas": {
     "one": "You have %s new message",

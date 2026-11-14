@@ -1,12 +1,6 @@
 package org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual
 
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
@@ -16,7 +10,6 @@ import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.maxLength
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldLabelPosition
 import androidx.compose.runtime.Composable
@@ -24,14 +17,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.aprengal.lendasnubeiras.data.localizacion.clases.ElementoL10n
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nSingular
@@ -41,7 +31,6 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosElementoLista
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosListaOpcions
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.Icona
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.Icona.Companion.DebuxarIcona
-import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.EspazadorAncho
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.AlertaDialogo
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.ElementoLista
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.ListaOpcions
@@ -51,7 +40,7 @@ fun CampoTexto( datos: DatosCampoTexto ) {
 
     var enfocado by rememberSaveable { mutableStateOf( false ) }
     var perdeuFoco by rememberSaveable { mutableStateOf( false ) }
-    val modificador = if ( datos.amosarTexto ) datos.modifier else datos.modifier.semantics { contentDescription = datos.texto.texto() }
+    val modificador = if ( datos.amosarEtiqueta ) datos.modifier else datos.modifier.semantics { contentDescription = datos.etiqueta.texto() }
     val haiErro = perdeuFoco && !datos.erro?.texto().isNullOrEmpty()
 
     OutlinedTextField(
@@ -61,7 +50,7 @@ fun CampoTexto( datos: DatosCampoTexto ) {
             enfocado = elemento.isFocused
         },
         enabled = datos.activado,
-        label = if ( datos.amosarTexto ) { { Texto( datos.texto ) } } else null,
+        label = if ( datos.amosarEtiqueta ) { { Texto( datos.etiqueta ) } } else null,
         labelPosition = TextFieldLabelPosition.Above(),
         lineLimits = datos.altura,
         keyboardOptions = datos.teclado,
@@ -127,7 +116,7 @@ internal fun <T : ElementoL10n> SelectorFiltro( titulo: L10nSingular, opcions: L
         val elementos = if ( textoTodas != null ) listOf<T?>( null ) + opcions else opcions
         val texto = { opcion: T? -> opcion?.nome?.texto() ?: textoTodas?.texto().orEmpty() }
 
-        val datosLista = DatosListaOpcions( elementos, temporal, { opcion -> temporal = opcion }, texto)
+        val datosLista = DatosListaOpcions( elementos, temporal, { opcion -> temporal = opcion }, texto )
         val contidoAlerta = @Composable { ListaOpcions( datosLista ) }
         val datosAlerta = DatosAlerta( titulo = titulo, cancelado = pechar, confirmado = confirmado, contido = contidoAlerta )
 
@@ -136,32 +125,6 @@ internal fun <T : ElementoL10n> SelectorFiltro( titulo: L10nSingular, opcions: L
     }
 
 }
-
-/*@Composable
-private fun <T : ElementoL10n> ListaFiltro( opcions: List<T>, escollido: T?, textoTodas: L10nSingular?, escoller: ( T? ) -> Unit ) {
-
-    val elementos = if ( textoTodas != null ) listOf<T?>( null ) + opcions else opcions
-
-    LazyColumn( Modifier.selectableGroup() ) {
-
-        items( elementos ) { opcion ->
-
-            val texto = opcion?.nome?.texto() ?: textoTodas?.texto().orEmpty()
-            val seleccionado = escollido == opcion
-
-            val modificador = Modifier.fillMaxWidth().selectable( seleccionado, onClick = { escoller( opcion ) }, role = Role.RadioButton ).padding( vertical = 8.dp )
-
-            Row( modifier = modificador, verticalAlignment = Alignment.CenterVertically ) {
-                RadioButton( seleccionado, null )
-                EspazadorAncho()
-                Text( texto )
-            }
-
-        }
-
-    }
-
-}*/
 
 //Igual se podería aplicar nun xogo de amosar ou agochar resposta
 //Funciona o campo de contrasinal, pero igual é innecesario

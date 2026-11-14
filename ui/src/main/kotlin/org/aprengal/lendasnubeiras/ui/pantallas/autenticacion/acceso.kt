@@ -27,6 +27,20 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.Te
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.TextoEnlazado
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.EspazadorAlto
 
+/**
+ * Mostra a pantalla de inicio de sesión mediante correo electrónico.
+ *
+ * Permite introducir un enderezo de correo electrónico e solicitar o
+ * inicio de sesión. O botón de acceso permanece desactivado mentres o
+ * enderezo non sexa válido ou se estea procesando a petición.
+ *
+ * Mostra as mensaxes correspondentes ao resultado da operación e ofrece
+ * un enlace para acceder á pantalla de creación dunha conta nova
+ * ([Ruta.Rexistro]).
+ *
+ * Mentres se procesa a petición, impide a navegación cara atrás e
+ * bloquea as interaccións que dependen do estado de activación.
+ */
 @Composable
 fun PantallaAcceso() {
 
@@ -55,8 +69,7 @@ fun PantallaAcceso() {
         }
     }
 
-    //val erro: L10nValidacion? by remember { derivedStateOf { validarCorreo( correo.text.toString() ) } }
-    val datos = DatosCampoTexto( correo, campoCorreo, 255, Modifier.fillMaxWidth(), activado, teclado = tecladoCorreo/*, erro = erro*/ )
+    val datos = DatosCampoTexto( correo, campoCorreo, 255, Modifier.fillMaxWidth(), activado, teclado = tecladoCorreo )
 
     val textoRexistro = L10nAutenticacion.CrearConta
     val enlace = mapOf( L10nAutenticacion.EnlaceCrearConta to { if ( activado ) navegacion.engadir( Ruta.Rexistro ) } )

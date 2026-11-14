@@ -26,12 +26,9 @@ import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nActividades
  * numérico, convertido a texto, mentres que [nome] proporciona o recurso
  * de localización utilizado para presentar o estado na interface.
  *
- * @property estado Identificador numérico do estado, utilizado para
- *                  almacenalo e recuperalo da base de datos.
- * @property nome Recurso de localización co nome do estado que se amosará
- *                na interface de usuario.
- * @property clave Identificador textual derivado de [estado], necesario
- *                 para implementar [ElementoL10n].
+ * @property estado Identificador numérico do estado, utilizado para almacenalo e recuperalo da base de datos.
+ * @property nome Recurso de localización co nome do estado que se amosarána interface de usuario.
+ * @property clave Identificador textual derivado de [estado], necesario para implementar [ElementoL10n].
  */
 enum class Estado( val estado: Int, override val nome: L10nActividades ): ElementoL10n {
 

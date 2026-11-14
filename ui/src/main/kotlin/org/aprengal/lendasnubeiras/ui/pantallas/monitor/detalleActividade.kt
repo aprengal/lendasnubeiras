@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,31 +19,30 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import org.aprengal.lendasnubeiras.data.actividades.datos.base.Actividade
 import org.aprengal.lendasnubeiras.ui.navegacion.Ruta
 import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.collerActividade
 import org.aprengal.lendasnubeiras.data.localizacion.cantidades.L10nPlural
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nActividades
-import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nBase
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nSingular
+import org.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosElementoLista
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.BotonSecundario
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.EspazadorAlto
+import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.ElementoLista
+import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.ListaTexto
 
 /**
- * Pantalla co detalle dunha actividade, que permite consultar a súa ficha de datos xerais.
+ * Mostra a pantalla co detalle dunha actividade, permitindo consultar a súa ficha de datos xerais.
  *
- * A pantalla mostra un botón para despregar ou ocultar a ficha cando a actividade ten textos
- * adicionais. Se non ten textos, a ficha móstrase directamente.
+ * Se a actividade contén textos adicionais, permite despregar ou ocultar a ficha mediante un botón.
+ * Se non contén textos adicionais, a ficha móstrase directamente.
  *
- * A existencia da actividade compróbase antes de navegar a esta pantalla, polo que aquí non se
- * contempla que non exista: [collerActividade] devolve a actividade e non se compara con null.
+ * A existencia da actividade compróbase antes de acceder a esta pantalla, polo que se dá por feito
+ * que [collerActividade] devolve unha actividade válida.
  *
- * @param clave Clave do título da actividade, a mesma que leva [Ruta.ActividadeDetalle].
+ * @param clave Clave identificadora da actividade que se vai mostrar, correspondente á propiedade
+ * clave de [Ruta.ActividadeDetalle].
  */
 @Composable
 fun PantallaActividadeDetalle( clave: String ) {
@@ -75,30 +75,52 @@ fun PantallaActividadeDetalle( clave: String ) {
 }
 
 /**
- * Mostra a ficha cos datos xerais dunha actividade.
+ * Mostra unha tarxeta coa información xeral dunha actividade.
  *
- * A ficha inclúe a categoría, o destinatario, a duración e os parágrafos da descrición.
- * Os datos preséntanse dentro dunha tarxeta e os textos da descrición móstranse por separado.
+ * Inclúe a súa categoría, o destinatario e a duración, organizados en filas separadas por divisores.
+ * A continuación, mostra os parágrafos da descrición e, se existe, unha lista de elementos que pode
+ * incluír unha cabeceira.
+ *
+ * A duración obtense mediante [L10nPlural.Duracion], adaptando o texto ao valor correspondente
+ * para empregar a forma singular ou plural axeitada.
  *
  * @param actividade Actividade da que se quere mostrar a información.
  */
 @Composable
 private fun FichaActividade( actividade: Actividade ) {
 
+    val duracion = L10nPlural.Duracion.texto( actividade.duracion )
+
     Card( Modifier.fillMaxWidth().padding( vertical = 4.dp ) ) {
 
-        Column( Modifier.fillMaxWidth().padding( horizontal = 16.dp, vertical = 12.dp ) ) {
+        Column( Modifier.fillMaxWidth() ) {
 
-            FilaFicha( L10nActividades.Categoria, actividade.categoria.nome )
-            EspazadorAlto()
-            FilaFicha( L10nActividades.Destinatario, actividade.destinatario.nome )
-            EspazadorAlto()
-            FilaFicha( L10nActividades.Duracion, L10nPlural.Duracion, actividade.duracion )
-            EspazadorAlto( 3 )
+            FilaFicha( L10nActividades.Categoria, actividade.categoria.nome.texto() )
+            HorizontalDivider()
+            FilaFicha( L10nActividades.Destinatario, actividade.destinatario.nome.texto() )
+            HorizontalDivider()
+            FilaFicha( L10nActividades.Duracion, duracion )
+            HorizontalDivider()
 
-            actividade.descricion.forEach { paragrafo ->
-                Text( paragrafo, style = MaterialTheme.typography.bodyLarge )
-                EspazadorAlto( 2 )
+            Column( Modifier.fillMaxWidth().padding( horizontal = 16.dp, vertical = 12.dp ) ) {
+
+                actividade.descricion.forEach { paragrafo ->
+                    Text( paragrafo, style = MaterialTheme.typography.bodyLarge )
+                    EspazadorAlto( 2 )
+                }
+
+                actividade.lista?.let { lista ->
+
+                    lista.cabeceira?.let { cabeceira ->
+                        Text( cabeceira )
+                        EspazadorAlto( 1 )
+                    }
+
+                    val ordenada = lista.tipo == "ordenada"
+                    ListaTexto( elementos = lista.elementos, ordenada = ordenada )
+
+                }
+
             }
 
         }
@@ -108,74 +130,18 @@ private fun FichaActividade( actividade: Actividade ) {
 }
 
 /**
- * Mostra unha fila da ficha a partir dunha etiqueta e dun valor singular.
+ * Mostra unha fila informativa dunha ficha, composta por unha etiqueta e o seu valor.
  *
- * Ambos os elementos son traducidos antes de delegar á representación visual en
- * [FilaFichaRender].
+ * Utiliza [ElementoLista] sen acción asociada, polo que presenta a información sen permitir
+ * interaccións coa fila.
  *
- * @param etiqueta Etiqueta localizada que identifica o dato.
- * @param valor Valor localizado que se quere mostrar.
- */
-@Composable
-private fun FilaFicha( etiqueta: L10nSingular, valor: L10nSingular ) {
-    FilaFichaRender( etiqueta.texto(), valor.texto() )
-}
-
-/**
- * Mostra unha fila da ficha cun valor plural que depende dunha cantidade.
- *
- * A tradución do valor realízase tendo en conta a cantidade indicada, para seleccionar
- * a forma gramatical correspondente.
+ * O valor recíbese como texto xa localizado, polo que pode representar distintos tipos de datos,
+ * incluídos textos singulares e plurais.
  *
  * @param etiqueta Etiqueta localizada que identifica o dato.
- * @param valor Texto plural localizado que se quere mostrar.
- * @param cantidade Cantidade utilizada para obter a forma plural adecuada.
+ * @param valor Texto do valor, xa localizado.
  */
 @Composable
-private fun FilaFicha( etiqueta: L10nSingular, valor: L10nPlural, cantidade: Number ) {
-    FilaFichaRender( etiqueta.texto(), valor.texto( cantidade ) )
-}
-
-/**
- * Representa visualmente unha fila da ficha a partir de dous textos xa localizados.
- *
- * Combina a etiqueta e o valor utilizando o formato definido en [L10nBase.FormatoFicha].
- * A etiqueta resáltase cun estilo tipográfico en negra e co tamaño correspondente ao título
- * grande do tema. Se non se atopa a etiqueta no texto formatado, utilízase unha representación
- * alternativa coa etiqueta e o valor separados por dous puntos.
- *
- * @param textoEtiqueta Texto da etiqueta que identifica o dato.
- * @param textoValor Texto co valor correspondente á etiqueta.
- */
-@Composable
-private fun FilaFichaRender( textoEtiqueta: String, textoValor: String ) {
-
-    val estilo = SpanStyle(
-        fontFamily = MaterialTheme.typography.titleLarge.fontFamily,
-        fontWeight = FontWeight.Bold,
-        fontSize = MaterialTheme.typography.titleLarge.fontSize
-    )
-
-    val formato = L10nBase.FormatoFicha.texto()
-    val textoCompleto = String.format( formato, textoEtiqueta, textoValor )
-
-    val texto = buildAnnotatedString {
-
-        val inicio = textoCompleto.indexOf( textoEtiqueta )
-
-        if ( inicio >= 0 ) {
-            append( textoCompleto.substring( 0, inicio ) )
-            withStyle( estilo ) { append( textoEtiqueta ) }
-            append( textoCompleto.substring( inicio + textoEtiqueta.length ) )
-        } else {
-            // Fallback por si acaso la etiqueta no aparece exacta
-            withStyle( estilo ) { append( textoEtiqueta ) }
-            append( ": " )
-            append( textoValor )
-        }
-
-    }
-
-    Text( text = texto, style = MaterialTheme.typography.bodyLarge )
-
+private fun FilaFicha( etiqueta: L10nSingular, valor: String ) {
+    ElementoLista( DatosElementoLista( titulo = etiqueta, contido = { Text( valor ) } ) )
 }

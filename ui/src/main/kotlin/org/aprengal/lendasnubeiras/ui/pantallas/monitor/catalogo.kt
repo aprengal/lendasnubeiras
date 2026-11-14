@@ -22,6 +22,18 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.Bo
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.EspazadorAlto
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.TarxetaActividade
 
+/**
+ * Mostra o catálogo de actividades públicas dispoñibles na aplicación.
+ *
+ * Presenta as actividades nunha lista vertical mediante [TarxetaActividade],
+ * cargando inicialmente un máximo de dez elementos.
+ *
+ * Se existen máis actividades por cargar, ofrece un botón que permite
+ * engadir os seguintes elementos á lista, mantendo os xa cargados.
+ *
+ * O número total de actividades e a cantidade de elementos cargados
+ * consérvanse ao recrear a pantalla.
+ */
 @Composable
 fun PantallaCatalogo() {
 

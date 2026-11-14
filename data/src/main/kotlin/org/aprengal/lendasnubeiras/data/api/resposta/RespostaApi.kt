@@ -9,7 +9,7 @@ package org.aprengal.lendasnubeiras.data.api.resposta
  *
  * @property codigo Código de resposta devolto pola API.
  * @property exito Indica se a operación foi satisfactoria, considerando
- *                 exitosos os códigos comprendidos entre 200 e 299.
+ * exitosos os códigos comprendidos entre 200 e 299.
  */
 sealed class RespostaApi( val codigo: Int ) {
     val exito: Boolean = codigo in 200..299

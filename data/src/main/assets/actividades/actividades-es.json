@@ -6,42 +6,57 @@
       "El participante debe contarle una historia a la otra persona conectando todas las imágenes que salieron."
     ],
     "resumo": "Cuenta una historia conectando las imágenes aleatorias que salgan en los dados.",
+    "dificultades": {
+      "facil": "Ideal para comenzar y familiarizarse con la dinámica del juego.",
+      "media": "Un reto equilibrado para poner a prueba tus habilidades.",
+      "dificil": "Un desafío mayor para quien busca poner a prueba sus límites."
+    },
     "textos": []
   },
   "pasa-palabra": {
     "titulo": "Pasa la palabra",
     "descricion": [
-      "El monitor lee una palabra y los equipos deben responderla.",
-      "Si aciertan, se pasa a la siguiente; si no lo saben, se puede decir 'Pasapalabra' para ceder el turno.",
-      "Cuenta con tres niveles: Doce palabras con letras aleatorias ascendentes, y en el difícil entran todas las letras del abecedario."
+      "La persona que presenta el juego lee una palabra que los equipos deben adivinar.",
+      "Si un equipo sabe la respuesta, puede decirla. Si no la sabe, puede decir «Pasa la palabra» para ceder el turno."
     ],
-    "resumo": "Responde a las preguntas o di 'Pasa la palabra' para ceder el turno.",
+    "resumo": "Adivina las palabras o di «Pasa la palabra» para ceder el turno.",
     "textos": []
   },
   "palabras-encadeadas": {
     "titulo": "Palabras encadenadas",
     "descricion": [
-      "Partiendo de una letra inicial mostrada en la pantalla, cada jugador debe decir una palabra que comience por la letra con la que terminó la anterior.",
-      "En los niveles avanzados se exige repetir las palabras anteriores o evitar repetirlas entre sesiones, con un límite de tiempo estricto."
+      "Partiendo de una letra inicial que aparece en la pantalla, cada participante debe decir una palabra que comience por la misma letra con la que terminó la palabra anterior."
     ],
-    "resumo": "Encadena palabras basándote en la letra final de la anterior dentro del límite de tiempo.",
+    "resumo": "Encadena palabras a partir de la última letra de la palabra anterior.",
     "textos": []
   },
   "simon-di": {
     "titulo": "La aplicación señala",
     "descricion": [
-      "La aplicación indica órdenes y acciones basadas en movimientos corporales, gestos o desplazamientos que los participantes deben ejecutar en un límite de tiempo ajustado.",
-      "Las órdenes van desde acciones sencillas individuales hasta secuencias encadenadas de dos movimientos."
+      "La aplicación indica órdenes y acciones basadas en movimientos corporales, gestos o desplazamientos que las personas participantes deben ejecutar.",
+      "Las órdenes pueden incluir acciones individuales o secuencias de varios movimientos."
     ],
-    "resumo": "Realiza movimientos corporales y acciones guiadas por la aplicación antes de que se agote el tiempo.",
+    "resumo": "Realiza movimientos corporales y acciones guiadas por la aplicación.",
     "textos": []
   },
   "baul-recordos": {
     "titulo": "Baúl de los recuerdos",
     "descricion": [
-      "La aplicación lanza una temática del pasado (como juguetes antiguos, la escuela o los oficios).",
-      "Los mayores comparten vivencias, recuerdos o cómo se vivía en su época, mientras los jóvenes escuchan, hacen preguntas y comparan con el presente para generar un diálogo intergeneracional."
+      "La aplicación propone una temática relacionada con el pasado, como los juguetes antiguos, la escuela o los oficios.",
+      "Las personas mayores comparten vivencias y recuerdos de cómo se vivía en su época, mientras las más jóvenes escuchan, hacen preguntas y comparan aquellas experiencias con el presente, creando un diálogo entre generaciones."
     ],
+    "lista": {
+      "tipo": "desordenada",
+      "cabeceira": "Posibles temas:",
+      "elementos": [
+        "El juego en la calle y nuestros antiguos juguetes",
+        "La escuela de antes y la de ahora",
+        "La música, los bailes y las fiestas populares",
+        "La vida cotidiana y las tareas del hogar",
+        "Los oficios tradicionales y el trabajo",
+        "La moda, la ropa y la estética"
+      ]
+    },
     "resumo": "Comparte vivencias del pasado y dialoga entre generaciones sobre diferentes temáticas.",
     "textos": []
   }

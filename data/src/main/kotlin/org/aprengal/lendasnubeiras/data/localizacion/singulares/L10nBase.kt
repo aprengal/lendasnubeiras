@@ -33,7 +33,8 @@ enum class L10nBase( internal val clave: String ) : L10nSingular {
     OrdeAntigas( "orde_antigas" ),
     FiltroOrde( "filtro_orde" ),
 
-    FormatoFicha( "formato_ficha" );
+    ListaOrdenada( "lista_ordenada" ),
+    ListaNonOrdenada( "lista_non_ordenada" );
 
     internal val dominio: Dominio = Dominio.BASE
 

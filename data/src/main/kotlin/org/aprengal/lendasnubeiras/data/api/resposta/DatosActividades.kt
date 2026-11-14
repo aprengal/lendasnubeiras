@@ -10,8 +10,7 @@ import org.aprengal.lendasnubeiras.data.api.RutasApi
  * nun mapa de pares clave-valor, almacenándoos nunha lista.
  *
  * @property lista Lista de mapas cos atributos das actividades recibidas.
- *                 Se a resposta non contén o array de actividades,
- *                 devolve unha lista baleira.
+ * Se a resposta non contén o array de actividades, devolve unha lista baleira.
  */
 class DatosActividades( datos: JSONObject ) : RespostaApi( datos.optInt( "codigo" ) ) {
 

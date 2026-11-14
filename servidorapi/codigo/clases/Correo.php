@@ -28,7 +28,7 @@ final readonly class Correo {
 
     /**
      * @var ?string Identificador Message-ID xerado para o correo.
-     *              É null se o envío non chega a completarse correctamente.
+     * É null se o envío non chega a completarse correctamente.
      */
     public ?string $boundary;
 

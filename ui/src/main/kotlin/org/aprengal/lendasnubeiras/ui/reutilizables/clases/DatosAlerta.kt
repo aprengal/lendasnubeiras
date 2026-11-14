@@ -13,7 +13,7 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.AlertaDi
  * @property titulo Recurso de localización co título do diálogo.
  * @property cancelado Acción executada ao cancelar o diálogo.
  * @property descartado Acción executada ao descartar o diálogo. Por defecto,
- *                      utiliza a mesma acción que [cancelado].
+ * utiliza a mesma acción que [cancelado].
  * @property contido Contido composable opcional que se amosa no diálogo.
  * @property confirmado Acción opcional executada ao confirmar o diálogo.
  * @property icona Icona opcional que acompaña o título do diálogo.

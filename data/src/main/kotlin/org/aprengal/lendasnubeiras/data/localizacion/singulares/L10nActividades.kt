@@ -36,7 +36,10 @@ enum class L10nActividades( internal val clave: String ) : L10nSingular {
     DificultadeDificil( "dificultade_dificil" ),
     DificultadePesadelo( "dificultade_pesadelo" ),
     AmosarFicha( "amosar_ficha" ),
-    OcultarFicha( "ocultar_ficha" );
+    OcultarFicha( "ocultar_ficha" ),
+    AmosarConfiguracion( "amosar_configuracion" ),
+    OcultarConfiguracion( "ocultar_configuracion" ),
+    Xogar( "xogar" );
 
     internal val dominio: Dominio = Dominio.META_ACTIVIDADES
 

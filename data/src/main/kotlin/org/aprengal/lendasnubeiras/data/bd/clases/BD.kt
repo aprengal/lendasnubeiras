@@ -18,6 +18,7 @@ import org.aprengal.lendasnubeiras.data.bd.clases.Taboa.PUNTUACIONS
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.limparCache
 import org.aprengal.lendasnubeiras.data.localizacion.clases.ElementoL10n
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nBase
 
@@ -281,6 +282,8 @@ object BD {
             actividadesObsoletas.values.forEach { actividade ->
                 eliminarPuntuacionActividade( actividade )
             }
+
+            limparCache()
 
             return@corrutinaResposta true
 

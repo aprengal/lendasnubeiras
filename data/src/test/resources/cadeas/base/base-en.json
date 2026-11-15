@@ -28,10 +28,17 @@
   "orde_recentes": "Most recent",
   "orde_antigas": "Oldest",
   "filtro_orde": "Sort by",
+  "lista_ordenada": "Ordered list",
+  "lista_non_ordenada": "Unordered list",
+  "xogar": "Play",
 
   "mensaxes_novas": {
     "one": "You have %s new message",
     "other": "You have %s new messages"
+  },
+  "duracion_minutos": {
+    "one": "%s minute",
+    "other": "%s minutes"
   },
 
   "mensaxes_fallos": {

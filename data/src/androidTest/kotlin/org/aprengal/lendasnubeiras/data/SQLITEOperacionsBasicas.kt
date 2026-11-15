@@ -11,6 +11,7 @@ import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.SeleccionSQL
 import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.collerActividade
 import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.collerActividadesBuscables
 import org.aprengal.lendasnubeiras.data.bd.clases.Taboa
+import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.limparCache
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeCrear
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeEditarOutras
@@ -60,12 +61,13 @@ class SQLITEOperacionsBasicas {
     @Test
     fun inserirActividade() {
 
-        val datos = datosCompletos( mapOf( "id" to "101", "clave_titulo" to "dados-historiosos" ) )
+        val tituloClave = "dados-historiosos"
+        val datos = datosCompletos( mapOf( "id" to "101", "clave_titulo" to tituloClave ) )
         val id = bd.insertar( Taboa.ACTIVIDADES, datos )
 
         assertTrue( id > 0 )
 
-        val resultado = collerActividade( id )!!
+        val resultado = collerActividade( tituloClave )!!
 
         assertEquals( "dados-historiosos", resultado.claveTitulo )
 
@@ -75,9 +77,9 @@ class SQLITEOperacionsBasicas {
     fun inserirVariasActividades() {
 
         val datos = listOf(
-            datosCompletosAny(mapOf("id" to 1L, "clave_titulo" to "dados-historiosos")),
-            datosCompletosAny(mapOf("id" to 2L, "clave_titulo" to "pasa-palabra")),
-            datosCompletosAny(mapOf("id" to 3L, "clave_titulo" to "palabras-encadenadas"))
+            datosCompletosAny( mapOf( "id" to 1L, "clave_titulo" to "dados-historiosos" ) ),
+            datosCompletosAny( mapOf( "id" to 2L, "clave_titulo" to "pasa-palabra" ) ),
+            datosCompletosAny( mapOf( "id" to 3L, "clave_titulo" to "palabras-encadenadas" ) )
         )
 
         val ids = bd.insertar( Taboa.ACTIVIDADES, datos )
@@ -95,30 +97,36 @@ class SQLITEOperacionsBasicas {
     @Test
     fun actualizarActividade() {
 
-        val datos = datosCompletos( mapOf( "id" to "102", "clave_titulo" to "dados-historiosos" ) )
+        val tituloClave = "dados-historiosos"
+        val novoTituloClave = "pasa-palabra"
+
+        val datos = datosCompletos( mapOf( "id" to "102", "clave_titulo" to tituloClave ) )
         val id = bd.insertar( Taboa.ACTIVIDADES, datos )
 
-        val cambios = mapOf( "clave_titulo" to "pasa-palabra" )
+        val cambios = mapOf( "clave_titulo" to novoTituloClave )
         val onde = mapOf( "id" to Condicion.Simple( id ) )
         val actualizadas = bd.actualizar( Taboa.ACTIVIDADES, cambios, onde )
+        limparCache()
 
         assertEquals( 1, actualizadas )
-        assertEquals( "pasa-palabra", collerActividade( id )!!.claveTitulo )
-        assertEquals( "pasa-palabra", collerActividade( "pasa-palabra" )!!.claveTitulo )
+        assertNull( collerActividade( tituloClave ) )
+        assertEquals( "pasa-palabra", collerActividade( novoTituloClave )!!.claveTitulo )
 
     }
 
     @Test
     fun eliminarActividade() {
 
-        val datos = datosCompletos( mapOf( "id" to "103", "clave_titulo" to "dados-historiosos", "estado" to "-1" ) )
+        val tituloClave = "dados-historiosos"
+        val datos = datosCompletos( mapOf( "id" to "103", "clave_titulo" to tituloClave, "estado" to "-1" ) )
         val id = bd.insertar( Taboa.ACTIVIDADES, datos )
 
         val onde = mapOf( "id" to Condicion.Simple( id ) )
         val eliminadas = bd.eliminar( Taboa.ACTIVIDADES, onde )
+        limparCache()
 
         assertEquals( 1, eliminadas )
-        assertNull( collerActividade( id ) )
+        assertNull( collerActividade( tituloClave ) )
 
     }
 

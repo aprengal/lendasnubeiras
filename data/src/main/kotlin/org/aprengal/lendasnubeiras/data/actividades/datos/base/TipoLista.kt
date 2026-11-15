@@ -1,9 +1,5 @@
 package org.aprengal.lendasnubeiras.data.actividades.datos.base
 
-import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma
-import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma.Nada
-
-
 /**
  * Define os tipos de lista admitidos para representar coleccións
  * de elementos textuais asociados a unha actividade.

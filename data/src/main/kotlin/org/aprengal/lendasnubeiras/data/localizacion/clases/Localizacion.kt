@@ -21,6 +21,7 @@ import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nValidacion
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.limparCache
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.FileNotFoundException
@@ -154,6 +155,7 @@ object Localizacion {
         traducionsVariantes.clear()
         pluraisCardinais = null
         pluraisOrdinarios = null
+        limparCache()
 
         return true
 

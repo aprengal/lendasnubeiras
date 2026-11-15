@@ -7,9 +7,10 @@
     ],
     "resumo": "Tell a story by connecting the random images rolled on the dice.",
     "dificultades": {
-      "facil": "Ideal to start and get familiar with the game dynamics.",
-      "media": "A balanced challenge to put your skills to the test.",
-      "dificil": "A greater challenge for those looking to test their limits."
+      "facil": "Ideal to start: 2 to 4 dice and simple everyday icons.",
+      "media": "A balanced challenge: 5 to 7 dice with a greater variety of elements.",
+      "dificil": "A greater challenge: 8 to 10 dice and more complex icons to test your limits.",
+      "pesadelo": "The ultimate challenge: 8 to 10 dice and access to the entire icon repertoire without filters."
     },
     "textos": {}
   },

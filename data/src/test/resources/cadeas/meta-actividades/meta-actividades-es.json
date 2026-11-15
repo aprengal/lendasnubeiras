@@ -1,5 +1,13 @@
 {
 
+  "categoria": "Categoría",
+  "destinatario": "Destinatario",
+  "duracion": "Duración",
+  "estado": "Estado",
+  "dificultade": "Dificultad",
+  "amosar_ficha": "Mostrar ficha",
+  "ocultar_ficha": "Ocultar ficha",
+
   "categoria_outros": "Otros",
   "categoria_dixital": "Digital",
   "categoria_aire_libre": "Aire libre",

@@ -8,7 +8,7 @@ class IntegridadeElementos {
     @Test
     fun integridadeElementos() {
 
-        val hashLocalizacion = "8be742e9914812051b93a1653c475d1bf563a85ff85db3a1d5d23d801a5627b3"
+        val hashLocalizacion = "93a58980b5970bea704b91498e3063af131fdb41672cb31507a5c834755c04bf"
 
         revisarHashElemento( "Localizacion", hashLocalizacion, TipoIdentificador.OBJECT )
 
@@ -16,7 +16,7 @@ class IntegridadeElementos {
 
         revisarHashElemento( "L10nSingular", hashL10nSingular, TipoIdentificador.SEALED_INTERFACE )
 
-        val hashCondicion = "aba983db04e3341f584d117f548f75f19667027747305b0683e9c7f97d44e5ba"
+        val hashCondicion = "667389c0e707f4be9ed91439a4c8d9d6da32012410812065bb19816fc5e480a1"
 
         revisarHashElemento( "Condicion", hashCondicion, TipoIdentificador.SEALED_INTERFACE )
 

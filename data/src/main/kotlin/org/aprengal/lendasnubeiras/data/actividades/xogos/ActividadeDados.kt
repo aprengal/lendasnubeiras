@@ -175,22 +175,6 @@ class ActividadeDados {
         "wizard_hat" to "\uDB85\uDC77"
     )
 
-    /*/**
-     * Selecciona unha cantidade determinada de iconas aleatorias sen repeticións.
-     *
-     * A selección realízase a partir dos valores de [iconasActividades].
-     * Se a cantidade solicitada supera o número de iconas dispoñibles,
-     * devólvense todos os iconas existentes.
-     *
-     * @param cantidad Número de iconas que se queren seleccionar, debe ser maior que cero.
-     * @return Lista cos caracteres correspondentes aos iconas seleccionados.
-     * @throws IllegalArgumentException Se a cantidade solicitada é menor ca un.
-     */
-    fun lanzarDados( cantidad: Int ): List<String> {
-        require( cantidad > 0 ) { "A cantidade de iconas debe ser maior que cero" }
-        return iconasActividades.values.shuffled().take( cantidad )
-    }*/
-
     /** Iconas do nivel fácil: obxectos, animais e comida do día a día. Son as únicas que aparecen nese nivel. */
     private val nomesFaciles = setOf(
         "account", "airplane", "baby_face", "bike",

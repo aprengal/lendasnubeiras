@@ -7,9 +7,10 @@
     ],
     "resumo": "Cuenta una historia conectando las imágenes aleatorias que salgan en los dados.",
     "dificultades": {
-      "facil": "Ideal para comenzar y familiarizarse con la dinámica del juego.",
-      "media": "Un reto equilibrado para poner a prueba tus habilidades.",
-      "dificil": "Un desafío mayor para quien busca poner a prueba sus límites."
+      "facil": "Ideal para empezar: de 2 a 4 dados e iconos sencillos del día a día.",
+      "media": "Un reto equilibrado: de 5 a 7 dados con más variedad de elementos.",
+      "dificil": "Un desafío mayor: de 8 a 10 dados e iconos más complejos para poner a prueba tus límites.",
+      "pesadelo": "El reto definitivo: de 8 a 10 dados y acceso a todo el repertorio de iconos sin filtros."
     },
     "textos": {}
   },

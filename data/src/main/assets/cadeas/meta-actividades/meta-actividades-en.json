@@ -2,11 +2,14 @@
 
   "categoria": "Category",
   "destinatario": "Audience",
-  "duration": "Duration",
+  "duracion": "Duration",
   "estado": "State",
   "dificultade": "Dificulty",
   "amosar_ficha": "Show details",
   "ocultar_ficha": "Hide details",
+  "amosar_configuracion": "Show settings",
+  "ocultar_configuracion": "Hide settings",
+  "xogar": "Play",
 
   "categoria_outros": "Others",
   "categoria_dixital": "Digital",

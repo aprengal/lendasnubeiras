@@ -95,7 +95,7 @@ fun PantallaActividadeDetalle( clave: String ) {
 @Composable
 private fun FichaActividade( actividade: Actividade ) {
 
-    val duracion = L10nPlural.Duracion.texto( actividade.duracion )
+    val duracionTexto = L10nPlural.Duracion.texto( actividade.duracion )
 
     Card( Modifier.fillMaxWidth().padding( vertical = 4.dp ) ) {
 
@@ -105,7 +105,7 @@ private fun FichaActividade( actividade: Actividade ) {
             HorizontalDivider()
             FilaFicha( L10nActividades.Destinatario, actividade.destinatario.nome.texto() )
             HorizontalDivider()
-            FilaFicha( L10nActividades.Duracion, duracion )
+            FilaFicha( L10nActividades.Duracion, duracionTexto )
             HorizontalDivider()
 
             Column( Modifier.fillMaxWidth().padding( horizontal = 16.dp, vertical = 12.dp ) ) {
@@ -139,8 +139,7 @@ private fun FichaActividade( actividade: Actividade ) {
  * Utiliza [ElementoLista] sen acción asociada, polo que presenta a información sen permitir
  * interaccións coa fila.
  *
- * O valor recíbese como texto xa localizado, polo que pode representar distintos tipos de datos,
- * incluídos textos singulares e plurais.
+ * O valor recíbese como texto xa localizado, polo que pode representar distintos tipos de datos.
  *
  * @param etiqueta Etiqueta localizada que identifica o dato.
  * @param valor Texto do valor, xa localizado.

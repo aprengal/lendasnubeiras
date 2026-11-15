@@ -1,5 +1,6 @@
 package org.aprengal.lendasnubeiras.data
 
+import android.util.Log
 import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.runBlocking
 import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Grupo
@@ -28,6 +29,7 @@ import org.aprengal.lendasnubeiras.data.bd.operacions.Xogadores.collerXogadores
 import org.aprengal.lendasnubeiras.data.bd.operacions.Xogadores.eliminarXogador
 import org.aprengal.lendasnubeiras.data.bd.operacions.Xogadores.insertarXogador
 import org.aprengal.lendasnubeiras.data.bd.clases.Taboa
+import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.limparCache
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion
 
 import org.junit.After
@@ -64,6 +66,7 @@ class SQLITEMonitor {
         bd.eliminar( Taboa.GRUPOS, mapOf( "id" to Condicion.Simple( 0, OperadorSimple.DISTINTO ) ) )
         val ondeLimpeza = mapOf( "estado" to Condicion.En( setOf( -3, -2, -1, 3 ) ) )
         bd.eliminar( Taboa.ACTIVIDADES, ondeLimpeza )
+        limparCache()
     }
 
     @After
@@ -71,6 +74,7 @@ class SQLITEMonitor {
         bd.eliminar( Taboa.GRUPOS, mapOf( "id" to Condicion.Simple( 0, OperadorSimple.DISTINTO ) ) )
         val ondeLimpeza = mapOf( "estado" to Condicion.En( setOf( -3, -2, -1, 3 ) ) )
         bd.eliminar( Taboa.ACTIVIDADES, ondeLimpeza )
+        limparCache()
     }
 
     @Test
@@ -146,10 +150,12 @@ class SQLITEMonitor {
     fun quitarGrupo() { //Efecto cascada con xogador e puntuacións
 
         val idActividade = 900L
+        val claveTitulo = "dados-historiosos"
+
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "dados-historiosos"))
+            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to claveTitulo ))
         )
-        val actividade = collerActividade( idActividade )!!
+        val actividade = collerActividade( claveTitulo )!!
 
         val idGrupo = insertarGrupo( "Equipo B" )
         val grupo = collerGrupo( idGrupo )!!
@@ -323,11 +329,13 @@ class SQLITEMonitor {
     fun quitarXogador() {
 
         val idActividade = 901L
+        val claveTitulo = "dados-historiosos"
+
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "dados-historiosos"))
+            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to claveTitulo ))
         )
 
-        val actividade = collerActividade( idActividade )!!
+        val actividade = collerActividade( claveTitulo )!!
 
         val idGrupo = insertarGrupo( "Equipo C" )
         val grupo = collerGrupo( idGrupo )!!
@@ -349,10 +357,12 @@ class SQLITEMonitor {
     fun inserirPuntuacionClaveDuplicada() {
 
         val idActividade = 902L
+        val claveTitulo = "dados-historiosos"
+
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "dados-historiosos"))
+            datosCompletos( mapOf( "id" to idActividade.toString(), "clave_titulo" to claveTitulo ) )
         )
-        val actividade = collerActividade( idActividade )!!
+        val actividade = collerActividade( claveTitulo )!!
 
         val idGrupo = insertarGrupo( "Equipo D" )
         val grupo = collerGrupo( idGrupo )!!
@@ -453,10 +463,12 @@ class SQLITEMonitor {
     fun insertarPuntuacionConTimestampActual() {
 
         val idActividade = 917L
+        val claveTitulo = "dados-historiosos"
+
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "dados-historiosos"))
+            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to claveTitulo ))
         )
-        val actividade = collerActividade( idActividade )!!
+        val actividade = collerActividade( claveTitulo )!!
 
         val idGrupo = insertarGrupo( "Equipo Y" )
         val grupo = collerGrupo( idGrupo )!!
@@ -495,10 +507,12 @@ class SQLITEMonitor {
     fun actualizarPuntuacionInferior() {
 
         val idActividade = 903L
+        val claveTitulo = "dados-historiosos"
+
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "dados-historiosos"))
+            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to claveTitulo ) )
         )
-        val actividade = collerActividade( idActividade )!!
+        val actividade = collerActividade( claveTitulo )!!
 
         val idGrupo = insertarGrupo( "Equipo E" )
         val grupo = collerGrupo( idGrupo )!!
@@ -518,10 +532,12 @@ class SQLITEMonitor {
     fun actualizarPuntuacionIgual() {
 
         val idActividade = 904L
+        val claveTitulo = "dados-historiosos"
+
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "dados-historiosos"))
+            datosCompletos( mapOf( "id" to idActividade.toString(), "clave_titulo" to claveTitulo ) )
         )
-        val actividade = collerActividade( idActividade )!!
+        val actividade = collerActividade( claveTitulo )!!
 
         val idGrupo = insertarGrupo( "Equipo F" )
         val grupo = collerGrupo( idGrupo )!!
@@ -541,10 +557,12 @@ class SQLITEMonitor {
     fun actualizarPuntuacionSuperior() {
 
         val idActividade = 905L
+        val claveTitulo = "dados-historiosos"
+
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "dados-historiosos"))
+            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to claveTitulo ))
         )
-        val actividade = collerActividade( idActividade )!!
+        val actividade = collerActividade( claveTitulo )!!
 
         val idGrupo = insertarGrupo( "Equipo G" )
         val grupo = collerGrupo( idGrupo )!!
@@ -564,10 +582,12 @@ class SQLITEMonitor {
     fun proteccionActualizarPuntuacion() {
 
         val idActividade = 906L
+        val claveTitulo = "dados-historiosos"
+
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "dados-historiosos"))
+            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to claveTitulo ))
         )
-        val actividade = collerActividade( idActividade )!!
+        val actividade = collerActividade( claveTitulo )!!
 
         val idGrupo = insertarGrupo( "Equipo H" )
         val grupo = collerGrupo( idGrupo )!!
@@ -593,10 +613,12 @@ class SQLITEMonitor {
     fun eliminarPuntuacionExistente() {
 
         val idActividade = 907L
+        val claveTitulo = "dados-historiosos"
+
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "dados-historiosos"))
+            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to claveTitulo ))
         )
-        val actividade = collerActividade( idActividade )!!
+        val actividade = collerActividade( claveTitulo )!!
 
         val idGrupo = insertarGrupo( "Equipo N" )
         val grupo = collerGrupo( idGrupo )!!
@@ -619,10 +641,11 @@ class SQLITEMonitor {
     fun collerClasificacionOrdenada() {
 
         val idActividade = 908L
+        val claveTitulo = "dados-historiosos"
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "dados-historiosos"))
+            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to claveTitulo ))
         )
-        val actividade = collerActividade( idActividade )!!
+        val actividade = collerActividade( claveTitulo )!!
 
         val idGrupo = insertarGrupo( "Equipo S" )
         val grupo = collerGrupo( idGrupo )!!
@@ -688,10 +711,11 @@ class SQLITEMonitor {
     fun collerClasificacionBaleira() {
 
         val idActividade = 909L
+        val claveTitulo = "dados-historiosos"
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "dados-historiosos"))
+            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to claveTitulo))
         )
-        val actividade = collerActividade( idActividade )!!
+        val actividade = collerActividade( claveTitulo )!!
 
         val clasificacion = collerClasificacion( actividade, Dificultade.Facil )
 
@@ -706,10 +730,12 @@ class SQLITEMonitor {
     fun eliminarActividadePuntuacions() {
 
         val idActividade = 910L
+        val claveTitulo = "dados-historiosos"
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "dados-historiosos"))
+            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to claveTitulo))
         )
-        val actividade = collerActividade( idActividade )!!
+        val actividade = collerActividade( claveTitulo )!!
+        limparCache()
 
         val idGrupo = insertarGrupo( "Equipo T" )
         val grupo = collerGrupo( idGrupo )!!
@@ -718,10 +744,11 @@ class SQLITEMonitor {
 
         insertarPuntuacion( actividade, Dificultade.Facil, xogador, 100L )
 
+
         val filasEliminadas = eliminarPuntuacionActividade( actividade )
 
         assertEquals( 1, filasEliminadas )
-        assertNull( collerActividade( idActividade ) )
+        assertNull( collerActividade( claveTitulo ) )
 
         val onde = SeleccionSQL( columnas = setOf( "*" ), onde = mapOf( "actividade_id" to Condicion.Simple( idActividade ) ) )
         assertTrue( bd.seleccionar( Taboa.PUNTUACIONS, onde ).isEmpty() )
@@ -734,15 +761,17 @@ class SQLITEMonitor {
     fun eliminarActividadeSenPuntuacions() {
 
         val idActividade = 911L
+        val claveTitulo = "dados-historiosos"
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to "dados-historiosos"))
+            datosCompletos(mapOf("id" to idActividade.toString(), "clave_titulo" to claveTitulo))
         )
-        val actividade = collerActividade( idActividade )!!
+        val actividade = collerActividade( claveTitulo )!!
+        limparCache()
 
         val filasEliminadas = eliminarPuntuacionActividade( actividade )
 
         assertEquals( 1, filasEliminadas )
-        assertNull( collerActividade( idActividade ) )
+        assertNull( collerActividade( claveTitulo ) )
 
     }
 

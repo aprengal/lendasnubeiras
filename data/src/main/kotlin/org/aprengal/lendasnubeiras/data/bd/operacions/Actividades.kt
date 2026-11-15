@@ -31,6 +31,18 @@ import org.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
  */
 object Actividades {
 
+    private const val LIMITE_CACHE = 10
+
+    //Últimas actividades consultadas pola clave do título. Ordénase por acceso, polo que ao
+    //superar o límite elimínase a que leva máis tempo sen usarse
+    private val cache = object : LinkedHashMap<String, Actividade>( 16, 0.75f, true ) {
+
+        override fun removeEldestEntry( eldest: MutableMap.MutableEntry<String, Actividade> ): Boolean {
+            return size > LIMITE_CACHE
+        }
+
+    }
+
     /**
      * Obtén as actividades dispoñibles para o buscador, permitindo aplicar
      * filtros pechados, ordenación e filtrado por texto libre.
@@ -91,24 +103,35 @@ object Actividades {
     }
 
     /**
-     * Obtén unha actividade a partir do seu identificador.
-     *
-     * @param id Identificador da actividade que se quere obter.
-     * @return Obxecto Actividade correspondente ou null se non existe.
-     */
-    fun collerActividade( id: Long ): Actividade? {
-        return buscarActividade( mapOf( "id" to Condicion.Simple( id ) ) )
-    }
-
-    /**
      * Obtén unha actividade a partir da súa clave de título.
+     *
+     * Gárdase unha caché coas últimas [LIMITE_CACHE] actividades consultadas, para non ler da base
+     * de datos e do JSON cada vez que se abre unha pantalla. As actividades que non existen non se
+     * gardan na caché.
      *
      * @param claveTitulo Clave única que identifica o título da actividade.
      * @return Obxecto Actividade correspondente ou null se non existe.
      */
     fun collerActividade( claveTitulo: String ): Actividade? {
-        val onde = mapOf( "clave_titulo" to Condicion.Simple( claveTitulo ) )
-        return buscarActividade( onde )
+
+        return synchronized( cache ) {
+
+            cache[ claveTitulo ] ?: buscarActividade( mapOf( "clave_titulo" to Condicion.Simple( claveTitulo ) ) )
+                ?.also { actividade -> cache[ claveTitulo ] = actividade }
+
+        }
+
+    }
+
+    /**
+     * Baleira a caché de actividades.
+     *
+     * Hai que chamala cando cambie o idioma, porque os textos cárganse ao crear a actividade, e
+     * ao actualizar o catálogo, xa que a sincronización pode modificar ou eliminar actividades que
+     * estean na caché. Non fai falta ao inserir unha actividade, porque as que non existen non se gardan.
+     */
+    fun limparCache() {
+        synchronized( cache ) { cache.clear() }
     }
 
     /**

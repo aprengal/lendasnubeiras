@@ -2,8 +2,9 @@ package org.aprengal.lendasnubeiras.data.actividades.datos.base
 
 import org.aprengal.lendasnubeiras.data.actividades.datos.DatosActividade
 import org.aprengal.lendasnubeiras.data.actividades.datos.base.TipoLista.Companion.escollerTipoLista
+import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Dificultade
+import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Dificultade.Companion.escollerDificultade
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.collerTextoActividade
-import org.json.JSONArray
 
 /**
  * Representa unha actividade cos seus datos xerais e contidos textuais.
@@ -54,6 +55,7 @@ data class Actividade(
     override val titulo: String
     override val descricion: List<String>
     val lista: DatosListaActividade?
+    val dificultades: Map<Dificultade, String>
     val textos: Map<String, String>
 
     init {
@@ -61,6 +63,7 @@ data class Actividade(
         val datos = collerTextoActividade( claveTitulo )
         val textosJson = datos.optJSONObject( "textos" )
         val listaJson = datos.optJSONObject( "lista" )
+        val dificultadesJson = datos.optJSONObject( "dificultades" )
 
         titulo = datos.optString( "titulo" )
         descricion = collerDescricion( datos )
@@ -76,6 +79,12 @@ data class Actividade(
             DatosListaActividade( tipo, cabeceira, elementos )
 
         }
+
+        dificultades = dificultadesJson?.let { json ->
+            json.keys().asSequence().associate { claveStr ->
+                escollerDificultade( claveStr ) to json.getString( claveStr )
+            }
+        } ?: emptyMap()
 
         textos = textosJson?.let { json -> json.keys().asSequence().associateWith { chave -> json.optString( chave ) } } ?: emptyMap()
 

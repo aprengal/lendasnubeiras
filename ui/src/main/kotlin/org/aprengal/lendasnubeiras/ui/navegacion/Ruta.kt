@@ -51,6 +51,15 @@ sealed interface Ruta: NavKey {
     @Serializable
     data class ActividadeDetalle( val clave: String ) : Ruta
 
+    /**
+     * Pantalla de detalle dunha actividade concreta.
+     *
+     * @property clave Clave identificadora da actividade que se vai mostrar.
+     * @property dificultade Nivel de dificultade co que se vai realizar a actividade.
+     */
+    @Serializable
+    data class Xogo( val clave: String, val dificultade: String ) : Ruta
+
     /** Pantalla do buscador de actividades. */
     @Serializable
     object Buscador : Ruta

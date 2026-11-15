@@ -40,7 +40,7 @@ import kotlin.time.Duration.Companion.milliseconds
  * ten un tempo limitado para dicir a súa palabra.
  *
  * Ao comezar, escóllese unha letra aleatoria da clave `letras` do mapa de textos, con valores separados
- * por comas. Cada xogador ten [segundosPorXogador] segundos, que se mostran nunha conta atrás
+ * por comas. Cada xogador ten un tempo limitado, que se mostran nunha conta atrás
  * ([ContaAtras]). O botón de seguinte xogador reinicia a conta atrás.
  *
  * Se se esgota o tempo, amósase que o xogador está eliminado. Nos niveis fácil, medio e difícil a conta
@@ -55,20 +55,26 @@ import kotlin.time.Duration.Companion.milliseconds
 @Composable
 fun PalabrasEncadeadas( dificultade: Dificultade, textos: Map<String, String> ) {
 
+    val segundos = when ( dificultade ) {
+        Dificultade.Facil -> 10
+        Dificultade.Media -> 7
+        Dificultade.Dificil -> 5
+        Dificultade.Pesadelo -> 3
+    }
+
     val texto = { clave: String -> collerTextoActividadeDixital( textos, clave ) }
     val letras = remember( textos ) { texto( "letras" ).split( "," ).map { letra -> letra.trim() }.filter { letra -> letra.isNotEmpty() } }
-    val segundos = segundosPorXogador( dificultade )
 
     var iniciada by rememberSaveable { mutableStateOf( false ) }
     var letra by rememberSaveable { mutableStateOf( "" ) }
     var ronda by rememberSaveable { mutableIntStateOf( 0 ) }
     var esgotado by rememberSaveable( ronda ) { mutableStateOf( false ) }
 
-    //No nivel pesadelo o reloxo non se detén tras unha eliminación: despois dun segundo pasa ao seguinte xogador
+    //No nivel pesadelo o reloxo non se detén tras unha eliminación
     LaunchedEffect( esgotado ) {
 
         if ( esgotado && dificultade == Dificultade.Pesadelo ) {
-            delay( 1000.milliseconds )
+            delay( 250.milliseconds )
             ronda++
         }
 
@@ -104,12 +110,12 @@ fun PalabrasEncadeadas( dificultade: Dificultade, textos: Map<String, String> ) 
             EspazadorAlto( 2 )
             ContaAtras( segundos, ronda ) { esgotado = true }
 
-            if ( esgotado ) {
+            if ( esgotado && dificultade != Dificultade.Pesadelo ) {
 
                 EspazadorAlto()
                 Text(
                     texto( "eliminado" ), Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                    style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.error
+                    style = MaterialTheme.typography.titleLarge
                 )
 
             }
@@ -124,24 +130,5 @@ fun PalabrasEncadeadas( dificultade: Dificultade, textos: Map<String, String> ) 
         EspazadorAlto( 2 )
 
     }
-
-}
-
-/**
- * Devolve os segundos que ten cada xogador para dicir a súa palabra.
- *
- * @param dificultade Nivel de dificultade.
- * @return Segundos de tempo por xogador.
- */
-private fun segundosPorXogador( dificultade: Dificultade ): Int {
-
-    val tempoRestante = when ( dificultade ) {
-        Dificultade.Facil -> 10
-        Dificultade.Media -> 7
-        Dificultade.Dificil -> 5
-        Dificultade.Pesadelo -> 3
-    }
-
-    return tempoRestante
 
 }

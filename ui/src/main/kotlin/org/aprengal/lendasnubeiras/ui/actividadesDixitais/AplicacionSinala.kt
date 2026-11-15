@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -22,12 +23,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 import org.aprengal.lendasnubeiras.data.actividades.datos.base.Actividade
 import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Dificultade
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.collerTextoActividadeDixital
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.CabeceiraActividadeDixital
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.EspazadorAlto
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.ContaAtras
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Mostra a actividade dixital «A aplicación sinala»: a aplicación indica ordes e accións que as persoas
@@ -45,10 +48,14 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.ContaAtr
 @Composable
 fun AplicacionSinala( dificultade: Dificultade, textos: Map<String, String> ) {
 
-    val texto = { clave: String -> collerTextoActividadeDixital( textos, clave ) }
-    val segundos = segundosPorAccion( dificultade )
+    val segundos = when ( dificultade ) {
+        Dificultade.Facil -> 6
+        Dificultade.Media -> 5
+        Dificultade.Dificil -> 4
+        Dificultade.Pesadelo -> error( "Aplicación sinala non ten nivel pesadelo" )
+    }
 
-    //Os niveis son acumulativos: cada un inclúe as ordes dos anteriores (5 en fácil, 10 en medio e 15 en difícil)
+    val texto = { clave: String -> collerTextoActividadeDixital( textos, clave ) }
     val ordes = remember( textos, dificultade ) {
 
         Dificultade.entries
@@ -61,7 +68,17 @@ fun AplicacionSinala( dificultade: Dificultade, textos: Map<String, String> ) {
 
     var iniciada by rememberSaveable { mutableStateOf( false ) }
     var ronda by rememberSaveable { mutableIntStateOf( 0 ) }
+    var esgotado by rememberSaveable( ronda ) { mutableStateOf( false ) }
     val orde = rememberSaveable( ronda ) { ordes.randomOrNull().orEmpty() }
+
+    // Retardo suave cando se esgota o tempo para evitar o salto brusco de 0 ao máximo
+    LaunchedEffect( esgotado ) {
+        if ( esgotado ) {
+            delay( 250.milliseconds )
+            ronda++
+            esgotado = false
+        }
+    }
 
     Column( Modifier.fillMaxSize().verticalScroll( rememberScrollState() ), horizontalAlignment = Alignment.CenterHorizontally ) {
 
@@ -80,7 +97,7 @@ fun AplicacionSinala( dificultade: Dificultade, textos: Map<String, String> ) {
             }
 
             EspazadorAlto( 2 )
-            ContaAtras( segundos, ronda ) { ronda++ }
+            ContaAtras( segundos, ronda ) { esgotado = true }
 
             EspazadorAlto( 2 )
             Button( onClick = { ronda++ }, modifier = Modifier.fillMaxWidth() ) { Text( texto( "seguinte_orde" ) ) }
@@ -92,25 +109,5 @@ fun AplicacionSinala( dificultade: Dificultade, textos: Map<String, String> ) {
         EspazadorAlto( 2 )
 
     }
-
-}
-
-/**
- * Devolve os segundos que teñen as persoas participantes para realizar cada acción.
- *
- * @param dificultade Nivel de dificultade.
- * @return Segundos de tempo por acción.
- * @throws IllegalStateException Se se pide o nivel pesadelo, que este xogo non ten.
- */
-private fun segundosPorAccion( dificultade: Dificultade ): Int {
-
-    val tempoRestante = when ( dificultade ) {
-        Dificultade.Facil -> 6
-        Dificultade.Media -> 5
-        Dificultade.Dificil -> 4
-        Dificultade.Pesadelo -> error( "Aplicación sinala non ten nivel pesadelo" )
-    }
-
-    return tempoRestante
 
 }

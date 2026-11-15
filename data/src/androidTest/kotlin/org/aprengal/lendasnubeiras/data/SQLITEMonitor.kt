@@ -37,7 +37,6 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
-import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 import java.time.Instant
@@ -56,20 +55,16 @@ class SQLITEMonitor {
             runBlocking { db.arrancar( contexto, false ) }
             Localizacion.arrancar( contexto )
             bd = db.bd
+
+            //Ao meterse manualmente a info en SQLITE, hai que actualizar o estado de todas as
+            // actividades a -1 para poder borrar as que empregan as probas instrumentais
+            bd.actualizar( Taboa.ACTIVIDADES, mapOf( "estado" to -1 ), mapOf( "id" to Condicion.Simple( 0, OperadorSimple.DISTINTO ) ) )
         }
 
     }
 
-    /*@Before
-    fun limparAntes() {
-        bd.eliminar( Taboa.GRUPOS, mapOf( "id" to Condicion.Simple( 0, OperadorSimple.DISTINTO ) ) )
-        val ondeLimpeza = mapOf( "estado" to Condicion.En( setOf( -3, -2, -1, 3 ) ) )
-        bd.eliminar( Taboa.ACTIVIDADES, ondeLimpeza )
-        limparCache()
-    }*/
-
     @After
-    fun limparDespois() {
+    fun limparActividades() {
         bd.eliminar( Taboa.GRUPOS, mapOf( "id" to Condicion.Simple( 0, OperadorSimple.DISTINTO ) ) )
         val ondeLimpeza = mapOf( "estado" to Condicion.En( setOf( -3, -2, -1, 3 ) ) )
         bd.eliminar( Taboa.ACTIVIDADES, ondeLimpeza )
@@ -742,7 +737,6 @@ class SQLITEMonitor {
         val xogador = collerXogador( idXogador )!!
 
         insertarPuntuacion( actividade, Dificultade.Facil, xogador, 100L )
-
 
         val filasEliminadas = eliminarPuntuacionActividade( actividade )
 

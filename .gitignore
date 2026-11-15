@@ -44,4 +44,7 @@ servidorapi/.htaccess
 constantes-privadas.php
 
 #copia dos arquivos de data
-androidTest/assets
+androidTest/assets/
+
+#copia dos arquivos de localización
+test/resources/

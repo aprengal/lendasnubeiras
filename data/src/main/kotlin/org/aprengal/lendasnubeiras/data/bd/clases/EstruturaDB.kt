@@ -142,7 +142,20 @@ internal class EstruturaDB {
             """
         )
 
-        //TODO: Insertar manualmente as actividades porque a API vai deixar de funcionar
+        //Inserción manual da información das actividades porque a API vai deixar de funcionar
+        db.execSQL(
+            """
+            INSERT INTO $actividades (
+                id, clave_titulo, id_autoria, id_categoria,
+                id_destinatario, estado, duracion, data_modificado
+            ) VALUES
+                (130797354209, 'dados-historiosos', 9762854874, 'interior', 'mixto', 2, 15, 130797354209),
+                (130797354210, 'pasa-palabra', 9762854874, 'dixital', 'mixto', 2, 30, 130797354210),
+                (130797354211, 'palabras-encadeadas', 9762854874, 'outros', 'mixto', 2, 10, 130797354211),
+                (130797354212, 'aplicacion-sinala', 9762854874, 'dixital', 'mixto', 2, 15, 130797354212),
+                (130797354213, 'baul-recordos', 9762854874, 'interior', 'mixto', 2, 15, 130797354213)
+            """
+        )
 
     }
 

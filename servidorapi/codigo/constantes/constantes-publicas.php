@@ -42,5 +42,8 @@ const DIAS_BORRADO_CONTA = 30;
 //Usuario reservado: administrador suspendido, sen sesión posible, ao que pasan as actividades publicadas das contas borradas. Non se pode modificar.
 const CORREO_USUARIO_LEGADO = 'legado@example.com';
 
-//Columnas da táboa de actividades que se reciben e se envían ao cliente
-const COLUMNAS_ACTIVIDADE = [ 'id', 'clave_titulo', 'id_autoria', 'id_categoria', 'id_destinatario', 'estado', 'duracion', 'data_modificado' ];
+//Columnas da táboa de actividades que se reciben e se envían ao cliente. Empréganse alias para poder realizar as joins
+const COLUMNAS_ACTIVIDADE = [
+    'a.id', 'a.clave_titulo', 'a.id_autoria', 'c.clave as id_categoria',
+    'd.clave as id_destinatario', 'a.estado', 'a.duracion', 'a.data_modificado'
+];

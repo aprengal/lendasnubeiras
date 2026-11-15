@@ -3,6 +3,42 @@
 declare( strict_types = 1 );
 
 /**
+ * Constrúe a configuración común das consultas de actividades.
+ *
+ * Recupera os datos das actividades mediante JOIN coas táboas
+ * categoria e destinatario, substituíndo os seus identificadores
+ * polas claves correspondentes.
+ *
+ * @return array Configuración común para as consultas de actividades.
+ */
+function busca_actividades(): array {
+
+	$datos = [
+        'columnas' => COLUMNAS_ACTIVIDADE,
+        'alias' => 'a',
+        'join' => [
+            [
+                'tipo' => 'INNER',
+                'principal' => 'id_categoria',
+                'secundaria' => 'c.id',
+                'taboa-join' => 'categorias',
+                'alias' => 'c'
+            ],
+            [
+                'tipo' => 'INNER',
+                'principal' => 'id_destinatario',
+                'secundaria' => 'd.id',
+                'taboa-join' => 'destinatarios',
+                'alias' => 'd'
+            ]
+        ]
+    ];
+
+    return $datos;
+
+}
+
+/**
  * Devolve as regras de validación dos campos dunha actividade.
  *
  * As regras varían segundo a operación:
@@ -67,19 +103,17 @@ function formatar_actividade( array $fila ): array {
 /**
  * Recupera unha actividade da base de datos mediante o seu identificador.
  *
- * Consulta unicamente os campos definidos en COLUMNAS_ACTIVIDADE
- * e normaliza os seus tipos mediante formatar_actividade().
+ * Consulta os campos definidos en COLUMNAS_ACTIVIDADE e obtén as claves
+ * da categoría e do destinatario mediante as correspondentes JOIN.
+ * Normaliza os tipos dos valores mediante formatar_actividade().
  *
  * @param int $id Identificador da actividade no servidor.
  * @return array|null Datos da actividade formateados ou null se non existe.
  */
 function coller_actividade( int $id ): ?array {
 
-	$busca = [
-		'columnas' => COLUMNAS_ACTIVIDADE,
-		'onde' => [ 'id' => $id ],
-		'limit' => 1
-	];
+	$busca = busca_actividades();
+    $busca[ 'onde' ] = [ 'a.id' => $id ];
 
 	$filas = db()->select( 'actividades', $busca, 'array' );
 
@@ -107,8 +141,8 @@ function coller_actividade( int $id ): ?array {
  * Os borradores e as actividades pendentes doutros usuarios non se
  * mostran a autores nin colaboradores.
  *
- * Os resultados devólvense normalizados mediante formatar_actividade()
- * e ordenados segundo o identificador de la actividad.
+ * As consultas recuperan tamén as claves da categoría e do destinatario
+ * mediante JOIN coas táboas correspondentes.
  *
  * @param Usuario|null $usuario Usuario cuxas actividades visibles
  * se queren recuperar, ou null para unha consulta anónima.
@@ -119,7 +153,7 @@ function coller_actividades_visibles( ?Usuario $usuario ): array {
     $rol = $usuario?->rol;
     $todas = in_array( $rol, [ Rol::EDITOR, Rol::ADMINISTRADOR ], true );
 
-    $busca = [ 'columnas' => COLUMNAS_ACTIVIDADE ];
+    $busca = busca_actividades();
 
     if ( !$todas ) {
         $busca[ 'onde' ] = [ 'estado' => [ 'operador' => 'IN', 'valores' => [ 2 ] ] ];

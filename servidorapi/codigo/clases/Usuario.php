@@ -215,7 +215,7 @@ final readonly class Usuario {
      * @param bool $revisar_cache Indica se se debe utilizar a caché global.
      * @return stdClass|null Obxecto cos datos e sesións vixentes, ou null se non se atopa.
      */
-    private function buscar_usuario( string $campo, string|int $valor, bool $revisar_cache ): ?stdClass {
+    private function buscar_usuario( string $campo, string|int $valor, bool $revisar_cache ): Usuario|null|stdClass {
 
         if ( $revisar_cache ) {
             return coller_usuario( $campo, $valor );

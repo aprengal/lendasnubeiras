@@ -31,6 +31,8 @@ function endpoint_actualizar(): void {
         responder( 429 );
     }
 
-    responder( 200, [ 'actividades' => coller_actividades_visibles( $usuario->existe() ? $usuario : null ) ] );
+    $actividades = coller_actividades_visibles( $usuario->existe() ? $usuario : null );
+
+    responder( 200, [ 'actividades' => $actividades ] );
 
 }

@@ -24,7 +24,7 @@ declare( strict_types = 1 );
  * @throws LogicException Se se solicita reiniciar o usuario actual
  * sen ter previamente un usuario autenticado e existente.
  */
-function usuario_actual( string $accion = 'coller' ) {
+function usuario_actual( string $accion = 'coller' ): Usuario {
 
     static $usuario;
 
@@ -85,7 +85,7 @@ function usuario_actual( string $accion = 'coller' ) {
  * @throws OutOfBoundsException Se se busca por identificador cun valor
  * non numérico ou inferior a -1.
  */
-function coller_usuario( string $campo, string|int $valor, bool $memoria = true ) {
+function coller_usuario( string $campo, string|int $valor, bool $memoria = true ): Usuario {
 
 	static $usuarios = [];
 

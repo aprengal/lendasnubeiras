@@ -51,7 +51,7 @@ internal object ControlAcceso {
             Ruta.Catalogo::class -> PodeLer
             Ruta.Buscador::class -> PodeLer
             Ruta.ActividadeDetalle::class -> PodeLer
-            Ruta.Xogo::class -> PodeLer
+            Ruta.ActividadeDixital::class -> PodeLer
 
             // Creación
             Ruta.ListarActividades::class -> PodeCrear

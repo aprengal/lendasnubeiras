@@ -1,6 +1,5 @@
 package org.aprengal.lendasnubeiras.data
 
-import android.util.Log
 import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.runBlocking
 import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Grupo
@@ -676,7 +675,7 @@ class SQLITEMonitor {
         puntuacion[ "unix_rexistro" ] = 2000L
         bd.insertar( Taboa.PUNTUACIONS, puntuacion )
 
-        puntuacion[ "dificultade" ] = Dificultade.Normal.clave
+        puntuacion[ "dificultade" ] = Dificultade.Media.clave
         puntuacion[ "xogador_id" ] = xogador4.id
         bd.insertar( Taboa.PUNTUACIONS, puntuacion )
 

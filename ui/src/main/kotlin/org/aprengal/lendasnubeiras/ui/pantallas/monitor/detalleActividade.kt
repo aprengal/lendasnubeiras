@@ -22,14 +22,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.aprengal.lendasnubeiras.data.actividades.datos.base.Actividade
 import org.aprengal.lendasnubeiras.data.actividades.datos.base.TipoLista
+import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Dificultade
 import org.aprengal.lendasnubeiras.ui.navegacion.Ruta
 import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.collerActividade
 import org.aprengal.lendasnubeiras.data.localizacion.cantidades.L10nPlural
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nActividades
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nSingular
-import org.aprengal.lendasnubeiras.ui.pantallas.monitor.actividadesDixitais.PrepararXogo
+import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalNavegacion
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosElementoLista
+import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.BotonPrincipal
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.BotonSecundario
+import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.SelectorFiltro
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.EspazadorAlto
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.ElementoLista
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.ListaTexto
@@ -50,19 +53,25 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.ListaTex
 fun PantallaActividadeDetalle( clave: String ) {
 
     val actividade = remember( clave ) { collerActividade( clave )!! }
-    val tenDescricion = actividade.textos.isNotEmpty()
+    val actividadeDixital = actividade.textos.isNotEmpty()
 
-    var fichaAberta by rememberSaveable { mutableStateOf( !tenDescricion ) }
+    var fichaAberta by rememberSaveable { mutableStateOf( !actividadeDixital ) }
+    var configuracionAberta by rememberSaveable { mutableStateOf( false ) }
     val textoFicha = if ( fichaAberta ) L10nActividades.OcultarFicha else L10nActividades.AmosarFicha
 
     Column( modifier = Modifier.fillMaxSize().verticalScroll( rememberScrollState() ) ) {
 
-        if ( tenDescricion ) {
+        if ( actividadeDixital ) {
+
+            val accionBotonFicha = {
+                fichaAberta = !fichaAberta
+                if (fichaAberta) configuracionAberta = false
+            }
 
             EspazadorAlto( 2 )
 
             Box( Modifier.fillMaxWidth(), contentAlignment = Alignment.Center ) {
-                BotonSecundario( textoFicha, { fichaAberta = !fichaAberta } )
+                BotonSecundario( textoFicha, accionBotonFicha )
             }
 
         }
@@ -72,8 +81,19 @@ fun PantallaActividadeDetalle( clave: String ) {
             FichaActividade( actividade )
         }
 
-        if ( tenDescricion ) {
-            PrepararXogo( actividade )
+        if ( fichaAberta && !actividadeDixital ) {
+            EspazadorAlto( 2 )
+        }
+
+        if ( actividadeDixital ) {
+
+            val botonConfiguracion = {
+                configuracionAberta = !configuracionAberta
+                if ( configuracionAberta ) fichaAberta = false
+            }
+
+            PrepararActividadeDixital( actividade, configuracionAberta, botonConfiguracion  )
+
         }
 
     }
@@ -147,4 +167,66 @@ private fun FichaActividade( actividade: Actividade ) {
 @Composable
 private fun FilaFicha( etiqueta: L10nSingular, valor: String ) {
     ElementoLista( DatosElementoLista( titulo = etiqueta, contido = { Text( valor ) } ) )
+}
+
+/**
+ * Mostra a configuración dunha actividade dixital, que se pode despregar ou ocultar mediante un botón.
+ *
+ * Permite escoller a dificultade e consultar a súa descrición. Se a actividade só ten unha dificultade
+ * dispoñible, non se amosa o selector. O botón para comezar a actividade permanece visible
+ * independentemente de que a configuración estea despregada ou oculta.
+ *
+ * @param actividade Actividade dixital que se vai configurar.
+ * @param configuracionAberta Indica se a configuración está despregada.
+ * @param cambiarConfiguracion Acción para despregar ou ocultar a configuración.
+ */
+@Composable
+fun PrepararActividadeDixital( actividade: Actividade, configuracionAberta: Boolean, cambiarConfiguracion: () -> Unit ) {
+
+    val navegacion = LocalNavegacion.current
+    val textoConfiguracion = if ( configuracionAberta ) L10nActividades.OcultarConfiguracion else L10nActividades.AmosarConfiguracion
+    val opcions = remember( actividade ) { actividade.dificultades.keys.sortedBy { dificultade -> dificultade.ordinal } }
+
+    var dificultade by rememberSaveable {
+        mutableStateOf( opcions.find { dif -> dif == Dificultade.Media } ?: opcions.firstOrNull() ?: Dificultade.Media )
+    }
+    val comezar = { navegacion.engadir( Ruta.ActividadeDixital( actividade.claveTitulo, dificultade.clave ) ) }
+
+    EspazadorAlto( 2 )
+
+    Box( Modifier.fillMaxWidth(), contentAlignment = Alignment.Center ) {
+        BotonSecundario( textoConfiguracion, cambiarConfiguracion )
+    }
+
+    if ( configuracionAberta ) {
+
+        EspazadorAlto( 2 )
+
+        Card( Modifier.fillMaxWidth().padding( vertical = 4.dp ) ) {
+
+            Column( Modifier.fillMaxWidth() ) {
+
+                if ( opcions.size > 1 ) {
+                    SelectorFiltro( L10nActividades.Dificultade, opcions, dificultade, null ) { escollido -> dificultade = escollido ?: dificultade }
+                    HorizontalDivider()
+                }
+
+                actividade.dificultades[ dificultade ]?.let { descricionDificultade ->
+                    Text( descricionDificultade, Modifier.padding( horizontal = 16.dp, vertical = 12.dp ), style = MaterialTheme.typography.bodyLarge )
+                }
+
+            }
+
+        }
+
+    }
+
+    EspazadorAlto( 2 )
+
+    Box( Modifier.fillMaxWidth().padding( horizontal = 16.dp ), contentAlignment = Alignment.Center ) {
+        BotonPrincipal( L10nActividades.Xogar, comezar, Modifier.fillMaxWidth() )
+    }
+
+    EspazadorAlto( 2 )
+
 }

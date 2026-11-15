@@ -2,7 +2,7 @@
   "dados-historiosos": {
     "titulo": "Dados historiosos",
     "descricion": [
-      "El juego elige aleatoriamente varias imágenes según la cantidad de dados que escojas.",
+      "La aplicación elige aleatoriamente varias imágenes según la cantidad de dados que escojas.",
       "El participante debe contarle una historia a la otra persona conectando todas las imágenes que salieron."
     ],
     "resumo": "Cuenta una historia conectando las imágenes aleatorias que salgan en los dados.",
@@ -12,7 +12,14 @@
       "dificil": "Un desafío mayor: de 8 a 10 dados e iconos más complejos para poner a prueba tus límites.",
       "pesadelo": "El reto definitivo: de 8 a 10 dados y acceso a todo el repertorio de iconos sin filtros."
     },
-    "textos": {}
+    "textos": {
+      "instrucions": "Lanza los dados e inventa una historia con los iconos que salen.",
+      "lanzar_dados": "Lanzar dados",
+      "ver_lista": "Ver lista completa",
+      "agochar_lista": "Ocultar lista completa",
+      "quitar_dado": "Quitar un dado",
+      "engadir_dado": "Añadir un dado"
+    }
   },
   "pasa-palabra": {
     "titulo": "Pasa la palabra",
@@ -43,7 +50,7 @@
   "baul-recordos": {
     "titulo": "Baúl de los recuerdos",
     "descricion": [
-      "La aplicación propone una temática relacionada con el pasado, como los juguetes antiguos, la escuela o los oficios.",
+      "O monitor propone una temática relacionada con el pasado, como los juguetes antiguos, la escuela o los oficios.",
       "Las personas mayores comparten vivencias y recuerdos de cómo se vivía en su época, mientras las más jóvenes escuchan, hacen preguntas y comparan aquellas experiencias con el presente, creando un diálogo entre generaciones."
     ],
     "lista": {

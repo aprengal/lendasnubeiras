@@ -9,6 +9,7 @@ enum class L10nActividades( internal val clave: String ) : L10nSingular {
     Duracion( "duracion" ),
     Estado( "estado" ),
     Dificultade( "dificultade" ),
+    DificultadeActual( "dificultade_actual" ),
 
     CategoriaOutros( "categoria_outros" ),
     CategoriaDixital( "categoria_dixital" ),

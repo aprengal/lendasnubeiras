@@ -5,6 +5,7 @@
   "duracion": "Duración",
   "estado": "Estado",
   "dificultade": "Dificultad",
+  "dificultade_actual": "Dificultad %s",
   "amosar_ficha": "Mostrar ficha",
   "ocultar_ficha": "Ocultar ficha",
   "amosar_configuracion": "Mostrar configuración",

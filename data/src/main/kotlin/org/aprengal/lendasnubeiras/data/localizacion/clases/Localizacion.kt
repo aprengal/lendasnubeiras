@@ -376,16 +376,16 @@ object Localizacion {
     }
 
     /**
-     * Obtén un texto da interface dun xogo a partir do mapa de textos da actividade.
+     * Obtén un texto da interface dunha actividade dixital a partir do seu mapa de textos.
      *
-     * Busca o texto correspondente á clave indicada. Se non existe, devolve
-     * o texto de substitución definido para o idioma actual.
+     * Busca o texto asociado á clave indicada. Se a clave non existe no mapa,
+     * devolve o texto de substitución definido para o idioma actual.
      *
-     * @param textos Mapa de textos da actividade ([Actividade.textos]).
+     * @param textos Mapa de textos da actividade dixital ([Actividade.textos]).
      * @param clave Clave do texto que se quere obter.
-     * @return O texto asociado á clave ou o texto de substitución se non existe.
+     * @return O texto asociado á clave ou, se non existe, o texto de substitución.
      */
-    fun collerTextoXogo( textos: Map<String, String>, clave: String ): String {
+    fun collerTextoActividadeDixital( textos: Map<String, String>, clave: String ): String {
         return textos[ clave ] ?: idiomaActual.value.pendente
     }
 

@@ -2,7 +2,7 @@
   "dados-historiosos": {
     "titulo": "Story Dice",
     "descricion": [
-      "The game randomly selects several images depending on the number of dice you choose.",
+      "The application randomly selects several images depending on the number of dice you choose.",
       "The participant must tell a story to the other person by connecting all the images that appeared."
     ],
     "resumo": "Tell a story by connecting the random images rolled on the dice.",
@@ -12,7 +12,14 @@
       "dificil": "A greater challenge: 8 to 10 dice and more complex icons to test your limits.",
       "pesadelo": "The ultimate challenge: 8 to 10 dice and access to the entire icon repertoire without filters."
     },
-    "textos": {}
+    "textos": {
+      "instrucions": "Roll the dice and invent a story with the icons that appear.",
+      "lanzar_dados": "Roll dice",
+      "ver_lista": "View full list",
+      "agochar_lista": "Hide full list",
+      "quitar_dado": "Remove a die",
+      "engadir_dado": "Add a die"
+    }
   },
   "pasa-palabra": {
     "titulo": "Pass the Word",
@@ -43,7 +50,7 @@
   "baul-recordos": {
     "titulo": "Memory Chest",
     "descricion": [
-      "The application proposes a theme related to the past, such as old toys, school, or professions.",
+      "The monitor proposes a theme related to the past, such as old toys, school, or professions.",
       "Older adults share experiences and memories of what life was like in their time, while younger ones listen, ask questions, and compare those experiences with the present, creating a dialogue between generations."
     ],
     "lista": {

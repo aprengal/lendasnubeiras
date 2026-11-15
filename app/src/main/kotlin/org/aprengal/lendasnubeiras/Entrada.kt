@@ -24,7 +24,6 @@ import androidx.core.os.LocaleListCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle as escoitarEstado
 import org.aprengal.lendasnubeiras.data.bd.clases.BD
-import org.aprengal.lendasnubeiras.data.api.ConexionApi
 import org.aprengal.lendasnubeiras.data.axustes.Axustes
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion

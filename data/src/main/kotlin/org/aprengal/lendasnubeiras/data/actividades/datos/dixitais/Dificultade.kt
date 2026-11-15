@@ -23,7 +23,7 @@ enum class Dificultade( override val clave: String, override val nome: L10nActiv
     Facil( "facil", L10nActividades.DificultadeFacil ),
 
     /** Nivel de dificultade medio. */
-    Normal( "normal", L10nActividades.DificultadeMedia ),
+    Media( "media", L10nActividades.DificultadeMedia ),
 
     /** Nivel de dificultade alto. */
     Dificil( "dificil", L10nActividades.DificultadeDificil ),
@@ -36,13 +36,13 @@ enum class Dificultade( override val clave: String, override val nome: L10nActiv
         /**
          * Obtén o nivel de dificultade correspondente a unha clave.
          *
-         * Se non existe ningún nivel coa clave indicada, devolve [Normal].
+         * Se non existe ningún nivel coa clave indicada, devolve [Media].
          *
          * @param clave Identificador do nivel de dificultade que se quere obter.
-         * @return O nivel correspondente á clave ou [Normal] se non existe.
+         * @return O nivel correspondente á clave ou [Media] se non existe.
          */
         fun escollerDificultade( clave: String ): Dificultade {
-            return entries.find { dificultade -> dificultade.clave == clave } ?: Normal
+            return entries.find { dificultade -> dificultade.clave == clave } ?: Media
         }
 
     }

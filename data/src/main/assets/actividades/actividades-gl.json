@@ -2,7 +2,7 @@
   "dados-historiosos": {
     "titulo": "Dados historiosos",
     "descricion": [
-      "O xogo escolle aleatoriamente varias imaxes segundo a cantidade de dados que escolles.",
+      "A aplicación escolle aleatoriamente varias imaxes segundo a cantidade de dados que escolles.",
       "O participante debe contarlle unha historia á outra persoa conectando todas as imaxes que saíron."
     ],
     "resumo": "Conta unha historia conectando as imaxes aleatorias que saian nos dados.",
@@ -13,6 +13,7 @@
       "pesadelo": "O reto definitivo: de 8 a 10 dados e acceso a todo o repertorio de iconas sen filtros."
     },
     "textos": {
+      "instrucions": "Lanza os dados e inventa unha historia coas iconas que saen.",
       "lanzar_dados": "Lanzar dados",
       "ver_lista": "Ver lista completa",
       "agochar_lista": "Agochar lista completa",
@@ -49,7 +50,7 @@
   "baul-recordos": {
     "titulo": "Baúl dos recordos",
     "descricion": [
-      "A aplicación propón unha temática relacionada co pasado, como os xoguetes antigos, a escola ou os oficios.",
+      "O monitor propón unha temática relacionada co pasado, como os xoguetes antigos, a escola ou os oficios.",
       "As persoas maiores comparten vivencias e recordos de como se vivía na súa época, mentres as máis novas escoitan, fan preguntas e comparan aquelas experiencias co presente, creando un diálogo entre xeracións."
     ],
     "lista": {

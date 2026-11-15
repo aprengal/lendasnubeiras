@@ -79,12 +79,6 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.TarxetaA
  * Se a busca non devolve ningunha actividade, amósase a mensaxe correspondente
  * de ausencia de resultados. Se existen máis coincidencias das que se están
  * amosando, ofrécese a posibilidade de continuar cargándoas.
- *
- * O teclado virtual ocúltase ao executar unha busca e a sección de busca avanzada
- * péchase automaticamente, facilitando a visualización dos resultados.
- *
- * A función non recibe parámetros nin devolve ningún valor, xa que toda a súa
- * interacción e presentación se xestionan mediante o estado interno de Compose.
  */
 @Composable
 fun PantallaBuscador() {

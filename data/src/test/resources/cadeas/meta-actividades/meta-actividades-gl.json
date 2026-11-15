@@ -4,9 +4,13 @@
   "destinatario": "Destinatario",
   "estado": "Estado",
   "dificultade": "Dificultade",
+  "dificultade_actual": "Dificultade %s",
   "duracion": "Duración",
   "amosar_ficha": "Amosar ficha",
   "ocultar_ficha": "Ocultar ficha",
+  "amosar_configuracion": "Amosar configuración",
+  "ocultar_configuracion": "Ocultar configuración",
+  "xogar": "Xogar",
 
   "categoria_outros": "Outros",
   "categoria_dixital": "Dixital",

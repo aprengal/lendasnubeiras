@@ -20,6 +20,7 @@ import org.aprengal.lendasnubeiras.data.usuarios.AccionsUsuario.rexistrarse
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalIdioma
 
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalNavegacion
+import org.aprengal.lendasnubeiras.ui.navegacion.Ruta
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosCampoTexto
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.BotonPrincipal
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.CampoTexto

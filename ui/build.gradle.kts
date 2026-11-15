@@ -66,18 +66,18 @@ dependencies {
     implementation( libs.kotlinx.serialization.json )
 
     //Previsualización
-    implementation( libs.androidx.compose.ui.tooling.preview )
-    debugImplementation( libs.androidx.compose.ui.tooling )
+    //implementation( libs.androidx.compose.ui.tooling.preview )
+    //debugImplementation( libs.androidx.compose.ui.tooling )
 
     //Tests unitarios
-    testImplementation( libs.junit )
-    testImplementation( kotlin( "reflect" ) )
+    //testImplementation( libs.junit )
+    //testImplementation( kotlin( "reflect" ) )
 
     //Tests instrumentais
     //androidTestImplementation( libs.androidx.runner )
     //androidTestImplementation( libs.androidx.rules )
 
-    //módulos proxecto
+    //módulo de datos
     implementation( project( ":data" ) )
 
 }

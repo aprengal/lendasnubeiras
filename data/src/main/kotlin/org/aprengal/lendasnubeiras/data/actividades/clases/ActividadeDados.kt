@@ -1,4 +1,4 @@
-package org.aprengal.lendasnubeiras.data.actividades.xogos
+package org.aprengal.lendasnubeiras.data.actividades.clases
 
 import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Dificultade
 
@@ -217,8 +217,8 @@ class ActividadeDados {
         "weather_windy"
     )
 
-    private val nomesNivelNormal = nomesFaciles + nomesMedios
-    private val nomesNivelDificil = nomesNivelNormal + nomesDificiles
+    private val nomesNivelMedio = nomesFaciles + nomesMedios
+    private val nomesNivelDificil = nomesNivelMedio + nomesDificiles
 
     init {
 
@@ -237,7 +237,7 @@ class ActividadeDados {
 
         return when ( dificultade ) {
             Dificultade.Facil -> 2..4
-            Dificultade.Normal -> 5..7
+            Dificultade.Media -> 5..7
             Dificultade.Dificil, Dificultade.Pesadelo -> 8..10
         }
 
@@ -256,7 +256,7 @@ class ActividadeDados {
 
         return when ( dificultade ) {
             Dificultade.Facil -> iconasActividades.filterKeys { nome -> nome in nomesFaciles }
-            Dificultade.Normal -> iconasActividades.filterKeys { nome -> nome in nomesNivelNormal }
+            Dificultade.Media -> iconasActividades.filterKeys { nome -> nome in nomesNivelMedio }
             Dificultade.Dificil -> iconasActividades.filterKeys { nome -> nome in nomesNivelDificil }
             Dificultade.Pesadelo -> iconasActividades
         }
@@ -289,7 +289,7 @@ class ActividadeDados {
         val nomesPesadelo = iconasActividades.keys - ( nomesFaciles + nomesMedios + nomesDificiles )
         val mapa = mapOf(
             Dificultade.Facil to iconasActividades.filterKeys { it in nomesFaciles },
-            Dificultade.Normal to iconasActividades.filterKeys { it in nomesMedios },
+            Dificultade.Media to iconasActividades.filterKeys { it in nomesMedios },
             Dificultade.Dificil to iconasActividades.filterKeys { it in nomesDificiles },
             Dificultade.Pesadelo to iconasActividades.filterKeys { it in nomesPesadelo }
         )

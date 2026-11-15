@@ -126,7 +126,7 @@ internal fun <T : ElementoL10n> SelectorFiltro( titulo: L10nSingular, opcions: L
 
 }
 
-//Igual se podería aplicar nun xogo de amosar ou agochar resposta
+//Igual se podería aplicar nunha actividade dixital de amosar ou agochar resposta
 //Funciona o campo de contrasinal, pero igual é innecesario
 /*@Composable
 fun CampoContrasinal( datos: DatosCampoTexto ) {

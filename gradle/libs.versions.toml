@@ -12,9 +12,8 @@ icu4j = "79.1"
 json = "20260814"
 junit = "4.13.2"
 kotlin = "2.4.21"
-kotlinxSerializationJson = "1.12.0"
+kotlinxSerializationJson = "1.13.0"
 lifecycleRuntimeKtx = "2.11.0"
-#lifecycleViewmodelNavigation3 = "2.12.0-alpha02"
 material = "1.14.0"
 navigation3Runtime = "1.2.1"
 navigation3Ui = "1.2.1"
@@ -37,8 +36,6 @@ androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-compose-ui-text = { group = "androidx.compose.ui", name = "ui-text", version.ref = "uiText" }
-androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
-androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-compose-ui-unit = { group = "androidx.compose.ui", name = "ui-unit", version.ref = "uiUnit" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }

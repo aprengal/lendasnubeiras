@@ -28,7 +28,7 @@ import org.aprengal.lendasnubeiras.ui.pantallas.monitor.PantallaBuscador
 import org.aprengal.lendasnubeiras.ui.pantallas.monitor.PantallaInicio
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalRuta
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalTitulo
-import org.aprengal.lendasnubeiras.ui.pantallas.monitor.actividadesDixitais.PantallaXogo
+import org.aprengal.lendasnubeiras.ui.pantallas.monitor.PantallaActividadeDixital
 import org.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaApertura
 import org.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaBase
 import org.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaSuperior
@@ -109,7 +109,7 @@ internal class DatosNavegacion {
             val actividadeArgumentos = DatosPantalla( TITULO_SUPERIOR )
 
             ruta<Ruta.ActividadeDetalle>( actividadeArgumentos ) { datos -> PantallaActividadeDetalle( datos.clave ) }
-            ruta<Ruta.Xogo>( actividadeArgumentos ) { datos -> PantallaXogo( datos.clave, datos.dificultade ) }
+            ruta<Ruta.ActividadeDixital>( actividadeArgumentos ) { datos -> PantallaActividadeDixital( datos.clave, datos.dificultade ) }
 
         }
 

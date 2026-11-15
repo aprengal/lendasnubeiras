@@ -47,6 +47,7 @@ fun PantallaInicio() {
 
     val accionCatalogo = { navegacion.engadir( Ruta.Catalogo ) }
     val accionBuscar = { navegacion.engadir( Ruta.Buscador ) }
+    val modificadorTextoAleatorio = Modifier.padding( vertical = 20.dp, horizontal = 16.dp )
 
     Column( modificadorCol, Arrangement.Center, Alignment.CenterHorizontally ) {
 
@@ -56,7 +57,7 @@ fun PantallaInicio() {
         EspazadorAlto( 3 )
 
         Card( Modifier.fillMaxWidth() ) {
-            TextoVariante( L10nVariante.MensaxesCambiantes, numeroAleatorio, Modifier.padding( 16.dp ), estilo = MaterialTheme.typography.bodyLarge )
+            TextoVariante( L10nVariante.MensaxesCambiantes, numeroAleatorio, modificadorTextoAleatorio, MaterialTheme.typography.bodyLarge )
         }
 
     }

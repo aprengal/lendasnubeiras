@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.aprengal.lendasnubeiras.data.actividades.datos.base.Actividade
 import org.aprengal.lendasnubeiras.data.actividades.datos.buscador.ActividadeBuscable
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nSingular
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalNavegacion

@@ -28,8 +28,8 @@ val copiarArquivosAndroidTest = tasks.register<Sync>( "copiarArquivosTesteoAndro
 
 val copiarTraducionsTest = tasks.register<Sync>( "copiarTraducionsTest" ) {
     description = "Shhhh2"
-    from( "src/main/assets/cadeas" )
-    into( "src/test/resources/cadeas" )
+    from( "src/main/assets/" )
+    into( "src/test/resources/" )
 }
 
 tasks.configureEach {

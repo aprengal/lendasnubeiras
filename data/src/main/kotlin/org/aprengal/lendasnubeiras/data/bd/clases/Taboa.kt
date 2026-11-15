@@ -9,7 +9,7 @@ package org.aprengal.lendasnubeiras.data.bd.clases
  */
 enum class Taboa( val nome: String ) {
 
-    /** Actividades do catálogo e xestión local de xogos. */
+    /** Actividades do catálogo e xestión local das actividades. */
     ACTIVIDADES( "actividades" ),
 
     /** Grupos de participantes que organiza o monitor para realizar actividades. */

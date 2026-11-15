@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -33,25 +32,26 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Dificultade
-import org.aprengal.lendasnubeiras.data.actividades.xogos.ActividadeDados
+import org.aprengal.lendasnubeiras.data.actividades.clases.ActividadeDados
 import org.aprengal.lendasnubeiras.data.actividades.datos.base.Actividade
-import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.collerTextoXogo
+import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.collerTextoActividadeDixital
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.Icona.Companion.DebuxarIcona
+import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.CabeceiraActividadeDixital
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.Texto
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.EspazadorAlto
 
 /**
- * Mostra o xogo "Dados historiosos": lánzanse varios dados e a persoa ten que contar unha historia
- * coas iconas que saen.
+ * Mostra a actividade dixital «Dados historiosos», na que a persoa lanza varios dados e crea
+ * unha historia a partir das iconas obtidas.
  *
- * A dificultade determina cantos dados se poden lanzar ([ActividadeDados.rangoDados]) e de que
- * iconas se escolle ([ActividadeDados.iconasDoNivel]). Se cambia a dificultade, reiníciase o xogo.
+ * A dificultade determina o número de dados que se poden lanzar ([ActividadeDados.rangoDados])
+ * e as iconas dispoñibles ([ActividadeDados.iconasDoNivel]).
  *
- * @param dificultade Nivel de dificultade do xogo.
- * @param textos Mapa cos textos da interface, o de [Actividade.textos].
+ * @param dificultade Nivel de dificultade da actividade dixital.
+ * @param textos Mapa cos textos da interface ([Actividade.textos]).
  */
 @Composable
-fun XogoDados( dificultade: Dificultade, textos: Map<String, String> ) {
+fun DadosHistoriosos( dificultade: Dificultade, textos: Map<String, String> ) {
 
     val tarefaDatos = remember { ActividadeDados() }
     val rango = tarefaDatos.rangoDados( dificultade )
@@ -60,16 +60,18 @@ fun XogoDados( dificultade: Dificultade, textos: Map<String, String> ) {
     var cantidadeDados by rememberSaveable( dificultade ) { mutableIntStateOf( rango.first ) }
     var amosarLista by rememberSaveable { mutableStateOf( false ) }
 
-    val texto = { clave: String -> collerTextoXogo( textos, clave ) }
+    val texto = { clave: String -> collerTextoActividadeDixital( textos, clave ) }
 
     LazyVerticalGrid(
-        columns = GridCells.Adaptive( minSize = 64.dp ),
+        columns = GridCells.Adaptive( minSize = 70.dp ),
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy( 8.dp ),
-        verticalArrangement = Arrangement.spacedBy( 8.dp )
+        horizontalArrangement = Arrangement.spacedBy( 10.dp ),
+        verticalArrangement = Arrangement.spacedBy( 10.dp )
     ) {
 
         item( span = { GridItemSpan( maxLineSpan ) } ) { EspazadorAlto() }
+
+        item( span = { GridItemSpan( maxLineSpan ) } ) { CabeceiraActividadeDixital( texto( "instrucions" ), dificultade ) }
 
         //Modificador de dados
         item( span = { GridItemSpan( maxLineSpan ) } ) {
@@ -77,6 +79,7 @@ fun XogoDados( dificultade: Dificultade, textos: Map<String, String> ) {
             val descricionQuitar = Modifier.semantics { contentDescription = texto( "quitar_dado" ) }
             val descricionEngadir = Modifier.semantics { contentDescription = texto( "engadir_dado" ) }
 
+            EspazadorAlto()
             Row( modifier = Modifier.fillMaxWidth(), Arrangement.SpaceEvenly, Alignment.CenterVertically ) {
                 Button( onClick = { cantidadeDados-- }, modifier = descricionQuitar, enabled = cantidadeDados > rango.first ) { Text( "-" ) }
                 Text( cantidadeDados.toString() )
@@ -88,11 +91,14 @@ fun XogoDados( dificultade: Dificultade, textos: Map<String, String> ) {
         //Botón de lanzamento de dados
         item( span = { GridItemSpan( maxLineSpan ) } ) {
 
-            val recheoInferior = if ( listaSeleccionados.isEmpty() ) 0.dp else 10.dp
-            val modificador = Modifier.fillMaxWidth().padding( bottom = recheoInferior )
+            val modificador = Modifier.fillMaxWidth()
             val accion = { listaSeleccionados = tarefaDatos.lanzarDados( cantidadeDados, dificultade ) }
 
             Button( onClick = accion, modifier = modificador ) { Text( text = texto( "lanzar_dados" ) ) }
+
+            if ( listaSeleccionados.isEmpty() ) {
+                EspazadorAlto()
+            }
 
         }
 
@@ -104,11 +110,14 @@ fun XogoDados( dificultade: Dificultade, textos: Map<String, String> ) {
 
             Column( modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally ) {
 
-                val recheoDivisor = Modifier.padding( vertical = 10.dp )
                 val corDivisor = MaterialTheme.colorScheme.primary
                 val textoBoton = if ( amosarLista ) texto( "agochar_lista" ) else texto( "ver_lista" )
 
-                HorizontalDivider( modifier = recheoDivisor, color = corDivisor )
+                EspazadorAlto()
+                HorizontalDivider( color = corDivisor )
+
+                //Ponse 2 porque cada fila engade 10.dp de altura do grid
+                EspazadorAlto( 2 )
                 Button( onClick = { amosarLista = !amosarLista } ) { Text( text = textoBoton ) }
 
             }
@@ -123,7 +132,7 @@ fun XogoDados( dificultade: Dificultade, textos: Map<String, String> ) {
 
                 // 1. Cabeceira
                 item( span = { GridItemSpan( maxLineSpan ) } ) {
-                    Texto( dificultade.nome, Modifier.padding( top = 16.dp, bottom = 8.dp ), MaterialTheme.typography.titleMedium )
+                    Texto( dificultade.nome, Modifier.padding( vertical = 10.dp ), MaterialTheme.typography.titleMedium )
                 }
 
                 // 2. Os iconos correspondentes a este nivel
@@ -131,17 +140,25 @@ fun XogoDados( dificultade: Dificultade, textos: Map<String, String> ) {
 
             }
 
+            item( span = { GridItemSpan( maxLineSpan ) } ) { EspazadorAlto() }
+
         }
 
     }
 
 }
 
+/**
+ * Mostra unha icona nunha casiña cadrada cun fondo de cor secundaria.
+ *
+ * @param icona Clave da icona que se quere debuxar.
+ * @param modifier Modificador que se aplica á casiña.
+ */
 @Composable
 private fun CasillaIcono( icona: String, modifier: Modifier = Modifier ) {
 
     val corExterna = MaterialTheme.colorScheme.secondary.copy( alpha = 0.15f )
-    val modificador = modifier.aspectRatio( 1f ).background( color = corExterna, shape = RoundedCornerShape( 8.dp ) )
+    val modificador = modifier.aspectRatio( 1f ).background( color = corExterna, shape = MaterialTheme.shapes.medium )
 
     BoxWithConstraints( contentAlignment = Alignment.Center, modifier = modificador ) {
         val dimension = with( LocalDensity.current ) { ( maxWidth * 0.625f ).toSp() }
@@ -150,12 +167,20 @@ private fun CasillaIcono( icona: String, modifier: Modifier = Modifier ) {
 
 }
 
+
+/**
+ * Mostra unha icona nunha casiña cadrada co seu bordo.
+ *
+ * Utilízase para visualizar as iconas dispoñibles durante as probas da actividade dixital.
+ *
+ * @param textoIcona Clave da icona que se quere debuxar.
+ */
 @Composable
 private fun ListarTodasIconas( textoIcona: String ) {
 
     val modificador = Modifier
         .aspectRatio( 1f )
-        .border( 1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape( 8.dp ) )
+        .border( 1.dp, MaterialTheme.colorScheme.outline, MaterialTheme.shapes.medium )
         .padding( 8.dp )
 
     Column( modificador, Arrangement.Center, Alignment.CenterHorizontally ) {

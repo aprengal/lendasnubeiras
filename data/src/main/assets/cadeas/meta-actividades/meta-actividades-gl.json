@@ -4,6 +4,7 @@
   "destinatario": "Destinatario",
   "estado": "Estado",
   "dificultade": "Dificultade",
+  "dificultade_actual": "Dificultade %s",
   "duracion": "Duración",
   "amosar_ficha": "Amosar ficha",
   "ocultar_ficha": "Ocultar ficha",

@@ -60,13 +60,13 @@ class SQLITEMonitor {
 
     }
 
-    @Before
+    /*@Before
     fun limparAntes() {
         bd.eliminar( Taboa.GRUPOS, mapOf( "id" to Condicion.Simple( 0, OperadorSimple.DISTINTO ) ) )
         val ondeLimpeza = mapOf( "estado" to Condicion.En( setOf( -3, -2, -1, 3 ) ) )
         bd.eliminar( Taboa.ACTIVIDADES, ondeLimpeza )
         limparCache()
-    }
+    }*/
 
     @After
     fun limparDespois() {

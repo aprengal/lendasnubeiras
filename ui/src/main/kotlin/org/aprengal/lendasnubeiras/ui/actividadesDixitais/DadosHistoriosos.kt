@@ -1,4 +1,4 @@
-package org.aprengal.lendasnubeiras.ui.pantallas.monitor.actividadesDixitais
+package org.aprengal.lendasnubeiras.ui.actividadesDixitais
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

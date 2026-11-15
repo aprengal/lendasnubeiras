@@ -247,7 +247,7 @@ object BD {
                 try {
 
                     val id = ( actServidor[ "id" ] as Number ).toLong()
-                    val dataModificadoServidor = ( actServidor[ "dataModificado" ] as? Number )?.toLong() ?: 0L
+                    val dataModificadoServidor = ( actServidor[ "data_modificado" ] as? Number )?.toLong() ?: 0L
                     val actLocal = actividadesLocais[ id ]
 
                     when {

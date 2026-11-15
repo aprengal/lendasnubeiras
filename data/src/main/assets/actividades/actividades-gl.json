@@ -33,19 +33,47 @@
   "palabras-encadeadas": {
     "titulo": "Palabras encadeadas",
     "descricion": [
-      "Partindo dunha letra inicial que aparece na pantalla, cada participante debe dicir unha palabra que comece pola mesma letra coa que rematou a palabra anterior."
+      "A aplicación amosa unha letra na pantalla.",
+      "Cada xogador debe dicir unha palabra que comece pola letra coa que rematou a palabra anterior, seguindo a quenda e os retos de memoria segundo o nivel."
     ],
     "resumo": "Encadea palabras a partir da última letra da palabra anterior.",
-    "textos": {}
+    "dificultades": {
+      "facil": "Fácil: di unha palabra que comece coa letra anterior. 10 segundos de tempo para cada xogador.",
+      "media": "Medio: repite as palabras anteriores e engade unha nova pola última letra. 7 segundos de límite.",
+      "dificil": "Difícil: mesmo xogo acumulativo pero sen repetir palabras en varias sesións. 5 segundos de límite.",
+      "pesadelo": "Pesadelo: o reto máis extremo con 3 segundos de límite e o reloxo non se para aínda que haxa un eliminado."
+    },
+    "textos": {
+      "instrucions": "Di unha palabra que comece coa última letra da anterior antes de que acabe o tempo.",
+      "letras": "A, B, C, D, E, F, G, H, I, L, M, N, Ñ, O, P, Q, R, S, T, U, V, X, Z",
+      "letra_inicial": "Letra inicial",
+      "comezar": "Comezar",
+      "rematar": "Rematar",
+      "seguinte_xogador": "Seguinte xogador",
+      "eliminado": "Eliminado!"
+    }
   },
-  "simon-di": {
+  "aplicacion-sinala": {
     "titulo": "A aplicación sinala",
     "descricion": [
       "A aplicación indica ordes e accións baseadas en movementos corporais, xestos ou desprazamentos que as persoas participantes deben executar.",
       "As ordes poden incluír accións individuais ou secuencias de varios movementos."
     ],
     "resumo": "Realiza movementos corporais e accións guiadas pola aplicación.",
-    "textos": {}
+    "dificultades": {
+      "facil": "Cinco ordes sinxelas e moi claras, con 6 segundos para realizar cada acción.",
+      "media": "Dez ordes: as do nivel fácil e outras cinco con pequenos desprazamentos e xestos. 5 segundos para cada acción.",
+      "dificil": "Quince ordes: as dos niveis anteriores e outras cinco con secuencias de dous movementos seguidos. 4 segundos para cada acción."
+    },
+    "textos": {
+      "instrucions": "Fai o que indique a aplicación antes de que remate o tempo.",
+      "comezar": "Comezar",
+      "seguinte_orde": "Seguinte orde",
+      "rematar": "Rematar",
+      "ordes_facil": "Levanta os dous brazos ao alto!|Pon as mans na cabeza!|Toca os teus ombreiros con suavidade!|Sorrí o máis ancho posible!|Saúda coa man dereita!",
+      "ordes_media": "Dá un paso á dereita!|Dá un paso atrás!|Cruza os brazos no peito!|Pon cara de sorpresa!|Toca coa man dereita o teu ombreiro esquerdo!",
+      "ordes_dificil": "Levanta os brazos e dá un paso á dereita!|Pon as mans na cabeza e pon cara de sorpresa!|Toca os ombreiros e dá un paso atrás!|Cruza os brazos e saúda coa man!|Levanta o brazo dereito e dá un paso adiante!"
+    }
   },
   "baul-recordos": {
     "titulo": "Baúl dos recordos",

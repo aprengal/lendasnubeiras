@@ -2,30 +2,33 @@ package org.aprengal.lendasnubeiras.ui.pantallas.monitor
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Dificultade.Companion.escollerDificultade
+import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Dificultade
 import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.collerActividade
+import org.aprengal.lendasnubeiras.ui.actividadesDixitais.AplicacionSinala
 import org.aprengal.lendasnubeiras.ui.navegacion.Ruta
-import org.aprengal.lendasnubeiras.ui.pantallas.monitor.actividadesDixitais.DadosHistoriosos
+import org.aprengal.lendasnubeiras.ui.actividadesDixitais.DadosHistoriosos
+import org.aprengal.lendasnubeiras.ui.actividadesDixitais.PalabrasEncadeadas
 
 /**
- * Mostra a pantalla da actividade dixital correspondente á clave do título e á dificultade escollida.
+ * Mostra a actividade dixital correspondente á clave recibida e á dificultade escollida.
  *
- * Obtén a actividade e a dificultade a partir das claves recibidas e mostra o contido da actividade
- * dixital correspondente. Só se navega a esta pantalla desde actividades dixitais que teñen unha
- * implementación asociada; se non existe ningunha para a actividade, considérase un erro de programación.
+ * Busca a actividade mediante a súa clave e mostra a implementación correspondente,
+ * pasándolle a dificultade escollida e os textos asociados á actividade.
  *
- * @param clave Clave do título da actividade, a mesma que leva [Ruta.ActividadeDixital].
- * @param claveDificultade Clave da dificultade escollida.
- * @throws IllegalStateException Se a actividade non ten ningunha implementación asociada.
+ * @param clave Clave do título da actividade, coincidente coa definida en [Ruta.ActividadeDixital].
+ * @param dificultade Dificultade escollida para a actividade.
+ * @throws IllegalStateException Se non existe unha implementación dixital asociada á actividade.
  */
 @Composable
-fun PantallaActividadeDixital( clave: String, claveDificultade: String ) {
+fun PantallaActividadeDixital( clave: String, dificultade: Dificultade ) {
 
     val actividade = remember( clave ) { collerActividade( clave )!! }
-    val dificultade = remember( claveDificultade ) { escollerDificultade( claveDificultade ) }
+    val textos = actividade.textos
 
     when ( actividade.claveTitulo ) {
-        "dados-historiosos" -> DadosHistoriosos( dificultade, actividade.textos )
+        "dados-historiosos" -> DadosHistoriosos( dificultade, textos )
+        "palabras-encadeadas" -> PalabrasEncadeadas( dificultade, textos )
+        "aplicacion-sinala" -> AplicacionSinala( dificultade, textos )
         else -> error( "${ actividade.claveTitulo } non ten ningunha actividade dixital asociada" )
     }
 

@@ -36,21 +36,48 @@
       "Partiendo de una letra inicial que aparece en la pantalla, cada participante debe decir una palabra que comience por la misma letra con la que terminó la palabra anterior."
     ],
     "resumo": "Encadena palabras a partir de la última letra de la palabra anterior.",
-    "textos": {}
+    "dificultades": {
+      "facil": "Fácil: di una palabra que comience por la última letra de la palabra anterior. 10 segundos para cada jugador.",
+      "media": "Medio: repite las palabras anteriores y añade una nueva que comience por la última letra. 7 segundos de límite.",
+      "dificil": "Difícil: el mismo juego acumulativo, pero sin repetir palabras en varias sesiones. 5 segundos de límite.",
+      "pesadelo": "Pesadilla: el reto más extremo, con 3 segundos de límite. El reloj no se detiene aunque haya un jugador eliminado."
+    },
+    "textos": {
+      "instrucions": "Di una palabra que comience por la última letra de la anterior antes de que se acabe el tiempo.",
+      "letras": "A, B, C, D, E, F, G, H, I, J, K, L, M, N, Ñ, O, P, Q, R, S, T, U, V, W, X, Y, Z",
+      "letra_inicial": "Letra inicial",
+      "comezar": "Comenzar",
+      "rematar": "Finalizar",
+      "seguinte_xogador": "Siguiente jugador",
+      "eliminado": "¡Eliminado!"
+    }
   },
-  "simon-di": {
+  "aplicacion-sinala": {
     "titulo": "La aplicación señala",
     "descricion": [
       "La aplicación indica órdenes y acciones basadas en movimientos corporales, gestos o desplazamientos que las personas participantes deben ejecutar.",
       "Las órdenes pueden incluir acciones individuales o secuencias de varios movimientos."
     ],
     "resumo": "Realiza movimientos corporales y acciones guiadas por la aplicación.",
-    "textos": {}
+    "dificultades": {
+      "facil": "Cinco órdenes sencillas y muy claras, con 6 segundos para realizar cada acción.",
+      "media": "Diez órdenes: las del nivel fácil y otras cinco con pequeños desplazamientos y gestos. 5 segundos para cada acción.",
+      "dificil": "Quince órdenes: las de los niveles anteriores y otras cinco con secuencias de dos movimientos seguidos. 4 segundos para cada acción."
+    },
+    "textos": {
+      "instrucions": "Haz lo que indique la aplicación antes de que se acabe el tiempo.",
+      "comezar": "Comenzar",
+      "seguinte_orde": "Siguiente orden",
+      "rematar": "Finalizar",
+      "ordes_facil": "¡Levanta los dos brazos!|¡Pon las manos en la cabeza!|¡Toca tus hombros suavemente!|¡Sonríe lo más ampliamente posible!|¡Saluda con la mano derecha!",
+      "ordes_media": "¡Da un paso a la derecha!|¡Da un paso atrás!|¡Cruza los brazos sobre el pecho!|¡Pon cara de sorpresa!|¡Toca con la mano derecha tu hombro izquierdo!",
+      "ordes_dificil": "¡Levanta los brazos y da un paso a la derecha!|¡Pon las manos en la cabeza y pon cara de sorpresa!|¡Toca tus hombros y da un paso atrás!|¡Cruza los brazos y saluda con la mano!|¡Levanta el brazo derecho y da un paso adelante!"
+    }
   },
   "baul-recordos": {
     "titulo": "Baúl de los recuerdos",
     "descricion": [
-      "O monitor propone una temática relacionada con el pasado, como los juguetes antiguos, la escuela o los oficios.",
+      "El monitor propone una temática relacionada con el pasado, como los juguetes antiguos, la escuela o los oficios.",
       "Las personas mayores comparten vivencias y recuerdos de cómo se vivía en su época, mientras las más jóvenes escuchan, hacen preguntas y comparan aquellas experiencias con el presente, creando un diálogo entre generaciones."
     ],
     "lista": {

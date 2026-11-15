@@ -37,6 +37,11 @@
   "dificultade_facil": "Easy",
   "dificultade_media": "Medium",
   "dificultade_dificil": "Hard",
-  "dificultade_pesadelo": "Nightmare"
+  "dificultade_pesadelo": "Nightmare",
+
+  "tempo_restante": {
+    "one": "%s second remaining",
+    "other": "%s seconds remaining"
+  }
 
 }

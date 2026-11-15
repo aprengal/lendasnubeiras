@@ -36,22 +36,49 @@
       "Starting from an initial letter shown on the screen, each participant must say a word that begins with the same letter the previous word ended with."
     ],
     "resumo": "Chain words starting from the last letter of the previous word.",
-    "textos": {}
+    "dificultades": {
+      "facil": "Easy: say a word that starts with the last letter of the previous word. Each player has 10 seconds.",
+      "media": "Medium: repeat the previous words and add a new one starting with the last letter. 7-second time limit.",
+      "dificil": "Hard: the same cumulative game, but without repeating words across multiple sessions. 5-second time limit.",
+      "pesadelo": "Nightmare: the ultimate challenge, with a 3-second time limit. The clock keeps running even when a player is eliminated."
+    },
+    "textos": {
+      "instrucions": "Say a word that starts with the last letter of the previous word before time runs out.",
+      "letras": "A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z",
+      "letra_inicial": "Starting letter",
+      "comezar": "Start",
+      "rematar": "Finish",
+      "seguinte_xogador": "Next player",
+      "eliminado": "Eliminated!"
+    }
   },
-  "simon-di": {
+  "aplicacion-sinala": {
     "titulo": "The App Signals",
     "descricion": [
-      "The application gives orders and actions based on body movements, gestures, or displacements that the participants must execute.",
+      "The application gives orders and actions based on body movements, gestures, or movements that participants must perform.",
       "The orders can include individual actions or sequences of multiple movements."
     ],
     "resumo": "Perform body movements and actions guided by the application.",
-    "textos": {}
+    "dificultades": {
+      "facil": "Five simple and very clear commands, with 6 seconds to perform each action.",
+      "media": "Ten commands: the ones from the easy level plus five more with small movements and gestures. 5 seconds for each action.",
+      "dificil": "Fifteen commands: the ones from the previous levels plus five more with sequences of two consecutive movements. 4 seconds for each action."
+    },
+    "textos": {
+      "instrucions": "Do what the application tells you before time runs out.",
+      "comezar": "Start",
+      "seguinte_orde": "Next command",
+      "rematar": "Finish",
+      "ordes_facil": "Raise both arms!|Put your hands on your head!|Gently touch your shoulders!|Smile as widely as you can!|Wave with your right hand!",
+      "ordes_media": "Take a step to the right!|Take a step back!|Cross your arms over your chest!|Make a surprised face!|Touch your left shoulder with your right hand!",
+      "ordes_dificil": "Raise your arms and take a step to the right!|Put your hands on your head and make a surprised face!|Touch your shoulders and take a step back!|Cross your arms and wave!|Raise your right arm and take a step forward!"
+    }
   },
   "baul-recordos": {
     "titulo": "Memory Chest",
     "descricion": [
-      "The monitor proposes a theme related to the past, such as old toys, school, or professions.",
-      "Older adults share experiences and memories of what life was like in their time, while younger ones listen, ask questions, and compare those experiences with the present, creating a dialogue between generations."
+      "The host suggests a topic related to the past, such as old toys, school, or traditional occupations.",
+      "Older adults share experiences and memories of what life was like in their time, while younger people listen, ask questions, and compare those experiences with the present, creating a dialogue between generations."
     ],
     "lista": {
       "tipo": "desordenada",

@@ -46,11 +46,11 @@ class SQLITEOperacionsBasicas {
 
     }
 
-    @Before
+    /*@Before
     fun limparAntes() {
         val ondeLimpeza = mapOf( "estado" to Condicion.En( setOf( -3, -2, -1, 3 ) ) )
         bd.eliminar( Taboa.ACTIVIDADES, ondeLimpeza )
-    }
+    }*/
 
     @After
     fun limparDespois() {
@@ -372,7 +372,7 @@ class SQLITEOperacionsBasicas {
             datosCompletosAny( mapOf( "id" to 1L, "id_autoria" to 30L, "clave_titulo" to "dados-historiosos" ) ),
             datosCompletosAny( mapOf( "id" to 2L, "id_autoria" to 20L, "clave_titulo" to "pasa-palabra" ) ),
             datosCompletosAny( mapOf( "id" to 3L, "id_autoria" to 30L, "clave_titulo" to "palabras-encadenadas" ) ),
-            datosCompletosAny( mapOf( "id" to 4L, "id_autoria" to 30L, "clave_titulo" to "simon-di" ) ),
+            datosCompletosAny( mapOf( "id" to 4L, "id_autoria" to 30L, "clave_titulo" to "aplicacion-sinala" ) ),
             datosCompletosAny( mapOf( "id" to 5L, "id_autoria" to 50L, "clave_titulo" to "baul-recordos" ) ),
         )
 

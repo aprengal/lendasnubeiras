@@ -7,7 +7,8 @@ import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion
 enum class L10nPlural( internal val clave: String, internal val dominio: Dominio ) : L10n {
 
     MensaxesNovas( "mensaxes_novas", Dominio.BASE ),
-    Duracion( "duracion_minutos", Dominio.BASE );
+    Duracion( "duracion_minutos", Dominio.BASE ),
+    TempoRestante( "tempo_restante", Dominio.META_ACTIVIDADES );
 
     fun texto( num: Number ): String = Localizacion.l10nPlural( this, num )
 

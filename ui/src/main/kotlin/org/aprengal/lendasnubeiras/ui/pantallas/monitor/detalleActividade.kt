@@ -190,7 +190,7 @@ fun PrepararActividadeDixital( actividade: Actividade, configuracionAberta: Bool
     var dificultade by rememberSaveable {
         mutableStateOf( opcions.find { dif -> dif == Dificultade.Media } ?: opcions.firstOrNull() ?: Dificultade.Media )
     }
-    val comezar = { navegacion.engadir( Ruta.ActividadeDixital( actividade.claveTitulo, dificultade.clave ) ) }
+    val comezar = { navegacion.engadir( Ruta.ActividadeDixital( actividade.claveTitulo, dificultade ) ) }
 
     EspazadorAlto( 2 )
 

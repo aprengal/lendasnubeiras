@@ -3,6 +3,7 @@ package org.aprengal.lendasnubeiras.ui.navegacion
 import android.annotation.SuppressLint
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
+import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Dificultade
 
 /**
  * Rutas de navegación da aplicación.
@@ -58,7 +59,7 @@ sealed interface Ruta: NavKey {
      * @property dificultade Nivel de dificultade co que se vai realizar a actividade.
      */
     @Serializable
-    data class ActividadeDixital( val clave: String, val dificultade: String ) : Ruta
+    data class ActividadeDixital( val clave: String, val dificultade: Dificultade ) : Ruta
 
     /** Pantalla do buscador de actividades. */
     @Serializable

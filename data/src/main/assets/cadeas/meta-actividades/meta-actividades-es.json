@@ -37,6 +37,12 @@
   "dificultade_facil": "Fácil",
   "dificultade_media": "Media",
   "dificultade_dificil": "Difícil",
-  "dificultade_pesadelo": "Pesadilla"
+  "dificultade_pesadelo": "Pesadilla",
+
+  "tempo_restante": {
+    "one": "Queda %s segundo",
+    "other": "Quedan %s segundos",
+    "many": "Quedan %s de segundos"
+  }
 
 }

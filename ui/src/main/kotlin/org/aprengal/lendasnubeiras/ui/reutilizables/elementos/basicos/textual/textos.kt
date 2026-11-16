@@ -29,22 +29,41 @@ import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalTitulo
 import org.aprengal.lendasnubeiras.ui.navegacion.Ruta
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.EspazadorAlto
 
+/**
+ * Mostra un texto localizado a partir dun elemento de localización singular.
+ *
+ * @param elemento Elemento de localización que contén o texto que se desexa mostrar.
+ * @param modifier Modificador que permite personalizar a disposición e o aspecto do texto.
+ * @param estilo Estilo tipográfico aplicado ao texto. Por defecto, utiliza o estilo local actual.
+ */
 @Composable
 fun Texto( elemento: L10nSingular, modifier: Modifier = Modifier, estilo: TextStyle = LocalTextStyle.current ) {
     Text( elemento.texto(), modifier, style = estilo )
 }
 
-//Por se hai un texto que apareza de golpe (mensaxes de erro en formularios)
-/*@Composable
-fun TextoAnunciable( elemento: L10nSingular, modifier: Modifier = Modifier ) {
-    Text( text = elemento.texto(), modifier = modifier.semantics { liveRegion = LiveRegionMode.Polite } )
-}*/
-
+/**
+ * Mostra un texto localizado en función da cantidade indicada, utilizando
+ * as formas plurais correspondentes.
+ *
+ * @param elemento Elemento de localización que contén as formas plurais do texto.
+ * @param cantidade Cantidade utilizada para determinar a forma plural que se mostrará.
+ * @param modifier Modificador que permite personalizar a disposición e o aspecto do texto.
+ * @param estilo Estilo tipográfico aplicado ao texto. Por defecto, utiliza o estilo local actual.
+ */
 @Composable
 fun TextoPlural( elemento: L10nPlural, cantidade: Number, modifier: Modifier = Modifier, estilo: TextStyle = LocalTextStyle.current ) {
     Text( elemento.texto( cantidade ), modifier, style = estilo )
 }
 
+/**
+ * Mostra un texto localizado en función da cantidade indicada, utilizando
+ * a variante correspondente definida no elemento de localización.
+ *
+ * @param elemento Elemento de localización que contén as variantes do texto.
+ * @param cantidade Cantidade utilizada para determinar a variante que se mostrará.
+ * @param modifier Modificador que permite personalizar a disposición e o aspecto do texto.
+ * @param estilo Estilo tipográfico aplicado ao texto. Por defecto, utiliza o estilo local actual.
+ */
 @Composable
 fun TextoVariante( elemento: L10nVariante, cantidade: Int, modifier: Modifier = Modifier, estilo: TextStyle = LocalTextStyle.current ) {
     Text( elemento.texto( cantidade ), modifier, style = estilo )

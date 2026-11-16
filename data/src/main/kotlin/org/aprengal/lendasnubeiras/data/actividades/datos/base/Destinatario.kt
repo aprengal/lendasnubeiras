@@ -7,18 +7,15 @@ import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nActividades
  * Define os grupos de persoas aos que vai dirixida unha actividade.
  *
  * Permite clasificar as actividades segundo o seu público destinatario,
- * facilitando a súa identificación e filtrado en función do perfil das
- * persoas ás que están dirixidas.
+ * facilitando a súa identificación e filtrado en función das persoas ás
+ * que están dirixidas.
  *
- * As categorías inclúen grupos definidos por franxas de idade, así como
- * opcións para actividades dirixidas ao público xeral ou a varios grupos.
+ * Inclúe grupos definidos por franxas de idade, así como opcións para
+ * actividades dirixidas ao público xeral ou a varios grupos.
  *
- * Cada valor dispón dunha clave única para a súa identificación e dun nome
- * localizado para a súa presentación na interface de usuario.
- *
- * @property clave Identificador único do destinatario.
- * @property nome Recurso de localización co nome do destinatario que se
- * amosará na interface de usuario.
+ * @property clave Identificador textual único do destinatario, independente do idioma.
+ * @property nome Denominación localizada do destinatario, utilizada para obter
+ * o texto que se presentará ao usuario.
  */
 enum class Destinatario( override val clave: String, override val nome: L10nActividades ): ElementoL10n {
 

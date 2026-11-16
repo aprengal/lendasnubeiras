@@ -6,19 +6,15 @@ import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nActividades
 /**
  * Define as categorías nas que se poden clasificar as actividades.
  *
- * Cada categoría permite identificar a temática ou o contexto no que se
- * desenvolve unha actividade, facilitando a súa organización e clasificación
- * dentro da aplicación.
+ * Permite identificar a temática ou o contexto dunha actividade,
+ * facilitando a súa organización e clasificación dentro da aplicación.
  *
- * Cada valor dispón dunha clave única para a súa identificación e dun nome
- * localizado para a súa presentación na interface de usuario.
- *
- * Inclúe unha categoría xenérica ([Outros]) que se utiliza como valor por
+ * Inclúe unha categoría xenérica ([Outros]), utilizada como valor por
  * defecto cando non se atopa unha categoría correspondente á clave indicada.
  *
- * @property clave Identificador único da categoría.
- * @property nome Recurso de localización co nome da categoría que se amosará
- * na interface de usuario.
+ * @property clave Identificador textual único da categoría, independente do idioma.
+ * @property nome Denominación localizada da categoría, utilizada para obter
+ * o texto que se presentará ao usuario.
  */
 enum class Categoria( override val clave: String, override val nome: L10nActividades ): ElementoL10n {
 

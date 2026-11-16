@@ -18,13 +18,15 @@ import org.aprengal.lendasnubeiras.ui.R
 import org.aprengal.lendasnubeiras.ui.navegacion.Ruta
 
 /**
- * Enumerado das iconas dispoñibles na aplicación.
+ * Define as iconas dispoñibles na aplicación.
  *
- * Cada elemento define un carácter da fonte de iconas empregada pola interface
- * e o recurso de localización asociado, utilizado como descrición accesible.
+ * Cada elemento identifica un carácter da fonte de iconas empregada
+ * na interface e proporciona unha denominación localizada que pode
+ * utilizarse como descrición accesible.
  *
- * Implementa [ElementoL10n] para identificar cada icona mediante a súa clave
- * e proporcionar o nome localizado correspondente.
+ * @property clave Identificador textual único da icona, independente do idioma.
+ * @property nome Denominación localizada da icona, utilizada para obter
+ * o texto que se presentará ao usuario.
  */
 enum class Icona( override val clave: String, override val nome: L10nIconas ): ElementoL10n {
 
@@ -47,7 +49,8 @@ enum class Icona( override val clave: String, override val nome: L10nIconas ): E
     Valido( "\uDB80\uDD2C", L10nIconas.Valido ),
     Invalido( "\uDB80\uDD56", L10nIconas.Invalido ),
     Correo( "\uDB80\uDDF0", L10nIconas.Correo ),
-    Catalogo( "\uDB82\uDC2E", L10nIconas.Catalogo );
+    Catalogo( "\uDB82\uDC2E", L10nIconas.Catalogo ),
+    ActividadeDixital( "\uDB80\uDE97", L10nIconas.ActividadeDixital );
 
 
     companion object {

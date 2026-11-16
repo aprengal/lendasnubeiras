@@ -44,6 +44,10 @@ sealed interface Ruta: NavKey {
     @Serializable
     object Catalogo : Ruta
 
+    /** Pantalla do buscador de actividades. */
+    @Serializable
+    object Buscador : Ruta
+
     /**
      * Detalle dunha actividade concreta.
      *
@@ -61,28 +65,24 @@ sealed interface Ruta: NavKey {
     @Serializable
     data class ActividadeDixital( val clave: String, val dificultade: Dificultade ) : Ruta
 
-    /** Pantalla do buscador de actividades. */
-    @Serializable
-    object Buscador : Ruta
-
     //Creación
-
+/*
     /** Listaxe das actividades que o usuario pode xestionar. */
     @Serializable
-    object ListarActividades : Ruta
+    object ListarActividades : Ruta*/
 
     /** Formulario de creación dunha actividade nova. */
     @Serializable
     object CrearActividade : Ruta
-
+/*
     /** Formulario de modificación dunha actividade existente. */
     @Serializable
-    object ModificarActividade : Ruta
+    object ModificarActividade : Ruta*/
 
     // Administración
-
+/*
     /** Pantalla de administración, só para usuarios con rol de administrador. */
     @Serializable
-    object Administrar : Ruta
+    object Administrar : Ruta*/
 
 }

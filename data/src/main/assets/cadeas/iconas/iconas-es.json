@@ -5,7 +5,6 @@
   "crear": "Crear",
   "inicio": "Inicio",
   "buscar": "Buscar",
-  "actividades": "Actividades",
   "idioma": "Dados",
 
   "correo": "Correo electrónico",
@@ -19,6 +18,7 @@
   "tema_escuro": "Tema oscuro",
 
   "limpar": "Limpiar campo",
-  "catalogo": "Catálogo"
+  "catalogo": "Catálogo",
+  "actividade_dixital": "Actividad digital"
 
 }

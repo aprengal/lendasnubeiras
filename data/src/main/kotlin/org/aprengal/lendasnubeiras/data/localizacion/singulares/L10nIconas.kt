@@ -11,7 +11,6 @@ enum class L10nIconas( internal val clave: String ) : L10nSingular {
     Inicio( "inicio" ),
     Buscar( "buscar" ),
     Limpar( "limpar" ),
-    Actividades( "actividades" ),
 
     Idioma( "idioma" ),
     TemaClaro( "tema_claro" ),
@@ -23,7 +22,8 @@ enum class L10nIconas( internal val clave: String ) : L10nSingular {
     Valido( "valido" ),
     Invalido( "invalido" ),
     Correo( "correo" ),
-    Catalogo( "catalogo" );
+    Catalogo( "catalogo" ),
+    ActividadeDixital( "actividade_dixital" );
 
     internal val dominio: Dominio = Dominio.ICONAS
 

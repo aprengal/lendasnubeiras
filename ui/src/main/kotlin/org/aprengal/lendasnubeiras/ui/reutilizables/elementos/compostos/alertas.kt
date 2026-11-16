@@ -13,6 +13,14 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.clases.Icona.Companion.Debux
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.BotonAuxiliar
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.BotonPrincipal
 
+/**
+ * Mostra un diálogo de alerta coa información e as accións definidas na súa configuración.
+ *
+ * Permite incluír unha icona, un título, un contido personalizado e accións
+ * para cancelar, confirmar ou descartar o diálogo.
+ *
+ * @param datos Obxecto que contén a configuración, o contido e as accións do diálogo.
+ */
 @Composable
 fun AlertaDialogo( datos: DatosAlerta ) {
 

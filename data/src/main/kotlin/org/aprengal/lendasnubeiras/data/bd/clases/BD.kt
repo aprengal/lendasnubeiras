@@ -64,12 +64,13 @@ object BD {
 
     /**
      * Define as opcións de ordenación dos resultados dunha busca de actividades.
-     * Cada opción establece a orde na que se presentarán as actividades en función
-     * da súa antigüidade.
      *
-     * @property clave Identificador da opción empregado para a súa representación
-     * e recuperación a partir de datos externos.
-     * @property nome Texto localizado que se amosará ao usuario.
+     * Permite establecer a orde na que se presentan os resultados segundo
+     * o criterio de antigüidade.
+     *
+     * @property clave Identificador textual único da opción de ordenación, independente do idioma.
+     * @property nome Denominación localizada da opción de ordenación, utilizada para obter
+     * o texto que se presentará ao usuario.
      * @property orde Sentido da ordenación aplicado aos resultados.
      */
     enum class OrdeBusca( override val clave: String, override val nome: L10nBase, val orde: Orde ): ElementoL10n {

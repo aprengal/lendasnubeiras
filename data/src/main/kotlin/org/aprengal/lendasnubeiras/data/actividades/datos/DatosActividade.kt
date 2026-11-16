@@ -27,6 +27,7 @@ import org.json.JSONObject
  * @property categoria Categoría na que se clasifica a actividade.
  * @property destinatario Grupo de persoas ao que vai dirixida a actividade.
  * @property estado Estado actual da actividade.
+ * @property dixital Indica se a actividade se pode realizar dentro da aplicación, é dicir, se ten textos para o xogo.
  */
 internal interface DatosActividade: ElementoBD {
 
@@ -37,6 +38,8 @@ internal interface DatosActividade: ElementoBD {
     val categoria: Categoria
     val destinatario: Destinatario
     val estado: Estado
+
+    val dixital: Boolean
 
     /**
      * Extrae os parágrafos da descrición dunha actividade a partir dos seus datos JSON.

@@ -5,7 +5,6 @@
   "crear": "Crear",
   "inicio": "Home",
   "buscar": "Search",
-  "actividades": "Activities",
   "idioma": "Dices",
 
   "correo": "Email",
@@ -19,6 +18,7 @@
   "tema_escuro": "Dark theme",
 
   "limpar": "Clear field",
-  "catalogo": "Catalog"
+  "catalogo": "Catalog",
+  "actividade_dixital": "Digital activity"
 
 }

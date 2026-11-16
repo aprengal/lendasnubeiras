@@ -40,6 +40,7 @@ import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.collerT
  * @property lista Estrutura opcional de lista con cabeceira e elementos para a actividade.
  * @property textos Mapa de textos adicionais da actividade para poder levalas a cabo dentro da aplicación,
  * identificados mediante as súas respectivas claves.
+ * @property dixital Indica se a actividade se pode realizar dentro da aplicación, é dicir, se ten textos para o xogo.
  */
 data class Actividade(
     override val id: Long,
@@ -57,6 +58,7 @@ data class Actividade(
     val lista: DatosListaActividade?
     val dificultades: Map<Dificultade, String>
     val textos: Map<String, String>
+    override val dixital: Boolean
 
     init {
 
@@ -87,6 +89,7 @@ data class Actividade(
         } ?: emptyMap()
 
         textos = textosJson?.let { json -> json.keys().asSequence().associateWith { chave -> json.optString( chave ) } } ?: emptyMap()
+        dixital = textos.isNotEmpty()
 
     }
 

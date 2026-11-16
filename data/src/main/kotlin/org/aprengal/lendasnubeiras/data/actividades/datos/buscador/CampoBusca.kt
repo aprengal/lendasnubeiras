@@ -6,15 +6,12 @@ import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nBase
 /**
  * Define os campos de texto nos que se pode realizar a busca de actividades.
  *
- * Permite indicar se o termo de busca debe aplicarse unicamente ao título,
- * á descrición ou a ambos os campos simultaneamente.
+ * Permite determinar se o termo de busca se aplica ao título, á descrición
+ * ou a ambos os campos simultaneamente.
  *
- * Cada valor identifica o campo correspondente mediante unha clave e un nome
- * localizado, permitindo a súa utilización tanto na lóxica de busca como na
- * interface de usuario.
- *
- * @property clave Identificador do campo de busca.
- * @property nome Recurso de localización co nome que se amosará na interface.
+ * @property clave Identificador textual único do campo de busca, independente do idioma.
+ * @property nome Denominación localizada do campo de busca, utilizada para obter
+ * o texto que se presentará ao usuario.
  */
 enum class CampoBusca( override val clave: String, override val nome: L10nBase ): ElementoL10n {
 

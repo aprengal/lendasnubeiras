@@ -30,8 +30,8 @@ android {
         applicationId = "org.aprengal.lendasnubeiras"
         minSdk = 29
         targetSdk = 37
-        versionCode = 2
-        versionName = "0.1.21"
+        versionCode = 3
+        versionName = "0.1.22"
 
         ndk {
             //noinspection ChromeOsAbiSupport

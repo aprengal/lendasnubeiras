@@ -7,15 +7,13 @@ import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nActividades
 /**
  * Define os niveis de dificultade dispoñibles para as actividades.
  *
- * Permite establecer distintos graos de dificultade para cada actividade,
- * identificados mediante unha clave única e un nome localizado.
+ * Permite clasificar as actividades segundo o grao de dificultade,
+ * facilitando a súa organización e a clasificación das puntuacións
+ * obtidas en función deste criterio.
  *
- * Estes niveis utilízanse, entre outras cousas, para clasificar e organizar
- * as puntuacións obtidas en función da dificultade da actividade.
- *
- * @property clave Identificador único do nivel de dificultade.
- * @property nome Recurso de localización co nome do nivel de dificultade
- * que se amosará na interface de usuario.
+ * @property clave Identificador textual único do nivel de dificultade, independente do idioma.
+ * @property nome Denominación localizada do nivel de dificultade, utilizada para obter
+ * o texto que se presentará ao usuario.
  */
 enum class Dificultade( override val clave: String, override val nome: L10nActividades ): ElementoL10n {
 

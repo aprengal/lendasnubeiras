@@ -63,16 +63,14 @@ fun TarxetaPulsable( icona: Icona, accion: () -> Unit, texto: L10nSingular, dime
 /**
  * Representa unha actividade mediante unha tarxeta interactiva.
  *
- * Mostra o título e o resumo da actividade, permitindo acceder á súa
- * información detallada ao seleccionar a tarxeta.
+ * A tarxeta presenta o título e o resumo da actividade e, se é dixital,
+ * unha icona identificativa.
  *
- * Ao premer nela, engádese á navegación a ruta [Ruta.ActividadeDetalle],
- * identificando a actividade mediante [ActividadeBuscable.claveTitulo].
+ * Ao premer na tarxeta, engádese á navegación a ruta
+ * [Ruta.ActividadeDetalle], identificando a actividade mediante
+ * [ActividadeBuscable.claveTitulo].
  *
- * A tarxeta ocupa todo o ancho dispoñible e presenta o título e o resumo
- * empregando os estilos tipográficos correspondentes.
- *
- * @param actividade Actividade cuxo título e resumo se van mostrar na tarxeta.
+ * @param actividade Actividade cuxo título e resumo se van mostrar.
  */
 @Composable
 fun TarxetaActividade( actividade: ActividadeBuscable ) {
@@ -83,9 +81,21 @@ fun TarxetaActividade( actividade: ActividadeBuscable ) {
     Card( onClick = accion, Modifier.fillMaxWidth().padding( vertical = 4.dp ) ) {
 
         Column( Modifier.fillMaxWidth().padding( horizontal = 16.dp, vertical = 12.dp ) )  {
-            Text( text = actividade.titulo, style = MaterialTheme.typography.titleLarge )
+
+            Row( Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically ) {
+
+                Text( text = actividade.titulo, modifier = Modifier.weight( 1f ), style = MaterialTheme.typography.titleLarge )
+
+                if ( actividade.dixital ) {
+                    EspazadorAncho()
+                    DebuxarIcona( Icona.ActividadeDixital.clave, Icona.ActividadeDixital.nome, 24.sp )
+                }
+
+            }
+
             EspazadorAlto()
             Text( text = actividade.resumo, style = MaterialTheme.typography.bodySmall )
+
         }
 
     }

@@ -35,6 +35,12 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.AlertaDi
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.ElementoLista
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.ListaOpcions
 
+/**
+ * Campo de texto da aplicación que permite introducir e editar información,
+ * xestionando o seu estado, validación e presentación de erros.
+ *
+ * @param datos Obxecto que contén a configuración e os datos necesarios para o campo de texto.
+ */
 @Composable
 fun CampoTexto( datos: DatosCampoTexto ) {
 
@@ -61,6 +67,15 @@ fun CampoTexto( datos: DatosCampoTexto ) {
 
 }
 
+/**
+ * Campo de texto destinado á busca de contido, cunha icona identificativa
+ * e unha opción para limpar o texto introducido.
+ *
+ * Permite iniciar a busca mediante a acción correspondente do teclado.
+ *
+ * @param estado Estado que almacena e xestiona o texto introducido.
+ * @param buscar Acción que se executará ao iniciar a busca.
+ */
 @Composable
 fun CampoBuscador( estado: TextFieldState, buscar: () -> Unit ) {
 
@@ -125,22 +140,3 @@ internal fun <T : ElementoL10n> SelectorFiltro( titulo: L10nSingular, opcions: L
     }
 
 }
-
-//Igual se podería aplicar nunha actividade dixital de amosar ou agochar resposta
-//Funciona o campo de contrasinal, pero igual é innecesario
-/*@Composable
-fun CampoContrasinal( datos: DatosCampoTexto ) {
-
-    var oculta by rememberSaveable { mutableStateOf( true ) }
-    val ocultarTexto = if ( oculta ) OutputTransformation { replace( 0, length, "•".repeat( length ) ) } else null
-
-    val localFocusManager = LocalFocusManager.current
-    val icona = if ( oculta ) Icona.OLLO_ABERTO else Icona.OLLO_PECHADO
-
-    val debuxoIcona = @Composable {
-        IconButton( { oculta = !oculta; localFocusManager.clearFocus() } ) { DebuxarIcona( icona.clave, icona.clave, 20.sp ) }
-    }
-
-    CampoTexto( datos, ocultarTexto, debuxoIcona )
-
-}*/

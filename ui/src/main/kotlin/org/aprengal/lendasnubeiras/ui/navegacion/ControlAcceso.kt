@@ -38,7 +38,7 @@ internal object ControlAcceso {
 
         val permiso = when ( ruta ) {
 
-            //Calquera
+            // Aberto
             Ruta.Axustes::class -> PodeAcceder
 
             // Autenticación
@@ -54,12 +54,12 @@ internal object ControlAcceso {
             Ruta.ActividadeDixital::class -> PodeLer
 
             // Creación
-            Ruta.ListarActividades::class -> PodeCrear
+            //Ruta.ListarActividades::class -> PodeCrear
             Ruta.CrearActividade::class -> PodeCrear
-            Ruta.ModificarActividade::class -> PodeEditar
+            //Ruta.ModificarActividade::class -> PodeEditar
 
             // Administración
-            Ruta.Administrar::class -> PodeAdministrar
+            //Ruta.Administrar::class -> PodeAdministrar
 
             else -> error( "A ruta ${ ruta.simpleName } non ten permiso asignado" )
 

@@ -53,7 +53,7 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.ListaTex
 fun PantallaActividadeDetalle( clave: String ) {
 
     val actividade = remember( clave ) { collerActividade( clave )!! }
-    val actividadeDixital = actividade.textos.isNotEmpty()
+    val actividadeDixital = actividade.dixital
 
     var fichaAberta by rememberSaveable { mutableStateOf( !actividadeDixital ) }
     var configuracionAberta by rememberSaveable { mutableStateOf( false ) }

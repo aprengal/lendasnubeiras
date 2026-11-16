@@ -33,6 +33,7 @@ import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.collerT
  * @property descricion Lista de parágrafos que compoñen a descrición da actividade.
  * @property resumo Resumo textual da actividade, cargado a partir dos seus
  * recursos textuais.
+ * @property dixital Indica se a actividade se pode realizar dentro da aplicación, é dicir, se ten textos para o xogo.
  */
 data class ActividadeBuscable(
     override val id: Long,
@@ -45,6 +46,7 @@ data class ActividadeBuscable(
     override val titulo: String
     override val descricion: List<String>
     val resumo: String
+    override val dixital: Boolean
 
     init {
 
@@ -53,6 +55,7 @@ data class ActividadeBuscable(
         titulo = datos.optString( "titulo" )
         descricion = collerDescricion( datos )
         resumo = datos.optString( "resumo" )
+        dixital = ( datos.optJSONObject( "textos" )?.length() ?: 0 ) > 0
 
     }
 

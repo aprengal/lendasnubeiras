@@ -26,7 +26,7 @@ import org.aprengal.lendasnubeiras.data.api.ConexionApi.MetodoApi
 import org.aprengal.lendasnubeiras.data.api.ConexionApi.procesarPeticion
 import org.aprengal.lendasnubeiras.data.api.RutasApi
 import org.aprengal.lendasnubeiras.data.api.resposta.RespostaXenerica
-import org.aprengal.lendasnubeiras.data.axustes.DatosTema.escollerVarianteImaxe
+import org.aprengal.lendasnubeiras.data.axustes.DatosTema.escollerRecursoTema
 import org.aprengal.lendasnubeiras.data.axustes.DatosTema.Variante
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.actualizarCatalogo
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.cambiarIdioma
@@ -119,7 +119,7 @@ fun PantallaAxustes() {
                 titulo = L10nOpcions.TituloCambioTema,
                 gardadoFallido = L10nOpcions.GardadoFallidoCambioTema,
                 tipo = TipoOpcion.ALERTA,
-                icona = escollerVarianteImaxe( temaActual, isSystemInDarkTheme(), Icona.TemaClaro, Icona.TemaEscuro ),
+                icona = escollerRecursoTema( temaActual, isSystemInDarkTheme(), Icona.TemaClaro, Icona.TemaEscuro ),
                 valorInicial = temaActual,
                 accion = { novoTema -> cambiarTema( novoTema ) },
                 tituloAlerta = L10nOpcions.DialogoCambioTema,

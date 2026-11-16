@@ -21,14 +21,29 @@
       "engadir_dado": "Add a die"
     }
   },
-  "pasa-palabra": {
-    "titulo": "Pass the Word",
+  "quen-o-ten": {
+    "titulo": "Who Has It?",
     "descricion": [
-      "The game host reads a word that the teams must guess.",
-      "If a team knows the answer, they can say it. If they don't know it, they can say «Pass the Word» to pass the turn."
+      "One person stands in the center while the others pass a small object behind their backs without the person in the center seeing it.",
+      "The person in the center must guess who has the object before time runs out."
     ],
-    "resumo": "Guess the words or say «Pass the Word» to pass the turn.",
-    "textos": {}
+    "resumo": "Pass the object in secret and find out who has it before time runs out.",
+    "dificultades": {
+      "facil": "2 minutes to calmly guess who has the object.",
+      "media": "1 minute and a half to figure out who is hiding it.",
+      "dificil": "1-minute time limit to find the object.",
+      "pesadelo": "30 seconds on the edge: maximum speed and tension."
+    },
+    "textos": {
+      "instrucions": "Pass the object secretly behind your backs! The person in the center has to guess who has it.",
+      "comezar": "Start",
+      "acertou": "Guessed it / Next",
+      "parar_tempo": "Pause timer",
+      "continuar_tempo": "Resume timer",
+      "cron_pausado": "Timer paused",
+      "tempo_esgotado": "Time's up!",
+      "rematar": "Finish"
+    }
   },
   "palabras-encadeadas": {
     "titulo": "Word Chain",

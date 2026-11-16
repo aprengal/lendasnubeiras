@@ -21,14 +21,29 @@
       "engadir_dado": "Añadir un dado"
     }
   },
-  "pasa-palabra": {
-    "titulo": "Pasa la palabra",
+  "quen-o-ten": {
+    "titulo": "¿Quién lo tiene?",
     "descricion": [
-      "La persona que presenta el juego lee una palabra que los equipos deben adivinar.",
-      "Si un equipo sabe la respuesta, puede decirla. Si no la sabe, puede decir «Pasa la palabra» para ceder el turno."
+      "Una persona se coloca en el centro mientras las demás se pasan un objeto pequeño por la espalda, sin que la persona del centro lo vea.",
+      "Quien está en el centro tiene que adivinar quién tiene el objeto antes de que se acabe el tiempo."
     ],
-    "resumo": "Adivina las palabras o di «Pasa la palabra» para ceder el turno.",
-    "textos": {}
+    "resumo": "Pasa el objeto en secreto y descubre quién lo tiene antes de que se acabe el tiempo.",
+    "dificultades": {
+      "facil": "2 minutos de tiempo para adivinar quién tiene el objeto con calma.",
+      "media": "1 minuto y medio para descubrir quién lo esconde.",
+      "dificil": "1 minuto de límite para encontrar el objeto.",
+      "pesadelo": "30 segundos al límite: máxima velocidad y tensión."
+    },
+    "textos": {
+      "instrucions": "¡Pasaos el objeto en secreto por la espalda! La persona del centro tiene que acertar quién lo tiene.",
+      "comezar": "Comenzar",
+      "acertou": "¡Acertó / Siguiente!",
+      "parar_tempo": "Parar tiempo",
+      "continuar_tempo": "Continuar tiempo",
+      "cron_pausado": "Cronómetro pausado",
+      "tempo_esgotado": "¡Tiempo agotado!",
+      "rematar": "Finalizar"
+    }
   },
   "palabras-encadeadas": {
     "titulo": "Palabras encadenadas",

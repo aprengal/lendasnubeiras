@@ -8,6 +8,7 @@ import org.aprengal.lendasnubeiras.ui.actividadesDixitais.AplicacionSinala
 import org.aprengal.lendasnubeiras.ui.navegacion.Ruta
 import org.aprengal.lendasnubeiras.ui.actividadesDixitais.DadosHistoriosos
 import org.aprengal.lendasnubeiras.ui.actividadesDixitais.PalabrasEncadeadas
+import org.aprengal.lendasnubeiras.ui.actividadesDixitais.QuenOTen
 
 /**
  * Mostra a actividade dixital correspondente á clave recibida e á dificultade escollida.
@@ -27,6 +28,7 @@ fun PantallaActividadeDixital( clave: String, dificultade: Dificultade ) {
 
     when ( actividade.claveTitulo ) {
         "dados-historiosos" -> DadosHistoriosos( dificultade, textos )
+        "quen-o-ten" -> QuenOTen( dificultade, textos )
         "palabras-encadeadas" -> PalabrasEncadeadas( dificultade, textos )
         "aplicacion-sinala" -> AplicacionSinala( dificultade, textos )
         else -> error( "${ actividade.claveTitulo } non ten ningunha actividade dixital asociada" )

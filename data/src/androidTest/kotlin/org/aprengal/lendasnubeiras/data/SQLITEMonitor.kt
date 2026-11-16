@@ -820,7 +820,7 @@ class SQLITEMonitor {
             datosCompletos(mapOf("id" to id1.toString(), "clave_titulo" to "dados-historiosos", "id_autoria" to "40"))
         )
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to id2.toString(), "clave_titulo" to "pasa-palabra", "id_autoria" to "40"))
+            datosCompletos(mapOf("id" to id2.toString(), "clave_titulo" to "quen-o-ten", "id_autoria" to "40"))
         )
         bd.insertar( Taboa.ACTIVIDADES,
             datosCompletos(mapOf("id" to id3.toString(), "clave_titulo" to "palabras-encadenadas", "id_autoria" to "41"))
@@ -831,7 +831,7 @@ class SQLITEMonitor {
 
         assertEquals( 2, resultado.size )
         assertTrue( resultado.any { it.claveTitulo == "dados-historiosos" } )
-        assertTrue( resultado.any { it.claveTitulo == "pasa-palabra" } )
+        assertTrue( resultado.any { it.claveTitulo == "quen-o-ten" } )
         assertTrue( resultado.none { it.claveTitulo == "palabras-encadenadas" } )
 
         bd.actualizar( Taboa.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.En( setOf( id1, id2, id3 ) ) ) )
@@ -845,12 +845,12 @@ class SQLITEMonitor {
         val id2 = 916L
 
         bd.insertar( Taboa.ACTIVIDADES, datosCompletos(mapOf("id" to id1.toString(), "clave_titulo" to "dados-historiosos")))
-        bd.insertar( Taboa.ACTIVIDADES, datosCompletos(mapOf("id" to id2.toString(), "clave_titulo" to "pasa-palabra")))
+        bd.insertar( Taboa.ACTIVIDADES, datosCompletos(mapOf("id" to id2.toString(), "clave_titulo" to "quen-o-ten")))
 
         val resultado = collerActividades( emptyMap() )
 
         assertTrue( resultado.any { it.claveTitulo == "dados-historiosos" } )
-        assertTrue( resultado.any { it.claveTitulo == "pasa-palabra" } )
+        assertTrue( resultado.any { it.claveTitulo == "quen-o-ten" } )
 
         bd.actualizar( Taboa.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.En( setOf( id1, id2 ) ) ) )
 

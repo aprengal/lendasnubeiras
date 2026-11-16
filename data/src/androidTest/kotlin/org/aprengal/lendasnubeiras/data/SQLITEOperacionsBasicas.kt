@@ -75,7 +75,7 @@ class SQLITEOperacionsBasicas {
 
         val datos = listOf(
             datosCompletosAny( mapOf( "id" to 1L, "clave_titulo" to "dados-historiosos" ) ),
-            datosCompletosAny( mapOf( "id" to 2L, "clave_titulo" to "pasa-palabra" ) ),
+            datosCompletosAny( mapOf( "id" to 2L, "clave_titulo" to "quen-o-ten" ) ),
             datosCompletosAny( mapOf( "id" to 3L, "clave_titulo" to "palabras-encadenadas" ) )
         )
 
@@ -95,7 +95,7 @@ class SQLITEOperacionsBasicas {
     fun actualizarActividade() {
 
         val tituloClave = "dados-historiosos"
-        val novoTituloClave = "pasa-palabra"
+        val novoTituloClave = "quen-o-ten"
 
         val datos = datosCompletos( mapOf( "id" to "102", "clave_titulo" to tituloClave ) )
         val id = bd.insertar( Taboa.ACTIVIDADES, datos )
@@ -107,7 +107,7 @@ class SQLITEOperacionsBasicas {
 
         assertEquals( 1, actualizadas )
         assertNull( collerActividade( tituloClave ) )
-        assertEquals( "pasa-palabra", collerActividade( novoTituloClave )!!.claveTitulo )
+        assertEquals( "quen-o-ten", collerActividade( novoTituloClave )!!.claveTitulo )
 
     }
 
@@ -163,7 +163,7 @@ class SQLITEOperacionsBasicas {
         val datos1 = datosCompletos(mapOf("id" to "500", "clave_titulo" to "dados-historiosos"))
         bd.insertar( Taboa.ACTIVIDADES, datos1 )
 
-        val datos2 = datosCompletos(mapOf("id" to "500", "clave_titulo" to "pasa-palabra"))
+        val datos2 = datosCompletos(mapOf("id" to "500", "clave_titulo" to "quen-o-ten"))
         assertEquals( -1, bd.insertar( Taboa.ACTIVIDADES, datos2 ) )
 
     }
@@ -204,7 +204,7 @@ class SQLITEOperacionsBasicas {
         val datos1 = datosCompletos( mapOf( "id" to "600", "clave_titulo" to "dados-historiosos", "estado" to "-1" ) )
         bd.insertar( Taboa.ACTIVIDADES, datos1 )
 
-        val datos2 = datosCompletos( mapOf( "id" to "601", "clave_titulo" to "pasa-palabra", "estado" to "-1" ) )
+        val datos2 = datosCompletos( mapOf( "id" to "601", "clave_titulo" to "quen-o-ten", "estado" to "-1" ) )
         bd.insertar( Taboa.ACTIVIDADES, datos2 )
 
         val cambios = mapOf( "id" to 600L )
@@ -260,7 +260,7 @@ class SQLITEOperacionsBasicas {
             datosCompletosAny(
                 mapOf(
                     "id" to 802L,
-                    "clave_titulo" to "pasa-palabra",
+                    "clave_titulo" to "quen-o-ten",
                     "id_categoria" to "musica",
                     "estado" to 2
                 )
@@ -281,7 +281,7 @@ class SQLITEOperacionsBasicas {
 
         assertEquals( 2, resultados.size )
         assertTrue( resultados.any { it.claveTitulo == "dados-historiosos" } )
-        assertTrue( resultados.any { it.claveTitulo == "pasa-palabra" } )
+        assertTrue( resultados.any { it.claveTitulo == "quen-o-ten" } )
         assertTrue( resultados.none { it.claveTitulo == "palabras-encadenadas" } )
 
         bd.actualizar(
@@ -307,7 +307,7 @@ class SQLITEOperacionsBasicas {
             datosCompletosAny(
                 mapOf(
                     "id" to 805L,
-                    "clave_titulo" to "pasa-palabra",
+                    "clave_titulo" to "quen-o-ten",
                     "id_categoria" to "outros",
                     "estado" to 2
                 )
@@ -367,7 +367,7 @@ class SQLITEOperacionsBasicas {
 
         val datos = listOf(
             datosCompletosAny( mapOf( "id" to 1L, "id_autoria" to 30L, "clave_titulo" to "dados-historiosos" ) ),
-            datosCompletosAny( mapOf( "id" to 2L, "id_autoria" to 20L, "clave_titulo" to "pasa-palabra" ) ),
+            datosCompletosAny( mapOf( "id" to 2L, "id_autoria" to 20L, "clave_titulo" to "quen-o-ten" ) ),
             datosCompletosAny( mapOf( "id" to 3L, "id_autoria" to 30L, "clave_titulo" to "palabras-encadenadas" ) ),
             datosCompletosAny( mapOf( "id" to 4L, "id_autoria" to 30L, "clave_titulo" to "aplicacion-sinala" ) ),
             datosCompletosAny( mapOf( "id" to 5L, "id_autoria" to 50L, "clave_titulo" to "baul-recordos" ) ),

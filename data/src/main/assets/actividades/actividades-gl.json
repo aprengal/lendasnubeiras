@@ -21,14 +21,29 @@
       "engadir_dado": "Engadir un dado"
     }
   },
-  "pasa-palabra": {
-    "titulo": "Pasa a palabra",
+  "quen-o-ten": {
+    "titulo": "Quen o ten?",
     "descricion": [
-      "O monitor le unha palabra que os equipos deben adiviñar.",
-      "Se un equipo sabe a resposta, pode dicila. Se non a sabe, pode dicir «Pasa a palabra» para ceder a quenda."
+      "Unha persoa ponse no centro mentres as demais pasan un obxecto pequeno polas costas, sen que a persoa do centro o vexa.",
+      "Quen está no centro ten que adiviñar quen ten o obxecto antes de que remate o tempo."
     ],
-    "resumo": "Adiviña as palabras ou di «Pasa a palabra» para ceder a quenda.",
-    "textos": {}
+    "resumo": "Pasa o obxecto en segredo e descobre quen o ten antes de que se acabe o tempo.",
+    "dificultades": {
+      "facil": "2 minutos de tempo para adiviñar quen ten o obxecto con calma.",
+      "media": "1 minuto e medio para descubrir quen o agocha.",
+      "dificil": "1 minuto de límite para atopar o obxecto.",
+      "pesadelo": "30 segundos ao límite: máxima velocidade e tensión."
+    },
+    "textos": {
+      "instrucions": "Pasade o obxecto en segredo polas costas. A persoa do centro ten que acertar quen o ten!",
+      "comezar": "Comezar",
+      "acertou": "Acertou / Seguinte",
+      "parar_tempo": "Parar tempo",
+      "continuar_tempo": "Continuar tempo",
+      "cron_pausado": "Cronómetro pausado",
+      "tempo_esgotado": "Tempo esgotado!",
+      "rematar": "Rematar"
+    }
   },
   "palabras-encadeadas": {
     "titulo": "Palabras encadeadas",

@@ -1,6 +1,7 @@
 package org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
@@ -14,8 +15,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -27,32 +32,49 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.Esp
 import kotlin.math.ceil
 
 /**
- * Mostra unha conta atrás circular: un indicador de progreso que se vai baleirando mentres baixa o
- * tempo, co número de segundos restantes no centro e, debaixo, o texto do tempo restante.
+ * Gardador do progreso da conta atrás ([ContaAtras]), para evitar que o círculo se reinicie
+ * ao rotar a pantalla.
  *
- * A conta atrás comeza de novo cada vez que cambia [ronda]. Cando chega a 0 execútase
- * [tempoEsgotado] unha soa vez e a conta queda en 0 ata que cambie [ronda].
+ * Só garda o valor actual do progreso, un número entre 0 e 1. Ao restauralo, crea un novo
+ * [Animatable] con ese valor.
+ */
+private val gardadorProgreso = Saver<Animatable<Float, AnimationVector1D>, Float>(
+    save = { progreso -> progreso.value },
+    restore = { valor -> Animatable( valor ) }
+)
+
+/**
+ * Mostra unha conta atrás circular co tempo restante no centro e debaixo do indicador.
  *
- * O número do centro non se le nos lectores de pantalla, porque xa o len no texto de debaixo.
+ * A conta atrás reiníciase cando cambia [ronda]. Pode pausarse e retomarse conservando o
+ * progreso. Ao chegar a cero, execútase [tempoEsgotado].
+ *
+ * O progreso consérvase ao restaurar o estado da pantalla, por exemplo, tras unha rotación.
  *
  * @param segundos Duración da conta atrás, en segundos.
- * @param ronda Identifica a conta atrás actual: ao cambiar, reiníciase.
- * @param tempoEsgotado Acción que se executa cando o tempo chega a 0.
+ * @param ronda Identificador da rolda actual.
+ * @param pausada Indica se a conta atrás está pausada.
+ * @param tempoEsgotado Acción que se executa ao rematar a conta atrás.
  */
 @Composable
-fun ContaAtras( segundos: Int, ronda: Int, tempoEsgotado: () -> Unit ) {
+fun ContaAtras( segundos: Int, ronda: Int, pausada: Boolean = false, tempoEsgotado: () -> Unit ) {
 
-    val progreso = remember { Animatable( 1f ) }
+    val progreso = rememberSaveable( saver = gardadorProgreso ) { Animatable( 1f ) }
+    var rondaAnimada by rememberSaveable { mutableIntStateOf( -1 ) }
     val accionFinal by rememberUpdatedState( tempoEsgotado )
-
-    //Só se recompón cando cambia o número, non en cada fotograma da animación
     val segundosRestantes by remember( segundos ) { derivedStateOf { ceil( progreso.value * segundos ).toInt() } }
 
-    LaunchedEffect( ronda, segundos ) {
+    LaunchedEffect( ronda, segundos, pausada ) {
 
-        progreso.snapTo( 1f )
-        progreso.animateTo( 0f, tween( segundos * 1000, easing = LinearEasing ) )
-        accionFinal()
+        if ( rondaAnimada != ronda ) {
+            progreso.snapTo( 1f )
+            rondaAnimada = ronda
+        }
+
+        if ( !pausada && progreso.value > 0f ) {
+            progreso.animateTo( 0f, tween( ( progreso.value * segundos * 1000 ).toInt(), easing = LinearEasing ) )
+            accionFinal()
+        }
 
     }
 

@@ -68,7 +68,7 @@ paths:
                   format: email
                   description: Correo electrónico co que se quere rexistrar o usuario.
                 uuid:
-                  $ref: "#/components/parameters/UuidDispositivoSchema"
+                  $ref: "#/components/schemas/UuidDispositivoSchema"
                 idioma:
                   type: string
                   enum:
@@ -117,7 +117,7 @@ paths:
                   format: email
                   description: Correo electrónico do usuario.
                 uuid:
-                  $ref: "#/components/parameters/UuidDispositivoSchema"
+                  $ref: "#/components/schemas/UuidDispositivoSchema"
                 idioma:
                   type: string
                   enum:
@@ -172,7 +172,7 @@ paths:
                 - uuid
               properties:
                 uuid:
-                  $ref: "#/components/parameters/UuidDispositivoSchema"
+                  $ref: "#/components/schemas/UuidDispositivoSchema"
       responses:
         "200":
           description: A sesión pechouse correctamente.
@@ -235,60 +235,60 @@ paths:
         default:
           $ref: "#/components/responses/UnexpectedError"
 
-/sesion/validacion:
-  post:
-    tags: [ Autenticación ]
-    summary: Validar a sesión actual
-    description: >
-      Comproba que a sesión enviada existe e segue activa, actívaa e devólvese 
-      a información do usuario.
-    security:
-      - cookieAuth: []
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            additionalProperties: false
-            required:
-              - uuid
-            properties:
-              uuid:
-                $ref: "#/components/parameters/UuidDispositivoSchema"
-    responses:
-      "200":
-        description: A sesión foi validada correctamente e devólvese a información do usuario.
+  /sesion/validacion:
+    post:
+      tags: [ Autenticación ]
+      summary: Validar a sesión actual
+      description: >
+        Comproba que a sesión enviada existe e segue activa, actívaa e devólvese 
+        a información do usuario.
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
         content:
           application/json:
             schema:
               type: object
+              additionalProperties: false
               required:
-                - id
-                - correo
-                - rol
+                - uuid
               properties:
-                info:
-                  type: string
-                  description: Información adicional.
-                id:
-                  type: integer
-                  description: Identificador único do usuario.
-                correo:
-                  type: string
-                  format: email
-                  description: Enderezo de correo electrónico do usuario.
-                rol:
-                  type: string
-                  description: Rol asignado ao usuario.
-      "401":
-        description: A cabeceira falta, a sesión é inválida, caducou ou non está activa.
-      "404":
-        description: O usuario asociado á sesión non existe.
-      "405":
-        $ref: "#/components/responses/MethodNotAllowed"
-      default:
-        $ref: "#/components/responses/UnexpectedError"
+                uuid:
+                  $ref: "#/components/schemas/UuidDispositivoSchema"
+      responses:
+        "200":
+          description: A sesión foi validada correctamente e devólvese a información do usuario.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - id
+                  - correo
+                  - rol
+                properties:
+                  info:
+                    type: string
+                    description: Información adicional.
+                  id:
+                    type: integer
+                    description: Identificador único do usuario.
+                  correo:
+                    type: string
+                    format: email
+                    description: Enderezo de correo electrónico do usuario.
+                  rol:
+                    type: string
+                    description: Rol asignado ao usuario.
+        "401":
+          description: A cabeceira falta, a sesión é inválida, caducou ou non está activa.
+        "404":
+          description: O usuario asociado á sesión non existe.
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+        default:
+          $ref: "#/components/responses/UnexpectedError"
 
   /conta/borrado:
     post:
@@ -322,7 +322,7 @@ paths:
                 - idioma
               properties:
                 uuid:
-                  $ref: "#/components/parameters/UuidDispositivoSchema"
+                  $ref: "#/components/schemas/UuidDispositivoSchema"
                 idioma:
                   type: string
                   enum:
@@ -365,7 +365,7 @@ paths:
                 - uuid
               properties:
                 uuid:
-                  $ref: "#/components/parameters/UuidDispositivoSchema"
+                  $ref: "#/components/schemas/UuidDispositivoSchema"
       responses:
         "200":
           description: O catálogo actualizouse correctamente.
@@ -421,7 +421,7 @@ paths:
                 - data_modificado
               properties:
                 uuid:
-                  $ref: "#/components/parameters/UuidDispositivoSchema"
+                  $ref: "#/components/schemas/UuidDispositivoSchema"
                 clave_titulo:
                   type: string
                   maxLength: 100
@@ -525,7 +525,7 @@ paths:
                 - data_modificado
               properties:
                 uuid:
-                  $ref: "#/components/parameters/UuidDispositivoSchema"
+                  $ref: "#/components/schemas/UuidDispositivoSchema"
                 id:
                   type: integer
                   minimum: 1
@@ -602,7 +602,7 @@ paths:
                 - erro
               properties:
                 uuid:
-                  $ref: "#/components/parameters/UuidDispositivoSchema"
+                  $ref: "#/components/schemas/UuidDispositivoSchema"
                 id_peticion:
                   type: string
                   format: uuid
@@ -650,7 +650,7 @@ paths:
                 - id
               properties:
                 uuid:
-                  $ref: "#/components/parameters/UuidDispositivoSchema"
+                  $ref: "#/components/schemas/UuidDispositivoSchema"
                 id:
                   type: integer
                   minimum: 1
@@ -723,7 +723,7 @@ components:
       in: header
       name: cabeceira_sesion
 
-  parameters:
+  schemas:
     UuidDispositivoSchema:
       type: string
       format: uuid

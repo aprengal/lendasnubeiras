@@ -16,6 +16,11 @@ import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Dificultade
 @Serializable
 sealed interface Ruta: NavKey {
 
+    // Abertas
+    /** Axustes da aplicación: tema e peche de sesión. */
+    @Serializable
+    object Axustes : Ruta
+
     // Autenticación
 
     /** Pantalla de benvida: permite iniciar sesión con conta ou como anónimo. */
@@ -35,10 +40,6 @@ sealed interface Ruta: NavKey {
     /** Pantalla principal da aplicación. */
     @Serializable
     object Inicio : Ruta
-
-    /** Axustes da aplicación: tema e peche de sesión. */
-    @Serializable
-    object Axustes : Ruta
 
     /** Catálogo con todas as actividades dispoñibles. */
     @Serializable

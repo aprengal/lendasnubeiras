@@ -126,7 +126,7 @@ fun DadosHistoriosos( dificultade: Dificultade, textos: Map<String, String> ) {
 
         if ( amosarLista ) {
 
-            val iconasPorNivel = tarefaDatos.iconasNivel()
+            val iconasPorNivel = tarefaDatos.todasIconasNivel()
 
             iconasPorNivel.forEach { ( dificultade, mapaIconas ) ->
 

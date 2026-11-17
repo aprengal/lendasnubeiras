@@ -231,15 +231,18 @@ class ActividadeDados {
      * Devolve o rango de dados que se poden lanzar nun nivel de dificultade.
      *
      * @param dificultade Nivel de dificultade.
-     * @return Rango co mínimo e o máximo de dados. Pesadelo ten os mesmos que difícil.
+     * @return Rango co mínimo e o máximo de dados.
      */
     fun rangoDados( dificultade: Dificultade ): IntRange {
 
-        return when ( dificultade ) {
+        val rango = when ( dificultade ) {
             Dificultade.Facil -> 2..4
             Dificultade.Media -> 5..7
-            Dificultade.Dificil, Dificultade.Pesadelo -> 8..10
+            Dificultade.Dificil -> 8..10
+            Dificultade.Pesadelo -> 11..20
         }
+
+        return rango
 
     }
 
@@ -284,14 +287,14 @@ class ActividadeDados {
      * Devolve un mapa coas iconas estritamente agrupadas por nivel,
      * sen acumular nin repetir (cada icona pertence a un único nivel).
      */
-    fun iconasNivel(): Map<Dificultade, Map<String, String>> {
+    fun todasIconasNivel(): Map<Dificultade, Map<String, String>> {
 
         val nomesPesadelo = iconasActividades.keys - ( nomesFaciles + nomesMedios + nomesDificiles )
         val mapa = mapOf(
-            Dificultade.Facil to iconasActividades.filterKeys { it in nomesFaciles },
-            Dificultade.Media to iconasActividades.filterKeys { it in nomesMedios },
-            Dificultade.Dificil to iconasActividades.filterKeys { it in nomesDificiles },
-            Dificultade.Pesadelo to iconasActividades.filterKeys { it in nomesPesadelo }
+            Dificultade.Facil to iconasActividades.filterKeys { nome -> nome in nomesFaciles },
+            Dificultade.Media to iconasActividades.filterKeys { nome -> nome in nomesMedios },
+            Dificultade.Dificil to iconasActividades.filterKeys { nome -> nome in nomesDificiles },
+            Dificultade.Pesadelo to iconasActividades.filterKeys { nome -> nome in nomesPesadelo }
         )
 
         return mapa

@@ -8,29 +8,27 @@ declare( strict_types = 1 );
  *
  * Rexistra no servidor un erro comunicado pola aplicación Android.
  *
- * Require unha sesión autenticada e recibe o identificador único da petición
- * na que se produciu o erro, xunto coa súa descrición.
+ * Os reportes almacénanse separados do rexistro de erros internos de PHP.
  *
- * Os reportes almacénanse en ORIXE . "reportes/reportes.txt", separados
- * do rexistro de erros internos de PHP. Cada reporte gárdase nunha liña
- * en formato JSON, incluíndo a marca temporal Unix, o identificador
- * do usuario, o identificador da petición e a descrición do erro.
+ * Cada reporte gárdase nunha liña JSON coa marca temporal
+ * e a descrición do erro.
  *
- * As descricións límpanse e limítanse a 2000 caracteres.
+ * As descricións límpanse e limítanse a 18000 caracteres.
  *
  * Respostas: 200 (reporte rexistrado), 400 (datos incorrectos),
- * 401 (sesión non válida), 500 (erro ao gardar o reporte).
+ * 429 (límite alcanzado), 500 (erro ao gardar o reporte).
  */
 function endpoint_reportar_erros(): void {
 
     esixir_metodo( 'POST' );
 
-    $usuario = esixir_sesion();
+    $campos = [ 'uuid' => [ 'tipo' => 'uuid' ], 'erro' => [ 'tipo' => 'texto', 'max' => 18000 ] ];
+    $datos = validar_corpo( coller_corpo(), $campos );
+    $identificador = $datos[ 'uuid' ];
 
-    $datos = validar_corpo( coller_corpo(), [
-        'id_peticion' => [ 'tipo' => 'uuid' ],
-        'erro' => [ 'tipo' => 'texto', 'max' => 2000 ]
-    ] );
+    if ( !revisar_intentos( 'reportes', $identificador, 1, MINUTO_EN_SEGUNDOS ) ) {
+        responder( 429 );
+    }
 
     $erro = sanitizar_campo( $datos[ 'erro' ] );
 
@@ -44,18 +42,7 @@ function endpoint_reportar_erros(): void {
 
     $directorio = ORIXE . 'reportes/';
 
-    // Crear o directorio se aínda non existe
-    if ( !is_dir( $directorio ) && !mkdir( $directorio, 0750, true ) && !is_dir( $directorio ) ) {
-        responder( 500 );
-    }
-
-    $reporte = [
-        'data' => time(),
-        'usuario' => $usuario->id,
-        'id_peticion' => $datos[ 'id_peticion' ],
-        'erro' => $erro
-    ];
-
+    $reporte = [ 'data' => time(), 'erro' => $erro ];
     $liña = json_encode( $reporte, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
 
     if ( $liña === false || file_put_contents( $directorio . 'reportes.txt', $liña . PHP_EOL, FILE_APPEND | LOCK_EX ) === false ) {

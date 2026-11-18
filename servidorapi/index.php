@@ -11,7 +11,9 @@ ini_set( 'memory_limit', '256M' );
 const NOME = 'Lendas Nubeiras';
 const DOMINIO = 'lendasnubeiras.duckdns.org';
 const BASE = __DIR__;
-define( 'ORIXE', dirname( __DIR__, 1 ) . '/' );
+
+//Neste caso en concreto, base e orixe son idénticas
+define( 'ORIXE', BASE . '/' );
 
 ini_set( 'log_errors', '1' );
 ini_set( "error_log", ORIXE . "error_log" );

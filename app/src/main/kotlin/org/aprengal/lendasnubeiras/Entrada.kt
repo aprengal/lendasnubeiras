@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -34,6 +35,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.rememberNavBackStack
+import org.aprengal.lendasnubeiras.data.utilidades.Depuracion.rexistrarErros
 import org.aprengal.lendasnubeiras.ui.navegacion.Enlaces
 import org.aprengal.lendasnubeiras.ui.navegacion.Navegacion
 import org.aprengal.lendasnubeiras.ui.navegacion.Navegacion.Companion.RexistrarNavegacion
@@ -115,6 +117,8 @@ class Entrada : AppCompatActivity() {
         installSplashScreen()
         enableEdgeToEdge()
         super.onCreate( savedInstanceState )
+
+        rexistrarErros()
 
         var trazaInicial = if ( savedInstanceState == null ) {
             Enlaces( intent ).let { enlaces -> enlaces.confirmar()?.let { ruta -> enlaces.crearTraza( ruta ) } }

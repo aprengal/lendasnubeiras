@@ -585,10 +585,7 @@ paths:
       summary: Rexistrar un erro da aplicación
       description: >
         Rexistra erros producidos na aplicación no servidor sen envialos a plataformas
-        de terceiros. A petición require unha sesión válida. Os textos 
-        demasiados longos son truncados polo servidor.
-      security:
-        - cookieAuth: []
+        de terceiros. Os textos demasiados longos son truncados polo servidor.
       requestBody:
         required: true
         content:
@@ -598,15 +595,10 @@ paths:
               additionalProperties: false
               required:
                 - uuid
-                - id_peticion
                 - erro
               properties:
                 uuid:
                   $ref: "#/components/schemas/UuidDispositivoSchema"
-                id_peticion:
-                  type: string
-                  format: uuid
-                  description: Identificador único da petición na que se produciu o erro.
                 erro:
                   type: string
                   maxLength: 2000

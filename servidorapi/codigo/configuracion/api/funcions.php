@@ -51,7 +51,7 @@ function coller_corpo(): array {
 
     $contido = file_get_contents( 'php://input' );
 
-    if ( !$contido || strlen( $contido ) > 20000 ) {
+    if ( !$contido ) {
        responder( 400 );
     }
 
@@ -259,4 +259,5 @@ function id_dispositivo( string $novo_valor = '' ): string {
     $id_dispositivo = $novo_valor;
 
     return $id_dispositivo;
+
 }

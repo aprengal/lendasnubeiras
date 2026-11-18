@@ -601,8 +601,8 @@ paths:
                   $ref: "#/components/schemas/UuidDispositivoSchema"
                 erro:
                   type: string
-                  maxLength: 2000
-                  description: Descrición do erro (máximo 2000 caracteres).
+                  maxLength: 18000
+                  description: Descrición do erro (máximo 18000 caracteres).
       responses:
         "200":
           description: O erro foi procesado correctamente.

@@ -39,12 +39,14 @@ google-services.json
 # Android Profiling
 *.hprof
 
-#Api de PHP. Claves privadas e configuración de .htaccess na raíz da web
+#Api de PHP. Claves privadas e configuración de .htaccess na raíz da web e arquivos de rexistros
 servidorapi/.htaccess
 constantes-privadas.php
+servidorapi/error_log
+servidorapi/reportes/reportes.txt
 
 #copia dos arquivos de data
-androidTest/assets/
+data/src/androidTest/assets/
 
 #copia dos arquivos de localización
-test/resources/
+data/src/test/resources/

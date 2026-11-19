@@ -31,7 +31,7 @@ android {
         minSdk = 29
         targetSdk = 37
         versionCode = 3
-        versionName = "0.1.22"
+        versionName = "0.1.23"
 
         ndk {
             //noinspection ChromeOsAbiSupport

@@ -48,7 +48,7 @@ function endpoint_limpar(): void {
         db()->delete( 'actividades', [
             'onde' => [
                 'estado' => ESTADO_ACTIVIDADE_BORRADA,
-                'data_modificado' => [ 'operador' => '<', 'valor' => time() - ( DIAS_PAPELEIRA * DIA_EN_SEGUNDOS ) ]
+                'data_borrado' => [ 'operador' => '<', 'valor' => time() - ( DIAS_PAPELEIRA * DIA_EN_SEGUNDOS ) ]
             ]
         ] );
 

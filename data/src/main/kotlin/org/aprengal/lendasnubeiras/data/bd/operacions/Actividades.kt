@@ -70,7 +70,7 @@ object Actividades {
             onde[ campo ] = Condicion.Simple( valor )
         }
 
-        val columnas = setOf( "id", "clave_titulo", "id_categoria", "id_destinatario", "estado" )
+        val columnas = setOf( "id", "clave_titulo", "clave_categoria", "clave_destinatario", "estado" )
         val ordenar = mapOf( criterios.colOrdenable to criterios.dirOrdenable )
         val datos = SeleccionSQL( columnas, alias = "a", onde = onde, ordenar = ordenar )
         val resultados = bd.seleccionar( Taboa.ACTIVIDADES, datos )
@@ -156,7 +156,7 @@ object Actividades {
      */
     fun collerActividadesPublicas( posicion: Int = 10, limite: Int = 0 ): List<ActividadeBuscable> {
 
-        val columnas = setOf( "id", "clave_titulo", "id_autoria", "id_categoria", "id_destinatario", "estado", "duracion", "data_modificado" )
+        val columnas = setOf( "id", "clave_titulo", "id_autoria", "clave_categoria", "clave_destinatario", "estado", "duracion", "data_modificado" )
         val onde = mapOf( "estado" to Condicion.Simple( Estado.Publicado.estado ) )
         val ordenar = mapOf( "id" to Orde.DESC )
         val datosLimite = listOf( posicion, limite )
@@ -240,8 +240,8 @@ object Actividades {
             datos[ "id" ] as Long,
             datos[ "clave_titulo" ] as String,
             datos[ "id_autoria" ] as Long,
-            escollerCategoria( datos[ "id_categoria" ] as String ),
-            escollerDestinatario( datos[ "id_destinatario" ] as String ),
+            escollerCategoria( datos[ "clave_categoria" ] as String ),
+            escollerDestinatario( datos[ "clave_destinatario" ] as String ),
             escollerEstado( ( datos[ "estado" ] as Long ).toInt() ),
             ( datos[ "duracion" ] as Long ).toInt(),
             datos[ "data_modificado" ] as Long
@@ -268,8 +268,8 @@ object Actividades {
         val actividade = ActividadeBuscable(
             datos[ "id" ] as Long,
             datos[ "clave_titulo" ] as String,
-            escollerCategoria( datos[ "id_categoria" ] as String ),
-            escollerDestinatario( datos[ "id_destinatario" ] as String ),
+            escollerCategoria( datos[ "clave_categoria" ] as String ),
+            escollerDestinatario( datos[ "clave_destinatario" ] as String ),
             escollerEstado( ( datos[ "estado" ] as Long ).toInt() )
         )
 

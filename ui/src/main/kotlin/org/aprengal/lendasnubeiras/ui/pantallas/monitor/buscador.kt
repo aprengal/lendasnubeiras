@@ -102,8 +102,8 @@ fun PantallaBuscador() {
         parametros?.let { datos ->
 
             val filtros = buildMap<String, ElementoL10n> {
-                datos.categoria?.let { categoria -> put( "id_categoria", categoria ) }
-                datos.destinatario?.let { destinatario -> put( "id_destinatario", destinatario ) }
+                datos.categoria?.let { categoria -> put( "clave_categoria", categoria ) }
+                datos.destinatario?.let { destinatario -> put( "clave_destinatario", destinatario ) }
             }
 
             //Pídese unha actividade máis ca as que se amosan: se chega, sábese que hai máis sen contalas

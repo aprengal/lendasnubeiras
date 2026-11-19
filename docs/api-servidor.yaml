@@ -96,7 +96,7 @@ paths:
       summary: Iniciar sesión
       description: >
         Solicita o inicio de sesión enviando ao correo do usuario unha ligazón
-        de verificación. Devólvese o rastro da sesión pendente de activación.
+        de verificación. Devólvese o token da sesión pendente de activación.
 
         Só se pode enviar unha mensaxe cada 60 segundos para o mesmo usuario.
         O correo envíase no idioma indicado no campo idioma.
@@ -160,7 +160,7 @@ paths:
       description: >
         Solicitase o peche de sesión activo no dispositivo actual.
       security:
-        - cookieAuth: []
+        - sesionHeaderAuth: []
       requestBody:
         required: true
         content:
@@ -243,7 +243,7 @@ paths:
         Comproba que a sesión enviada existe e segue activa, actívaa e devólvese 
         a información do usuario.
       security:
-        - cookieAuth: []
+        - sesionHeaderAuth: []
       requestBody:
         required: true
         content:
@@ -309,7 +309,7 @@ paths:
         Os administradores non poden solicitar o borrado da súa propia conta.
         Só se pode enviar unha mensaxe cada 60 segundos.
       security:
-        - cookieAuth: []
+        - sesionHeaderAuth: []
       requestBody:
         required: true
         content:
@@ -402,7 +402,7 @@ paths:
         Os estados definitivos do servidor son 0, 1 e 2. Non se permite crear
         unha actividade directamente no estado 3 (borrada).
       security:
-        - cookieAuth: []
+        - sesionHeaderAuth: []
       requestBody:
         required: true
         content:
@@ -505,7 +505,7 @@ paths:
         corresponder a recursos válidos e o usuario debe ter permisos para
         realizar a operación.
       security:
-        - cookieAuth: []
+        - sesionHeaderAuth: []
       requestBody:
         required: true
         content:
@@ -608,10 +608,10 @@ paths:
           description: O erro foi procesado correctamente.
         "400":
           description: JSON mal formado ou campos ausentes, baleiros ou inválidos.
-        "401":
-          $ref: "#/components/responses/Unauthenticated"
         "405":
           $ref: "#/components/responses/MethodNotAllowed"
+        "429":
+            description: Superouse o límite de 1 reporte cada 60 segundos por dispositivo.
         default:
           $ref: "#/components/responses/UnexpectedError"
 
@@ -629,7 +629,7 @@ paths:
 
         Debe indicarse polo menos un dos campos correo, rol ou estado.
       security:
-        - cookieAuth: []
+        - sesionHeaderAuth: []
       requestBody:
         required: true
         content:
@@ -654,11 +654,11 @@ paths:
                 rol:
                   type: string
                   enum:
-                    - Monitor
-                    - Colaborador
-                    - Autor
-                    - Editor
-                    - Administrador
+                    - monitor
+                    - colaborador
+                    - autor
+                    - editor
+                    - administrador
                   maxLength: 15
                   description: Novo rol do usuario.
                 estado:
@@ -710,7 +710,7 @@ paths:
 
 components:
   securitySchemes:
-    cookieAuth:
+    sesionHeaderAuth:
       type: apiKey
       in: header
       name: cabeceira_sesion
@@ -723,7 +723,7 @@ components:
 
   responses:
     Unauthenticated:
-      description: Houbo un problema coa sesión actual (cookie ausente ou inválida) e é preciso iniciar sesión outra vez.
+      description: Houbo un problema coa sesión actual e é preciso iniciar sesión outra vez.
     MethodNotAllowed:
       description: A petición non pode procesarse porque o método HTTP empregado non é o correcto. A resposta inclúe a cabeceira Allow.
       headers:

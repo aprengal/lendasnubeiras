@@ -35,6 +35,7 @@ enum class L10nBase( internal val clave: String ) : L10nSingular {
 
     ListaOrdenada( "lista_ordenada" ),
     ListaNonOrdenada( "lista_non_ordenada" );
+    //FormatoHora( "formato_hora" );
 
     internal val dominio: Dominio = Dominio.BASE
 

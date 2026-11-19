@@ -1,6 +1,7 @@
 package org.aprengal.lendasnubeiras.data.bd.clases
 
 import android.database.sqlite.SQLiteDatabase
+import android.util.Log
 import org.aprengal.lendasnubeiras.data.actividades.datos.base.Estado
 import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Dificultade
 
@@ -45,8 +46,8 @@ internal class EstruturaDB {
                 id              INTEGER NOT NULL PRIMARY KEY, --ids negativas reservadas a actividades locais e as positivas ás que están no servidor
                 clave_titulo    TEXT NOT NULL UNIQUE CHECK ( LENGTH( clave_titulo ) <= 100 AND clave_titulo GLOB '[a-z0-9-]*' ),
                 id_autoria      INTEGER NOT NULL CHECK ( id_autoria >= 0 ),
-                id_categoria    TEXT NOT NULL CHECK ( LENGTH( id_categoria ) <= 15 ),
-                id_destinatario TEXT NOT NULL CHECK ( LENGTH( id_destinatario ) <= 15 ),
+                clave_categoria    TEXT NOT NULL CHECK ( LENGTH( clave_categoria ) <= 15 ),
+                clave_destinatario TEXT NOT NULL CHECK ( LENGTH( clave_destinatario ) <= 15 ),
                 -- Positivos = xa enviado ao servidor: 0=borrador, 1=pendente, 2=publicado, 3=borrado. Negativos = aínda non enviado: -1=borrador, -2=pendente, -3=publicado
                 estado          TINYINT NOT NULL DEFAULT -1 CHECK ( estado BETWEEN -3 AND 3 ),
                 duracion        TINYINT NOT NULL CHECK ( duracion BETWEEN 1 AND 180 ),
@@ -57,8 +58,8 @@ internal class EstruturaDB {
 
         db.execSQL( "CREATE UNIQUE INDEX uq_actividades_clave_titulo ON $actividades( clave_titulo )" )
         db.execSQL( "CREATE INDEX idx_actividades_autoria ON $actividades( id_autoria )" )
-        db.execSQL( "CREATE INDEX idx_actividades_categoria ON $actividades( id_categoria )" )
-        db.execSQL( "CREATE INDEX idx_actividades_destinatario ON $actividades( id_destinatario )" )
+        db.execSQL( "CREATE INDEX idx_actividades_categoria ON $actividades( clave_categoria )" )
+        db.execSQL( "CREATE INDEX idx_actividades_destinatario ON $actividades( clave_destinatario )" )
         db.execSQL( "CREATE INDEX idx_actividades_estado ON $actividades( estado )" )
         db.execSQL( "CREATE INDEX idx_actividades_data_modificado ON $actividades( data_modificado )" )
 
@@ -146,8 +147,8 @@ internal class EstruturaDB {
         db.execSQL(
             """
             INSERT INTO $actividades (
-                id, clave_titulo, id_autoria, id_categoria,
-                id_destinatario, estado, duracion, data_modificado
+                id, clave_titulo, id_autoria, clave_categoria,
+                clave_destinatario, estado, duracion, data_modificado
             ) VALUES
                 ( 130797354209, 'dados-historiosos', 9762854874, 'interior', 'mixto', 2, 15, 130797354209 ),
                 ( 130797354210, 'quen-o-ten', 9762854874, 'interior', 'mixto', 2, 10, 130797354210 ),
@@ -172,11 +173,12 @@ internal class EstruturaDB {
      */
     fun actualizar( db: SQLiteDatabase, oldVersion: Int, newVersion: Int ) {
 
-        /*if ( oldVersion < 2 && newVersion == 3 ) {
+        if ( oldVersion < 2 && newVersion == 3 ) {
 
-            db.execSQL( "SELECT VERSION()" )
+            //db.execSQL( "SELECT VERSION()" )
+            Log.d( "UPDATE", "Actualizando SQLite" )
 
-        }*/
+        }
 
     }
 

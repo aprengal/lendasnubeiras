@@ -84,7 +84,7 @@ class SQLITEOperacionsBasicas {
         assertEquals( 3, ids.size )
         assertTrue( ids.all { it > 0 } )
 
-        val consulta = SeleccionSQL( columnas = setOf( "id", "clave_titulo", "id_autoria", "id_categoria", "id_destinatario", "estado", "duracion", "data_modificado" ) )
+        val consulta = SeleccionSQL( columnas = setOf( "id", "clave_titulo", "id_autoria", "clave_categoria", "clave_destinatario", "estado", "duracion", "data_modificado" ) )
         val resultados = bd.seleccionar( Taboa.ACTIVIDADES, consulta )
 
         assertEquals( 3, resultados.size )
@@ -253,7 +253,7 @@ class SQLITEOperacionsBasicas {
                 mapOf(
                     "id" to 801L,
                     "clave_titulo" to "dados-historiosos",
-                    "id_categoria" to "musica",
+                    "clave_categoria" to "musica",
                     "estado" to 2
                 )
             ),
@@ -261,7 +261,7 @@ class SQLITEOperacionsBasicas {
                 mapOf(
                     "id" to 802L,
                     "clave_titulo" to "quen-o-ten",
-                    "id_categoria" to "musica",
+                    "clave_categoria" to "musica",
                     "estado" to 2
                 )
             ),
@@ -269,7 +269,7 @@ class SQLITEOperacionsBasicas {
                 mapOf(
                     "id" to 803L,
                     "clave_titulo" to "palabras-encadenadas",
-                    "id_categoria" to "arte",
+                    "clave_categoria" to "arte",
                     "estado" to 1
                 )
             )
@@ -300,7 +300,7 @@ class SQLITEOperacionsBasicas {
                 mapOf(
                     "id" to 804L,
                     "clave_titulo" to "dados-historiosos",
-                    "id_categoria" to "interior",
+                    "clave_categoria" to "interior",
                     "estado" to 2
                 )
             ),
@@ -308,7 +308,7 @@ class SQLITEOperacionsBasicas {
                 mapOf(
                     "id" to 805L,
                     "clave_titulo" to "quen-o-ten",
-                    "id_categoria" to "outros",
+                    "clave_categoria" to "outros",
                     "estado" to 2
                 )
             )
@@ -316,7 +316,7 @@ class SQLITEOperacionsBasicas {
 
         bd.insertar( Taboa.ACTIVIDADES, datos )
 
-        val resultados = collerActividadesBuscables( CriteriosBusca( "data_modificado", filtros = mapOf( "id_categoria" to Categoria.Interior ) ) )
+        val resultados = collerActividadesBuscables( CriteriosBusca( "data_modificado", filtros = mapOf( "clave_categoria" to Categoria.Interior ) ) )
 
         assertEquals( 1, resultados.size )
         assertEquals( "dados-historiosos", resultados[ 0 ].claveTitulo )

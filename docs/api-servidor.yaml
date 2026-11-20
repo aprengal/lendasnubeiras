@@ -148,8 +148,6 @@ paths:
           description: Xa se enviou unha mensaxe para este usuario hai menos de 60 segundos.
         "405":
           $ref: "#/components/responses/MethodNotAllowed"
-        "409":
-          description: Non se puido pechar sesión por un motivo descoñecido.
         default:
           $ref: "#/components/responses/UnexpectedError"
 
@@ -179,15 +177,19 @@ paths:
         "400":
           description: JSON mal formado ou campos ausentes.
         "401":
-          description: Sesión non recoñecida. Pódese pechar a nivel local
+          description: Sesión non recoñecida. Pódese pechar a nivel local.
+        "403":
+          description: A conta non está activa.
         "405":
           $ref: "#/components/responses/MethodNotAllowed"
+        "409":
+          description: Non se puido pechar a sesión.
         default:
           $ref: "#/components/responses/UnexpectedError"
 
   /accion/verificacion:
     get:
-      tags: [Autenticación]
+      tags: [ Autenticación ]
       summary: Verificar unha acción
       description: >
         Verifica unha acción de rexistro, inicio de sesión ou borrado da conta
@@ -199,6 +201,9 @@ paths:
         administrativa. Ao verificar un inicio de sesión, actívase a sesión.
         Ao verificar un borrado, a conta péchase e queda pendente de eliminación
         definitiva aos 30 días.
+
+        O parámetro idioma determina a lingua empregada na páxina HTML
+        devolta polo servidor, tanto nas verificacións correctas como nos erros.
 
         Os erros de verificación previstos devolven o mesmo código 409 para
         evitar revelar información sobre a validez do token. Isto inclúe
@@ -225,11 +230,28 @@ paths:
           schema:
             type: string
             format: uuid
+        - name: idioma
+          in: query
+          required: false
+          description: Lingua na que se presenta a páxina HTML de resposta.
+          schema:
+            type: string
       responses:
         "200":
-          description: A acción foi verificada correctamente.
+          description: >
+            A acción foi verificada correctamente. Devólvese unha páxina HTML.
+          content:
+            text/html:
+              schema:
+                type: string
         "409":
-          description: A acción non se puido verificar.
+          description: >
+            A acción non se puido verificar. Devólvese unha páxina HTML
+            co resultado da verificación.
+          content:
+            text/html:
+              schema:
+                type: string
         "405":
           $ref: "#/components/responses/MethodNotAllowed"
         default:
@@ -240,7 +262,7 @@ paths:
       tags: [ Autenticación ]
       summary: Validar a sesión actual
       description: >
-        Comproba que a sesión enviada existe e segue activa, actívaa e devólvese 
+        Comproba que a sesión enviada existe e segue activa, valídase e devólvese 
         a información do usuario.
       security:
         - sesionHeaderAuth: []
@@ -281,6 +303,8 @@ paths:
                   rol:
                     type: string
                     description: Rol asignado ao usuario.
+        "400":
+          description: JSON mal formado ou uuid ausente/inválido.
         "401":
           description: A cabeceira falta, a sesión é inválida, caducou ou non está activa.
         "404":
@@ -337,6 +361,8 @@ paths:
           description: JSON mal formado ou idioma ausente ou inválido.
         "401":
           $ref: "#/components/responses/Unauthenticated"
+        "403":
+          description: A conta non está activa.
         "409":
           description: A conta non se pode borrar porque pertence a un administrador ou xa existe unha solicitude incompatible.
         "429":
@@ -612,6 +638,8 @@ paths:
           $ref: "#/components/responses/MethodNotAllowed"
         "429":
             description: Superouse o límite de 1 reporte cada 60 segundos por dispositivo.
+        "500":
+            description: Houbo un erro ao gardar o reporte.
         default:
           $ref: "#/components/responses/UnexpectedError"
 

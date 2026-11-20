@@ -47,6 +47,21 @@ class TesteoDatos {
         Opcion::class.sealedSubclasses.forEach { opcion -> comprobarOpcion( opcion.objectInstance!! ) }
     }
 
+    @Test
+    fun nomeOpcionUnico() {
+
+        val nomes = Opcion::class.sealedSubclasses.mapNotNull { it.objectInstance }.map { it.nome }
+
+        val duplicados = nomes.groupingBy { it }.eachCount().filter { it.value > 1 }.keys
+
+        assertEquals(
+            "Existen nomes duplicados nas preferencias: $duplicados",
+            emptySet<String>(),
+            duplicados
+        )
+
+    }
+
     fun comprobarClaveRol( rol: Rol ) {
 
         val esperado = when ( rol ) {

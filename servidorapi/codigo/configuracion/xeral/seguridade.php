@@ -205,7 +205,7 @@ function xerar_token( int $lonxitude = 16, bool $especiais = true ): string {
  * @param string    $modo        Modo de operación ('cifrar', 'descifrar', 'cifrar_64', 'descifrar_64').
  * @param string    $nome_clave  Nome do grupo de clave de cifrado.
  * @param ?Usuario  $usuario     Obxecto Usuario opcional para contextualizar a clave.
- * @return mixed    O resultado do cifrado/descifrado ou null se o modo non é válido.
+ * @return mixed    O resultado do cifrado/descifrado, null se o modo non é válido ou false en caso de fallo.
  */
 function cifrar_descifrar( string $contido, string $modo, string $nome_clave, ?Usuario $usuario = null ) {
 

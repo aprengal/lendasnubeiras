@@ -124,6 +124,11 @@ function analizar_cabeceira_sesion(): ?array {
     }
 
     $info_sesion = cifrar_descifrar( $valor_sesion, 'descifrar', $esquema );
+
+    if ( !$info_sesion ) {
+        return null;
+    }
+
     $lista = explode( '|', $info_sesion );
 
     if ( count( $lista ) != 5 ) {

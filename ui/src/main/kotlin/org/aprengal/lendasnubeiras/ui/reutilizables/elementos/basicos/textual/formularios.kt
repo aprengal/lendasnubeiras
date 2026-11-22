@@ -19,11 +19,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.sp
 import org.aprengal.lendasnubeiras.data.localizacion.clases.ElementoL10n
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nBase
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nSingular
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosAlerta
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosCampoTexto
@@ -98,7 +100,7 @@ fun CampoBuscador( estado: TextFieldState, buscar: () -> Unit ) {
         inputTransformation = InputTransformation.maxLength( 100 ),
         onKeyboardAction = { buscar() },
         leadingIcon = { DebuxarIcona( iconaBuscar.clave, iconaBuscar.nome, 20.sp ) },
-        placeholder = { Text( "Buscar" ) },
+        placeholder = { Texto( L10nBase.CampoBuscar, Modifier.clearAndSetSemantics {} ) },
         trailingIcon = reiniciar,
         shape = CircleShape
     )

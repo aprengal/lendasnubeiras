@@ -1,6 +1,5 @@
 {
 
-  "nome_app": "Lendas Nubeiras",
   "si": "Si",
   "non": "Non",
   "aceptar": "Aceptar",
@@ -19,6 +18,7 @@
   "ocultar_busca_avanzada": "Ocultar busca avanzada",
   "busca_avanzada": "Busca avanzada",
   "sen_resultados": "Sen resultados",
+  "campo_buscar": "Buscar",
   "boton_buscar": "Buscar",
   "filtro_todos": "Todos",
   "filtro_todas": "Todas",
@@ -35,6 +35,16 @@
     "one": "Tes %s mensaxe nova",
     "other": "Tes %s mensaxes novas",
     "many": "Tes %s de mensaxes novas"
+  },
+  "resultado_busca": {
+    "one": "Atopouse %s resultado",
+    "many": "Atopáronse %s de resultados",
+    "other": "Atopáronse %s resultados"
+  },
+  "resultado_busca_mais": {
+    "one": "Atopouse máis de %s resultado",
+    "many": "Atopáronse máis de %s de resultados",
+    "other": "Atopáronse máis de %s resultados"
   },
   "duracion_minutos": {
     "one": "%s minuto",

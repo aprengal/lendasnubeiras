@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -20,6 +21,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import org.aprengal.lendasnubeiras.data.actividades.datos.base.Categoria
 import org.aprengal.lendasnubeiras.data.actividades.datos.base.Destinatario
@@ -27,6 +31,7 @@ import org.aprengal.lendasnubeiras.data.actividades.datos.buscador.CampoBusca
 import org.aprengal.lendasnubeiras.data.actividades.datos.buscador.CriteriosBusca
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.OrdeBusca
 import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.collerActividadesBuscables
+import org.aprengal.lendasnubeiras.data.localizacion.cantidades.L10nPlural
 import org.aprengal.lendasnubeiras.data.localizacion.clases.ElementoL10n
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nBase
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.ParametrosBusca
@@ -35,6 +40,7 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.Bo
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.CampoBuscador
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.SelectorFiltro
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.Texto
+import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.TextoPlural
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.EspazadorAlto
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.TarxetaActividade
 
@@ -93,8 +99,6 @@ fun PantallaBuscador() {
     var destinatario by rememberSaveable { mutableStateOf<Destinatario?>( null ) }
     var orde by rememberSaveable { mutableStateOf( OrdeBusca.Recentes ) }
     var parametros by rememberSaveable { mutableStateOf<ParametrosBusca?>( null ) }
-
-    //Cada nova busca (novos parámetros) volve a pór o límite en 10
     var totalCargados by rememberSaveable( parametros ) { mutableIntStateOf( limitePorPaxina ) }
 
     val resultados = remember( parametros, totalCargados ) {
@@ -106,12 +110,7 @@ fun PantallaBuscador() {
                 datos.destinatario?.let { destinatario -> put( "clave_destinatario", destinatario ) }
             }
 
-            //Pídese unha actividade máis ca as que se amosan: se chega, sábese que hai máis sen contalas
-            val criterios = CriteriosBusca(
-                colOrdenable = "id", dirOrdenable = datos.orde.orde, filtros = filtros,
-                termo = datos.termo, campoBusca = datos.campoBusca, limite = totalCargados + 1
-            )
-
+            val criterios = CriteriosBusca( "id", datos.orde.orde, filtros, datos.termo, datos.campoBusca, totalCargados + 1 )
             collerActividadesBuscables( criterios )
 
         }
@@ -196,23 +195,54 @@ fun PantallaBuscador() {
         resultados?.let {
 
             if ( amosadas.isEmpty() ) {
+
                 item {
+
                     EspazadorAlto()
-                    Texto( L10nBase.SenResultados )
+
+                    Column( Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally ) {
+                        Texto(
+                            L10nBase.SenResultados,
+                            Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                            MaterialTheme.typography.titleLarge
+                        )
+                    }
+
                 }
-            }
 
-            items( amosadas ) { actividade -> TarxetaActividade( actividade ) }
-
-            if ( haiMais ) {
+            } else {
 
                 item {
 
-                    val accion = { totalCargados += limitePorPaxina }
+                    EspazadorAlto()
 
-                    EspazadorAlto()
-                    BotonPrincipal( L10nBase.CargarMais, accion, Modifier.fillMaxWidth() )
-                    EspazadorAlto()
+                    val textoEscollido = if ( haiMais ) L10nPlural.ResultadosBuscaMais else L10nPlural.ResultadosBusca
+
+                    Column( Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally ) {
+                        TextoPlural(
+                            textoEscollido, amosadas.size,
+                            Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                            MaterialTheme.typography.titleLarge
+                        )
+                    }
+
+                    EspazadorAlto( 2 )
+
+                }
+
+                items( amosadas ) { actividade -> TarxetaActividade( actividade ) }
+
+                if ( haiMais ) {
+
+                    item {
+
+                        val accion = { totalCargados += limitePorPaxina }
+
+                        EspazadorAlto()
+                        BotonPrincipal( L10nBase.CargarMais, accion, Modifier.fillMaxWidth() )
+                        EspazadorAlto()
+
+                    }
 
                 }
 

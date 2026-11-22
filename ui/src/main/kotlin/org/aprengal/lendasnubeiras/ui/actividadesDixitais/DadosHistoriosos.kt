@@ -27,8 +27,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Dificultade
@@ -76,8 +76,8 @@ fun DadosHistoriosos( dificultade: Dificultade, textos: Map<String, String> ) {
         //Modificador de dados
         item( span = { GridItemSpan( maxLineSpan ) } ) {
 
-            val descricionQuitar = Modifier.semantics { contentDescription = texto( "quitar_dado" ) }
-            val descricionEngadir = Modifier.semantics { contentDescription = texto( "engadir_dado" ) }
+            val descricionQuitar = Modifier.clearAndSetSemantics { contentDescription = texto( "quitar_dado" ) }
+            val descricionEngadir = Modifier.clearAndSetSemantics { contentDescription = texto( "engadir_dado" ) }
 
             EspazadorAlto()
             Row( modifier = Modifier.fillMaxWidth(), Arrangement.SpaceEvenly, Alignment.CenterVertically ) {

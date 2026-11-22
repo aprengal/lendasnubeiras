@@ -1,5 +1,6 @@
 package org.aprengal.lendasnubeiras.ui.pantallas.abertas
 
+import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -82,9 +84,11 @@ fun PantallaAxustes() {
 
         if ( usuarioActual().existe ) {
 
+            val modificadorUsuario = Modifier.fillMaxWidth().padding( vertical = 10.dp ).semantics( mergeDescendants = true ) {}
+
             Card {
 
-                Column( Modifier.fillMaxWidth().padding( vertical = 10.dp ), Arrangement.Center, Alignment.CenterHorizontally ) {
+                Column( modificadorUsuario, Arrangement.Center, Alignment.CenterHorizontally ) {
                     Texto( L10nOpcions.UsuarioAutenticado, estilo = MaterialTheme.typography.titleLarge )
                     EspazadorAlto()
                     Text( usuarioActual().correo )
@@ -98,6 +102,10 @@ fun PantallaAxustes() {
 
         Card {
 
+            val versionActual = Build.VERSION.SDK_INT
+            val android13 = Build.VERSION_CODES.TIRAMISU
+            val subtituloAccion = if ( versionActual >= android13 ) L10nOpcions.SubtituloReinicioIdioma else L10nOpcions.SubtituloPecheIdioma
+
             val datosIdioma = DatosOpcion(
                 clave = "cambio_idioma",
                 titulo = L10nOpcions.TituloCambioIdioma,
@@ -108,7 +116,7 @@ fun PantallaAxustes() {
                 accion = { novoIdioma -> cambiarIdioma( novoIdioma ) },
                 tituloAlerta = L10nOpcions.DialogoCambioIdioma,
                 opcions = Idioma.entries.filter { idioma -> idioma != Idioma.Nada },
-                descricionExtra = L10nOpcions.SubtituloCambioIdioma
+                descricionExtra = subtituloAccion
             )
 
             ContidoOpcion( datosIdioma )

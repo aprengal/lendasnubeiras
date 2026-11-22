@@ -57,8 +57,8 @@ function regras_actividade( bool $modificar ): array {
 	$regras = [
 		'clave_titulo' => [ 'tipo' => 'texto', 'max' => 100 ],
 		'id_autoria' => [ 'tipo' => 'enteiro', 'min' => 0 ],
-		'id_categoria' => [ 'tipo' => 'texto', 'max' => 15 ],
-		'id_destinatario' => [ 'tipo' => 'texto', 'max' => 15 ],
+		'clave_categoria' => [ 'tipo' => 'texto', 'max' => 15 ],
+		'clave_destinatario' => [ 'tipo' => 'texto', 'max' => 15 ],
 		'estado' => [
 			'tipo' => 'enteiro',
 			'valores' => $modificar ? [ 0, 1, 2, 3 ] : [ 0, 1, 2, -1, -2, -3 ]
@@ -91,8 +91,8 @@ function formatar_actividade( array $fila ): array {
 		'id' => (int) $fila[ 'id' ],
 		'clave_titulo' => (string) $fila[ 'clave_titulo' ],
 		'id_autoria' => (int) $fila[ 'id_autoria' ],
-		'id_categoria' => (string) $fila[ 'id_categoria' ],
-		'id_destinatario' => (string) $fila[ 'id_destinatario' ],
+		'clave_categoria' => (string) $fila[ 'clave_categoria' ],
+		'clave_destinatario' => (string) $fila[ 'clave_destinatario' ],
 		'estado' => (int) $fila[ 'estado' ],
 		'duracion' => (int) $fila[ 'duracion' ],
 		'data_modificado' => (int) $fila[ 'data_modificado' ]

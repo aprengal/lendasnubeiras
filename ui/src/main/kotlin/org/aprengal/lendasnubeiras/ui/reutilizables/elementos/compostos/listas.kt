@@ -103,10 +103,16 @@ fun <T> ListaOpcions( datos: DatosListaOpcions<T> ) {
 fun ElementoLista( datos: DatosElementoLista ) {
 
     val modificador = datos.accion?.let { accion -> Modifier.clickable( role = Role.Button, onClick = accion ) } ?: Modifier
+    val iconaInicial: @Composable () -> Unit = {
+        datos.icona?.let { icona ->
+            val descricion = if ( icona.nome.texto().equals( datos.titulo.texto(), ignoreCase = true ) ) null else icona.nome
+            DebuxarIcona( icona.clave, descricion, 20.sp )
+        }
+    }
 
     ListItem( { Texto( datos.titulo, estilo = MaterialTheme.typography.titleLarge ) }, modificador,
         supportingContent = { datos.contido() },
-        leadingContent = { datos.icona?.let{ icona -> DebuxarIcona( icona.clave, icona.nome, 20.sp ) } },
+        leadingContent = iconaInicial,
         trailingContent = datos.contidoExtra
     )
 

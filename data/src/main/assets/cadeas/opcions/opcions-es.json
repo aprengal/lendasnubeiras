@@ -17,6 +17,7 @@
   "dialogo_peche_sesion": "¿Cerrar sesión?",
 
   "reinicio_cambio_idioma": "La aplicación se reiniciará tras cambiar el idioma",
+  "peche_cambio_idioma": "La aplicación se cerrará tras cambiar el idioma",
   "contido_actualizacion_catalogo": "Si la actualización es correcta, no se mostrará ningún texto.",
   "contido_borrado_conta": "Se enviará un correo para confirmar el borrado de cuenta y la sesión actual se cerrará.",
 

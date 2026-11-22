@@ -44,6 +44,6 @@ const CORREO_USUARIO_LEGADO = 'legado@example.com';
 
 //Columnas da táboa de actividades que se reciben e se envían ao cliente. Empréganse alias para poder realizar as joins
 const COLUMNAS_ACTIVIDADE = [
-    'a.id', 'a.clave_titulo', 'a.id_autoria', 'c.clave as id_categoria',
-    'd.clave as id_destinatario', 'a.estado', 'a.duracion', 'a.data_modificado'
+    'a.id', 'a.clave_titulo', 'a.id_autoria', 'c.clave as clave_categoria',
+    'd.clave as clave_destinatario', 'a.estado', 'a.duracion', 'a.data_modificado'
 ];

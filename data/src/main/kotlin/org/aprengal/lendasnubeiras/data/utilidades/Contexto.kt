@@ -1,8 +1,10 @@
 package org.aprengal.lendasnubeiras.data.utilidades
 
 import android.accessibilityservice.AccessibilityServiceInfo
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.view.accessibility.AccessibilityManager
 
 /**
@@ -29,20 +31,28 @@ object Contexto {
     }
 
     /**
-     * Reinicia a aplicación iniciando de novo a súa actividade principal.
+     * Reinicia a aplicación relanzando a actividade principal en Android 13 ou superior.
+     * En versións anteriores, limítase a pechar as actividades actuais sen relanzar o proceso.
      *
-     * Elimina as actividades anteriores da pila mediante as bandeiras do Intent
-     * e finaliza o proceso actual unha vez iniciado o novo lanzamento.
-     *
-     * @param contexto Contexto empregado para obter e iniciar a actividade principal da aplicación.
+     * @param contexto Contexto empregado para obter o intento de inicio, o compoñente principal
+     * e pechar a actividade actual se é unha [Activity].
      */
-    fun reiniciarAplicacion( contexto: Context ) {
+    fun reiniciarPecharAplicacion( contexto: Context ) {
 
-        val intento = contexto.packageManager.getLaunchIntentForPackage( contexto.packageName )
+        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ) {
 
-        intento?.addFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK )
-        contexto.startActivity( intento )
-        Runtime.getRuntime().exit( 0 )
+            val launchIntent = contexto.packageManager.getLaunchIntentForPackage( contexto.packageName ) ?: return
+            val component = launchIntent.component ?: return
+
+            val intento = Intent.makeRestartActivityTask( component ).apply {
+                addFlags( Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK )
+            }
+
+            contexto.startActivity( intento )
+
+        }
+
+        ( contexto as? Activity )?.finishAffinity()
 
     }
 

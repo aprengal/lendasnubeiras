@@ -5,9 +5,10 @@ import android.content.res.Resources
 import android.icu.text.PluralRules
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import org.aprengal.lendasnubeiras.data.actividades.datos.base.Actividade
 import org.aprengal.lendasnubeiras.data.utilidades.Contexto.haiLector
-import org.aprengal.lendasnubeiras.data.utilidades.Contexto.reiniciarAplicacion
+import org.aprengal.lendasnubeiras.data.utilidades.Contexto.reiniciarPecharAplicacion
 import org.aprengal.lendasnubeiras.data.localizacion.cantidades.L10nPlural
 import org.aprengal.lendasnubeiras.data.localizacion.cantidades.L10nVariante
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nActividades
@@ -148,7 +149,10 @@ object Localizacion {
         if ( idiomaActual.value == novoIdioma ) return true
 
         idiomaActual.value = novoIdioma
-        if ( haiLector( appContext ) ) reiniciarAplicacion( appContext )
+        if ( haiLector( appContext ) ) {
+            gardarIdiomaSO()
+            reiniciarPecharAplicacion( appContext )
+        }
 
         traducions.clear()
         traducionsPlurais.clear()
@@ -158,6 +162,17 @@ object Localizacion {
         limparCache()
 
         return true
+
+    }
+
+    fun gardarIdiomaSO() {
+
+        val idiomaAplicacion = LocaleListCompat.forLanguageTags( idiomaActual.value.codigoRexion.replace( "_", "-" ) )
+        val idiomaOpcions = AppCompatDelegate.getApplicationLocales().get( 0 )
+
+        if ( idiomaAplicacion.get( 0 ) != idiomaOpcions ) {
+            AppCompatDelegate.setApplicationLocales( idiomaAplicacion )
+        }
 
     }
 

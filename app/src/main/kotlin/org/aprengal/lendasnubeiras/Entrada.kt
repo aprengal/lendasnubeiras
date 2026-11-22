@@ -35,6 +35,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.rememberNavBackStack
+import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.gardarIdiomaSO
 import org.aprengal.lendasnubeiras.data.utilidades.Depuracion.rexistrarErros
 import org.aprengal.lendasnubeiras.ui.navegacion.Enlaces
 import org.aprengal.lendasnubeiras.ui.navegacion.Navegacion
@@ -185,16 +186,8 @@ class Entrada : AppCompatActivity() {
      * habitualmente que Android recree a actividade para aplicar o novo idioma.
      */
     override fun onStop() {
-
         super.onStop()
-
-        val idiomaAplicacion = LocaleListCompat.forLanguageTags( idioma.value.codigoRexion.replace( "_", "-" ) )
-        val idiomaOpcions = AppCompatDelegate.getApplicationLocales().get( 0 )
-
-        if ( idiomaAplicacion.get( 0 ) != idiomaOpcions ) {
-            AppCompatDelegate.setApplicationLocales( idiomaAplicacion )
-        }
-
+        gardarIdiomaSO()
     }
 
 }

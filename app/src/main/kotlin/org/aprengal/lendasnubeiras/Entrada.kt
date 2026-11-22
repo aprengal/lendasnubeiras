@@ -4,11 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -21,7 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
-import androidx.core.os.LocaleListCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle as escoitarEstado
 import org.aprengal.lendasnubeiras.data.bd.clases.BD
@@ -176,14 +173,11 @@ class Entrada : AppCompatActivity() {
     }
 
     /**
-     * Sincroniza o idioma da aplicación co do sistema cando a actividade pasa a segundo plano.
+     * Rexista ou actualiza o idioma do sistema operativo cando a actividade
+     * pasa a segundo plano mediante [gardarIdiomaSO].
      *
-     * A actualización realízase neste momento para evitar que os cambios de idioma afecten
-     * á experiencia de usuario durante o uso normal da aplicación.
-     *
-     * Se o idioma actual da aplicación é distinto do rexistrado en [AppCompatDelegate],
-     * actualízao mediante [AppCompatDelegate.setApplicationLocales]. Este cambio provoca
-     * habitualmente que Android recree a actividade para aplicar o novo idioma.
+     * Execútase en `onStop` para persistir o estado ao saír da vista activa
+     * sen interferir co fluxo normal mentres o usuario interactúa coa aplicación.
      */
     override fun onStop() {
         super.onStop()

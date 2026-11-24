@@ -4,10 +4,6 @@ package org.aprengal.lendasnubeiras.data.localizacion.clases
  * Define os idiomas dispoñibles na aplicación e os seus datos de identificación
  * e localización.
  *
- * Inclúe o valor especial Nada, que representa a ausencia dun idioma seleccionado
- * e permite establecer un estado inicial antes de aplicar o idioma configurado
- * nas opcións da aplicación.
- *
  * @property nome Nome do idioma.
  * @property codigo Código lingüístico do idioma.
  * @property rexion Código da rexión asociada ao idioma.
@@ -20,10 +16,7 @@ enum class Idioma( val nome: String, val codigo: String, val rexion: String, val
     /** Idioma castelán. */
     Castelan( "Español", "es", "ES", pendente = "¡PENDIENTE!" ),
     /** Idioma inglés. */
-    Ingles( "English", "en", "GB", pendente = "PENDING!!" ),
-
-    /** Ausencia dun idioma seleccionado ou configurado. */
-    Nada( "", "", "", "" );
+    Ingles( "English", "en", "GB", pendente = "PENDING!!" );
 
     /**
      * Código lingüístico e rexional do idioma, no formato código_rexión.

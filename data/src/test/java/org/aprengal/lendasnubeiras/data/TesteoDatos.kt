@@ -18,7 +18,6 @@ class TesteoDatos {
                 Idioma.Galego -> "gl_ES"
                 Idioma.Castelan -> "es_ES"
                 Idioma.Ingles -> "en_GB"
-                Idioma.Nada -> "_"
             }
         }
 

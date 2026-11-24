@@ -11,14 +11,13 @@ import org.aprengal.lendasnubeiras.data.utilidades.Contexto.haiLector
 import org.aprengal.lendasnubeiras.data.utilidades.Contexto.reiniciarPecharAplicacion
 import org.aprengal.lendasnubeiras.data.localizacion.cantidades.L10nPlural
 import org.aprengal.lendasnubeiras.data.localizacion.cantidades.L10nVariante
-import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nActividades
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nMetaActividades
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nAutenticacion
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nBase
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nIconas
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nOpcions
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nSingular
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nTitulos
-import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nValidacion
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -61,7 +60,7 @@ object Localizacion {
     private val traducionsVariantes = mutableMapOf<Dominio, Map<L10nVariante, Map<String, String>>>()
 
     /** Fluxo de estado interno que almacena e comunica o idioma activo da aplicación. */
-    private val idiomaActual = MutableStateFlow( Idioma.Nada )
+    private val idiomaActual = MutableStateFlow( Idioma.Castelan )
 
     /** Regras ICU de pluralización cardinal do idioma activo, cargadas baixo demanda. */
     private var pluraisCardinais: PluralRules? = null
@@ -76,12 +75,11 @@ object Localizacion {
     internal val L10nSingular.clave: String
 
         get() = when ( this ) {
-            is L10nActividades -> clave
+            is L10nMetaActividades -> clave
             is L10nAutenticacion -> clave
             is L10nBase -> clave
             is L10nTitulos -> clave
             is L10nIconas -> clave
-            is L10nValidacion -> clave
             is L10nOpcions -> clave
         }
 
@@ -92,12 +90,11 @@ object Localizacion {
     internal val L10nSingular.dominio: Dominio
 
         get() = when ( this ) {
-            is L10nActividades -> dominio
+            is L10nMetaActividades -> dominio
             is L10nAutenticacion -> dominio
             is L10nBase -> dominio
             is L10nTitulos -> dominio
             is L10nIconas -> dominio
-            is L10nValidacion -> dominio
             is L10nOpcions -> dominio
         }
 
@@ -119,7 +116,7 @@ object Localizacion {
      */
     fun arrancar( contexto: Context ): StateFlow<Idioma> {
 
-        if ( ::appContext.isInitialized && idiomaActual.value != Idioma.Nada ) return idiomaActual.asStateFlow()
+        if ( ::appContext.isInitialized ) return idiomaActual.asStateFlow()
 
         appContext = contexto.applicationContext
         idiomaActual.value = Idioma.escollerIdiomaAplicacion(
@@ -188,12 +185,11 @@ object Localizacion {
     private fun collerClavesSingular( dominio: Dominio): List<L10nSingular> {
 
         val lista = when( dominio ) {
-            Dominio.META_ACTIVIDADES -> L10nActividades.entries
+            Dominio.META_ACTIVIDADES -> L10nMetaActividades.entries
             Dominio.AUTENTICACION -> L10nAutenticacion.entries
             Dominio.BASE -> L10nBase.entries
             Dominio.TITULOS -> L10nTitulos.entries
             Dominio.ICONAS -> L10nIconas.entries
-            Dominio.VALIDACION -> L10nValidacion.entries
             Dominio.OPCIONS -> L10nOpcions.entries
         }
 

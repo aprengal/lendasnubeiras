@@ -60,88 +60,10 @@ sealed class Permiso {
         }
     }
 
-    /** Permiso para borrar a propia conta (require que o usuario exista e non sexa ADMIN). */
+    /** Permiso para borrar a propia conta (require que o usuario exista). */
     object PodeBorrarConta : Permiso() {
         override fun invoke( usuario: Usuario ): Boolean {
-            return usuario.existe && usuario.rol != Rol.ADMIN
-        }
-    }
-
-    /** Permiso para xestionar usuarios e grupos (require calquera rol activo). */
-    object PodeXestionarUsuariosGrupos : Permiso() {
-        override fun invoke( usuario: Usuario ): Boolean {
-            return usuario.rol != Rol.NADA
-            //return usuario.rol in listOf( Rol.MONITOR, Rol.COLABORADOR, Rol.AUTOR, Rol.EDITOR, Rol.ADMIN )
-        }
-    }
-
-    /** Permiso para crear contido (para colaboradores, autores, editores e administradores). */
-    object PodeCrear : Permiso() {
-        override fun invoke( usuario: Usuario ): Boolean {
-            return usuario.rol in listOf( Rol.COLABORADOR, Rol.AUTOR, Rol.EDITOR, Rol.ADMIN )
-        }
-    }
-
-    /** Permiso para descartar contido. */
-    object PodeDescartar : Permiso() {
-        override fun invoke( usuario: Usuario ): Boolean {
-            return usuario.rol in listOf( Rol.COLABORADOR, Rol.AUTOR, Rol.EDITOR, Rol.ADMIN )
-        }
-    }
-
-    /** Permiso para editar contido propio. */
-    object PodeEditar : Permiso() {
-        override fun invoke( usuario: Usuario ): Boolean {
-            return usuario.rol in listOf( Rol.COLABORADOR, Rol.AUTOR, Rol.EDITOR, Rol.ADMIN )
-        }
-    }
-
-    /** Permiso para publicar contido (restringido a autores, editores e administradores). */
-    object PodePublicar : Permiso() {
-        override fun invoke( usuario: Usuario ): Boolean {
-            return usuario.rol in listOf( Rol.AUTOR, Rol.EDITOR, Rol.ADMIN )
-        }
-    }
-
-    /** Permiso para borrar contido propio. */
-    object PodeBorrar : Permiso() {
-        override fun invoke( usuario: Usuario ): Boolean {
-            return usuario.rol in listOf( Rol.AUTOR, Rol.EDITOR, Rol.ADMIN )
-        }
-    }
-
-    /** Permiso para restaurar contido propio. */
-    object PodeRestaurar : Permiso() {
-        override fun invoke( usuario: Usuario ): Boolean {
-            return usuario.rol in listOf( Rol.AUTOR, Rol.EDITOR, Rol.ADMIN )
-        }
-    }
-
-    /** Permiso para editar contido doutros usuarios (exclusivo de editores e administradores). */
-    object PodeEditarOutras : Permiso() {
-        override fun invoke( usuario: Usuario ): Boolean {
-            return usuario.rol in listOf( Rol.EDITOR, Rol.ADMIN )
-        }
-    }
-
-    /** Permiso para borrar contido doutros usuarios. */
-    object PodeBorrarOutras : Permiso() {
-        override fun invoke( usuario: Usuario ): Boolean {
-            return usuario.rol in listOf( Rol.EDITOR, Rol.ADMIN )
-        }
-    }
-
-    /** Permiso para restaurar contido doutros usuarios. */
-    object PodeRestaurarOutras : Permiso() {
-        override fun invoke( usuario: Usuario ): Boolean {
-            return usuario.rol in listOf( Rol.EDITOR, Rol.ADMIN )
-        }
-    }
-
-    /** Permiso total de administración (exclusivo para o rol ADMIN). */
-    object PodeAdministrar : Permiso() {
-        override fun invoke( usuario: Usuario ): Boolean {
-            return usuario.rol == Rol.ADMIN
+            return usuario.existe
         }
     }
 

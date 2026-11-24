@@ -1,7 +1,7 @@
 package org.aprengal.lendasnubeiras.data.actividades.datos.dixitais
 
 import org.aprengal.lendasnubeiras.data.localizacion.clases.ElementoL10n
-import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nActividades
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nMetaActividades
 
 
 /**
@@ -15,19 +15,19 @@ import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nActividades
  * @property nome Denominación localizada do nivel de dificultade, utilizada para obter
  * o texto que se presentará ao usuario.
  */
-enum class Dificultade( override val clave: String, override val nome: L10nActividades ): ElementoL10n {
+enum class Dificultade( override val clave: String, override val nome: L10nMetaActividades ): ElementoL10n {
 
     /** Nivel de dificultade máis baixo. */
-    Facil( "facil", L10nActividades.DificultadeFacil ),
+    Facil( "facil", L10nMetaActividades.DificultadeFacil ),
 
     /** Nivel de dificultade medio. */
-    Media( "media", L10nActividades.DificultadeMedia ),
+    Media( "media", L10nMetaActividades.DificultadeMedia ),
 
     /** Nivel de dificultade alto. */
-    Dificil( "dificil", L10nActividades.DificultadeDificil ),
+    Dificil( "dificil", L10nMetaActividades.DificultadeDificil ),
 
     /** Nivel de dificultade máis alto. */
-    Pesadelo( "pesadelo", L10nActividades.DificultadePesadelo );
+    Pesadelo( "pesadelo", L10nMetaActividades.DificultadePesadelo );
 
     companion object {
 

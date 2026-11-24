@@ -5,9 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.collerActividade
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeAcceder
-import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeAdministrar
-import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeCrear
-import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeEditar
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeIniciarSesion
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeLer
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeRexistrarse
@@ -26,9 +23,8 @@ internal object ControlAcceso {
      * Comproba se o usuario actual ten permiso para acceder a unha ruta.
      *
      * Cada clase de ruta asócíase a un permiso: calquera usuario ([PodeAcceder]),
-     * autenticación ([PodeIniciarSesion], [PodeRexistrarse]), lectura
-     * ([PodeLer]), creación ([PodeCrear]), edición ([PodeEditar]) ou
-     * administración ([PodeAdministrar]).
+     * autenticación ([PodeIniciarSesion], [PodeRexistrarse]) ou lectura
+     * ([PodeLer]).
      *
      * @param ruta Clase da ruta á que se quere acceder.
      * @return `true` se o usuario ten o permiso asociado a esa ruta.
@@ -52,14 +48,6 @@ internal object ControlAcceso {
             Ruta.Buscador::class -> PodeLer
             Ruta.ActividadeDetalle::class -> PodeLer
             Ruta.ActividadeDixital::class -> PodeLer
-
-            // Creación
-            //Ruta.ListarActividades::class -> PodeCrear
-            Ruta.CrearActividade::class -> PodeCrear
-            //Ruta.ModificarActividade::class -> PodeEditar
-
-            // Administración
-            //Ruta.Administrar::class -> PodeAdministrar
 
             else -> error( "A ruta ${ ruta.simpleName } non ten permiso asignado" )
 

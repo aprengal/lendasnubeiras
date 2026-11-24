@@ -1,5 +1,7 @@
 package org.aprengal.lendasnubeiras.data.bd.operacions
 
+import android.util.Log
+import kotlinx.coroutines.CoroutineScope
 import org.aprengal.lendasnubeiras.data.actividades.datos.base.Actividade
 import org.aprengal.lendasnubeiras.data.actividades.datos.buscador.ActividadeBuscable
 import org.aprengal.lendasnubeiras.data.actividades.datos.buscador.CampoBusca
@@ -8,17 +10,23 @@ import org.aprengal.lendasnubeiras.data.actividades.datos.buscador.CriteriosBusc
 import org.aprengal.lendasnubeiras.data.actividades.datos.base.Destinatario.Companion.escollerDestinatario
 import org.aprengal.lendasnubeiras.data.actividades.datos.base.Estado
 import org.aprengal.lendasnubeiras.data.actividades.datos.base.Estado.Companion.escollerEstado
+import org.aprengal.lendasnubeiras.data.api.ConexionApi.MetodoApi
+import org.aprengal.lendasnubeiras.data.api.ConexionApi.procesarPeticion
+import org.aprengal.lendasnubeiras.data.api.RutasApi
+import org.aprengal.lendasnubeiras.data.api.resposta.DatosActividades
+import org.aprengal.lendasnubeiras.data.api.resposta.RespostaXenerica
+import org.aprengal.lendasnubeiras.data.axustes.Axustes.collerIdDispositivo
+import org.aprengal.lendasnubeiras.data.bd.clases.OperacionsBD.Companion.buscarElemento
+import org.aprengal.lendasnubeiras.data.bd.clases.OperacionsBD.Companion.buscarElementos
+import org.aprengal.lendasnubeiras.data.bd.clases.BD.OperadorSimple
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.Orde
-import org.aprengal.lendasnubeiras.data.bd.clases.BD.buscarElemento
-import org.aprengal.lendasnubeiras.data.bd.clases.BD.buscarElementos
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.bd
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.SeleccionSQL
-import org.aprengal.lendasnubeiras.data.bd.clases.Taboa
+import org.aprengal.lendasnubeiras.data.bd.clases.BD.Taboa
+import org.aprengal.lendasnubeiras.data.bd.operacions.Puntuacions.eliminarPuntuacionsActividade
 import org.aprengal.lendasnubeiras.data.localizacion.clases.ElementoL10n
-import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeCrear
-import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeEditarOutras
-import org.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
+import org.aprengal.lendasnubeiras.data.utilidades.Corrutinas
 
 /**
  * Obxecto encargado de xestionar as operacións de consulta e acceso
@@ -31,10 +39,19 @@ import org.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
  */
 object Actividades {
 
+    /**
+     * Número máximo de actividades que se poden almacenar na caché.
+     */
     private const val LIMITE_CACHE = 10
 
-    //Últimas actividades consultadas pola clave do título. Ordénase por acceso, polo que ao
-    //superar o límite elimínase a que leva máis tempo sen usarse
+    /**
+     * Caché LRU (*Least Recently Used*) das actividades consultadas.
+     *
+     * Mantén as actividades máis recentemente utilizadas e elimina automaticamente
+     * a menos recente cando se supera o límite establecido por [LIMITE_CACHE].
+     *
+     * A orde das entradas actualízase con cada acceso.
+     */
     private val cache = object : LinkedHashMap<String, Actividade>( 16, 0.75f, true ) {
 
         override fun removeEldestEntry( eldest: MutableMap.MutableEntry<String, Actividade> ): Boolean {
@@ -198,32 +215,6 @@ object Actividades {
     }
 
     /**
-     * Lista as actividades que o usuario actual ten permiso para editar.
-     *
-     * Antes de realizar a consulta, comproba que o usuario ten permisos
-     * para crear actividades. Se non pode editar actividades doutros usuarios,
-     * limita os resultados ás actividades das que é autor.
-     *
-     * @return Lista de actividades que o usuario actual pode editar.
-     * @throws IllegalArgumentException Se o usuario actual non ten permisos para crear actividades.
-     */
-    fun listarActividadesEditables(): List<Actividade> {
-
-        val usuarioActual = usuarioActual()
-
-        require( PodeCrear( usuarioActual ) ) { "Non se poden listar as actividades se non pode crealas" }
-
-        val onde: MutableMap<String, Condicion> = mutableMapOf()
-
-        if ( !PodeEditarOutras( usuarioActual ) ) {
-            onde[ "id_autoria" ] = Condicion.Simple( usuarioActual.id )
-        }
-
-        return buscarElementos( Taboa.ACTIVIDADES, onde ) { actividade -> crearActividade( actividade ) }
-
-    }
-
-    /**
      * Constrúe unha instancia de Actividade a partir dos datos dun rexistro
      * da base de datos.
      *
@@ -274,6 +265,98 @@ object Actividades {
         )
 
         return actividade
+
+    }
+
+    /**
+     * Sincroniza o catálogo local de actividades co catálogo dispoñible no servidor.
+     *
+     * O proceso realízase mediante unha corrutina no ámbito recibido e comprende as seguintes
+     * operacións:
+     *
+     * 1. Envía ao servidor unha petición de actualización identificando o dispositivo.
+     * 2. Obtén a lista de actividades dispoñibles no servidor.
+     * 3. Compara as actividades recibidas coas almacenadas localmente.
+     * 4. Insire as actividades que aínda non existen na base de datos local.
+     * 5. Actualiza as actividades locais cando a versión do servidor é máis recente,
+     * comparando os campos `dataModificado`.
+     * 6. Identifica as actividades locais que xa non aparecen no catálogo do servidor.
+     * 7. Elimina as actividades obsoletas e as súas puntuacións asociadas mediante
+     * [eliminarPuntuacionsActividade].
+     * 8. Comunica ao servidor os problemas detectados durante o procesamento dos datos.
+     *
+     * A execución da operación xestiónase mediante [Corrutinas.corrutinaResposta].
+     *
+     * Os rexistros que presentan un formato inesperado ou valores nulos nos campos esperados
+     * rexístranse como incidencias e non interrompen necesariamente o procesamento do resto
+     * das actividades.
+     *
+     * @param ambito Ámbito de corrutinas no que se executa a operación de sincronización.
+     * @return `true` se a petición inicial ao servidor ten éxito e se completa o proceso
+     * de sincronización; `false` se a petición inicial non ten éxito.
+     */
+    suspend fun actualizarCatalogo( ambito: CoroutineScope ): Boolean {
+
+        val resposta = Corrutinas.corrutinaResposta( ambito ) {
+
+            val problemas = mutableListOf<String>()
+            val campos = mutableMapOf( "uuid" to collerIdDispositivo() )
+            val actividadesServidor: DatosActividades = procesarPeticion( MetodoApi.POST, RutasApi.ACTUALIZAR, campos )
+
+            if ( !actividadesServidor.exito ) return@corrutinaResposta false
+
+            val ondeLocal = mapOf( "id" to Condicion.Simple( 0, OperadorSimple.MAIOR_IGUAL ) )
+            val actividadesLocais = collerActividades( ondeLocal ).associateBy { elemento -> elemento.id }
+            val actividadesObsoletas = actividadesLocais.toMutableMap()
+
+            actividadesServidor.lista.forEach { actServidor ->
+
+                try {
+
+                    val id = ( actServidor[ "id" ] as Number ).toLong()
+                    val dataModificadoServidor = ( actServidor[ "data_modificado" ] as? Number )?.toLong() ?: 0L
+                    val actLocal = actividadesLocais[ id ]
+
+                    when {
+
+                        actLocal == null -> bd.insertar( Taboa.ACTIVIDADES, actServidor )
+
+                        dataModificadoServidor > actLocal.dataModificado -> {
+                            actividadesObsoletas.remove( id )
+                            bd.actualizar( Taboa.ACTIVIDADES, actServidor, mapOf( "id" to Condicion.Simple( id ) ) )
+                        }
+
+                        else -> actividadesObsoletas.remove( id )
+
+                    }
+
+                } catch ( e: ClassCastException ) {
+                    val mensaxe = "Actividade con formato inesperado do servidor: $actServidor"
+                    Log.wtf( "ActualizarCatalogo", mensaxe, e )
+                    problemas.add( mensaxe )
+                } catch ( _: NullPointerException ) {
+                    val mensaxe = "Actividade con valor nulo inesperado: $actServidor"
+                    problemas.add( mensaxe )
+                }
+
+            }
+
+            if ( problemas.isNotEmpty() ) {
+                campos[ "erro" ] = problemas.toString()
+                procesarPeticion( MetodoApi.POST, RutasApi.REPORTES, campos ) as RespostaXenerica
+            }
+
+            actividadesObsoletas.values.forEach { actividade ->
+                eliminarPuntuacionsActividade( actividade )
+            }
+
+            limparCache()
+
+            return@corrutinaResposta true
+
+        }.await()
+
+        return resposta
 
     }
 

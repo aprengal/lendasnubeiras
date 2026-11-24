@@ -1,7 +1,7 @@
 package org.aprengal.lendasnubeiras.data.actividades.datos.base
 
 import org.aprengal.lendasnubeiras.data.localizacion.clases.ElementoL10n
-import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nActividades
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nMetaActividades
 
 /**
  * Define as categorías nas que se poden clasificar as actividades.
@@ -16,22 +16,22 @@ import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nActividades
  * @property nome Denominación localizada da categoría, utilizada para obter
  * o texto que se presentará ao usuario.
  */
-enum class Categoria( override val clave: String, override val nome: L10nActividades ): ElementoL10n {
+enum class Categoria( override val clave: String, override val nome: L10nMetaActividades ): ElementoL10n {
 
     /** Actividades que non encaixan en ningunha das outras categorías. */
-    Outros( "outros", L10nActividades.CategoriaOutros ),
+    Outros( "outros", L10nMetaActividades.CategoriaOutros ),
 
     /** Actividades relacionadas co ámbito dixital e as novas tecnoloxías. */
-    Dixital( "dixital", L10nActividades.CategoriaDixital ),
+    Dixital( "dixital", L10nMetaActividades.CategoriaDixital ),
 
     /** Actividades que se desenvolven principalmente ao aire libre. */
-    AireLibre( "aire-libre", L10nActividades.CategoriaAireLibre ),
+    AireLibre( "aire-libre", L10nMetaActividades.CategoriaAireLibre ),
 
     /** Actividades que se desenvolven en espazos interiores. */
-    Interior( "interior", L10nActividades.CategoriaInterior ),
+    Interior( "interior", L10nMetaActividades.CategoriaInterior ),
 
     /** Actividades relacionadas coa lectura. */
-    Lectura( "lectura", L10nActividades.CategoriaLectura );
+    Lectura( "lectura", L10nMetaActividades.CategoriaLectura );
 
     companion object {
 

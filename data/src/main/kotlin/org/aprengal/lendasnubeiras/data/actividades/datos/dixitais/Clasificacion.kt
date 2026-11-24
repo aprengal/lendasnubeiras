@@ -1,7 +1,7 @@
 package org.aprengal.lendasnubeiras.data.actividades.datos.dixitais
 
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.ElementoBD
-import org.aprengal.lendasnubeiras.data.bd.clases.Taboa.PUNTUACIONS
+import org.aprengal.lendasnubeiras.data.bd.clases.BD.Taboa.PUNTUACIONS
 
 /**
  * Representa a clasificación dunha actividade para unha dificultade determinada.

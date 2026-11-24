@@ -91,7 +91,7 @@ function usuario_legado( Usuario $usuario ): bool {
  * @throws InvalidArgumentException Se o identificador non é válido
  * ou corresponde á conta reservada.
  */
-function borrar_conta( int $id, int $id_legado ) {
+function borrar_conta( int $id, int $id_legado ): void {
 
 	if ( $id <= 0 || $id === $id_legado ) {
 		throw new InvalidArgumentException( 'Non se pode borrar a conta ' . $id );
@@ -99,20 +99,27 @@ function borrar_conta( int $id, int $id_legado ) {
 
 	db()->iniciar_transaccion();
 
-	db()->delete( 'actividades', [
+	$actividades_borrables = [
 		'onde' => [
 			'id_autoria' => $id,
-			'estado' => [ 'operador' => 'IN', 'valores' => [ ESTADO_ACTIVIDADE_BORRADOR, ESTADO_ACTIVIDADE_PENDENTE, ESTADO_ACTIVIDADE_BORRADA ] ]
+			'estado' => [
+				'operador' => 'IN',
+				'valores' => [ ESTADO_ACTIVIDADE_BORRADOR, ESTADO_ACTIVIDADE_PENDENTE, ESTADO_ACTIVIDADE_BORRADA ]
+			]
 		]
-	] );
+	];
 
-	db()->update( 'actividades', [
+	$actividades_traspasables = [
 		'nova_info' => [ 'id_autoria' => $id_legado ],
 		'onde' => [ 'id_autoria' => $id ]
-	] );
+	];
 
-	db()->delete( 'info_temporal', [ 'onde' => [ 'id' => $id ] ] );
-	db()->delete( 'usuarios', [ 'onde' => [ 'id' => $id ], 'limit' => 1 ] );
+	$onde_usuario = [ 'onde' => [ 'id' => $id ] ];
+
+	db()->delete( 'actividades', $actividades_borrables );
+	db()->update( 'actividades', $actividades_traspasables );
+	db()->delete( 'info_temporal', $onde_usuario );
+	db()->delete( 'usuarios', $onde_usuario );
 
 	db()->executar_transaccion();
 
@@ -135,14 +142,14 @@ function borrar_conta( int $id, int $id_legado ) {
  */
 function borrar_contas_caducadas(): int {
 
-	$limite = time() - DIAS_BORRADO_CONTA * DIA_EN_SEGUNDOS;
+	$data_limite = time() - DIAS_BORRADO_CONTA * DIA_EN_SEGUNDOS;
 
 	//data_borrado vale 0 cando a conta non está en proceso de borrado, polo que se exclúe
 	$contas = db()->select( 'usuarios', [
 		'columnas' => 'id',
 		'onde' => [
 			'estado' => ESTADO_USUARIO_BORRADO,
-			'data_borrado' => [ 'operador' => 'BETWEEN', 'valores' => [ 1, $limite - 1 ] ]
+			'data_borrado' => [ 'operador' => 'BETWEEN', 'valores' => [ 1, $data_limite - 1 ] ]
 		]
 	], 'array' );
 

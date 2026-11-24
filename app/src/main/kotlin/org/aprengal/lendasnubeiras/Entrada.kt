@@ -74,7 +74,7 @@ class Entrada : AppCompatActivity() {
      * Inicializa os servizos que a aplicación necesita antes de mostrar nada.
      *
      * Arranca, por orde, os axustes, a localización (obtendo o fluxo
-     * do idioma), o tema, a base de datos e a sesión actual.
+     * do idioma), a base de datos, a sesión actual e o tema.
      *
      * A inicialización execútase mediante [runBlocking], polo que bloquea o fío chamador
      * ata que rematan todas as operacións.
@@ -86,9 +86,9 @@ class Entrada : AppCompatActivity() {
         runBlocking {
             Axustes.arrancar( contexto )
             idioma = Localizacion.arrancar( contexto )
-            Tema.arrancar()
             BD.arrancar( contexto )
             SesionActual.arrancar()
+            Tema.arrancar()
         }
 
     }

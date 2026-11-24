@@ -1,7 +1,7 @@
 package org.aprengal.lendasnubeiras.data.bd.clasesAxuda
 
 import org.aprengal.lendasnubeiras.data.bd.clases.BD
-import org.aprengal.lendasnubeiras.data.bd.clases.Taboa
+import org.aprengal.lendasnubeiras.data.bd.clases.BD.Taboa
 
 /**
  * Representa a configuración dunha combinación (JOIN) entre a táboa principal

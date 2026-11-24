@@ -1,7 +1,7 @@
 package org.aprengal.lendasnubeiras.data.actividades.datos.base
 
 import org.aprengal.lendasnubeiras.data.localizacion.clases.ElementoL10n
-import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nActividades
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nMetaActividades
 
 /**
  * Define os grupos de persoas aos que vai dirixida unha actividade.
@@ -17,25 +17,25 @@ import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nActividades
  * @property nome Denominación localizada do destinatario, utilizada para obter
  * o texto que se presentará ao usuario.
  */
-enum class Destinatario( override val clave: String, override val nome: L10nActividades ): ElementoL10n {
+enum class Destinatario( override val clave: String, override val nome: L10nMetaActividades ): ElementoL10n {
 
     /** Actividades dirixidas ao público xeral, sen unha franxa de idade específica. */
-    Xeral( "xeral", L10nActividades.DestinatarioXeral ),
+    Xeral( "xeral", L10nMetaActividades.DestinatarioXeral ),
 
     /** Actividades dirixidas a nenos e nenas de entre 6 e 11 anos. */
-    Peques( "peques", L10nActividades.DestinatarioPeques ),
+    Peques( "peques", L10nMetaActividades.DestinatarioPeques ),
 
     /** Actividades dirixidas a mozos e mozas de entre 12 e 18 anos. */
-    Xuvenil( "xuvenil", L10nActividades.DestinatarioXuvenil ),
+    Xuvenil( "xuvenil", L10nMetaActividades.DestinatarioXuvenil ),
 
     /** Actividades dirixidas a persoas adultas, sen unha franxa de idade específica. */
-    Adultos( "adultos", L10nActividades.DestinatarioAdultos ),
+    Adultos( "adultos", L10nMetaActividades.DestinatarioAdultos ),
 
     /** Actividades dirixidas a persoas que teñen 65 anos ou máis. */
-    Maiores( "maiores", L10nActividades.DestinatarioMaiores ),
+    Maiores( "maiores", L10nMetaActividades.DestinatarioMaiores ),
 
     /** Actividades dirixidas a persoas de diferentes grupos de idade. */
-    Mixto( "mixto", L10nActividades.DestinatarioMixto );
+    Mixto( "mixto", L10nMetaActividades.DestinatarioMixto );
 
     companion object {
 

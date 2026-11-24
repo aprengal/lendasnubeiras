@@ -8,6 +8,10 @@ import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import androidx.core.database.sqlite.transaction
+import org.aprengal.lendasnubeiras.data.BuildConfig
+import org.aprengal.lendasnubeiras.data.bd.clases.BD.ElementoBD
+import org.aprengal.lendasnubeiras.data.bd.clases.BD.Taboa
+import org.aprengal.lendasnubeiras.data.bd.clases.BD.bd
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.CombinacionSQL
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.SeleccionSQL
@@ -22,7 +26,7 @@ import kotlin.collections.iterator
  * Defínese como clase en lugar de obxecto porque [SQLiteOpenHelper] require unha instancia
  * para a súa utilización e debe ser herdada mediante unha clase.
  */
-internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, null, DB_VERSION ) {
+internal class OperacionsBD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, null, VERSION_BD ) {
 
     /**
      * Conxunto de táboas permitidas nas operacións de acceso á base de datos.
@@ -35,7 +39,41 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
         const val DB_NOME = "lendas_nubeiras.bd"
 
         /** Versión actual do esquema da base de datos. */
-        const val DB_VERSION = 1
+        private val VERSION_BD = if ( BuildConfig.DEBUG ) 2 else 1
+
+        /**
+         * Busca o primeiro elemento dunha táboa que cumpra as condicións especificadas.
+         *
+         * Recupera todos os campos do primeiro rexistro coincidente e transforma o resultado
+         * nun elemento do tipo solicitado mediante a función de conversión.
+         *
+         * @param taboa Táboa da base de datos na que se realiza a busca.
+         * @param onde Condicións que deben cumprir os rexistros para seren seleccionados.
+         * @param accion Función que converte os datos do rexistro nun elemento do tipo `T`.
+         * @return O primeiro elemento coincidente convertido ao tipo `T`, ou `null` se non
+         * existen resultados.
+         */
+        internal fun <T: ElementoBD> buscarElemento( taboa: Taboa, onde: Map<String, Condicion>, accion: (Map<String, Any> ) -> T ): T? {
+            val resultados = bd.seleccionar( taboa, SeleccionSQL( setOf( "*" ), onde = onde ) )
+            return resultados.firstOrNull()?.let( accion )
+        }
+
+        /**
+         * Busca todos os elementos dunha táboa que cumpran as condicións especificadas.
+         *
+         * Se non se indican condicións, recupera todos os rexistros da táboa.
+         * Cada rexistro convértese nun elemento do tipo `T` mediante a función proporcionada.
+         *
+         * @param taboa Táboa da base de datos na que se realiza a busca.
+         * @param onde Condicións que deben cumprir os rexistros. Por defecto, non se aplica
+         * ningún filtro.
+         * @param accion Función que converte os datos de cada rexistro nun elemento do tipo `T`.
+         * @return Lista de elementos coincidentes. Se non hai resultados, devolve unha lista baleira.
+         */
+        internal fun <T: ElementoBD> buscarElementos( taboa: Taboa, onde: Map<String, Condicion> = emptyMap(), accion: ( Map<String, Any> ) -> T ): List<T> {
+            val resultados = bd.seleccionar( taboa, SeleccionSQL( setOf( "*" ), onde = onde ) )
+            return resultados.map( accion )
+        }
 
     }
 
@@ -45,20 +83,20 @@ internal class BBDD( contexto: Context ) : SQLiteOpenHelper( contexto, DB_NOME, 
      * @param db Base de datos na que se debe crear a estrutura.
      */
     override fun onCreate( db: SQLiteDatabase ) {
-        EstruturaDB().crear( db )
+        EstruturaBD().crear( db )
     }
 
     /**
      * Actualiza a estrutura da base de datos cando cambia a súa versión.
      *
-     * Delega a execución das modificacións necesarias na clase [EstruturaDB].
+     * Delega a execución das modificacións necesarias na clase [EstruturaBD].
      *
      * @param db Base de datos cuxa estrutura se debe actualizar.
      * @param oldVersion Versión anterior da base de datos.
      * @param newVersion Nova versión da base de datos.
      */
     override fun onUpgrade( db: SQLiteDatabase, oldVersion: Int, newVersion: Int ) {
-        EstruturaDB().actualizar( db, oldVersion, newVersion )
+        EstruturaBD().actualizar( db, oldVersion, newVersion )
     }
 
     /**

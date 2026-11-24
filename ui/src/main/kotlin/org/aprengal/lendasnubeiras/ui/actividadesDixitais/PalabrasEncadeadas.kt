@@ -45,7 +45,7 @@ import kotlin.time.Duration.Companion.milliseconds
  *
  * Se se esgota o tempo, amósase que o xogador está eliminado. Nos niveis fácil, medio e difícil a conta
  * atrás queda en 0 ata que se prema o botón de seguinte xogador. No nivel pesadelo o reloxo non se
- * detén: despois dun segundo pasa automaticamente ao seguinte xogador.
+ * detén: despois dun cuarto de segundo pasa automaticamente ao seguinte xogador.
  *
  * Non se leva a conta dos xogadores nin das palabras: iso queda para as persoas participantes.
  *

@@ -11,7 +11,7 @@ import org.aprengal.lendasnubeiras.data.bd.clases.BD.TipoCombinacion
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.CombinacionSQL
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.SeleccionSQL
-import org.aprengal.lendasnubeiras.data.bd.clases.Taboa
+import org.aprengal.lendasnubeiras.data.bd.clases.BD.Taboa
 import java.time.Instant
 
 /**
@@ -95,6 +95,20 @@ object Puntuacions {
 
         return bd.eliminar( Taboa.PUNTUACIONS, onde )
 
+    }
+
+    /**
+     * Elimina unha actividade e todas as súas puntuacións asociadas da base de datos.
+     *
+     * Primeiro elimina os rexistros da táboa [Taboa.PUNTUACIONS] vinculados á actividade mediante
+     * o seu identificador e, a continuación, elimina o propio rexistro da táboa [Taboa.ACTIVIDADES].
+     *
+     * @param actividade Actividade que se quere eliminar.
+     * @return Número de rexistros eliminados da táboa de actividades.
+     */
+    fun eliminarPuntuacionsActividade( actividade: Actividade ): Int {
+        bd.eliminar(Taboa.PUNTUACIONS, mapOf( "actividade_id" to Condicion.Simple( actividade.id ) ) )
+        return bd.eliminar(Taboa.ACTIVIDADES, mapOf( "id" to Condicion.Simple( actividade.id ) ) )
     }
 
     /**

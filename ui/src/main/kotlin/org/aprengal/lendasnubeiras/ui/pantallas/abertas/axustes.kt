@@ -24,13 +24,9 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import org.aprengal.lendasnubeiras.data.api.ConexionApi.MetodoApi
-import org.aprengal.lendasnubeiras.data.api.ConexionApi.procesarPeticion
-import org.aprengal.lendasnubeiras.data.api.RutasApi
-import org.aprengal.lendasnubeiras.data.api.resposta.RespostaXenerica
 import org.aprengal.lendasnubeiras.data.axustes.DatosTema.escollerRecursoTema
 import org.aprengal.lendasnubeiras.data.axustes.DatosTema.Variante
-import org.aprengal.lendasnubeiras.data.bd.clases.BD.actualizarCatalogo
+import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.actualizarCatalogo
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.cambiarIdioma
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.obterTexto
@@ -115,7 +111,7 @@ fun PantallaAxustes() {
                 valorInicial = idiomaActual,
                 accion = { novoIdioma -> cambiarIdioma( novoIdioma ) },
                 tituloAlerta = L10nOpcions.DialogoCambioIdioma,
-                opcions = Idioma.entries.filter { idioma -> idioma != Idioma.Nada },
+                opcions = Idioma.entries,
                 descricionExtra = subtituloAccion
             )
 
@@ -138,44 +134,22 @@ fun PantallaAxustes() {
 
         }
 
-        //As seguintes funcionalidades puxéronse en opcións, pero igual sería mellor que estivesen
-        //noutras pantallas de xestión, pero como non se van implementar, deixase aquí para verificar que funcionan.
-        if ( usuarioActual().existe ) {
+        //Actualización manual do catálogo. Tamén se executa isto ao abrir a aplicación
+        val ambito = CoroutineScope( SupervisorJob() + Dispatchers.IO )
+        val accionCatalogo = intentarAccion(
+            L10nOpcions.DialogoActualizacionCatalogo,
+            L10nOpcions.ContidoActualizacionCatalogo,
+            L10nOpcions.ActualizacionCatalogoFallido
+        ) { actualizarCatalogo( ambito ) }
 
-            val ambito = CoroutineScope( SupervisorJob() + Dispatchers.IO )
-            val accionCatalogo = intentarAccion(
-                L10nOpcions.DialogoActualizacionCatalogo,
-                L10nOpcions.ContidoActualizacionCatalogo,
-                L10nOpcions.ActualizacionCatalogoFallido
-            ) { actualizarCatalogo( ambito ) }
+        val modificador = Modifier.fillMaxWidth().padding( vertical = 12.dp )
 
-            val modificador = Modifier.fillMaxWidth().padding( vertical = 12.dp )
+        EspazadorAlto( 2 )
 
-            EspazadorAlto( 2 )
+        Card( onClick = accionCatalogo ) {
 
-            Card( onClick = accionCatalogo ) {
-
-                Column( modificador, Arrangement.Center, Alignment.CenterHorizontally ) {
-                    Texto( L10nOpcions.TituloActualizacionCatalogo )
-                }
-
-            }
-
-            EspazadorAlto( 2 )
-
-            val limpezaDatos: suspend () -> Boolean = {
-                val resposta = procesarPeticion( MetodoApi.GET, RutasApi.LIMPAR, emptyMap() ) as RespostaXenerica
-                resposta.exito
-            }
-
-            val accionLimpeza = intentarAccion( L10nOpcions.DialogoLimpezaDatos, erro = L10nOpcions.LimpezaDatosFallido ) { limpezaDatos() }
-
-            Card( onClick = accionLimpeza ) {
-
-                Column( modificador, Arrangement.Center, Alignment.CenterHorizontally ) {
-                    Texto( L10nOpcions.TituloLimpezaDatos )
-                }
-
+            Column( modificador, Arrangement.Center, Alignment.CenterHorizontally ) {
+                Texto( L10nOpcions.TituloActualizacionCatalogo )
             }
 
         }

@@ -15,8 +15,6 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -25,8 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeCrear
-import org.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.ui.Alignment
@@ -53,13 +49,11 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.visual.Log
 internal fun EstruturaBase( navegacion: Navegacion, contido: @Composable () -> Unit ) {
 
     val aviso = LocalAviso.current
-    val amosarAccion = PodeCrear( usuarioActual() )
 
     Scaffold(
         topBar = { NavegacionSuperior( navegacion ) },
         bottomBar = { NavegacionInferior( navegacion ) },
-        snackbarHost = { SnackbarHost( aviso ) },
-        floatingActionButton = { if ( amosarAccion ) BotonCrearActividade( navegacion ) }
+        snackbarHost = { SnackbarHost( aviso ) }
     ) { recheoInterno ->
 
         Column( modifier = Modifier.fillMaxSize().padding( recheoInterno ).padding( horizontal = 10.dp ) ) {
@@ -132,25 +126,6 @@ private fun NavegacionInferior( navegacion: Navegacion ) {
 
         }
 
-    }
-
-}
-
-/**
- * Debuxa o botón flotante para acceder á creación dunha actividade.
- *
- * Ao premelo, engade a ruta de creación de actividades á navegación.
- *
- * @param navegacion Controlador de navegación empregado para abrir a pantalla de creación.
- */
-@Composable
-private fun BotonCrearActividade( navegacion: Navegacion ) {
-
-    val ruta = Ruta.CrearActividade
-    val accion = { navegacion.engadir( ruta ) }
-
-    FloatingActionButton( onClick = accion, shape = CircleShape ) {
-        DebuxarIconaMenu( ruta, 20.sp )
     }
 
 }

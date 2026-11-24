@@ -2,10 +2,11 @@ package org.aprengal.lendasnubeiras.data.bd.operacions
 
 import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Grupo
 import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Xogador
-import org.aprengal.lendasnubeiras.data.bd.clases.BD
+import org.aprengal.lendasnubeiras.data.bd.clases.OperacionsBD.Companion.buscarElemento
+import org.aprengal.lendasnubeiras.data.bd.clases.OperacionsBD.Companion.buscarElementos
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.bd
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
-import org.aprengal.lendasnubeiras.data.bd.clases.Taboa
+import org.aprengal.lendasnubeiras.data.bd.clases.BD.Taboa
 
 /**
  * Obxecto encargado de xestionar as operacións de acceso e modificación
@@ -56,7 +57,7 @@ object Xogadores {
      */
     fun collerXogador( id: Long ): Xogador? {
         val onde = mapOf( "id" to Condicion.Simple( id ) )
-        return BD.buscarElemento( Taboa.XOGADORES, onde ) { fila -> crearXogador( fila ) }
+        return buscarElemento( Taboa.XOGADORES, onde ) { fila -> crearXogador( fila ) }
     }
 
     /**
@@ -67,7 +68,7 @@ object Xogadores {
      */
     fun collerXogadores( grupo: Grupo ): List<Xogador> {
         val onde = mapOf( "grupo_id" to Condicion.Simple( grupo.id ) )
-        return BD.buscarElementos( Taboa.XOGADORES, onde ) { xogador -> crearXogador( xogador ) }
+        return buscarElementos( Taboa.XOGADORES, onde ) { xogador -> crearXogador( xogador ) }
     }
 
     /**

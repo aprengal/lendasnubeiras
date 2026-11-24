@@ -1,7 +1,7 @@
 package org.aprengal.lendasnubeiras.data.actividades.datos.dixitais
 
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.ElementoBD
-import org.aprengal.lendasnubeiras.data.bd.clases.Taboa.GRUPOS
+import org.aprengal.lendasnubeiras.data.bd.clases.BD.Taboa.GRUPOS
 
 /**
  * Representa un grupo de xogadores.

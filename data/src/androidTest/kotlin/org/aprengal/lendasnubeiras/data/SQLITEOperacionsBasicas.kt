@@ -4,17 +4,15 @@ import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.runBlocking
 import org.aprengal.lendasnubeiras.data.actividades.datos.base.Categoria
 import org.aprengal.lendasnubeiras.data.actividades.datos.buscador.CriteriosBusca
-import org.aprengal.lendasnubeiras.data.bd.clases.BBDD
+import org.aprengal.lendasnubeiras.data.bd.clases.OperacionsBD
 import org.aprengal.lendasnubeiras.data.bd.clases.BD
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.SeleccionSQL
 import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.collerActividade
 import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.collerActividadesBuscables
-import org.aprengal.lendasnubeiras.data.bd.clases.Taboa
+import org.aprengal.lendasnubeiras.data.bd.clases.BD.Taboa
 import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.limparCache
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion
-import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeCrear
-import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeEditarOutras
 import org.aprengal.lendasnubeiras.data.usuarios.Rol
 import org.aprengal.lendasnubeiras.data.usuarios.Usuario
 
@@ -22,7 +20,6 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
-import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
 import org.junit.Test
@@ -31,7 +28,7 @@ class SQLITEOperacionsBasicas {
 
     companion object {
 
-        private lateinit var bd: BBDD
+        private lateinit var bd: OperacionsBD
         private val db: BD = BD
 
         @JvmStatic
@@ -332,73 +329,6 @@ class SQLITEOperacionsBasicas {
     //Esta función permite que se poida cambiar a ID e o Rol a nivel interno
     fun collerUsuarioActualTest( id: Long = 0L, rol: Rol ): Usuario {
         return Usuario( id = id, correo = "test@test.com", rol )
-    }
-
-    fun listarActividadesTest( id: Long, rol: Rol ): List<Map<String, Any>> {
-
-        val usuarioActual = collerUsuarioActualTest( id, rol )
-
-        require( PodeCrear( usuarioActual ) ) { "Non se poden listar as actividades se non pode crealas" }
-
-        val onde = if ( !PodeEditarOutras( usuarioActual ) ) {
-            mapOf( "id_autoria" to Condicion.Simple( usuarioActual.id ) )
-        } else {
-            emptyMap()
-        }
-
-        val datos = SeleccionSQL( columnas = setOf( "*" ), onde = onde )
-
-        val resultados = bd.seleccionar( Taboa.ACTIVIDADES, datos )
-        val saida = mutableListOf<Map<String, Any>>()
-
-        resultados.forEach { actividade -> saida.add( actividade ) }
-
-        return saida
-
-    }
-
-    @Test
-    fun listarActividadesEditables() {
-
-        revisarHashElemento(
-            "listarActividadesEditables",
-            "f85f3317b65e63ede4820e573027f576a80d4c370ab08fddea61aecb21839af8"
-        )
-
-        val datos = listOf(
-            datosCompletosAny( mapOf( "id" to 1L, "id_autoria" to 30L, "clave_titulo" to "dados-historiosos" ) ),
-            datosCompletosAny( mapOf( "id" to 2L, "id_autoria" to 20L, "clave_titulo" to "quen-o-ten" ) ),
-            datosCompletosAny( mapOf( "id" to 3L, "id_autoria" to 30L, "clave_titulo" to "palabras-encadenadas" ) ),
-            datosCompletosAny( mapOf( "id" to 4L, "id_autoria" to 30L, "clave_titulo" to "aplicacion-sinala" ) ),
-            datosCompletosAny( mapOf( "id" to 5L, "id_autoria" to 50L, "clave_titulo" to "baul-recordos" ) ),
-        )
-
-        bd.insertar( Taboa.ACTIVIDADES, datos )
-
-        // O ideal é comparar con permisos, non con roles directamente
-        // Pero neste caso o que se quere verificar é que cada rol ten os resultados esperados
-        for ( rol in Rol.entries ) {
-
-            if ( rol in setOf( Rol.NADA, Rol.MONITOR ) ) {
-
-                assertThrows( IllegalArgumentException::class.java ) {
-                    listarActividadesTest( 30L, rol )
-                }
-
-                continue
-
-            }
-
-            val resultado = listarActividadesTest( 30L, rol )
-
-            if ( rol in setOf( Rol.EDITOR, Rol.ADMIN ) ) {
-                assertEquals( "Resultado inesperado con $rol", 5, resultado.size )
-            } else {
-                assertEquals( "Resultado inesperado con $rol", 3, resultado.size )
-            }
-
-        }
-
     }
 
 }

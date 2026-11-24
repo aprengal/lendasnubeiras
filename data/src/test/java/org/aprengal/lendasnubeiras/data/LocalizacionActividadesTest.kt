@@ -36,7 +36,7 @@ class LocalizacionActividadesTest {
     @Test
     fun comprobarActividades() {
 
-        val idiomas = Idioma.entries.filter { idioma -> idioma != Idioma.Nada }
+        val idiomas = Idioma.entries
         val dificultadesValidas = Dificultade.entries.map { dificultade -> dificultade.clave }.toSet()
         val actividadesPorIdioma = idiomas.associateWith { idioma -> collerActividadesJson( idioma ) }
 

@@ -1,7 +1,7 @@
 package org.aprengal.lendasnubeiras.data.actividades.datos.base
 
 import org.aprengal.lendasnubeiras.data.localizacion.clases.ElementoL10n
-import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nActividades
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nMetaActividades
 
 /**
  * Define os posibles estados dunha actividade ao longo do seu ciclo de vida.
@@ -30,28 +30,28 @@ import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nActividades
  * @property nome Recurso de localización co nome do estado que se amosarána interface de usuario.
  * @property clave Identificador textual derivado de [estado], necesario para implementar [ElementoL10n].
  */
-enum class Estado( val estado: Int, override val nome: L10nActividades ): ElementoL10n {
+enum class Estado( val estado: Int, override val nome: L10nMetaActividades ): ElementoL10n {
 
     /** Actividade creada localmente que aínda non se enviou ao servidor. */
-    BorradorLocal( -1, L10nActividades.EstadoBorradorLocal ),
+    BorradorLocal( -1, L10nMetaActividades.EstadoBorradorLocal ),
 
     /** Actividade pendente de aprobación por un editor que aínda non se enviou ao servidor. */
-    PendenteLocal( -2, L10nActividades.EstadoPendenteLocal ),
+    PendenteLocal( -2, L10nMetaActividades.EstadoPendenteLocal ),
 
     /** Actividade publicada que aínda non se enviou ao servidor. */
-    PublicadoLocal( -3, L10nActividades.EstadoPublicadoLocal ),
+    PublicadoLocal( -3, L10nMetaActividades.EstadoPublicadoLocal ),
 
     /** Actividade gardada no servidor como borrador. */
-    Borrador( 0, L10nActividades.EstadoBorrador ),
+    Borrador( 0, L10nMetaActividades.EstadoBorrador ),
 
     /** Actividade enviada ao servidor que está pendente de aprobación por un editor. */
-    Pendente( 1, L10nActividades.EstadoPendente ),
+    Pendente( 1, L10nMetaActividades.EstadoPendente ),
 
     /** Actividade publicada e dispoñible no servidor. */
-    Publicado( 2, L10nActividades.EstadoPublicado ),
+    Publicado( 2, L10nMetaActividades.EstadoPublicado ),
 
     /** Actividade eliminada no servidor. */
-    Borrado( 3, L10nActividades.EstadoBorrado );
+    Borrado( 3, L10nMetaActividades.EstadoBorrado );
 
     /** Identificador textual do estado, obtido a partir do seu valor numérico. */
     override val clave = estado.toString()

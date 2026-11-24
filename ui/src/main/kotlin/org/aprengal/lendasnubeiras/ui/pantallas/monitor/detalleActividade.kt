@@ -26,7 +26,7 @@ import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Dificultade
 import org.aprengal.lendasnubeiras.ui.navegacion.Ruta
 import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.collerActividade
 import org.aprengal.lendasnubeiras.data.localizacion.cantidades.L10nPlural
-import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nActividades
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nMetaActividades
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nSingular
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalNavegacion
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosElementoLista
@@ -57,7 +57,7 @@ fun PantallaActividadeDetalle( clave: String ) {
 
     var fichaAberta by rememberSaveable { mutableStateOf( !actividadeDixital ) }
     var configuracionAberta by rememberSaveable { mutableStateOf( false ) }
-    val textoFicha = if ( fichaAberta ) L10nActividades.OcultarFicha else L10nActividades.AmosarFicha
+    val textoFicha = if ( fichaAberta ) L10nMetaActividades.OcultarFicha else L10nMetaActividades.AmosarFicha
 
     Column( modifier = Modifier.fillMaxSize().verticalScroll( rememberScrollState() ) ) {
 
@@ -121,11 +121,11 @@ private fun FichaActividade( actividade: Actividade ) {
 
         Column( Modifier.fillMaxWidth() ) {
 
-            FilaFicha( L10nActividades.Categoria, actividade.categoria.nome.texto() )
+            FilaFicha( L10nMetaActividades.Categoria, actividade.categoria.nome.texto() )
             HorizontalDivider()
-            FilaFicha( L10nActividades.Destinatario, actividade.destinatario.nome.texto() )
+            FilaFicha( L10nMetaActividades.Destinatario, actividade.destinatario.nome.texto() )
             HorizontalDivider()
-            FilaFicha( L10nActividades.Duracion, duracionTexto )
+            FilaFicha( L10nMetaActividades.Duracion, duracionTexto )
             HorizontalDivider()
 
             Column( Modifier.fillMaxWidth().padding( horizontal = 16.dp, vertical = 12.dp ) ) {
@@ -184,7 +184,7 @@ private fun FilaFicha( etiqueta: L10nSingular, valor: String ) {
 fun PrepararActividadeDixital( actividade: Actividade, configuracionAberta: Boolean, cambiarConfiguracion: () -> Unit ) {
 
     val navegacion = LocalNavegacion.current
-    val textoConfiguracion = if ( configuracionAberta ) L10nActividades.OcultarConfiguracion else L10nActividades.AmosarConfiguracion
+    val textoConfiguracion = if ( configuracionAberta ) L10nMetaActividades.OcultarConfiguracion else L10nMetaActividades.AmosarConfiguracion
     val opcions = remember( actividade ) { actividade.dificultades.keys.sortedBy { dificultade -> dificultade.ordinal } }
 
     var dificultade by rememberSaveable {
@@ -207,7 +207,7 @@ fun PrepararActividadeDixital( actividade: Actividade, configuracionAberta: Bool
             Column( Modifier.fillMaxWidth() ) {
 
                 if ( opcions.size > 1 ) {
-                    SelectorFiltro( L10nActividades.Dificultade, opcions, dificultade, null ) { escollido -> dificultade = escollido ?: dificultade }
+                    SelectorFiltro( L10nMetaActividades.Dificultade, opcions, dificultade, null ) { escollido -> dificultade = escollido ?: dificultade }
                     HorizontalDivider()
                 }
 
@@ -224,7 +224,7 @@ fun PrepararActividadeDixital( actividade: Actividade, configuracionAberta: Bool
     EspazadorAlto( 2 )
 
     Box( Modifier.fillMaxWidth().padding( horizontal = 16.dp ), contentAlignment = Alignment.Center ) {
-        BotonPrincipal( L10nActividades.Xogar, comezar, Modifier.fillMaxWidth() )
+        BotonPrincipal( L10nMetaActividades.Xogar, comezar, Modifier.fillMaxWidth() )
     }
 
     EspazadorAlto( 2 )

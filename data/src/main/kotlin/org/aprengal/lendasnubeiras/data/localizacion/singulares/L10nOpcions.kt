@@ -2,6 +2,9 @@ package org.aprengal.lendasnubeiras.data.localizacion.singulares
 
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Dominio
 
+/**
+ * Textos localizados relacionados coas opcións e preferencias da aplicación.
+ */
 enum class L10nOpcions( internal val clave: String ) : L10nSingular {
 
     UsuarioAutenticado( "usuario_autenticado" ),

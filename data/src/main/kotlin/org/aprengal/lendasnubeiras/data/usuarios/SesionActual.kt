@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.UUID
 
-
 /**
  * Xestor da sesión activa da aplicación.
  *
@@ -34,10 +33,18 @@ import java.util.UUID
  */
 object SesionActual {
 
-    /** Datos do usuario asociado á sesión actual. Inicialmente non hai ningún usuario autenticado. */
+    /**
+     * Datos do usuario asociado á sesión actual.
+     *
+     * Inicialmente contén os valores correspondentes á ausencia dun usuario autenticado.
+     */
     private var usuario = Usuario( 0L, "", Rol.NADA )
 
-    /** Identificador reactivo da sesión actual, que cambia cada vez que se establece unha nova sesión. */
+    /**
+     * Identificador reactivo da sesión actual.
+     *
+     * Xérase un novo identificador cada vez que se establece ou restablece unha sesión.
+     */
     private val _idSesion = MutableStateFlow( "" )
 
     /**
@@ -54,6 +61,9 @@ object SesionActual {
      * Comproba o identificador interno da sesión para evitar repetir o proceso
      * de inicialización. Se non existe unha sesión activa, delega a súa
      * comprobación e recuperación en [validarSesion].
+     *
+     * Se hai un usuario actual é válido e existe, solicita a execución das tarefas
+     * programadas de mantemento do servidor mediante [RutasApi.LIMPAR].
      */
     suspend fun arrancar() {
 
@@ -61,12 +71,16 @@ object SesionActual {
 
         validarSesion()
 
+        if ( usuario.existe ) {
+            procesarPeticion( MetodoApi.GET, RutasApi.LIMPAR, emptyMap() ) as RespostaXenerica
+        }
+
     }
 
     /**
      * Obtén os datos do usuario asociado á sesión actual.
      *
-     * @return Obxecto [Usuario] coa identificación, correo electrónico e rol actuais.
+     * @return Obxecto [Usuario] coa identificación, o correo electrónico e o rol actuais.
      */
     fun usuarioActual(): Usuario {
         return usuario
@@ -80,7 +94,7 @@ object SesionActual {
      *
      * @return Un [StateFlow] co identificador actual da sesión.
      */
-    fun collerSesionActual() : StateFlow<String> {
+    fun collerSesionActual(): StateFlow<String> {
         return _idSesion.asStateFlow()
     }
 
@@ -88,7 +102,7 @@ object SesionActual {
      * Establece os datos do usuario da sesión actual e xera un novo identificador.
      *
      * Os parámetros teñen valores predeterminados que permiten restablecer
-     * a sesión a un estado sen usuario autenticado.
+     * a sesión ao estado correspondente á ausencia dun usuario autenticado.
      *
      * @param id Identificador do usuario.
      * @param correo Correo electrónico asociado ao usuario.
@@ -133,11 +147,13 @@ object SesionActual {
      *
      * Cando o servidor valida correctamente a sesión, actualízanse as credenciais
      * e os datos locais do usuario. Se responde cun código 401 ou 403, elimínase
-     * a credencial almacenada e mantéñense os valores predeterminados de monitor.
+     * a credencial almacenada e restablécese o usuario sen sesión autenticada.
      *
      * Se a petición non pode completarse por outros motivos, inténtase recuperar
      * a identificación e o rol a partir dos datos da sesión gardados localmente.
      * Durante esta recuperación, o rol queda limitado como máximo ao de autor.
+     *
+     * Finalmente, establécese a sesión cos datos obtidos.
      */
     private suspend fun validarSesion() {
 
@@ -166,14 +182,14 @@ object SesionActual {
                 correo = datos.correo
                 rol = buscarRol( datos.rol )
 
-            } else if ( datos.codigo in setOf( 401, 403 ) ) { //Usuario non atopado ou denegouse a entrada
+            } else if ( datos.codigo in setOf( 401, 403 ) ) {
 
                 borrarOpcion( Opcion.SesionUsuario )
                 id = 0L
                 correo = ""
                 rol = Rol.NADA
 
-            } else { //Outros: servidor fóra de servizo, non hai internet ou a saber, pero non se puido chegar ao servidor
+            } else {
 
                 val datosAlmacenados = collerSesionLocal( sesionActual )
 
@@ -186,8 +202,8 @@ object SesionActual {
                         try {
                             id = infoSesion[ 0 ].toLong()
                             val rolGardado = buscarRol( infoSesion[ 1 ] )
-                            rol = if ( rolGardado > Rol.AUTOR ) Rol.AUTOR else rolGardado
-                        } catch ( _: NumberFormatException ) { //Datos corruptos
+                            rol = if ( rolGardado > Rol.MONITOR ) Rol.MONITOR else rolGardado
+                        } catch ( _: NumberFormatException ) {
                             borrarSesionsLocais()
                         }
 
@@ -208,7 +224,8 @@ object SesionActual {
     /**
      * Pecha a sesión actual e elimina as credenciais correspondentes.
      *
-     * Require que o usuario actual teña permisos para pechar a súa sesión.
+     * Require que o usuario actual teña permisos para pechar a súa sesión,
+     * segundo as condicións establecidas por [PodePecharSesion].
      *
      * Se a sesión é anónima, elimina a opción correspondente e restablece
      * o usuario actual aos seus valores predeterminados.

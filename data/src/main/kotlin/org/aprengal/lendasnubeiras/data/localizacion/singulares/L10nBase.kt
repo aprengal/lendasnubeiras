@@ -2,6 +2,9 @@ package org.aprengal.lendasnubeiras.data.localizacion.singulares
 
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Dominio
 
+/**
+ * Textos localizados de carácter xeral utilizados nos distintos compoñentes da aplicación.
+ */
 enum class L10nBase( internal val clave: String ) : L10nSingular {
     Aceptar( "aceptar" ),
     Cancelar( "cancelar" ),

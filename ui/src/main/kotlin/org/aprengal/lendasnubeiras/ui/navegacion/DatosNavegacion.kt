@@ -7,8 +7,6 @@ import androidx.navigation3.runtime.NavMetadataKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.metadata
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nTitulos
-//import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeAdministrar
-import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeCrear
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeLer
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeRexistrarse
 import org.aprengal.lendasnubeiras.ui.navegacion.ControlAcceso.comprobarAcceso
@@ -17,7 +15,6 @@ import org.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.AP
 import org.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.COMPLETA
 import org.aprengal.lendasnubeiras.ui.navegacion.DatosNavegacion.TipoPantalla.TITULO_SUPERIOR
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalNavegacion
-//import org.aprengal.lendasnubeiras.ui.pantallas.creador.NovaActividade
 import org.aprengal.lendasnubeiras.ui.pantallas.autenticacion.PantallaAcceso
 import org.aprengal.lendasnubeiras.ui.pantallas.abertas.PantallaAxustes
 import org.aprengal.lendasnubeiras.ui.pantallas.autenticacion.PantallaBenvida
@@ -28,7 +25,6 @@ import org.aprengal.lendasnubeiras.ui.pantallas.monitor.PantallaBuscador
 import org.aprengal.lendasnubeiras.ui.pantallas.monitor.PantallaInicio
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalRuta
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalTitulo
-import org.aprengal.lendasnubeiras.ui.pantallas.creador.NovaActividade
 import org.aprengal.lendasnubeiras.ui.pantallas.monitor.PantallaActividadeDixital
 import org.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaApertura
 import org.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaBase
@@ -39,8 +35,7 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.estruturas.EstruturaSuperior
  *
  * Asocia cada [Ruta] coa súa pantalla, co seu tipo ([TipoPantalla]) e co seu
  * título. Só se rexistran as rutas ás que o usuario ten permiso no momento de
- * crear o obxecto: por exemplo, as de creación só existen se [PodeCrear] o
- * permite.
+ * crear o obxecto.
  */
 internal class DatosNavegacion {
 
@@ -75,7 +70,6 @@ internal class DatosNavegacion {
      * - [PodeRexistrarse]: [Ruta.Benvida], [Ruta.Acceso] e [Ruta.Rexistro].
      * - [PodeLer]: [Ruta.Catalogo], [Ruta.Inicio], [Ruta.Buscador] e
      *   [Ruta.ActividadeDetalle].
-     * - [PodeCrear]: [Ruta.CrearActividade]
      */
     val entradasNavegacion = entryProvider {
 
@@ -111,23 +105,6 @@ internal class DatosNavegacion {
             ruta<Ruta.ActividadeDixital>( actividadeArgumentos ) { datos -> PantallaActividadeDixital( datos.clave, datos.dificultade ) }
 
         }
-
-        if ( PodeCrear() ) {
-
-            //val listar = DatosPantalla( TITULO_SUPERIOR )
-            val crear = DatosPantalla( TITULO_SUPERIOR, L10nTitulos.CrearActividade )
-            //val modificar = DatosPantalla( TITULO_SUPERIOR )
-
-            // ruta<Ruta.ListarActividades>( listar ) { TODO() }
-            ruta<Ruta.CrearActividade>( crear ) { NovaActividade() }
-            //ruta<Ruta.ModificarActividade>( modificar ) { TODO() }
-
-        }
-
-        /*if ( PodeAdministrar() ) {
-            val administrar = DatosPantalla( TITULO_SUPERIOR )
-            ruta<Ruta.Administrar>( administrar ) { TODO() }
-        }*/
 
     }
 

@@ -30,7 +30,6 @@ object Depuracion {
             val datos = mapOf( "uuid" to collerIdDispositivo(), "erro" to problema.stackTraceToString() )
 
             corrutina { procesarPeticion( MetodoApi.POST, RutasApi.REPORTES, datos ) as RespostaXenerica }
-            Log.d( "OPS", "erro mandadooooooooo" )
             previousHandler?.uncaughtException( fio, problema )
 
         }

@@ -1,7 +1,7 @@
 package org.aprengal.lendasnubeiras.data.actividades.datos.dixitais
 
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.ElementoBD
-import org.aprengal.lendasnubeiras.data.bd.clases.Taboa.XOGADORES
+import org.aprengal.lendasnubeiras.data.bd.clases.BD.Taboa.XOGADORES
 
 /**
  * Representa un xogador dentro da aplicación.

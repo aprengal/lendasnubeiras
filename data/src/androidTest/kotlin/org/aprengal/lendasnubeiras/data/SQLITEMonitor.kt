@@ -4,9 +4,8 @@ import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.runBlocking
 import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Grupo
 import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Dificultade
-import org.aprengal.lendasnubeiras.data.bd.clases.BBDD
+import org.aprengal.lendasnubeiras.data.bd.clases.OperacionsBD
 import org.aprengal.lendasnubeiras.data.bd.clases.BD
-import org.aprengal.lendasnubeiras.data.bd.clases.BD.eliminarPuntuacionActividade
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.OperadorSimple
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.SeleccionSQL
@@ -27,8 +26,9 @@ import org.aprengal.lendasnubeiras.data.bd.operacions.Xogadores.collerXogador
 import org.aprengal.lendasnubeiras.data.bd.operacions.Xogadores.collerXogadores
 import org.aprengal.lendasnubeiras.data.bd.operacions.Xogadores.eliminarXogador
 import org.aprengal.lendasnubeiras.data.bd.operacions.Xogadores.insertarXogador
-import org.aprengal.lendasnubeiras.data.bd.clases.Taboa
+import org.aprengal.lendasnubeiras.data.bd.clases.BD.Taboa
 import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.limparCache
+import org.aprengal.lendasnubeiras.data.bd.operacions.Puntuacions.eliminarPuntuacionsActividade
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion
 
 import org.junit.After
@@ -45,7 +45,7 @@ class SQLITEMonitor {
 
     companion object {
 
-        private lateinit var bd: BBDD
+        private lateinit var bd: OperacionsBD
         private val db: BD = BD
 
         @JvmStatic
@@ -738,7 +738,7 @@ class SQLITEMonitor {
 
         insertarPuntuacion( actividade, Dificultade.Facil, xogador, 100L )
 
-        val filasEliminadas = eliminarPuntuacionActividade( actividade )
+        val filasEliminadas = eliminarPuntuacionsActividade( actividade )
 
         assertEquals( 1, filasEliminadas )
         assertNull( collerActividade( claveTitulo ) )
@@ -761,7 +761,7 @@ class SQLITEMonitor {
         val actividade = collerActividade( claveTitulo )!!
         limparCache()
 
-        val filasEliminadas = eliminarPuntuacionActividade( actividade )
+        val filasEliminadas = eliminarPuntuacionsActividade( actividade )
 
         assertEquals( 1, filasEliminadas )
         assertNull( collerActividade( claveTitulo ) )

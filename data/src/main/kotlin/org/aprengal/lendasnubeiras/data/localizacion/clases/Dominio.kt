@@ -29,9 +29,6 @@ enum class Dominio( val nome: String ) {
     /** Dominio dos títulos das pantallas. */
     TITULOS( "titulos" ),
 
-    /** Dominio dos procesos de validación. */
-    VALIDACION( "validacion" ),
-
     /** Dominio das opcións e preferencias da aplicación. */
     OPCIONS( "opcions" )
 

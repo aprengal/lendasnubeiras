@@ -6,14 +6,13 @@ import org.aprengal.lendasnubeiras.data.localizacion.clases.Idioma
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion.clave
 import org.aprengal.lendasnubeiras.data.localizacion.cantidades.L10nPlural
 import org.aprengal.lendasnubeiras.data.localizacion.cantidades.L10nVariante
-import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nActividades
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nMetaActividades
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nAutenticacion
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nBase
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nIconas
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nOpcions
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nSingular
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nTitulos
-import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nValidacion
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -27,12 +26,11 @@ class LocalizacionTest {
     private fun collerClavesSingular( dominio: Dominio ): List<L10nSingular> {
 
         val lista = when( dominio ) {
-            Dominio.META_ACTIVIDADES -> L10nActividades.entries
+            Dominio.META_ACTIVIDADES -> L10nMetaActividades.entries
             Dominio.AUTENTICACION -> L10nAutenticacion.entries
             Dominio.BASE -> L10nBase.entries
             Dominio.TITULOS -> L10nTitulos.entries
             Dominio.ICONAS -> L10nIconas.entries
-            Dominio.VALIDACION -> L10nValidacion.entries
             Dominio.OPCIONS -> L10nOpcions.entries
         }
 
@@ -44,7 +42,7 @@ class LocalizacionTest {
     fun comprobarLocalizacion() {
 
         val dominios = Dominio.entries
-        val idiomas = Idioma.entries.filter { idioma -> idioma != Idioma.Nada }
+        val idiomas = Idioma.entries
 
         //Hai categorías de plurais que non engade Android
         val categoriasExtras = mapOf(

@@ -1,9 +1,9 @@
 package org.aprengal.lendasnubeiras.data.bd.clases
 
 import android.database.sqlite.SQLiteDatabase
-import android.util.Log
 import org.aprengal.lendasnubeiras.data.actividades.datos.base.Estado
 import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Dificultade
+import org.aprengal.lendasnubeiras.data.bd.clases.BD.Taboa
 
 /**
  * Xestor encargado de definir e manter a estrutura da base de datos SQLite.
@@ -12,33 +12,19 @@ import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Dificultade
  * necesarios para o funcionamento da aplicación, así como a xestión das actualizacións
  * da estrutura entre diferentes versións da base de datos.
  */
-internal class EstruturaDB {
+internal class EstruturaBD {
 
     /**
-     * Crea a estrutura inicial da base de datos, incluíndo todas as táboas,
-     * índices, claves foráneas, restricións e disparadores necesarios.
+     * Crea a estrutura inicial da base de datos, incluíndo a táboa ACTIVIDADES,
+     * os seus índices, restricións e disparadores.
      *
-     * As táboas creadas son:
-     * - ACTIVIDADES: almacena as actividades, o seu estado de sincronización
-     *   e os seus datos de identificación e modificación.
-     * - GRUPOS: almacena os grupos de xogadores.
-     * - XOGADORES: almacena os xogadores asociados aos seus respectivos grupos.
-     * - PUNTUACIONS: almacena as puntuacións obtidas polos xogadores nas actividades.
-     *
-     * Tamén se crean índices para optimizar as consultas máis habituais e disparadores
-     * para protexer a integridade dos datos e impedir modificacións non permitidas.
+     * Tamén se realiza a inserción inicial dos datos do catálogo de actividades.
      *
      * @param db Base de datos SQLite na que se creará a estrutura.
      */
     fun crear( db: SQLiteDatabase ) {
 
-        val dificultades = Dificultade.entries.joinToString( "," ) { dificultade -> "'${ dificultade.clave }'" }
-
-        //Nomes táboas
         val actividades = Taboa.ACTIVIDADES.nome
-        val grupos = Taboa.GRUPOS.nome
-        val xogadores = Taboa.XOGADORES.nome
-        val puntuacions = Taboa.PUNTUACIONS.nome
 
         db.execSQL(
             """
@@ -56,6 +42,7 @@ internal class EstruturaDB {
             """
         )
 
+        ///Índices
         db.execSQL( "CREATE UNIQUE INDEX uq_actividades_clave_titulo ON $actividades( clave_titulo )" )
         db.execSQL( "CREATE INDEX idx_actividades_autoria ON $actividades( id_autoria )" )
         db.execSQL( "CREATE INDEX idx_actividades_categoria ON $actividades( clave_categoria )" )
@@ -63,51 +50,7 @@ internal class EstruturaDB {
         db.execSQL( "CREATE INDEX idx_actividades_estado ON $actividades( estado )" )
         db.execSQL( "CREATE INDEX idx_actividades_data_modificado ON $actividades( data_modificado )" )
 
-        db.execSQL(
-            """
-            CREATE TABLE $grupos (
-                id   INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT CHECK ( id >= 0 ),
-                nome TEXT NOT NULL COLLATE NOCASE CHECK ( LENGTH( nome ) BETWEEN 1 AND 100 )
-            )
-            """
-        )
-
-        db.execSQL( "CREATE UNIQUE INDEX uq_grupos_nome ON $grupos( nome )" )
-
-        db.execSQL(
-            """
-            CREATE TABLE $xogadores (
-                id       INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT CHECK ( id >= 0 ),
-                nome     TEXT NOT NULL COLLATE NOCASE CHECK ( LENGTH( nome ) BETWEEN 1 AND 100 ),
-                grupo_id INTEGER NOT NULL CHECK ( grupo_id >= 0 ),
-        
-                CONSTRAINT fk_xogadores_grupo FOREIGN KEY ( grupo_id ) REFERENCES $grupos ( id ) ON UPDATE RESTRICT ON DELETE CASCADE
-            )
-            """
-        )
-
-        db.execSQL( "CREATE UNIQUE INDEX uq_xogadores_nome_grupo ON $xogadores( nome, grupo_id )" )
-        db.execSQL( "CREATE INDEX idx_xogadores_grupo ON $xogadores( grupo_id )" )
-
-        db.execSQL(
-            """
-            CREATE TABLE $puntuacions (
-                actividade_id INTEGER NOT NULL CHECK ( actividade_id >= 0 ),
-                dificultade   TEXT NOT NULL COLLATE NOCASE CHECK ( dificultade IN ( $dificultades ) ),
-                xogador_id    INTEGER NOT NULL CHECK ( xogador_id >= 0 ),
-                puntos        INTEGER NOT NULL CHECK ( puntos >= 0 ),
-                unix_rexistro INTEGER NOT NULL CHECK ( unix_rexistro >= 0 ),
-
-                PRIMARY KEY ( actividade_id, dificultade, xogador_id ),
-                CONSTRAINT fk_puntuacions_actividade FOREIGN KEY ( actividade_id ) REFERENCES $actividades ( id ) ON UPDATE RESTRICT ON DELETE RESTRICT,
-                CONSTRAINT fk_puntuacions_xogador FOREIGN KEY ( xogador_id ) REFERENCES $xogadores ( id ) ON UPDATE RESTRICT ON DELETE CASCADE
-            )
-            """
-        )
-
         //Disparadores
-
-        //Xenéricos
         db.execSQL(
             """
             CREATE TRIGGER trg_actividades_proteccion_upd
@@ -128,17 +71,6 @@ internal class EstruturaDB {
             WHEN NOT ( old.estado < 0 OR old.estado = ${ Estado.Borrado.estado } )
             BEGIN
                 SELECT RAISE( ABORT, 'Só se poden eliminar actividades non enviadas ou xa borradas no servidor' );
-            END
-            """
-        )
-
-        db.execSQL(
-            """
-            CREATE TRIGGER trg_puntuacions_proteccion_upd
-            BEFORE UPDATE ON $puntuacions
-            WHEN NEW.puntos <= OLD.puntos
-            BEGIN
-                SELECT RAISE ( ABORT, 'Non se pode cambiar unha puntuación se é igual ou inferior á actual' );
             END
             """
         )
@@ -167,16 +99,78 @@ internal class EstruturaDB {
      * correspondentes. As modificacións deben preservar os datos existentes sempre
      * que sexa posible e garantir a compatibilidade coa nova estrutura.
      *
+     * Na migración da versión 1 á 2 créanse as táboas GRUPOS, XOGADORES e PUNTUACIONS,
+     * xunto cos seus índices e disparadores correspondentes.
+     *
      * @param db Base de datos SQLite sobre a que se aplicarán as modificacións.
      * @param oldVersion Número da versión anterior da base de datos.
      * @param newVersion Número da nova versión da base de datos.
      */
     fun actualizar( db: SQLiteDatabase, oldVersion: Int, newVersion: Int ) {
 
-        if ( oldVersion < 2 && newVersion == 3 ) {
+        if ( oldVersion < 2 && newVersion >= 2 ) {
 
-            //db.execSQL( "SELECT VERSION()" )
-            Log.d( "UPDATE", "Actualizando SQLite" )
+            val dificultades = Dificultade.entries.joinToString( "," ) { dificultade -> "'${ dificultade.clave }'" }
+
+            //Nomes táboas
+            val actividades = Taboa.ACTIVIDADES.nome
+            val grupos = Taboa.GRUPOS.nome
+            val xogadores = Taboa.XOGADORES.nome
+            val puntuacions = Taboa.PUNTUACIONS.nome
+
+            db.execSQL(
+                """
+                CREATE TABLE $grupos (
+                    id   INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT CHECK ( id >= 0 ),
+                    nome TEXT NOT NULL COLLATE NOCASE CHECK ( LENGTH( nome ) BETWEEN 1 AND 100 )
+                )
+                """
+            )
+
+            db.execSQL( "CREATE UNIQUE INDEX uq_grupos_nome ON $grupos( nome )" )
+
+            db.execSQL(
+                """
+                CREATE TABLE $xogadores (
+                    id       INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT CHECK ( id >= 0 ),
+                    nome     TEXT NOT NULL COLLATE NOCASE CHECK ( LENGTH( nome ) BETWEEN 1 AND 100 ),
+                    grupo_id INTEGER NOT NULL CHECK ( grupo_id >= 0 ),
+
+                    CONSTRAINT fk_xogadores_grupo FOREIGN KEY ( grupo_id ) REFERENCES $grupos ( id ) ON UPDATE RESTRICT ON DELETE CASCADE
+                )
+                """
+            )
+
+            db.execSQL( "CREATE UNIQUE INDEX uq_xogadores_nome_grupo ON $xogadores( nome, grupo_id )" )
+            db.execSQL( "CREATE INDEX idx_xogadores_grupo ON $xogadores( grupo_id )" )
+
+            db.execSQL(
+                """
+                CREATE TABLE $puntuacions (
+                    actividade_id INTEGER NOT NULL CHECK ( actividade_id >= 0 ),
+                    dificultade   TEXT NOT NULL COLLATE NOCASE CHECK ( dificultade IN ( $dificultades ) ),
+                    xogador_id    INTEGER NOT NULL CHECK ( xogador_id >= 0 ),
+                    puntos        INTEGER NOT NULL CHECK ( puntos >= 0 ),
+                    unix_rexistro INTEGER NOT NULL CHECK ( unix_rexistro >= 0 ),
+
+                    PRIMARY KEY ( actividade_id, dificultade, xogador_id ),
+                    CONSTRAINT fk_puntuacions_actividade FOREIGN KEY ( actividade_id ) REFERENCES $actividades ( id ) ON UPDATE RESTRICT ON DELETE RESTRICT,
+                    CONSTRAINT fk_puntuacions_xogador FOREIGN KEY ( xogador_id ) REFERENCES $xogadores ( id ) ON UPDATE RESTRICT ON DELETE CASCADE
+                )
+                """
+            )
+
+            //Disparadores
+            db.execSQL(
+                """
+                CREATE TRIGGER trg_puntuacions_proteccion_upd
+                BEFORE UPDATE ON $puntuacions
+                WHEN NEW.puntos <= OLD.puntos
+                BEGIN
+                    SELECT RAISE ( ABORT, 'Non se pode cambiar unha puntuación se é igual ou inferior á actual' );
+                END
+                """
+            )
 
         }
 

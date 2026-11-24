@@ -1,9 +1,11 @@
 package org.aprengal.lendasnubeiras.data.bd.operacions
 
 import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Grupo
-import org.aprengal.lendasnubeiras.data.bd.clases.BD
+import org.aprengal.lendasnubeiras.data.bd.clases.OperacionsBD.Companion.buscarElemento
+import org.aprengal.lendasnubeiras.data.bd.clases.OperacionsBD.Companion.buscarElementos
+import org.aprengal.lendasnubeiras.data.bd.clases.BD.bd
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
-import org.aprengal.lendasnubeiras.data.bd.clases.Taboa
+import org.aprengal.lendasnubeiras.data.bd.clases.BD.Taboa
 
 /**
  * Obxecto encargado de xestionar as operacións de acceso e modificación
@@ -21,7 +23,7 @@ object Grupos {
      * @return Identificador do grupo inserido.
      */
     fun insertarGrupo( nome: String ): Long {
-        return BD.bd.insertar( Taboa.GRUPOS, mapOf( "nome" to nome ) )
+        return bd.insertar( Taboa.GRUPOS, mapOf( "nome" to nome ) )
     }
 
     /**
@@ -32,7 +34,7 @@ object Grupos {
      */
     fun collerGrupo( id: Long ): Grupo?{
         val onde = mapOf( "id" to Condicion.Simple( id ) )
-        return BD.buscarElemento( Taboa.GRUPOS, onde ) { fila -> crearGrupo( fila ) }
+        return buscarElemento( Taboa.GRUPOS, onde ) { fila -> crearGrupo( fila ) }
     }
 
     /**
@@ -41,7 +43,7 @@ object Grupos {
      * @return Lista cos grupos rexistrados.
      */
     fun collerGrupos(): List<Grupo> {
-        return BD.buscarElementos( Taboa.GRUPOS ) { fila -> crearGrupo( fila ) }
+        return buscarElementos( Taboa.GRUPOS ) { fila -> crearGrupo( fila ) }
     }
 
     /**
@@ -62,7 +64,7 @@ object Grupos {
      * @return Número de rexistros modificados.
      */
     fun actualizarGrupo( grupo: Grupo, campos: Map<String, Any> ): Int {
-        return BD.bd.actualizar( Taboa.GRUPOS, campos, mapOf( "id" to Condicion.Simple( grupo.id ) ) )
+        return bd.actualizar( Taboa.GRUPOS, campos, mapOf( "id" to Condicion.Simple( grupo.id ) ) )
     }
 
     /**
@@ -72,7 +74,7 @@ object Grupos {
      * @return Número de rexistros eliminados.
      */
     fun eliminarGrupo( grupo: Grupo ): Int {
-        return BD.bd.eliminar( Taboa.GRUPOS, mapOf( "id" to Condicion.Simple( grupo.id ) ) )
+        return bd.eliminar( Taboa.GRUPOS, mapOf( "id" to Condicion.Simple( grupo.id ) ) )
     }
 
 }

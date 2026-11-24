@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS LendasNubeiras_417072_usuarios ( -- A id asígnase au
     id      BIGINT UNSIGNED NOT NULL,
     uuid    CHAR(32) NOT NULL,
     correo  VARCHAR(255) NOT NULL,
-    estado  TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    estado  TINYINT UNSIGNED NOT NULL DEFAULT 0, -- 0 non activo, 1 activo, 2 suspendido, 3 pendente para borrar
     id_rol  TINYINT UNSIGNED NOT NULL,
     data_borrado BIGINT UNSIGNED NOT NULL DEFAULT 0, -- Momento en que o usuario confirmou o borrado da conta (0 se non o pediu)
     PRIMARY KEY ( id ),
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS LendasNubeiras_417072_usuarios ( -- A id asígnase au
     KEY idx_usuario_rol ( id_rol ),
     KEY idx_usuario_data_borrado ( data_borrado ),
     CONSTRAINT chk_usuarios_uuid CHECK ( uuid REGEXP '^[A-Z0-9]{32}$' ),
-    CONSTRAINT chk_usuarios_estado CHECK ( estado in ( 0, 1, 2 ) ),
+    CONSTRAINT chk_usuarios_estado CHECK ( estado in ( 0, 1, 2, 3 ) ),
     CONSTRAINT fk_usuarios_rol FOREIGN KEY ( id_rol ) REFERENCES LendasNubeiras_417072_roles( id ) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS LendasNubeiras_417072_destinatarios ( -- A id non seg
 -- =========================================
 CREATE TABLE IF NOT EXISTS LendasNubeiras_417072_actividades ( -- A id asígnase automaticamente cunha fórmula que parte como base do timestamp actual. // id = data_creado
     id              BIGINT UNSIGNED NOT NULL,
-    clave_titulo VARCHAR(100) COLLATE utf8mb4_bin NOT NULL,
+    clave_titulo    VARCHAR(100) NOT NULL,
     id_autoria      BIGINT UNSIGNED NOT NULL,
     id_categoria    TINYINT UNSIGNED NOT NULL,
     id_destinatario TINYINT UNSIGNED NOT NULL,

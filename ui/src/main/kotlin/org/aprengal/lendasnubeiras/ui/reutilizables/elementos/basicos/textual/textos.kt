@@ -22,7 +22,7 @@ import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Dificultade
 import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.collerActividade
 import org.aprengal.lendasnubeiras.data.localizacion.cantidades.L10nPlural
 import org.aprengal.lendasnubeiras.data.localizacion.cantidades.L10nVariante
-import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nActividades
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nMetaActividades
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nSingular
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalRuta
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalTitulo
@@ -144,7 +144,7 @@ fun <T: L10nSingular> TextoEnlazado( elemento: T, enlaces: Map<T, () -> Unit> ) 
 @Composable
 fun CabeceiraActividadeDixital( instrucions: String, dificultade: Dificultade ) {
 
-    val textoDificultade = L10nActividades.DificultadeActual.texto().format( dificultade.nome.texto() )
+    val textoDificultade = L10nMetaActividades.DificultadeActual.texto().format( dificultade.nome.texto() )
 
     Column( Modifier.fillMaxWidth().padding( horizontal = 8.dp ) ) {
         Text( instrucions, style = MaterialTheme.typography.bodyLarge )

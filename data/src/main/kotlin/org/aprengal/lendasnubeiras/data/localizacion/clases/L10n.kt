@@ -1,14 +1,16 @@
 package org.aprengal.lendasnubeiras.data.localizacion.clases
 
+import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nSingular
+import org.aprengal.lendasnubeiras.data.localizacion.cantidades.L10nPlural
+import org.aprengal.lendasnubeiras.data.localizacion.cantidades.L10nVariante
 /**
  * Interface raíz do sistema de localización da aplicación.
  *
- * Constitúe a abstracción común das distintas modalidades de elementos
- * localizados, permitindo agrupar baixo un mesmo tipo as definicións
- * de textos independentes do idioma.
+ * Define o tipo común dos elementos que representan textos independentes
+ * do idioma, permitindo agrupar as distintas modalidades de localización
+ * baixo unha mesma abstracción.
  *
- * É a interface nai das enumeracións L10nSingular, L10nPlural e L10nVariante,
- * que representan diferentes formas de organizar os textos traducibles
- * empregados para proporcionar o contido textual que se mostrará ao usuario.
+ * As súas implementacións, [L10nSingular], [L10nPlural] e [L10nVariante],
+ * representan diferentes formas de organizar e obter os textos localizados.
  */
 interface L10n

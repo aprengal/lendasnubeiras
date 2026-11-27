@@ -8,7 +8,7 @@ class IntegridadeElementos {
     @Test
     fun integridadeElementos() {
 
-        val hashLocalizacion = "bf31015168ee50cd3a9d4b18065e436e9b2c9b05bdc791b24f5173b36d918cdb"
+        val hashLocalizacion = "bd774ef036b592a4a091806936fb8dc66199e3e16fc1ac51e9e29c5d37e36520"
 
         revisarHashElemento( "Localizacion", hashLocalizacion, TipoIdentificador.OBJECT )
 

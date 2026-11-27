@@ -1,47 +1,61 @@
+
 # Lendas Nubeiras
 
 Aplicación móbil para o fomento de actividades interxeracionais.
 
-**Lendas Nubeiras** é unha aplicación que permite descubrir, organizar e participar en actividades pensadas para distintos grupos de idade, coa finalidade de favorecer o encontro e a interacción entre persoas de diferentes xeracións.
+**Lendas Nubeiras** é unha aplicación móbil que permite descubrir, organizar e participar en actividades dirixidas a diferentes grupos de idade, co obxectivo de fomentar o encontro, a convivencia e a interacción entre persoas de distintas xeracións.
 
 ## 🎯 Obxectivos
 
-- Desenvolver unha aplicación móbil nativa para Android que permita a xestión e participación en actividades dirixidas a distintos grupos de idade.
-- Favorecer o encontro e a interacción entre persoas de diferentes xeracións a través de actividades compartidas.
-- Deseñar unha arquitectura cliente-servidor escalable, empregando unha API propia e unha base de datos relacional.
-- Aplicar unha interface de usuario moderna, accesible e intuitiva, adaptada tanto a persoas maiores como a usuarios máis novos.
-- Xestionar todo o ciclo de vida do proxecto empregando ferramentas de control de versións e metodoloxías propias do desenvolvemento de software.
+- Desenvolver unha aplicación móbil nativa para Android que permita consultar, xestionar e participar en actividades dirixidas a diferentes grupos de idade.
+- Favorecer o encontro e a interacción entre persoas de distintas xeracións mediante a realización de actividades compartidas.
+- Deseñar unha arquitectura cliente-servidor escalable, empregando unha API REST propia e unha base de datos relacional.
+- Desenvolver unha interface de usuario moderna, accesible e intuitiva, adaptada ás necesidades de persoas maiores e usuarios máis novos.
+- Xestionar o ciclo de vida completo do proxecto mediante ferramentas de control de versións e metodoloxías propias do desenvolvemento de software.
 
 ## 🛠️ Tecnoloxías
 
-| Compoñente            | Tecnoloxía                   |
-|-----------------------|------------------------------|
-| App móbil             | Kotlin + Jetpack Compose     |
-| API / Backend         | PHP                          |
-| Base de datos         | MySQL                        |
-| Aloxamento (temporal) | VPS en Google Cloud Platform |
+| Compoñente             | Tecnoloxía                   |
+|------------------------|------------------------------|
+| Aplicación móbil       | Kotlin + Jetpack Compose     |
+| API / Backend          | PHP                          |
+| Base de datos          | MySQL                        |
+| Aloxamento (temporal)  | VPS en Google Cloud Platform |
+| Sistema de construción | Gradle                       |
 
 ## 📂 Estrutura do repositorio
 
-```
-lendasnubeiras/           (privado)
-├── app/                  # Módulo que ensambla e permite arrincar a aplicación
-├── data/                 # Datos e lóxica de acceso a datos
-├── docs/                 # Documentación técnica compilada (servida por GitHub Pages)
-├── ui/                   # Interface de usuario (Jetpack Compose)
-├── servidorapi/          # Código fonte da API REST
-└── gradle/               # Configuración de Gradle
-```
+O código fonte está organizado nos seguintes directorios e módulos:
+
+    lendasnubeiras/
+    ├── app/                  # Módulo principal da aplicación Android
+    ├── data/                 # Datos e lóxica de acceso aos datos
+    ├── docs/                 # Manuais e documentación do proxecto en PDF
+    ├── ui/                   # Interface de usuario con Jetpack Compose
+    ├── servidorapi/          # Código fonte da API REST
+    └── gradle/               # Configuración de Gradle
+
+## 💻 Código fonte
+
+O código fonte da aplicación Android está organizado nos módulos `app`, `data` e `ui`, utilizando Gradle como sistema de construción.
+
+O backend está implementado mediante unha API REST propia, cuxo código fonte se atopa no directorio `servidorapi`.
+
+O repositorio contén tanto o código da aplicación móbil como o da API.
 
 ## 📖 Documentación
 
-A documentación do proxecto atópase en varios pdf en https://github.com/aprengal/lendasnubeiras/tree/main/docs
+Os manuais e a documentación do proxecto están dispoñibles en formato PDF no directorio [`docs/`](https://github.com/aprengal/lendasnubeiras/tree/main/docs) do repositorio.
 
 ## 🚀 Estado do proxecto
 
-🔧 En desenvolvemento — Proxecto Final de Ciclo (2026).
+**Finalizado — Proxecto Final de Ciclo (2026).**
 
-Faltan crear varias pantallas pantallas en compose e realizar a mostra de cinco actividades.
+O desenvolvemento do proxecto está completado.
+
+## 🔗 Repositorio
+
+[github.com/aprengal/lendasnubeiras](https://github.com/aprengal/lendasnubeiras)
 
 ## ✍️ Autor
 
@@ -49,4 +63,4 @@ Faltan crear varias pantallas pantallas en compose e realizar a mostra de cinco 
 
 ## 📄 Licenza
 
-Este proxecto está baixo a licenza MIT, aínda que hai varias fontes que contan con outra licenza
+Este proxecto está baixo a licenza MIT, aínda que hai varias fontes que contan con outra licenza.

@@ -21,15 +21,6 @@ final readonly class DB {
     /** @var mysqli Conexión activa co servidor MySQL mediante a extensión MySQLi. */
     public mysqli $conexion;
 
-    /** @var string Nome prefixado da táboa que almacena os roles do sistema. */
-    public string $roles;
-
-    /** @var string Nome prefixado da táboa que almacena os permisos dispoñibles. */
-    public string $permisos;
-
-    /** @var string Nome prefixado da táboa que relaciona os permisos cos roles. */
-    public string $permisos_roles;
-
     /** @var string Nome prefixado da táboa que almacena os usuarios do sistema. */
     public string $usuarios;
 
@@ -47,9 +38,6 @@ final readonly class DB {
 
     /** @var string Nome prefixado da táboa que almacena información temporal e datos de sesión. */
     public string $info_temporal;
-
-    /** @var string Nome prefixado da táboa que almacena as tarefas programadas. */
-    public string $tarefas_programadas;
 
     /**
      * Inicializa a conexión coa base de datos MySQL e configura os nomes das táboas.

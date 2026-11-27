@@ -21,7 +21,6 @@ declare( strict_types = 1 );
 function endpoint_validar_sesion(): void {
 
     esixir_metodo( 'POST' );
-
     validar_corpo( coller_corpo(), [ 'uuid' => [ 'tipo' => 'uuid' ] ] );
 
     $rastro = analizar_cabeceira_sesion();

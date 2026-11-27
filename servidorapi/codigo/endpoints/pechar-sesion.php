@@ -21,10 +21,7 @@ declare( strict_types = 1 );
 function endpoint_pechar_sesion(): void {
 
     esixir_metodo( 'POST' );
-
-    validar_corpo( coller_corpo(), [
-        'uuid' => [ 'tipo' => 'uuid' ]
-    ] );
+    validar_corpo( coller_corpo(), [ 'uuid' => [ 'tipo' => 'uuid' ] ] );
 
     $usuario = esixir_sesion();
     $resultado = $usuario->verificar_peche_sesion();

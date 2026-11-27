@@ -285,28 +285,6 @@ final readonly class Usuario {
     }
 
     /**
-     * Comproba se o rol do usuario ten un permiso determinado.
-     *
-     * Recupera os permisos asociados ao rol e comproba se inclúen
-     * o permiso solicitado. Se o usuario non ten un rol asignado,
-     * devolve false.
-     *
-     * @param string $permiso Clave do permiso que se quere comprobar.
-     * @return bool True se o rol ten o permiso; false en caso contrario.
-     */
-    public function pode( string $permiso ) {
-
-       if ( !$this->rol ) {
-          return false;
-       }
-
-       $permisos = coller_permisos( $this->rol );
-
-       return in_array( $permiso, $permisos, true );
-
-   }
-
-    /**
      * Recupera os datos dunha sesión do usuario mediante o seu token.
      *
      * Calcula o HMAC do token e utilízao como índice para buscar a sesión

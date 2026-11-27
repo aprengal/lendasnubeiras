@@ -22,7 +22,6 @@ require_once "codigo/clases/Correo.php";
 require_once "codigo/configuracion/xeral/funcions-base.php";
 require_once "codigo/configuracion/xeral/depuracion.php";
 require_once "codigo/configuracion/xeral/seguridade.php";
-require_once "codigo/configuracion/xeral/permisos.php";
 require_once "codigo/configuracion/xeral/rastro-sesion.php";
 require_once "codigo/configuracion/xeral/usuario-actual.php";
 require_once "codigo/opcions.php";

@@ -1,8 +1,7 @@
 package org.aprengal.lendasnubeiras.data.localizacion.clases
 
 /**
- * Define os idiomas dispoñibles na aplicación e os seus datos de identificación
- * e localización.
+ * Define os idiomas dispoñibles na aplicación e os seus datos de identificación e localización.
  *
  * @property nome Nome do idioma.
  * @property codigo Código lingüístico do idioma.
@@ -39,20 +38,6 @@ enum class Idioma( val nome: String, val codigo: String, val rexion: String, val
             codigos.forEach { codigoRexion -> entries.find { idioma -> idioma.codigoRexion == codigoRexion }?.let { resultado -> return resultado } }
             return Castelan
         }
-
-        /*
-        /**
-         * Identifica o idioma correspondente a un código lingüístico e rexional.
-         *
-         * Se non existe ningunha coincidencia, devolve Nada en lugar de
-         * seleccionar un idioma predeterminado.
-         *
-         * @param etiqueta Código lingüístico e rexional que se quere identificar.
-         * @return Idioma correspondente ou Nada se non existe coincidencia.
-         */
-        fun escollerIdioma( etiqueta: String ): Idioma {
-            return entries.find { idioma -> idioma.codigoRexion == etiqueta } ?: Nada
-        }*/
 
     }
 

@@ -1,7 +1,6 @@
 package org.aprengal.lendasnubeiras.data.bd.clases
 
 import android.database.sqlite.SQLiteDatabase
-import org.aprengal.lendasnubeiras.data.actividades.datos.base.Estado
 import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Dificultade
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.Taboa
 
@@ -31,11 +30,8 @@ internal class EstruturaBD {
             CREATE TABLE $actividades (
                 id              INTEGER NOT NULL PRIMARY KEY, --ids negativas reservadas a actividades locais e as positivas ás que están no servidor
                 clave_titulo    TEXT NOT NULL UNIQUE CHECK ( LENGTH( clave_titulo ) <= 100 AND clave_titulo GLOB '[a-z0-9-]*' ),
-                id_autoria      INTEGER NOT NULL CHECK ( id_autoria >= 0 ),
                 clave_categoria    TEXT NOT NULL CHECK ( LENGTH( clave_categoria ) <= 15 ),
                 clave_destinatario TEXT NOT NULL CHECK ( LENGTH( clave_destinatario ) <= 15 ),
-                -- Positivos = xa enviado ao servidor: 0=borrador, 1=pendente, 2=publicado, 3=borrado. Negativos = aínda non enviado: -1=borrador, -2=pendente, -3=publicado
-                estado          TINYINT NOT NULL DEFAULT -1 CHECK ( estado BETWEEN -3 AND 3 ),
                 duracion        TINYINT NOT NULL CHECK ( duracion BETWEEN 1 AND 180 ),
                 data_modificado INTEGER NOT NULL CHECK ( data_modificado >= 0 )
             )
@@ -44,10 +40,8 @@ internal class EstruturaBD {
 
         ///Índices
         db.execSQL( "CREATE UNIQUE INDEX uq_actividades_clave_titulo ON $actividades( clave_titulo )" )
-        db.execSQL( "CREATE INDEX idx_actividades_autoria ON $actividades( id_autoria )" )
         db.execSQL( "CREATE INDEX idx_actividades_categoria ON $actividades( clave_categoria )" )
         db.execSQL( "CREATE INDEX idx_actividades_destinatario ON $actividades( clave_destinatario )" )
-        db.execSQL( "CREATE INDEX idx_actividades_estado ON $actividades( estado )" )
         db.execSQL( "CREATE INDEX idx_actividades_data_modificado ON $actividades( data_modificado )" )
 
         //Disparadores
@@ -56,21 +50,9 @@ internal class EstruturaBD {
             CREATE TRIGGER trg_actividades_proteccion_upd
             BEFORE UPDATE ON $actividades
             FOR EACH ROW
-            WHEN old.id != new.id AND old.estado >= 0
+            WHEN old.id != new.id
             BEGIN
-                SELECT RAISE( ABORT, 'A id da actividades non pode ser modificada unha vez enviada' );
-            END
-            """
-        )
-
-        db.execSQL(
-            """
-            CREATE TRIGGER trg_actividades_proteccion_del
-            BEFORE DELETE ON $actividades
-            FOR EACH ROW
-            WHEN NOT ( old.estado < 0 OR old.estado = ${ Estado.Borrado.estado } )
-            BEGIN
-                SELECT RAISE( ABORT, 'Só se poden eliminar actividades non enviadas ou xa borradas no servidor' );
+                SELECT RAISE( ABORT, 'A id da actividades non pode ser modificada' );
             END
             """
         )
@@ -79,14 +61,14 @@ internal class EstruturaBD {
         db.execSQL(
             """
             INSERT INTO $actividades (
-                id, clave_titulo, id_autoria, clave_categoria,
-                clave_destinatario, estado, duracion, data_modificado
+                id, clave_titulo, clave_categoria,
+                clave_destinatario, duracion, data_modificado
             ) VALUES
-                ( 130797354209, 'dados-historiosos', 9762854874, 'interior', 'mixto', 2, 15, 130797354209 ),
-                ( 130797354210, 'quen-o-ten', 9762854874, 'interior', 'mixto', 2, 10, 130797354210 ),
-                ( 130797354211, 'palabras-encadeadas', 9762854874, 'outros', 'mixto', 2, 10, 130797354211 ),
-                ( 130797354212, 'aplicacion-sinala', 9762854874, 'dixital', 'mixto', 2, 15, 130797354212 ),
-                ( 130797354213, 'baul-recordos', 9762854874, 'interior', 'mixto', 2, 15, 130797354213 )
+                ( 130797354209, 'dados-historiosos', 'interior', 'mixto', 15, 130797354209 ),
+                ( 130797354210, 'quen-o-ten', 'interior', 'mixto', 10, 130797354210 ),
+                ( 130797354211, 'palabras-encadeadas', 'outros', 'mixto', 10, 130797354211 ),
+                ( 130797354212, 'aplicacion-sinala', 'dixital', 'mixto', 15, 130797354212 ),
+                ( 130797354213, 'baul-recordos', 'interior', 'mixto', 15, 130797354213 )
             """
         )
 

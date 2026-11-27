@@ -27,6 +27,7 @@ import org.aprengal.lendasnubeiras.data.bd.operacions.Xogadores.collerXogadores
 import org.aprengal.lendasnubeiras.data.bd.operacions.Xogadores.eliminarXogador
 import org.aprengal.lendasnubeiras.data.bd.operacions.Xogadores.insertarXogador
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.Taboa
+import org.aprengal.lendasnubeiras.data.bd.clases.EstruturaBD
 import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.limparCache
 import org.aprengal.lendasnubeiras.data.bd.operacions.Puntuacions.eliminarPuntuacionsActividade
 import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion
@@ -53,20 +54,17 @@ class SQLITEMonitor {
         fun preparar() {
             val contexto = InstrumentationRegistry.getInstrumentation().targetContext
             runBlocking { db.arrancar( contexto, false ) }
-            Localizacion.arrancar( contexto )
             bd = db.bd
-
-            //Ao meterse manualmente a info en SQLITE, hai que actualizar o estado de todas as
-            // actividades a -1 para poder borrar as que empregan as probas instrumentais
-            bd.actualizar( Taboa.ACTIVIDADES, mapOf( "estado" to -1 ), mapOf( "id" to Condicion.Simple( 0, OperadorSimple.DISTINTO ) ) )
+            EstruturaBD().actualizar( bd.writableDatabase, 1, 2 )
+            Localizacion.arrancar( contexto )
         }
 
     }
 
     @After
-    fun limparActividades() {
+    fun limparElementos() {
         bd.eliminar( Taboa.GRUPOS, mapOf( "id" to Condicion.Simple( 0, OperadorSimple.DISTINTO ) ) )
-        val ondeLimpeza = mapOf( "estado" to Condicion.En( setOf( -3, -2, -1, 3 ) ) )
+        val ondeLimpeza = mapOf( "id" to Condicion.Simple( 0, OperadorSimple.MAIOR_IGUAL ) )
         bd.eliminar( Taboa.ACTIVIDADES, ondeLimpeza )
         limparCache()
     }
@@ -162,8 +160,6 @@ class SQLITEMonitor {
 
         val onde = SeleccionSQL( columnas = setOf( "*" ), onde = mapOf( "xogador_id" to Condicion.Simple( idXogador ) ) )
         assertTrue( bd.seleccionar( Taboa.PUNTUACIONS, onde ).isEmpty() )
-
-        bd.actualizar( Taboa.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
 
     }
 
@@ -342,9 +338,6 @@ class SQLITEMonitor {
         val onde = SeleccionSQL( columnas = setOf( "*" ), onde = mapOf( "xogador_id" to Condicion.Simple( idXogador ) ) )
         assertTrue( bd.seleccionar( Taboa.PUNTUACIONS, onde ).isEmpty() )
 
-        eliminarGrupo( grupo )
-        bd.actualizar( Taboa.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
-
     }
 
     @Test
@@ -364,11 +357,7 @@ class SQLITEMonitor {
         val xogador = collerXogador( idXogador )!!
 
         insertarPuntuacion( actividade, Dificultade.Facil, xogador, 10L )
-
         assertEquals( -1L, insertarPuntuacion( actividade, Dificultade.Facil, xogador, 20L ) )
-
-        eliminarGrupo( grupo )
-        bd.actualizar( Taboa.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
 
     }
 
@@ -399,8 +388,6 @@ class SQLITEMonitor {
             )
         )
 
-        bd.actualizar( Taboa.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
-
     }
 
     @Test
@@ -423,9 +410,6 @@ class SQLITEMonitor {
             )
         )
 
-        bd.eliminar( Taboa.GRUPOS, mapOf( "id" to Condicion.Simple( idGrupo ) ) )
-        bd.actualizar( Taboa.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
-
     }
 
     @Test
@@ -447,9 +431,6 @@ class SQLITEMonitor {
                 mapOf( "actividade_id" to idActividade, "dificultade" to Dificultade.Facil.clave, "xogador_id" to idXogador, "puntos" to 10L, "unix_rexistro" to -15L )
             )
         )
-
-        bd.eliminar( Taboa.GRUPOS, mapOf( "id" to Condicion.Simple( idGrupo ) ) )
-        bd.actualizar( Taboa.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
 
     }
 
@@ -492,9 +473,6 @@ class SQLITEMonitor {
         val unixRexistro = resultado[ 0 ][ "unix_rexistro" ] as Long
         assertTrue( unixRexistro in antes..despois )
 
-        bd.eliminar( Taboa.GRUPOS, mapOf( "id" to Condicion.Simple( idGrupo ) ) )
-        bd.actualizar( Taboa.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
-
     }
 
     @Test
@@ -516,9 +494,6 @@ class SQLITEMonitor {
         insertarPuntuacion( actividade, Dificultade.Facil, xogador, 100L )
 
         assertEquals( 0, actualizarPuntuacion( actividade, Dificultade.Facil, xogador, 50L ) )
-
-        eliminarGrupo( grupo )
-        bd.actualizar( Taboa.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
 
     }
 
@@ -542,9 +517,6 @@ class SQLITEMonitor {
 
         assertEquals( 0, actualizarPuntuacion( actividade, Dificultade.Facil, xogador, 100L ) )
 
-        eliminarGrupo( grupo )
-        bd.actualizar( Taboa.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
-
     }
 
     @Test
@@ -566,9 +538,6 @@ class SQLITEMonitor {
         insertarPuntuacion( actividade, Dificultade.Facil, xogador, 100L )
 
         assertEquals( 1, actualizarPuntuacion( actividade, Dificultade.Facil, xogador, 150L ) )
-
-        eliminarGrupo( grupo )
-        bd.actualizar( Taboa.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
 
     }
 
@@ -598,9 +567,6 @@ class SQLITEMonitor {
 
         assertEquals( -1, bd.actualizar( Taboa.PUNTUACIONS, mapOf( "puntos" to 100L ), onde ) )
 
-        eliminarGrupo( grupo )
-        bd.actualizar( Taboa.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
-
     }
 
     @Test
@@ -625,9 +591,6 @@ class SQLITEMonitor {
 
         val onde = SeleccionSQL( columnas = setOf( "*" ), onde = mapOf( "xogador_id" to Condicion.Simple( idXogador ) ) )
         assertTrue( bd.seleccionar( Taboa.PUNTUACIONS, onde ).isEmpty() )
-
-        bd.eliminar( Taboa.GRUPOS, mapOf( "id" to Condicion.Simple( idGrupo ) ) )
-        bd.actualizar( Taboa.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
 
     }
 
@@ -696,9 +659,6 @@ class SQLITEMonitor {
         assertEquals( 100L, clasificacion.listaPuntuacions[ "Breogan" ]!![ "puntos" ] )
         assertEquals( 1000L, clasificacion.listaPuntuacions[ "Breogan" ]!![ "unix_rexistro" ] )
 
-        bd.eliminar( Taboa.GRUPOS, mapOf( "id" to Condicion.Simple( idGrupo ) ) )
-        bd.actualizar( Taboa.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
-
     }
 
     @Test
@@ -715,8 +675,6 @@ class SQLITEMonitor {
 
         assertEquals( "dados-historiosos", clasificacion.claveActividade )
         assertTrue( clasificacion.listaPuntuacions.isEmpty() )
-
-        bd.actualizar( Taboa.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.Simple( idActividade ) ) )
 
     }
 
@@ -817,24 +775,22 @@ class SQLITEMonitor {
         val id3 = 914L
 
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to id1.toString(), "clave_titulo" to "dados-historiosos", "id_autoria" to "40"))
+            datosCompletos(mapOf("id" to id1.toString(), "clave_titulo" to "dados-historiosos", "clave_categoria" to "interior" ) )
         )
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to id2.toString(), "clave_titulo" to "quen-o-ten", "id_autoria" to "40"))
+            datosCompletos(mapOf("id" to id2.toString(), "clave_titulo" to "quen-o-ten", "clave_categoria" to "interior" ))
         )
         bd.insertar( Taboa.ACTIVIDADES,
-            datosCompletos(mapOf("id" to id3.toString(), "clave_titulo" to "palabras-encadenadas", "id_autoria" to "41"))
+            datosCompletos(mapOf("id" to id3.toString(), "clave_titulo" to "palabras-encadenadas", "clave_categoria" to "dixital" ))
         )
 
-        val onde = mapOf( "id_autoria" to Condicion.Simple( 40L ) )
+        val onde: Map<String, Condicion> = mapOf( "clave_categoria" to Condicion.Simple( "interior", OperadorSimple.IGUAL ) )
         val resultado = collerActividades( onde )
 
         assertEquals( 2, resultado.size )
         assertTrue( resultado.any { it.claveTitulo == "dados-historiosos" } )
         assertTrue( resultado.any { it.claveTitulo == "quen-o-ten" } )
         assertTrue( resultado.none { it.claveTitulo == "palabras-encadenadas" } )
-
-        bd.actualizar( Taboa.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.En( setOf( id1, id2, id3 ) ) ) )
 
     }
 
@@ -851,8 +807,6 @@ class SQLITEMonitor {
 
         assertTrue( resultado.any { it.claveTitulo == "dados-historiosos" } )
         assertTrue( resultado.any { it.claveTitulo == "quen-o-ten" } )
-
-        bd.actualizar( Taboa.ACTIVIDADES, mapOf( "estado" to 3 ), mapOf( "id" to Condicion.En( setOf( id1, id2 ) ) ) )
 
     }
 

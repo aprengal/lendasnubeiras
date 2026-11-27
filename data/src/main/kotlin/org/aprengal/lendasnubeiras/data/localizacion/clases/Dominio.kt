@@ -1,12 +1,5 @@
 package org.aprengal.lendasnubeiras.data.localizacion.clases
 
-//Para tratar de descargar un dominio ao saír dun elemento composable
-/*DisposableEffect( clave ) {
-    onDispose {
-        descargarDominio( Dominio.Actividade( clave ) )
-    }
-}*/
-
 /**
  * Dominios que identifican os distintos recursos e seccións da aplicación.
  *

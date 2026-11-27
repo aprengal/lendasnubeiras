@@ -7,7 +7,7 @@ import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
-import androidx.compose.foundation.text.input.maxLength
+import androidx.compose.foundation.text.input.maxLengthReject
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -97,7 +97,7 @@ fun CampoBuscador( estado: TextFieldState, buscar: () -> Unit ) {
         modifier = Modifier.fillMaxWidth(),
         lineLimits = TextFieldLineLimits.SingleLine,
         keyboardOptions = KeyboardOptions( imeAction = ImeAction.Search ),
-        inputTransformation = InputTransformation.maxLength( 100 ),
+        inputTransformation = InputTransformation.maxLengthReject( 100 ),
         onKeyboardAction = { buscar() },
         leadingIcon = { DebuxarIcona( iconaBuscar.clave, iconaBuscar.nome, 20.sp ) },
         placeholder = { Texto( L10nBase.CampoBuscar, Modifier.clearAndSetSemantics {} ) },
@@ -107,6 +107,21 @@ fun CampoBuscador( estado: TextFieldState, buscar: () -> Unit ) {
 
 }
 
+/**
+ * Mostra un elemento de lista para seleccionar un valor de tipo [T] mediante un diálogo
+ * modal de opcións e notifica a escolla confirmada a través de [escoller].
+ *
+ * Cando [textoTodas] non é `null`, engádese unha opción inicial representada por `null`
+ * para permitir limpar o filtro e non restrinxir por ese criterio; en caso contrario,
+ * só se listan os elementos de [opcions] e [escoller] pode recibir `null` ao cancelar
+ * ou se a lista non admite baleiro segundo o caso de uso.
+ *
+ * @param titulo Texto amosado como etiqueta do elemento e como título do diálogo.
+ * @param opcions Lista de valores seleccionables que implementan [ElementoL10n].
+ * @param escollido Valor actualmente seleccionado, ou `null` cando non hai selección activa.
+ * @param textoTodas Texto opcional para a opción "todas/todos" representada por `null`.
+ * @param escoller Callback invocado ao confirmar a selección no diálogo.
+ */
 @Composable
 internal fun <T : ElementoL10n> SelectorFiltro( titulo: L10nSingular, opcions: List<T>, escollido: T?, textoTodas: L10nSingular?, escoller: ( T? ) -> Unit ) {
 

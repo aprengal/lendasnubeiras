@@ -63,29 +63,6 @@ enum class L10nMetaActividades( internal val clave: String ) : L10nSingular {
     /** Actividades dirixidas a persoas de diferentes grupos de idade. */
     DestinatarioMixto( "destinatario_mixto" ),
 
-    // Estados
-
-    /** Estado de borrador dunha actividade local aínda non enviada ao servidor. */
-    EstadoBorradorLocal( "estado_borrador_local" ),
-
-    /** Estado pendente dunha actividade local aínda non enviada ao servidor. */
-    EstadoPendenteLocal( "estado_pendente_local" ),
-
-    /** Estado publicado dunha actividade local aínda non enviada ao servidor. */
-    EstadoPublicadoLocal( "estado_publicado_local" ),
-
-    /** Estado de borrador dunha actividade rexistrada no servidor. */
-    EstadoBorrador( "estado_borrador" ),
-
-    /** Estado pendente dunha actividade rexistrada no servidor. */
-    EstadoPendente( "estado_pendente" ),
-
-    /** Estado publicado dunha actividade rexistrada no servidor. */
-    EstadoPublicado( "estado_publicado" ),
-
-    /** Estado borrado dunha actividade rexistrada no servidor. */
-    EstadoBorrado( "estado_borrado" ),
-
     // Dificultades
 
     /** Dificultade fácil. */

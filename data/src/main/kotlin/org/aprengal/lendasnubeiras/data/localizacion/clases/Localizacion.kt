@@ -162,6 +162,13 @@ object Localizacion {
 
     }
 
+    /**
+     * Sincroniza o idioma actual da aplicación co rexistrado no sistema operativo
+     * mediante [AppCompatDelegate.setApplicationLocales] cando difiren.
+     *
+     * Debe chamarse só en situacións puntuais (como ao pasar a segundo plano),
+     * xa que aplicar o cambio pode conxelar ou recrear a pantalla e afectar á UX.
+     */
     fun gardarIdiomaSO() {
 
         val idiomaAplicacion = LocaleListCompat.forLanguageTags( idiomaActual.value.codigoRexion.replace( "_", "-" ) )

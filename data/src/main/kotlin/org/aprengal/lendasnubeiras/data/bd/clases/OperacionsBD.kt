@@ -41,40 +41,6 @@ internal class OperacionsBD( contexto: Context ) : SQLiteOpenHelper( contexto, D
         /** Versión actual do esquema da base de datos. */
         private val VERSION_BD = if ( BuildConfig.DEBUG ) 2 else 1
 
-        /**
-         * Busca o primeiro elemento dunha táboa que cumpra as condicións especificadas.
-         *
-         * Recupera todos os campos do primeiro rexistro coincidente e transforma o resultado
-         * nun elemento do tipo solicitado mediante a función de conversión.
-         *
-         * @param taboa Táboa da base de datos na que se realiza a busca.
-         * @param onde Condicións que deben cumprir os rexistros para seren seleccionados.
-         * @param accion Función que converte os datos do rexistro nun elemento do tipo `T`.
-         * @return O primeiro elemento coincidente convertido ao tipo `T`, ou `null` se non
-         * existen resultados.
-         */
-        internal fun <T: ElementoBD> buscarElemento( taboa: Taboa, onde: Map<String, Condicion>, accion: (Map<String, Any> ) -> T ): T? {
-            val resultados = bd.seleccionar( taboa, SeleccionSQL( setOf( "*" ), onde = onde ) )
-            return resultados.firstOrNull()?.let( accion )
-        }
-
-        /**
-         * Busca todos os elementos dunha táboa que cumpran as condicións especificadas.
-         *
-         * Se non se indican condicións, recupera todos os rexistros da táboa.
-         * Cada rexistro convértese nun elemento do tipo `T` mediante a función proporcionada.
-         *
-         * @param taboa Táboa da base de datos na que se realiza a busca.
-         * @param onde Condicións que deben cumprir os rexistros. Por defecto, non se aplica
-         * ningún filtro.
-         * @param accion Función que converte os datos de cada rexistro nun elemento do tipo `T`.
-         * @return Lista de elementos coincidentes. Se non hai resultados, devolve unha lista baleira.
-         */
-        internal fun <T: ElementoBD> buscarElementos( taboa: Taboa, onde: Map<String, Condicion> = emptyMap(), accion: ( Map<String, Any> ) -> T ): List<T> {
-            val resultados = bd.seleccionar( taboa, SeleccionSQL( setOf( "*" ), onde = onde ) )
-            return resultados.map( accion )
-        }
-
     }
 
     /**
@@ -282,6 +248,40 @@ internal class OperacionsBD( contexto: Context ) : SQLiteOpenHelper( contexto, D
 
         return emptyList()
 
+    }
+
+    /**
+     * Busca o primeiro elemento dunha táboa que cumpra as condicións especificadas.
+     *
+     * Recupera todos os campos do primeiro rexistro coincidente e transforma o resultado
+     * nun elemento do tipo solicitado mediante a función de conversión.
+     *
+     * @param taboa Táboa da base de datos na que se realiza a busca.
+     * @param onde Condicións que deben cumprir os rexistros para seren seleccionados.
+     * @param accion Función que converte os datos do rexistro nun elemento do tipo `T`.
+     * @return O primeiro elemento coincidente convertido ao tipo `T`, ou `null` se non
+     * existen resultados.
+     */
+    internal fun <T: ElementoBD> buscarElemento( taboa: Taboa, onde: Map<String, Condicion>, accion: (Map<String, Any> ) -> T ): T? {
+        val resultados = bd.seleccionar( taboa, SeleccionSQL( setOf( "*" ), onde = onde ) )
+        return resultados.firstOrNull()?.let( accion )
+    }
+
+    /**
+     * Busca todos os elementos dunha táboa que cumpran as condicións especificadas.
+     *
+     * Se non se indican condicións, recupera todos os rexistros da táboa.
+     * Cada rexistro convértese nun elemento do tipo `T` mediante a función proporcionada.
+     *
+     * @param taboa Táboa da base de datos na que se realiza a busca.
+     * @param onde Condicións que deben cumprir os rexistros. Por defecto, non se aplica
+     * ningún filtro.
+     * @param accion Función que converte os datos de cada rexistro nun elemento do tipo `T`.
+     * @return Lista de elementos coincidentes. Se non hai resultados, devolve unha lista baleira.
+     */
+    internal fun <T: ElementoBD> buscarElementos( taboa: Taboa, onde: Map<String, Condicion> = emptyMap(), accion: ( Map<String, Any> ) -> T ): List<T> {
+        val resultados = bd.seleccionar( taboa, SeleccionSQL( setOf( "*" ), onde = onde ) )
+        return resultados.map( accion )
     }
 
     /**

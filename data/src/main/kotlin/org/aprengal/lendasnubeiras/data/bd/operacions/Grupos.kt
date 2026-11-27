@@ -1,8 +1,6 @@
 package org.aprengal.lendasnubeiras.data.bd.operacions
 
 import org.aprengal.lendasnubeiras.data.actividades.datos.dixitais.Grupo
-import org.aprengal.lendasnubeiras.data.bd.clases.OperacionsBD.Companion.buscarElemento
-import org.aprengal.lendasnubeiras.data.bd.clases.OperacionsBD.Companion.buscarElementos
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.bd
 import org.aprengal.lendasnubeiras.data.bd.clasesAxuda.Condicion
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.Taboa
@@ -34,7 +32,7 @@ object Grupos {
      */
     fun collerGrupo( id: Long ): Grupo?{
         val onde = mapOf( "id" to Condicion.Simple( id ) )
-        return buscarElemento( Taboa.GRUPOS, onde ) { fila -> crearGrupo( fila ) }
+        return bd.buscarElemento( Taboa.GRUPOS, onde ) { fila -> crearGrupo( fila ) }
     }
 
     /**
@@ -43,7 +41,7 @@ object Grupos {
      * @return Lista cos grupos rexistrados.
      */
     fun collerGrupos(): List<Grupo> {
-        return buscarElementos( Taboa.GRUPOS ) { fila -> crearGrupo( fila ) }
+        return bd.buscarElementos( Taboa.GRUPOS ) { fila -> crearGrupo( fila ) }
     }
 
     /**

@@ -100,40 +100,6 @@ enum class RutasApi( val ruta: String ) {
     ACTUALIZAR( "actividade/actualizar" ),
 
     /**
-     * Crea unha nova actividade e almacénaa na base de datos do servidor.
-     *
-     * Require unha sesión autenticada e os datos necesarios para definir
-     * a actividade. O servidor asigna o identificador definitivo e devolve
-     * tamén o estado resultante da creación.
-     *
-     * Os estados temporais empregados polo cliente transfórmanse
-     * nos estados definitivos do servidor:
-     * - -1: borrador (0).
-     * - -2: pendente (1).
-     * - -3: publicado (2).
-     *
-     * Non se permite crear actividades directamente no estado borrado (3).
-     */
-    CREARACTIVIDADE( "actividade/crear" ),
-
-    /**
-     * Modifica os datos dunha actividade existente ou cambia o seu estado.
-     *
-     * Require unha sesión autenticada e o envío dos datos completos
-     * da actividade, incluído o seu identificador no servidor.
-     *
-     * O campo estado determina a operación realizada:
-     * - 0: borrador.
-     * - 1: pendente.
-     * - 2: publicado.
-     * - 3: borrado.
-     *
-     * Os identificadores dos recursos deben ser válidos e o usuario
-     * debe dispoñer dos permisos necesarios para realizar a modificación.
-     */
-    MODIFICARACTIVIDADE( "actividade/modificar" ),
-
-    /**
      * Envía ao servidor información sobre os erros producidos
      * durante a execución da aplicación.
      *
@@ -145,20 +111,6 @@ enum class RutasApi( val ruta: String ) {
      * os 2000 caracteres son truncadas polo servidor.
      */
     REPORTES( "reportar-erros" ),
-
-    /**
-     * Xestiona as contas dos usuarios do sistema.
-     *
-     * Esta operación está reservada aos administradores e permite modificar
-     * o rol, o enderezo de correo electrónico ou o estado dunha conta.
-     *
-     * Tamén permite cancelar unha solicitude de borrado modificando
-     * o estado da conta. Non se pode asignar directamente o estado
-     * correspondente ao borrado nin modificar a conta do usuario reservado.
-     *
-     * É obrigatorio indicar polo menos un dos campos que se quere modificar.
-     */
-    USUARIOS( "axustar-usuarios" ),
 
     /**
      * Executa as tarefas programadas de mantemento do servidor.

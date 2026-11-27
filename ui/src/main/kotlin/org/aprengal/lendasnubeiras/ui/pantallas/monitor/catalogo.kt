@@ -15,7 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.collerActividadesPublicas
-import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.contarActividadesPublicas
+import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.contarActividades
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nBase
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.AmosarTituloCentrado
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.BotonPrincipal
@@ -38,7 +38,7 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.TarxetaA
 fun PantallaCatalogo() {
 
     val limitePorPaxina = 10
-    val totalActividades by rememberSaveable { mutableIntStateOf( contarActividadesPublicas() ) }
+    val totalActividades by rememberSaveable { mutableIntStateOf( contarActividades() ) }
     var totalCargados by rememberSaveable { mutableIntStateOf( limitePorPaxina.coerceAtMost( totalActividades ) ) }
 
     val actividades = remember( totalCargados ) { collerActividadesPublicas( 0, totalCargados ) }

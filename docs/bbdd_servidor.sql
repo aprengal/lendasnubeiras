@@ -1,6 +1,6 @@
 --  Lendas Nubeiras DB
 -- Servidor: 127.0.0.1
--- Arquivo xerado o mércores, 26 de outubro de 2026 ás 23:00:00 CEST
+-- Arquivo xerado o mércores, 27 de novembro de 2026 ás 00:00:00 CEST
 -- Versión do servidor: 12.3.2-MariaDB
 -- Versión de PHP: 8.5.3
 
@@ -14,62 +14,23 @@ DROP TABLE IF EXISTS LendasNubeiras_417072_opcions;
 DROP TABLE IF EXISTS LendasNubeiras_417072_actividades;
 DROP TABLE IF EXISTS LendasNubeiras_417072_destinatarios;
 DROP TABLE IF EXISTS LendasNubeiras_417072_categorias;
-
-DROP TABLE IF EXISTS LendasNubeiras_417072_permisos_rol;
 DROP TABLE IF EXISTS LendasNubeiras_417072_usuarios;
-DROP TABLE IF EXISTS LendasNubeiras_417072_permisos;
-DROP TABLE IF EXISTS LendasNubeiras_417072_roles;
-
--- =========================================
--- Táboa: roles
--- =========================================
-CREATE TABLE IF NOT EXISTS LendasNubeiras_417072_roles (
-    id    TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    clave VARCHAR(12) NOT NULL,
-    PRIMARY KEY ( id ),
-    UNIQUE KEY uq_roles_clave ( clave )
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT = 15;
-
--- =========================================
--- Táboa: permisos
--- =========================================
-CREATE TABLE IF NOT EXISTS LendasNubeiras_417072_permisos (
-    id   TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    nome VARCHAR(25) NOT NULL,
-    PRIMARY KEY ( id ),
-    UNIQUE KEY uq_permisos_nome ( nome )
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT = 15;
-
--- =========================================
--- Táboa: permisos_rol
--- =========================================
-CREATE TABLE IF NOT EXISTS LendasNubeiras_417072_permisos_rol (
-    id_rol     TINYINT UNSIGNED NOT NULL,
-    id_permiso TINYINT UNSIGNED NOT NULL,
-    PRIMARY KEY ( id_rol, id_permiso ),
-    KEY idx_permisos_rol_permiso ( id_permiso ),
-    CONSTRAINT fk_permisos_rol_roles FOREIGN KEY ( id_rol ) REFERENCES LendasNubeiras_417072_roles( id ) ON DELETE RESTRICT ON UPDATE RESTRICT,
-    CONSTRAINT fk_permisos_rol_permiso FOREIGN KEY ( id_permiso ) REFERENCES LendasNubeiras_417072_permisos( id ) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =========================================
 -- Táboa: usuario
 -- =========================================
 CREATE TABLE IF NOT EXISTS LendasNubeiras_417072_usuarios ( -- A id asígnase automaticamente cunha fórmula que parte como base do timestamp actual
-    id      BIGINT UNSIGNED NOT NULL,
-    uuid    CHAR(32) NOT NULL,
-    correo  VARCHAR(255) NOT NULL,
-    estado  TINYINT UNSIGNED NOT NULL DEFAULT 0, -- 0 non activo, 1 activo, 2 suspendido, 3 pendente para borrar
-    id_rol  TINYINT UNSIGNED NOT NULL,
+    id           BIGINT UNSIGNED NOT NULL,
+    uuid         CHAR(32) NOT NULL,
+    correo       VARCHAR(255) NOT NULL,
+    estado       TINYINT UNSIGNED NOT NULL DEFAULT 0, -- 0 non activo, 1 activo, 2 suspendido, 3 pendente para borrar
     data_borrado BIGINT UNSIGNED NOT NULL DEFAULT 0, -- Momento en que o usuario confirmou o borrado da conta (0 se non o pediu)
     PRIMARY KEY ( id ),
     UNIQUE KEY uq_usuario_uuid ( uuid ),
     UNIQUE KEY uq_usuario_correo ( correo ),
-    KEY idx_usuario_rol ( id_rol ),
     KEY idx_usuario_data_borrado ( data_borrado ),
     CONSTRAINT chk_usuarios_uuid CHECK ( uuid REGEXP '^[A-Z0-9]{32}$' ),
-    CONSTRAINT chk_usuarios_estado CHECK ( estado in ( 0, 1, 2, 3 ) ),
-    CONSTRAINT fk_usuarios_rol FOREIGN KEY ( id_rol ) REFERENCES LendasNubeiras_417072_roles( id ) ON DELETE RESTRICT ON UPDATE RESTRICT
+    CONSTRAINT chk_usuarios_estado CHECK ( estado in ( 0, 1, 2, 3 ) )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =========================================
@@ -95,7 +56,7 @@ CREATE TABLE IF NOT EXISTS LendasNubeiras_417072_destinatarios ( -- A id non seg
 -- =========================================
 -- Táboa: actividade
 -- =========================================
-CREATE TABLE IF NOT EXISTS LendasNubeiras_417072_actividades ( -- A id asígnase automaticamente cunha fórmula que parte como base do timestamp actual. // id = data_creado
+CREATE TABLE IF NOT EXISTS LendasNubeiras_417072_actividades ( -- A id asígnase automaticamente cunha fórmula que parte como base do timestamp actual. id = data_creado
     id              BIGINT UNSIGNED NOT NULL,
     clave_titulo    VARCHAR(100) NOT NULL,
     id_autoria      BIGINT UNSIGNED NOT NULL,
@@ -150,37 +111,6 @@ CREATE TABLE IF NOT EXISTS LendasNubeiras_417072_info_temporal (
 -- Delimitadores
 -- =========================================
 DELIMITER $$
-
-CREATE TRIGGER trg_roles_proteccion_upd
-BEFORE UPDATE ON LendasNubeiras_417072_roles
-FOR EACH ROW
-BEGIN
-    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Ningún rol pode ser modificado';
-END$$
-
-CREATE TRIGGER trg_permisos_proteccion_upd
-BEFORE UPDATE ON LendasNubeiras_417072_permisos
-FOR EACH ROW
-BEGIN
-    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Ningún permiso pode ser modificado';
-END$$
-
-CREATE TRIGGER trg_permisos_rol_bloquear_monitor
-BEFORE INSERT ON LendasNubeiras_417072_permisos_rol
-FOR EACH ROW
-BEGIN
-    IF EXISTS ( SELECT 1 FROM LendasNubeiras_417072_roles WHERE id = NEW.id_rol AND clave = 'monitor' ) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'O rol monitor non pode ter permisos';
-    END IF;
-END$$
-
-CREATE TRIGGER trg_permisos_rol_no_update
-BEFORE UPDATE ON LendasNubeiras_417072_permisos_rol
-FOR EACH ROW
-BEGIN
-    SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Non se pode modificar datos nesta táboa. Só se pode insertar ou borrar un rexistro';
-END$$
 
 CREATE TRIGGER trg_actividades_proteccion_upd
 BEFORE UPDATE ON LendasNubeiras_417072_actividades

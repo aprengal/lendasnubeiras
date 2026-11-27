@@ -8,8 +8,7 @@ import org.aprengal.lendasnubeiras.data.api.RutasApi
  * un tratamento específico dos datos recibidos.
  *
  * Empregada en rutas como [RutasApi.REXISTRO], [RutasApi.PECHE],
- * [RutasApi.MODIFICARACTIVIDADE], [RutasApi.REPORTES],
- * [RutasApi.USUARIOS], [RutasApi.BORRARCONTA] e [RutasApi.LIMPAR].
+ * [RutasApi.REPORTES], [RutasApi.BORRARCONTA] e [RutasApi.LIMPAR].
  *
  * Herda de [RespostaApi] o código de resposta e a indicación de éxito
  * da operación, sen engadir propiedades adicionais.

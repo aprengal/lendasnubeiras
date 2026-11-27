@@ -8,13 +8,13 @@ import org.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
  * Clase selada que define o sistema de permisos da aplicación.
  *
  * Cada obxecto derivado representa un permiso concreto e implementa a súa
- * propia lóxica de validación en función do usuario e, cando corresponda,
+ * propia lóxica de validación en función do [Usuario] e, cando corresponda,
  * doutras condicións da aplicación.
  */
 sealed class Permiso {
 
     /**
-     * Comproba se o usuario indicado cumpre as condicións necesarias para
+     * Comproba se o [usuario] indicado cumpre as condicións necesarias para
      * dispoñer deste permiso.
      *
      * Debe ser implementado por cada clase derivada mediante a definición
@@ -32,31 +32,24 @@ sealed class Permiso {
         }
     }
 
-    /** Permiso para iniciar sesión (require non estar autenticado previamente, é dicir, rol NADA). */
+    /** Permiso para iniciar sesión (require o rol [Rol.NADA]). */
     object PodeIniciarSesion : Permiso() {
         override fun invoke( usuario: Usuario ): Boolean {
             return usuario.rol == Rol.NADA
         }
     }
 
-    /** Permiso para rexistrarse (require non ter sesión iniciada). */
+    /** Permiso para rexistrarse (require o rol [Rol.NADA]). */
     object PodeRexistrarse : Permiso() {
         override fun invoke( usuario: Usuario ): Boolean {
             return usuario.rol == Rol.NADA
         }
     }
 
-    /** Permiso para pechar sesión (require que exista usuario ou que a opción anónima estea activa). */
+    /** Permiso para pechar sesión (require que exista usuario ou que [SesionAnonima] estea activa). */
     object PodePecharSesion : Permiso() {
         override fun invoke( usuario: Usuario ): Boolean {
             return usuario.existe || collerOpcion( SesionAnonima )
-        }
-    }
-
-    /** Permiso básico de lectura (require calquera rol válido distinto de NADA). */
-    object PodeLer : Permiso() {
-        override fun invoke( usuario: Usuario ): Boolean {
-            return usuario.rol != Rol.NADA
         }
     }
 
@@ -64,6 +57,20 @@ sealed class Permiso {
     object PodeBorrarConta : Permiso() {
         override fun invoke( usuario: Usuario ): Boolean {
             return usuario.existe
+        }
+    }
+
+    /** Permiso básico de lectura (require un rol distinto de [Rol.NADA]). */
+    object PodeLer : Permiso() {
+        override fun invoke( usuario: Usuario ): Boolean {
+            return usuario.rol != Rol.NADA
+        }
+    }
+
+    /** Permiso para xestionar xogadores (require o rol [Rol.MONITOR]). */
+    object PodeXestionarXogadores : Permiso() {
+        override fun invoke( usuario: Usuario ): Boolean {
+            return usuario.rol == Rol.MONITOR
         }
     }
 

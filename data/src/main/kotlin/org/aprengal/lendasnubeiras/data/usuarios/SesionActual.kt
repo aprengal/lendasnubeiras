@@ -62,8 +62,8 @@ object SesionActual {
      * de inicialización. Se non existe unha sesión activa, delega a súa
      * comprobación e recuperación en [validarSesion].
      *
-     * Se hai un usuario actual é válido e existe, solicita a execución das tarefas
-     * programadas de mantemento do servidor mediante [RutasApi.LIMPAR].
+     * Se o un usuario actual é válido e existe, solicita a execución das tarefas
+     * programadas de mantemento do servidor nun novo fío mediante [RutasApi.LIMPAR].
      */
     suspend fun arrancar() {
 
@@ -72,7 +72,7 @@ object SesionActual {
         validarSesion()
 
         if ( usuario.existe ) {
-            procesarPeticion( MetodoApi.GET, RutasApi.LIMPAR, emptyMap() ) as RespostaXenerica
+            corrutina { procesarPeticion( MetodoApi.GET, RutasApi.LIMPAR, emptyMap() ) as RespostaXenerica }
         }
 
     }

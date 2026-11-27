@@ -7,8 +7,6 @@ import kotlinx.coroutines.SupervisorJob
 import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.actualizarCatalogo
 import org.aprengal.lendasnubeiras.data.localizacion.clases.ElementoL10n
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nBase
-import org.aprengal.lendasnubeiras.data.bd.clases.OperacionsBD.Companion.buscarElemento
-import org.aprengal.lendasnubeiras.data.bd.clases.OperacionsBD.Companion.buscarElementos
 
 /**
  * Obxecto central que agrupa os elementos comúns relacionados coa base de datos SQLite local.
@@ -31,10 +29,10 @@ object BD {
 
     /**
      * Interface que deben implementar os tipos de datos que se queiran utilizar nos métodos
-     * xenéricos de consulta definidos no companion object de [OperacionsBD].
+     * xenéricos de consulta definidos en [OperacionsBD].
      *
-     * Permite identificar os tipos de elementos compatibles cos métodos [buscarElemento]
-     * e [buscarElementos].
+     * Permite identificar os tipos de elementos compatibles cos métodos [OperacionsBD.buscarElemento]
+     * e [OperacionsBD.buscarElementos].
      */
     internal interface ElementoBD
 
@@ -44,11 +42,13 @@ object BD {
      * @property clave Palabra clave SQL correspondente á orde de clasificación.
      */
     enum class Orde( val clave: String ) {
+
         /** Orde ascendente, de menor a maior. */
         ASC( "ASC" ),
 
         /** Orde descendente, de maior a menor. */
         DESC( "DESC" )
+
     }
 
     /**

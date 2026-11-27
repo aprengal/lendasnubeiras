@@ -15,7 +15,6 @@ import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion
  */
 enum class L10nPlural( internal val clave: String, internal val dominio: Dominio ) : L10n {
 
-    MensaxesNovas( "mensaxes_novas", Dominio.BASE ),
     ResultadosBusca( "resultado_busca", Dominio.BASE ),
     ResultadosBuscaMais( "resultado_busca_mais", Dominio.BASE ),
     Duracion( "duracion_minutos", Dominio.BASE ),

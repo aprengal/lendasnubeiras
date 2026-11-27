@@ -69,6 +69,12 @@ fun TextoVariante( elemento: L10nVariante, cantidade: Int, modifier: Modifier = 
     Text( elemento.texto( cantidade ), modifier, style = estilo )
 }
 
+/**
+ * Mostra o título correspondente á [Ruta] actual obtido desde [LocalRuta] ou desde
+ * [LocalTitulo] no resto de pantallas.
+ *
+ * @throws IllegalArgumentException Se a ruta actual non ten un título dispoñible.
+ */
 @Composable
 fun AmosarTitulo() {
 
@@ -86,6 +92,10 @@ fun AmosarTitulo() {
 
 }
 
+/**
+ * Mostra o título da pantalla actual centrado horizontalmente dentro dunha columna
+ * que ocupa todo o ancho dispoñible.
+ */
 @Composable
 fun AmosarTituloCentrado() {
 
@@ -95,6 +105,15 @@ fun AmosarTituloCentrado() {
 
 }
 
+/**
+ * Mostra un texto localizado con un ou varios treitos interactivos destacados e
+ * subliñados que executan a acción asociada en [enlaces].
+ *
+ * @param T Tipo de elemento de localización singular empregado para o texto e as ligazóns.
+ * @param elemento Elemento de localización que contén o texto completo.
+ * @param enlaces Mapa entre cada segmento clicable e o callback executado ao premer nel.
+ * @throws IllegalArgumentException Se [enlaces] está baleiro ou algún enlace non aparece no texto localizado.
+ */
 @Composable
 fun <T: L10nSingular> TextoEnlazado( elemento: T, enlaces: Map<T, () -> Unit> ) {
 

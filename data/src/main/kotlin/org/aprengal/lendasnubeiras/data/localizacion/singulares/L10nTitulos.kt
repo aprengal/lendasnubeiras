@@ -21,10 +21,7 @@ enum class L10nTitulos( internal val clave: String ) : L10nSingular {
     Axustes( "axustes" ),
 
     /** Título da pantalla do catálogo de actividades. */
-    Catalogo( "catalogo" ),
-
-    /** Título da pantalla de creación dunha actividade. */
-    CrearActividade( "crear_actividade" );
+    Catalogo( "catalogo" );
 
     /** Dominio de localización ao que pertencen estes textos. */
     internal val dominio: Dominio = Dominio.TITULOS

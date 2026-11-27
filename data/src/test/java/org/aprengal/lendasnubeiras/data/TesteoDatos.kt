@@ -66,10 +66,6 @@ class TesteoDatos {
         val esperado = when ( rol ) {
             Rol.NADA -> "nada"
             Rol.MONITOR -> "monitor"
-            Rol.COLABORADOR -> "colaborador"
-            Rol.AUTOR -> "autor"
-            Rol.EDITOR -> "editor"
-            Rol.ADMIN -> "admin"
         }
 
         assertEquals( esperado, rol.clave )

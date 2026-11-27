@@ -15,7 +15,6 @@ import org.aprengal.lendasnubeiras.data.localizacion.clases.Localizacion
  */
 enum class L10nVariante( internal val clave: String, internal val dominio: Dominio ) : L10n {
 
-    MensaxesFallos( "mensaxes_fallos", Dominio.BASE ),
     MensaxesCambiantes( "mensaxes_cambiantes", Dominio.BASE );
 
     /**

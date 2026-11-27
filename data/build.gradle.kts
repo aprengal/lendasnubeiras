@@ -45,7 +45,7 @@ tasks.withType<ProcessJavaResTask>().configureEach {
 android {
 
     namespace = "org.aprengal.lendasnubeiras.data"
-    compileSdk = 37
+    compileSdk { version = release( 37 ) { minorApiLevel = 1 } }
 
     defaultConfig {
         minSdk = 29

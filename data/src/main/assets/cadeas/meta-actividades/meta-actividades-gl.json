@@ -25,15 +25,6 @@
   "destinatario_maiores": "Maiores",
   "destinatario_mixto": "Mixto",
 
-  "estado_borrador_local": "Borrador local",
-  "estado_pendente_local": "Pendente local",
-  "estado_publicado_local": "Publicado local",
-
-  "estado_borrador": "Borrador",
-  "estado_pendente": "Pendente",
-  "estado_publicado": "Publicado",
-  "estado_borrado": "Borrado",
-
   "dificultade_facil": "Fácil",
   "dificultade_media": "Media",
   "dificultade_dificil": "Difícil",

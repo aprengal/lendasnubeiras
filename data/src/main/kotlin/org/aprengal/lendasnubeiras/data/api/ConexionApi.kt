@@ -10,7 +10,6 @@ import java.io.IOException
 import java.net.SocketTimeoutException
 import org.aprengal.lendasnubeiras.data.axustes.Opcion
 import org.aprengal.lendasnubeiras.data.BuildConfig
-import org.aprengal.lendasnubeiras.data.api.resposta.ActividadeCreada
 import org.aprengal.lendasnubeiras.data.api.resposta.DatosActividades
 import org.aprengal.lendasnubeiras.data.api.resposta.RespostaAcceso
 import org.aprengal.lendasnubeiras.data.api.resposta.RespostaApi
@@ -39,8 +38,7 @@ object ConexionApi {
      */
     enum class MetodoApi( val clave: String ) {
         GET( "GET" ),
-        POST( "POST" ),
-        DELETE( "DELETE" )
+        POST( "POST" )
     }
 
     /**
@@ -65,7 +63,6 @@ object ConexionApi {
      * - [RutasApi.ACCESO]: [RespostaAcceso].
      * - [RutasApi.VALIDACION]: [RespostaValidacionSesion].
      * - [RutasApi.ACTUALIZAR]: [DatosActividades].
-     * - [RutasApi.CREARACTIVIDADE]: [ActividadeCreada].
      * - Resto de rutas: [RespostaXenerica].
      *
      * Delega o envío da petición HTTP na función [peticion] e converte os datos
@@ -85,9 +82,8 @@ object ConexionApi {
             RutasApi.ACCESO -> RespostaAcceso( datos )
             RutasApi.VALIDACION -> RespostaValidacionSesion( datos )
             RutasApi.ACTUALIZAR -> DatosActividades( datos )
-            RutasApi.CREARACTIVIDADE -> ActividadeCreada( datos )
-            RutasApi.REXISTRO, RutasApi.PECHE, RutasApi.MODIFICARACTIVIDADE,
-            RutasApi.REPORTES, RutasApi.USUARIOS, RutasApi.BORRARCONTA, RutasApi.LIMPAR -> RespostaXenerica( datos )
+            RutasApi.REXISTRO, RutasApi.PECHE, RutasApi.REPORTES,
+            RutasApi.BORRARCONTA, RutasApi.LIMPAR -> RespostaXenerica( datos )
         }
 
         @Suppress( "UNCHECKED_CAST" )

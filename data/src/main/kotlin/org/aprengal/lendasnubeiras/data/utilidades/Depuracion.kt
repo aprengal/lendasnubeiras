@@ -1,6 +1,5 @@
 package org.aprengal.lendasnubeiras.data.utilidades
 
-import android.util.Log
 import org.aprengal.lendasnubeiras.data.api.ConexionApi.MetodoApi
 import org.aprengal.lendasnubeiras.data.api.ConexionApi.procesarPeticion
 import org.aprengal.lendasnubeiras.data.api.RutasApi

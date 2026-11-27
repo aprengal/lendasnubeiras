@@ -27,9 +27,7 @@ tags:
   - name: Autenticación
     description: Rexistro, inicio de sesión, validación da sesión e peche de sesión.
   - name: Actividades
-    description: Consulta e xestión das actividades.
-  - name: Administración
-    description: Xestión de usuarios, só para administradores.
+    description: Consulta do catálogo de actividades.
   - name: Conta
     description: Xestión da propia conta do usuario.
   - name: Sistema
@@ -45,7 +43,7 @@ paths:
         Rexistra un usuario a partir do seu correo electrónico. Envíase unha
         mensaxe cunha ligazón para verificar a acción. A ligazón é válida
         durante 15 minutos. Unha vez verificada, a solicitude queda pendente
-        de aprobación administrativa.
+        de validación ou activación segundo o estado da conta.
 
         O correo envíase no idioma indicado no campo idioma.
 
@@ -92,7 +90,7 @@ paths:
 
   /conta/iniciar-sesion:
     post:
-      tags: [ Autenticación ]
+      tags: [Autenticación]
       summary: Iniciar sesión
       description: >
         Solicita o inicio de sesión enviando ao correo do usuario unha ligazón
@@ -153,10 +151,10 @@ paths:
 
   /conta/pechar-sesion:
     post:
-      tags: [ Conta ]
+      tags: [Conta]
       summary: Pechar a sesión de usuario rexistrado
       description: >
-        Solicitase o peche de sesión activo no dispositivo actual.
+        Solicítase o peche de sesión activo no dispositivo actual.
       security:
         - sesionHeaderAuth: []
       requestBody:
@@ -189,7 +187,7 @@ paths:
 
   /accion/verificacion:
     get:
-      tags: [ Autenticación ]
+      tags: [Autenticación]
       summary: Verificar unha acción
       description: >
         Verifica unha acción de rexistro, inicio de sesión ou borrado da conta
@@ -197,8 +195,8 @@ paths:
 
         As ligazóns caducan aos 15 minutos e só se poden usar unha vez.
 
-        Ao verificar un rexistro, a solicitude queda pendente de aprobación
-        administrativa. Ao verificar un inicio de sesión, actívase a sesión.
+        Ao verificar un rexistro, a solicitude queda pendente de activación
+        segundo o estado da conta. Ao verificar un inicio de sesión, actívase a sesión.
         Ao verificar un borrado, a conta péchase e queda pendente de eliminación
         definitiva aos 30 días.
 
@@ -259,10 +257,10 @@ paths:
 
   /sesion/validacion:
     post:
-      tags: [ Autenticación ]
+      tags: [Autenticación]
       summary: Validar a sesión actual
       description: >
-        Comproba que a sesión enviada existe e segue activa, valídase e devólvese 
+        Comproba que a sesión enviada existe e segue activa, valídase e devólvese
         a información do usuario.
       security:
         - sesionHeaderAuth: []
@@ -327,10 +325,6 @@ paths:
         reservado e elimínanse os borradores, as actividades pendentes e as
         da papeleira.
 
-        Durante ese prazo, un administrador pode cancelar o borrado cambiando
-        o estado da conta mediante /axustar-usuarios.
-
-        Os administradores non poden solicitar o borrado da súa propia conta.
         Só se pode enviar unha mensaxe cada 60 segundos.
       security:
         - sesionHeaderAuth: []
@@ -364,7 +358,7 @@ paths:
         "403":
           description: A conta non está activa.
         "409":
-          description: A conta non se pode borrar porque pertence a un administrador ou xa existe unha solicitude incompatible.
+          description: Xa existe unha solicitude de borrado ou unha situación incompatible coa operación.
         "429":
           description: Xa se enviou unha mensaxe hai menos de 60 segundos.
         "405":
@@ -411,200 +405,6 @@ paths:
         default:
           $ref: "#/components/responses/UnexpectedError"
 
-  /actividade/crear:
-    post:
-      tags: [Actividades]
-      summary: Crear unha actividade
-      description: >
-        Crea unha actividade e engádea á base de datos. O servidor asigna
-        o identificador da actividade e devólveo na resposta xunto co estado convertido.
-
-        Os estados negativos son códigos temporais do cliente e deben
-        transformarse no servidor:
-        -1 corresponde a borrador (0),
-        -2 corresponde a pendente (1),
-        -3 corresponde a publicado (2).
-
-        Os estados definitivos do servidor son 0, 1 e 2. Non se permite crear
-        unha actividade directamente no estado 3 (borrada).
-      security:
-        - sesionHeaderAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              additionalProperties: false
-              required:
-                - uuid
-                - clave_titulo
-                - id_autoria
-                - id_categoria
-                - id_destinatario
-                - estado
-                - duracion
-                - data_modificado
-              properties:
-                uuid:
-                  $ref: "#/components/schemas/UuidDispositivoSchema"
-                clave_titulo:
-                  type: string
-                  maxLength: 100
-                  description: Clave do título da actividade.
-                id_autoria:
-                  type: integer
-                  minimum: 0
-                  description: Identificador do usuario autor.
-                id_categoria:
-                  type: string
-                  maxLength: 15
-                  description: Identificador da categoría.
-                id_destinatario:
-                  type: string
-                  maxLength: 15
-                  description: Identificador do destinatario.
-                estado:
-                  type: integer
-                  enum:
-                    - 0
-                    - 1
-                    - 2
-                    - -1
-                    - -2
-                    - -3
-                  description: >
-                    Estado solicitado. Os valores negativos son temporais
-                    do cliente e transfórmanse no servidor: -1 a 0, -2 a 1
-                    e -3 a 2. O valor 3 non se admite na creación.
-                duracion:
-                  type: integer
-                  minimum: 1
-                  maximum: 180
-                  description: Duración da actividade.
-                data_modificado:
-                  type: integer
-                  minimum: 0
-                  description: Marca temporal da última modificación.
-      responses:
-        "201":
-          description: A actividade creouse correctamente.
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - id
-                  - estado
-                properties:
-                  id:
-                    type: integer
-                    minimum: 1
-                    description: Identificador asignado polo servidor.
-                  estado:
-                    type: integer
-                    enum:
-                      - 0
-                      - 1
-                      - 2
-                    description: Estado definitivo asignado polo servidor.
-        "400":
-          description: JSON mal formado, campos ausentes ou valores inválidos.
-        "401":
-          $ref: "#/components/responses/Unauthenticated"
-        "403":
-          description: O usuario non ten permisos para crear a actividade cos datos indicados.
-        "405":
-          $ref: "#/components/responses/MethodNotAllowed"
-        default:
-          $ref: "#/components/responses/UnexpectedError"
-
-  /actividade/modificar:
-    post:
-      tags: [Actividades]
-      summary: Modificar, borrar ou restaurar unha actividade
-      description: >
-        Modifica os datos dunha actividade. O campo estado indica a operación:
-        0 para borrador, 1 para pendente, 2 para publicado e 3 para borrado.
-
-        Envíanse todos os campos da actividade. Os identificadores deben
-        corresponder a recursos válidos e o usuario debe ter permisos para
-        realizar a operación.
-      security:
-        - sesionHeaderAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              additionalProperties: false
-              required:
-                - uuid
-                - id
-                - clave_titulo
-                - id_autoria
-                - id_categoria
-                - id_destinatario
-                - estado
-                - duracion
-                - data_modificado
-              properties:
-                uuid:
-                  $ref: "#/components/schemas/UuidDispositivoSchema"
-                id:
-                  type: integer
-                  minimum: 1
-                  description: Identificador positivo da actividade no servidor.
-                clave_titulo:
-                  type: string
-                  maxLength: 100
-                  description: Clave do título da actividade.
-                id_autoria:
-                  type: integer
-                  minimum: 0
-                  description: Identificador do usuario autor.
-                id_categoria:
-                  type: string
-                  maxLength: 15
-                  description: Identificador da categoría.
-                id_destinatario:
-                  type: string
-                  maxLength: 15
-                  description: Identificador do destinatario.
-                estado:
-                  type: integer
-                  enum:
-                    - 0
-                    - 1
-                    - 2
-                    - 3
-                  description: "0 = borrador, 1 = pendente, 2 = publicado, 3 = borrado."
-                duracion:
-                  type: integer
-                  minimum: 1
-                  maximum: 180
-                  description: Duración da actividade.
-                data_modificado:
-                  type: integer
-                  minimum: 0
-                  description: Marca temporal da última modificación.
-      responses:
-        "200":
-          description: A actividade foi actualizada.
-        "400":
-          description: JSON mal formado, campos ausentes ou valores inválidos.
-        "401":
-          $ref: "#/components/responses/Unauthenticated"
-        "403":
-          description: O usuario non ten permisos para modificar esta actividade ou cambiar o seu estado/autoría.
-        "404":
-          description: A actividade non existe.
-        "405":
-          $ref: "#/components/responses/MethodNotAllowed"
-        default:
-          $ref: "#/components/responses/UnexpectedError"
-
   /reportar-erros:
     post:
       tags: [Sistema]
@@ -637,80 +437,9 @@ paths:
         "405":
           $ref: "#/components/responses/MethodNotAllowed"
         "429":
-            description: Superouse o límite de 1 reporte cada 60 segundos por dispositivo.
+          description: Superouse o límite de 1 reporte cada 60 segundos por dispositivo.
         "500":
-            description: Houbo un erro ao gardar o reporte.
-        default:
-          $ref: "#/components/responses/UnexpectedError"
-
-  /axustar-usuarios:
-    post:
-      tags: [Administración]
-      summary: Xestionar usuarios
-      description: >
-        Só para administradores. Permite cambiar o rol, o correo electrónico
-        ou o estado dunha conta.
-
-        Cambiar o estado dunha conta en proceso de borrado cancela o borrado.
-        O estado de borrado non se pode asignar desde este endpoint.
-        O usuario reservado non se pode modificar.
-
-        Debe indicarse polo menos un dos campos correo, rol ou estado.
-      security:
-        - sesionHeaderAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              additionalProperties: false
-              required:
-                - uuid
-                - id
-              properties:
-                uuid:
-                  $ref: "#/components/schemas/UuidDispositivoSchema"
-                id:
-                  type: integer
-                  minimum: 1
-                  description: Identificador do usuario que se quere modificar.
-                correo:
-                  type: string
-                  format: email
-                  description: Novo correo electrónico.
-                rol:
-                  type: string
-                  enum:
-                    - monitor
-                    - colaborador
-                    - autor
-                    - editor
-                    - administrador
-                  maxLength: 15
-                  description: Novo rol do usuario.
-                estado:
-                  type: integer
-                  enum:
-                    - 0
-                    - 1
-                    - 2
-                  description: "0 = pendente, 1 = activo, 2 = suspendido."
-      responses:
-        "200":
-          description: O usuario foi actualizado correctamente.
-        "400":
-          description: JSON mal formado, identificador inválido, rol non válido ou ningún campo que modificar.
-        "401":
-          $ref: "#/components/responses/Unauthenticated"
-        "403":
-          description: O usuario autenticado non é administrador ou non ten permisos suficientes.
-        "404":
-          description: O usuario que se quere modificar non existe.
-        "409":
-          description: O usuario indicado é o usuario reservado ou o correo xa está en uso por outro usuario.
-        "405":
-          $ref: "#/components/responses/MethodNotAllowed"
+          description: Houbo un erro ao gardar o reporte.
         default:
           $ref: "#/components/responses/UnexpectedError"
 

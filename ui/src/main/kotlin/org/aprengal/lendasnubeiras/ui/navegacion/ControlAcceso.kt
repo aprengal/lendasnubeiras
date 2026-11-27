@@ -84,11 +84,12 @@ internal object ControlAcceso {
     /**
      * Comproba que unha ruta concreta sexa válida.
      *
-     * Por agora só se valida [Ruta.ActividadeDetalle]: se a actividade
-     * indicada non existe, redirixe ao [Ruta.Catalogo].
+     * Por agora só se valida [Ruta.ActividadeDetalle]: se a actividade indicada
+     * non existe ou o seu título está baleiro ou contén unicamente espazos
+     * en branco, redirixe ao [Ruta.Catalogo].
      *
      * @param ruta Ruta que se quere mostrar.
-     * @return `true` se a ruta é válida; `false` se se redirixiu a outra pantalla.
+     * @return `true` se a ruta é válida; `false` se se programa unha redirección a outra pantalla.
      */
     @Composable
     internal fun verificarRuta( ruta: Ruta ): Boolean {
@@ -96,8 +97,14 @@ internal object ControlAcceso {
         val navegacion = LocalNavegacion.current
 
         val redirixir = when ( ruta ) {
-            is Ruta.ActividadeDetalle -> if ( collerActividade( ruta.clave ) == null ) Ruta.Catalogo else null
+
+            is Ruta.ActividadeDetalle -> {
+                val actividade = collerActividade( ruta.clave )
+                if ( actividade == null || actividade.titulo.isBlank() ) Ruta.Catalogo else null
+            }
+
             else -> null
+
         }
 
         if ( redirixir != null ) {

@@ -110,11 +110,9 @@ fun ElementoLista( datos: DatosElementoLista ) {
         }
     }
 
-    ListItem( { Texto( datos.titulo, estilo = MaterialTheme.typography.titleLarge ) }, modificador,
-        supportingContent = { datos.contido() },
-        leadingContent = iconaInicial,
-        trailingContent = datos.contidoExtra
-    )
+    ListItem( modificador, supportingContent = { datos.contido() }, leadingContent = iconaInicial, trailingContent = datos.contidoExtra ) {
+        Texto( datos.titulo, estilo = MaterialTheme.typography.titleLarge )
+    }
 
 }
 

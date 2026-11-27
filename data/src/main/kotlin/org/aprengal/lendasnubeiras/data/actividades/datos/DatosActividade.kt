@@ -1,8 +1,6 @@
 package org.aprengal.lendasnubeiras.data.actividades.datos
 
-import org.aprengal.lendasnubeiras.data.actividades.datos.base.Categoria
-import org.aprengal.lendasnubeiras.data.actividades.datos.base.Destinatario
-import org.aprengal.lendasnubeiras.data.actividades.datos.base.Estado
+
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.ElementoBD
 import org.json.JSONObject
 
@@ -20,25 +18,16 @@ import org.json.JSONObject
  * a partir dos seus datos en formato JSON, evitando duplicar esta lóxica
  * nas distintas implementacións da interface.
  *
- * @property id Identificador único da actividade.
  * @property claveTitulo Clave que identifica os recursos textuais asociados á actividade.
  * @property titulo Título da actividade.
  * @property descricion Lista de parágrafos que compoñen a descrición da actividade.
- * @property categoria Categoría na que se clasifica a actividade.
- * @property destinatario Grupo de persoas ao que vai dirixida a actividade.
- * @property estado Estado actual da actividade.
  * @property dixital Indica se a actividade se pode realizar dentro da aplicación, é dicir, se ten textos para o xogo.
  */
 internal interface DatosActividade: ElementoBD {
 
-    val id: Long
     val claveTitulo: String
     val titulo: String
     val descricion: List<String>
-    val categoria: Categoria
-    val destinatario: Destinatario
-    val estado: Estado
-
     val dixital: Boolean
 
     /**

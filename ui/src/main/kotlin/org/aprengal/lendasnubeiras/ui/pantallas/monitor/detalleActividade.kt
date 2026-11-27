@@ -28,6 +28,8 @@ import org.aprengal.lendasnubeiras.data.bd.operacions.Actividades.collerActivida
 import org.aprengal.lendasnubeiras.data.localizacion.cantidades.L10nPlural
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nMetaActividades
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nSingular
+import org.aprengal.lendasnubeiras.data.usuarios.Rol
+import org.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
 import org.aprengal.lendasnubeiras.ui.navegacion.Locais.LocalNavegacion
 import org.aprengal.lendasnubeiras.ui.reutilizables.clases.DatosElementoLista
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.basicos.textual.BotonPrincipal
@@ -53,15 +55,15 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.ListaTex
 fun PantallaActividadeDetalle( clave: String ) {
 
     val actividade = remember( clave ) { collerActividade( clave )!! }
-    val actividadeDixital = actividade.dixital
+    val podeExecutarse = actividade.dixital && usuarioActual().rol == Rol.MONITOR
 
-    var fichaAberta by rememberSaveable { mutableStateOf( !actividadeDixital ) }
+    var fichaAberta by rememberSaveable { mutableStateOf( !podeExecutarse ) }
     var configuracionAberta by rememberSaveable { mutableStateOf( false ) }
     val textoFicha = if ( fichaAberta ) L10nMetaActividades.OcultarFicha else L10nMetaActividades.AmosarFicha
 
     Column( modifier = Modifier.fillMaxSize().verticalScroll( rememberScrollState() ) ) {
 
-        if ( actividadeDixital ) {
+        if ( podeExecutarse ) {
 
             val accionBotonFicha = {
                 fichaAberta = !fichaAberta
@@ -81,11 +83,11 @@ fun PantallaActividadeDetalle( clave: String ) {
             FichaActividade( actividade )
         }
 
-        if ( fichaAberta && !actividadeDixital ) {
+        if ( fichaAberta && !podeExecutarse ) {
             EspazadorAlto( 2 )
         }
 
-        if ( actividadeDixital ) {
+        if ( podeExecutarse ) {
 
             val botonConfiguracion = {
                 configuracionAberta = !configuracionAberta

@@ -8,16 +8,12 @@ import org.aprengal.lendasnubeiras.data.actividades.datos.buscador.CampoBusca
 import org.aprengal.lendasnubeiras.data.actividades.datos.base.Categoria.Companion.escollerCategoria
 import org.aprengal.lendasnubeiras.data.actividades.datos.buscador.CriteriosBusca
 import org.aprengal.lendasnubeiras.data.actividades.datos.base.Destinatario.Companion.escollerDestinatario
-import org.aprengal.lendasnubeiras.data.actividades.datos.base.Estado
-import org.aprengal.lendasnubeiras.data.actividades.datos.base.Estado.Companion.escollerEstado
 import org.aprengal.lendasnubeiras.data.api.ConexionApi.MetodoApi
 import org.aprengal.lendasnubeiras.data.api.ConexionApi.procesarPeticion
 import org.aprengal.lendasnubeiras.data.api.RutasApi
 import org.aprengal.lendasnubeiras.data.api.resposta.DatosActividades
 import org.aprengal.lendasnubeiras.data.api.resposta.RespostaXenerica
 import org.aprengal.lendasnubeiras.data.axustes.Axustes.collerIdDispositivo
-import org.aprengal.lendasnubeiras.data.bd.clases.OperacionsBD.Companion.buscarElemento
-import org.aprengal.lendasnubeiras.data.bd.clases.OperacionsBD.Companion.buscarElementos
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.OperadorSimple
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.Orde
 import org.aprengal.lendasnubeiras.data.bd.clases.BD.bd
@@ -80,14 +76,13 @@ object Actividades {
     fun collerActividadesBuscables( criterios: CriteriosBusca ): List<ActividadeBuscable> {
 
         val onde = mutableMapOf<String, Condicion>()
-        onde[ "estado" ] = Condicion.Simple( Estado.Publicado.estado )
 
         for ( ( campo, valor ) in criterios.filtros ) {
             require( valor is ElementoL10n ) { "Tipo non soportado: ${ valor::class }" }
             onde[ campo ] = Condicion.Simple( valor )
         }
 
-        val columnas = setOf( "id", "clave_titulo", "clave_categoria", "clave_destinatario", "estado" )
+        val columnas = setOf( "id", "clave_titulo", "clave_categoria", "clave_destinatario" )
         val ordenar = mapOf( criterios.colOrdenable to criterios.dirOrdenable )
         val datos = SeleccionSQL( columnas, alias = "a", onde = onde, ordenar = ordenar )
         val resultados = bd.seleccionar( Taboa.ACTIVIDADES, datos )
@@ -161,23 +156,23 @@ object Actividades {
      * @return Lista de actividades que cumpren todas as condicións indicadas.
      */
     fun collerActividades( onde: Map<String, Condicion> ): List<Actividade> {
-        return buscarElementos( Taboa.ACTIVIDADES, onde ) { actividade -> crearActividade( actividade ) }
+        return bd.buscarElementos( Taboa.ACTIVIDADES, onde ) { actividade -> crearActividade( actividade ) }
     }
 
     /**
-     * Obtén as actividades públicas almacenadas de forma paxinada ordenadas de maneira descendente.
+     * Obtén as actividades almacenadas na base de datos local de forma paxinada,
+     * ordenadas por identificador de maneira descendente.
      *
      * @param limite Número máximo de actividades a devolver.
      * @param posicion Desprazamento (offset) para a paginación.
-     * @return Lista de actividades públicas.
+     * @return Lista de actividades almacenadas.
      */
     fun collerActividadesPublicas( posicion: Int = 10, limite: Int = 0 ): List<ActividadeBuscable> {
 
-        val columnas = setOf( "id", "clave_titulo", "id_autoria", "clave_categoria", "clave_destinatario", "estado", "duracion", "data_modificado" )
-        val onde = mapOf( "estado" to Condicion.Simple( Estado.Publicado.estado ) )
+        val columnas = setOf( "id", "clave_titulo", "clave_categoria", "clave_destinatario", "duracion", "data_modificado" )
         val ordenar = mapOf( "id" to Orde.DESC )
         val datosLimite = listOf( posicion, limite )
-        val datos = SeleccionSQL( columnas = columnas, onde = onde, ordenar = ordenar, limite = datosLimite )
+        val datos = SeleccionSQL( columnas = columnas, ordenar = ordenar, limite = datosLimite )
         val resultados = bd.seleccionar( Taboa.ACTIVIDADES, datos )
 
         return resultados.map { actividade -> crearActividadeBuscable( actividade ) }
@@ -185,19 +180,18 @@ object Actividades {
     }
 
     /**
-     * Conta o número de actividades que se atopan publicadas.
+     * Conta o número total de actividades almacenadas na base de datos local.
      *
-     * Realiza unha consulta á base de datos para obter o total de actividades
-     * cuxo estado é [Estado.Publicado].
+     * Como o catálogo só incorpora actividades publicadas, o resultado corresponde
+     * ao número total de actividades publicadas almacenadas localmente.
      *
-     * @return Número de actividades publicadas. Devolve 0 se non se obteñen
+     * @return Número total de actividades publicadas. Devolve 0 se non se obteñen
      * resultados ou se non é posible converter o valor a un enteiro.
      */
-    fun contarActividadesPublicas(): Int {
+    fun contarActividades(): Int {
 
         val columnas = setOf( "COUNT( * ) as total" )
-        val onde = mapOf( "estado" to Condicion.Simple( Estado.Publicado.estado ) )
-        val datos = SeleccionSQL( columnas = columnas, onde = onde )
+        val datos = SeleccionSQL( columnas = columnas )
         val resultados = bd.seleccionar( Taboa.ACTIVIDADES, datos )
 
         return resultados.firstOrNull()?.get( "total" )?.toString()?.toIntOrNull() ?: 0
@@ -211,29 +205,27 @@ object Actividades {
      * @return Obxecto Actividade correspondente ou null se non se atopa ningún rexistro.
      */
     private fun buscarActividade( onde: Map<String, Condicion> ): Actividade? {
-        return buscarElemento( Taboa.ACTIVIDADES, onde ) { actividade -> crearActividade( actividade ) }
+        return bd.buscarElemento( Taboa.ACTIVIDADES, onde ) { actividade -> crearActividade( actividade ) }
     }
 
     /**
-     * Constrúe unha instancia de Actividade a partir dos datos dun rexistro
+     * Constrúe unha instancia de [Actividade] a partir dos datos dun rexistro
      * da base de datos.
      *
-     * Converte os identificadores de categoría, destinatario e estado nos
-     * seus correspondentes obxectos e adapta os valores numéricos aos tipos
-     * esperados pola clase Actividade.
+     * Converte os identificadores de categoría e destinatario nos seus
+     * correspondentes obxectos e adapta o valor numérico da duración ao tipo
+     * esperado pola clase [Actividade].
      *
      * @param datos Mapa cos campos e valores correspondentes á actividade.
-     * @return Instancia de Actividade construída cos datos recibidos.
+     * @return Instancia de [Actividade] construída cos datos recibidos.
      */
     private fun crearActividade( datos: Map<String, Any> ): Actividade {
 
         val actividade = Actividade(
             datos[ "id" ] as Long,
             datos[ "clave_titulo" ] as String,
-            datos[ "id_autoria" ] as Long,
             escollerCategoria( datos[ "clave_categoria" ] as String ),
             escollerDestinatario( datos[ "clave_destinatario" ] as String ),
-            escollerEstado( ( datos[ "estado" ] as Long ).toInt() ),
             ( datos[ "duracion" ] as Long ).toInt(),
             datos[ "data_modificado" ] as Long
         )
@@ -243,29 +235,18 @@ object Actividades {
     }
 
     /**
-     * Constrúe unha instancia de ActividadeBuscable a partir dos datos
+     * Constrúe unha instancia de [ActividadeBuscable] a partir dos datos
      * dun rexistro da base de datos.
      *
-     * A diferenza de Actividade, esta representación contén unicamente
-     * os datos necesarios para identificar e mostrar unha actividade
-     * nos resultados do buscador, evitando recuperar información adicional
-     * que non é necesaria nese contexto.
+     * Esta representación contén unicamente a clave do título da actividade,
+     * necesaria para identificala nos resultados do buscador, sen recuperar
+     * información adicional.
      *
      * @param datos Mapa cos campos e valores correspondentes á actividade.
-     * @return Instancia de ActividadeBuscable construída cos datos recibidos.
+     * @return Instancia de [ActividadeBuscable] construída coa clave do título.
      */
     private fun crearActividadeBuscable( datos: Map<String, Any> ): ActividadeBuscable {
-
-        val actividade = ActividadeBuscable(
-            datos[ "id" ] as Long,
-            datos[ "clave_titulo" ] as String,
-            escollerCategoria( datos[ "clave_categoria" ] as String ),
-            escollerDestinatario( datos[ "clave_destinatario" ] as String ),
-            escollerEstado( ( datos[ "estado" ] as Long ).toInt() )
-        )
-
-        return actividade
-
+        return ActividadeBuscable( datos[ "clave_titulo" ] as String )
     }
 
     /**
@@ -276,14 +257,16 @@ object Actividades {
      *
      * 1. Envía ao servidor unha petición de actualización identificando o dispositivo.
      * 2. Obtén a lista de actividades dispoñibles no servidor.
-     * 3. Compara as actividades recibidas coas almacenadas localmente.
-     * 4. Insire as actividades que aínda non existen na base de datos local.
-     * 5. Actualiza as actividades locais cando a versión do servidor é máis recente,
+     * 3. Filtra as actividades recibidas, aceptando exclusivamente aquelas cuxo estado é `2`
+     * (publicado).
+     * 4. Compara as actividades publicadas recibidas coas almacenadas localmente.
+     * 5. Insire as actividades que aínda non existen na base de datos local.
+     * 6. Actualiza as actividades locais cando a versión do servidor é máis recente,
      * comparando os campos `dataModificado`.
-     * 6. Identifica as actividades locais que xa non aparecen no catálogo do servidor.
-     * 7. Elimina as actividades obsoletas e as súas puntuacións asociadas mediante
+     * 7. Identifica as actividades locais que xa non aparecen no catálogo de actividades publicadas.
+     * 8. Elimina as actividades obsoletas e as súas puntuacións asociadas mediante
      * [eliminarPuntuacionsActividade].
-     * 8. Comunica ao servidor os problemas detectados durante o procesamento dos datos.
+     * 9. Comunica ao servidor os problemas detectados durante o procesamento dos datos.
      *
      * A execución da operación xestiónase mediante [Corrutinas.corrutinaResposta].
      *
@@ -297,6 +280,8 @@ object Actividades {
      */
     suspend fun actualizarCatalogo( ambito: CoroutineScope ): Boolean {
 
+        val estadoPublicado = 2
+
         val resposta = Corrutinas.corrutinaResposta( ambito ) {
 
             val problemas = mutableListOf<String>()
@@ -309,37 +294,39 @@ object Actividades {
             val actividadesLocais = collerActividades( ondeLocal ).associateBy { elemento -> elemento.id }
             val actividadesObsoletas = actividadesLocais.toMutableMap()
 
-            actividadesServidor.lista.forEach { actServidor ->
+            actividadesServidor.lista
+                .filter { el -> ( el[ "estado" ] as? Number )?.toInt() == estadoPublicado }
+                .forEach { actServidor ->
 
-                try {
+                    try {
 
-                    val id = ( actServidor[ "id" ] as Number ).toLong()
-                    val dataModificadoServidor = ( actServidor[ "data_modificado" ] as? Number )?.toLong() ?: 0L
-                    val actLocal = actividadesLocais[ id ]
+                        val id = ( actServidor[ "id" ] as Number ).toLong()
+                        val dataModificadoServidor = ( actServidor[ "data_modificado" ] as? Number )?.toLong() ?: 0L
+                        val actLocal = actividadesLocais[ id ]
 
-                    when {
+                        when {
 
-                        actLocal == null -> bd.insertar( Taboa.ACTIVIDADES, actServidor )
+                            actLocal == null -> bd.insertar( Taboa.ACTIVIDADES, actServidor )
 
-                        dataModificadoServidor > actLocal.dataModificado -> {
-                            actividadesObsoletas.remove( id )
-                            bd.actualizar( Taboa.ACTIVIDADES, actServidor, mapOf( "id" to Condicion.Simple( id ) ) )
+                            dataModificadoServidor > actLocal.dataModificado -> {
+                                actividadesObsoletas.remove( id )
+                                bd.actualizar( Taboa.ACTIVIDADES, actServidor, mapOf( "id" to Condicion.Simple( id ) ) )
+                            }
+
+                            else -> actividadesObsoletas.remove( id )
+
                         }
 
-                        else -> actividadesObsoletas.remove( id )
-
+                    } catch ( e: ClassCastException ) {
+                        val mensaxe = "Actividade con formato inesperado do servidor: $actServidor"
+                        Log.wtf( "ActualizarCatalogo", mensaxe, e )
+                        problemas.add( mensaxe )
+                    } catch ( _: NullPointerException ) {
+                        val mensaxe = "Actividade con valor nulo inesperado: $actServidor"
+                        problemas.add( mensaxe )
                     }
 
-                } catch ( e: ClassCastException ) {
-                    val mensaxe = "Actividade con formato inesperado do servidor: $actServidor"
-                    Log.wtf( "ActualizarCatalogo", mensaxe, e )
-                    problemas.add( mensaxe )
-                } catch ( _: NullPointerException ) {
-                    val mensaxe = "Actividade con valor nulo inesperado: $actServidor"
-                    problemas.add( mensaxe )
                 }
-
-            }
 
             if ( problemas.isNotEmpty() ) {
                 campos[ "erro" ] = problemas.toString()

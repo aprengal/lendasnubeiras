@@ -4,7 +4,7 @@ declare( strict_types = 1 );
 
 /**
  * Representa un usuario do sistema e xestiona os seus datos,
- * permisos, sesións e operacións asociadas á súa conta.
+ * sesións e operacións asociadas á súa conta.
  */
 final readonly class Usuario {
 
@@ -29,11 +29,6 @@ final readonly class Usuario {
     public int $estado;
 
     /**
-     * @var Rol Rol asignado ao usuario, representado mediante unha instancia do enum Rol.
-     */
-    public Rol $rol;
-
-    /**
      * @var array Array asociativo coas sesións do usuario cargadas durante a petición actual.
      * As claves identifican os tokens mediante o seu hash HMAC.
      */
@@ -49,8 +44,6 @@ final readonly class Usuario {
      * realizar ningunha consulta adicional.
      *
      * Durante a inicialización:
-     * - Convértese o rol recibido como texto na súa correspondente instancia
-     *   do enum Rol.
      * - As propiedades recibidas asígnanse dinamicamente, permitindo que
      *   __set() procese e cargue as sesións do usuario.
      * - Recupéranse as sesións almacenadas na caché estática da petición.
@@ -58,10 +51,10 @@ final readonly class Usuario {
      *   identificar a súa inexistencia na caché.
      * - As propiedades que non teñan valor reciben os seus valores por defecto.
      *
-     * @param string     $campo          Campo polo que se realiza a busca (ex. 'id', 'correo' ou 'uuid').
-     * @param string|int $valor          Valor correspondente ao campo de busca.
-     * @param bool       $revisar_cache  Indica se se debe consultar a caché estática de usuarios.
-     * @param ?stdClass  $datos          Datos precargados do usuario. Se se proporcionan, omítese a busca.
+     * @param string     $campo         Campo polo que se realiza a busca (ex. 'id', 'correo' ou 'uuid').
+     * @param string|int $valor         Valor correspondente ao campo de busca.
+     * @param bool       $revisar_cache Indica se se debe consultar a caché estática de usuarios.
+     * @param ?stdClass  $datos         Datos precargados do usuario. Se se proporcionan, omítese a busca.
      */
     public function __construct( string $campo, string|int $valor, bool $revisar_cache = true, ?stdClass $datos = null ) {
 
@@ -72,13 +65,7 @@ final readonly class Usuario {
        if ( $datos ) {
 
           foreach ( $datos as $clave => $valor_o ) {
-
-             if ( $clave === 'rol' && is_string( $valor_o ) ) {
-                $valor_o = Rol::from( $valor_o );
-             }
-
              $this->$clave = $valor_o;
-
           }
 
           $this->sesions = $this->cargar_sesions();
@@ -140,7 +127,6 @@ final readonly class Usuario {
             'uuid' => '',
             'correo' => '',
             'estado' => 0,
-            'rol' => Rol::MONITOR,
             'sesions' => []
         ];
 
@@ -194,7 +180,7 @@ final readonly class Usuario {
      * Recupera un usuario da base de datos e carga as súas sesións temporais vixentes.
      *
      * Busca o usuario polo campo e valor indicados, obtendo os seus datos
-     * básicos e o rol asociado mediante unha unión coa táboa roles.
+     * básicos.
      *
      * O parámetro $revisar_cache determina como se realiza a busca:
      * - true: delega en coller_usuario(), que utiliza o mecanismo de caché global.
@@ -226,16 +212,9 @@ final readonly class Usuario {
             return null;
         }
 
-        // Para que funcione a JOIN ao buscar por id, cómpre indicar o alias da táboa
-        $campo_onde = "u.$campo";
-
         $busca_usuario = [
-            'columnas' => [ 'u.id', 'u.uuid', 'u.correo', 'u.estado', 'r.clave as rol' ],
-            'alias' => 'u',
-            'join' => [
-                [ 'tipo' => 'INNER', 'principal' => 'id_rol', 'secundaria' => 'r.id', 'taboa-join' => 'roles' ]
-            ],
-            'onde' => [ $campo_onde => $valor ],
+            'columnas' => [ 'id', 'uuid', 'correo', 'estado' ],
+            'onde' => [ $campo => $valor ],
             'limit' => 1
         ];
 

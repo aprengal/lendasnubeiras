@@ -146,8 +146,8 @@ function verificar_inicio( array $accion ): bool {
 /**
  * Verifica unha solicitude de borrado e actualiza o estado da conta.
  *
- * Só permite borrar contas existentes e activas que non pertenzan
- * a administradores nin correspondan a usuarios legados.
+ * Só permite borrar contas existentes e activas que non correspondan
+ * a usuarios legados.
  *
  * Unha vez actualizado o estado da conta, destrúe todas as súas sesións activas.
  *
@@ -165,7 +165,6 @@ function verificar_borrado( array $accion ): bool {
     if (
         !$usuario->existe() ||
         $usuario->estado !== ESTADO_USUARIO_ACTIVO ||
-        $usuario->rol === Rol::ADMINISTRADOR ||
         usuario_legado( $usuario )
     ) {
         return false;

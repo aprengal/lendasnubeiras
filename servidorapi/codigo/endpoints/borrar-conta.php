@@ -14,11 +14,9 @@ declare( strict_types = 1 );
  * definitiva durante o período establecido en DIAS_BORRADO_CONTA días.
  *
  * A solicitude require unha sesión autenticada e a confirmación mediante
- * a ligazón enviada ao correo electrónico. Non require aprobación
- * administrativa.
+ * a ligazón enviada ao correo electrónico.
  *
- * Os administradores e os usuarios legados non poden solicitar
- * o borrado da súa propia conta.
+ * Os usuarios legados non poden solicitar o borrado da súa propia conta.
  *
  * Tras enviar o correo de confirmación, destrúese a sesión actual.
  *
@@ -33,16 +31,16 @@ function endpoint_borrar_conta(): void {
 
     esixir_metodo( 'POST' );
 
-    $usuario = esixir_sesion();
-
-    if ( $usuario->rol === Rol::ADMINISTRADOR || usuario_legado( $usuario ) ) {
-        responder( 409 );
-    }
-
     $corpo = validar_corpo( coller_corpo(), [
         'uuid' => [ 'tipo' => 'uuid' ],
         'idioma' => [ 'tipo' => 'texto', 'max' => 2, 'valores' => IDIOMAS_API ]
     ] );
+
+    $usuario = esixir_sesion();
+
+    if ( usuario_legado( $usuario ) ) {
+        responder( 409 );
+    }
 
     if ( !revisar_intentos( 'borrado_conta', (string) $usuario->id, 1, MINUTO_EN_SEGUNDOS ) ) {
         responder( 429 );

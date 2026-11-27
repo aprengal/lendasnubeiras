@@ -286,7 +286,6 @@ paths:
                 required:
                   - id
                   - correo
-                  - rol
                 properties:
                   info:
                     type: string
@@ -298,9 +297,6 @@ paths:
                     type: string
                     format: email
                     description: Enderezo de correo electrónico do usuario.
-                  rol:
-                    type: string
-                    description: Rol asignado ao usuario.
         "400":
           description: JSON mal formado ou uuid ausente/inválido.
         "401":

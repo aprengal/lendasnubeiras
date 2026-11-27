@@ -23,9 +23,9 @@ import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nAutenticacio
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nBase
 import org.aprengal.lendasnubeiras.data.localizacion.singulares.L10nSingular
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodeBorrarConta
-import org.aprengal.lendasnubeiras.data.usuarios.Rol.Companion.buscarRol
 import org.aprengal.lendasnubeiras.data.usuarios.SesionActual.cambiarSesion
 import org.aprengal.lendasnubeiras.data.usuarios.SesionActual.usuarioActual
+import org.aprengal.lendasnubeiras.data.usuarios.SesionActual.xerarPegadaUsuario
 import org.aprengal.lendasnubeiras.data.utilidades.Corrutinas.corrutina
 import org.aprengal.lendasnubeiras.data.utilidades.Corrutinas.corrutinaResposta
 import kotlin.time.Duration.Companion.milliseconds
@@ -121,7 +121,8 @@ object AccionsUsuario {
      * intervalos de catro segundos, o que permite agardar ata quince minutos
      * pola validación da sesión.
      *
-     * Unha vez validada, actualiza a sesión local cos datos do usuario,
+     * Unha vez validada, garda o identificador de usuario xunto coa súa pegada
+     * no almacenamento local e actualiza a sesión cos datos do usuario,
      * incluíndo o seu identificador, correo electrónico e rol.
      *
      * Durante o proceso informa do progreso e dos posibles erros mediante
@@ -174,12 +175,13 @@ object AccionsUsuario {
                                 200 -> {
 
                                     actualizarEstado( L10nAutenticacion.SesionValidadaCorrectamente, false )
-                                    gardarSesionLocal( sesion.sesion, usuario.info )
+                                    val info = "${ usuario.idUsuario }|${ xerarPegadaUsuario( usuario.idUsuario, idDispositivo ) }"
+                                    gardarSesionLocal( sesion.sesion, info )
                                     delay( 1000.milliseconds )
 
                                     val id = usuario.idUsuario
                                     val correo = usuario.correo
-                                    val rol = buscarRol( usuario.rol )
+                                    val rol = usuario.rol
 
                                     cambiarSesion( id, correo, rol )
                                     sesionValidada = true

@@ -112,10 +112,10 @@ function formatar_actividade( array $fila ): array {
  */
 function coller_actividade( int $id ): ?array {
 
-	$busca = busca_actividades();
-    $busca[ 'onde' ] = [ 'a.id' => $id ];
+	$datos_busca = busca_actividades();
+    $datos_busca[ 'onde' ] = [ 'a.id' => $id ];
 
-	$filas = db()->select( 'actividades', $busca, 'array' );
+	$filas = db()->select( 'actividades', $datos_busca, 'array' );
 
 	if ( !$filas ) {
 		return null;
@@ -126,90 +126,21 @@ function coller_actividade( int $id ): ?array {
 }
 
 /**
- * Recupera as actividades que pode consultar un usuario segundo o seu rol.
- *
- * As actividades borradas (3) nunca se inclúen nos resultados.
- *
- * A visibilidade distribúese do seguinte xeito:
- *
- * - Usuarios anónimos: actividades publicadas (2).
- * - Monitores: actividades publicadas (2).
- * - Autores e colaboradores: actividades publicadas (2) e as súas
- *   propias actividades en borrador (0) ou pendentes (1).
- * - Editores e administradores: todas as actividades, agás as borradas.
- *
- * Os borradores e as actividades pendentes doutros usuarios non se
- * mostran a autores nin colaboradores.
+ * Recupera as actividades publicadas (estado 2).
  *
  * As consultas recuperan tamén as claves da categoría e do destinatario
  * mediante JOIN coas táboas correspondentes.
  *
- * @param Usuario|null $usuario Usuario cuxas actividades visibles
- * se queren recuperar, ou null para unha consulta anónima.
- * @return array Lista de actividades visibles cos seus tipos normalizados.
+ * @param Usuario|null $usuario Mantense por compatibilidade de firma.
+ * @return array Lista de actividades publicadas cos seus tipos normalizados.
  */
 function coller_actividades_visibles( ?Usuario $usuario ): array {
 
-    $rol = $usuario?->rol;
-    $todas = in_array( $rol, [ Rol::EDITOR, Rol::ADMINISTRADOR ], true );
+    $datos_busca = busca_actividades();
+    $datos_busca[ 'onde' ] = [ 'estado' => [ 'operador' => 'IN', 'valores' => [ 2 ] ] ];
 
-    $busca = busca_actividades();
-
-    if ( !$todas ) {
-        $busca[ 'onde' ] = [ 'estado' => [ 'operador' => 'IN', 'valores' => [ 2 ] ] ];
-    }
-
-    $filas = db()->select( 'actividades', $busca, 'array' ) ?? [];
-
-    if ( $usuario && $usuario->existe() && !in_array( $rol, [ Rol::MONITOR, Rol::EDITOR, Rol::ADMINISTRADOR ], true ) && !$todas ) {
-
-        $busca_propias = [
-            'columnas' => COLUMNAS_ACTIVIDADE,
-            'onde' => [
-                'id_autoria' => $usuario->id,
-                'estado' => [ 'operador' => 'IN', 'valores' => [ 0, 1 ] ]
-            ]
-        ];
-
-        $filas += db()->select( 'actividades', $busca_propias, 'array' ) ?? [];
-
-    }
-
-    ksort( $filas );
+    $filas = db()->select( 'actividades', $datos_busca, 'array' ) ?? [];
 
     return array_values( array_map( 'formatar_actividade', $filas ) );
-
-}
-
-/**
- * Comproba se un usuario pode crear ou modificar unha actividade
- * segundo o seu rol, a súa autoría e os estados implicados.
- *
- * As regras de autorización son:
- *
- * - Administradores e editores: poden xestionar calquera actividade.
- * - Autores: poden xestionar unicamente as súas propias actividades.
- * - Colaboradores: poden xestionar as súas propias actividades sempre
- *   que tanto o estado actual como o novo sexan anteriores á publicación.
- * - Monitores e demais roles: non poden xestionar actividades.
- *
- * Ao crear unha actividade, o estado actual debe indicarse como 0.
- *
- * @param Usuario $usuario Usuario que solicita a operación.
- * @param int $id_autoria Identificador do autor da actividade.
- * @param int $estado_actual Estado actual da actividade.
- * @param int $estado_novo Estado que se quere establecer.
- * @return bool True se o usuario ten permisos para realizar a operación.
- */
-function pode_xestionar_actividade( Usuario $usuario, int $id_autoria, int $estado_actual, int $estado_novo ): bool {
-
-	$propia = $id_autoria === $usuario->id;
-
-	return match ( $usuario->rol ) {
-		Rol::ADMINISTRADOR, Rol::EDITOR => true,
-		Rol::AUTOR => $propia,
-		Rol::COLABORADOR => $propia && $estado_actual < 2 && $estado_novo < 2,
-		default => false
-	};
 
 }

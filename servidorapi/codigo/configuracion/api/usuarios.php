@@ -4,10 +4,9 @@ declare( strict_types = 1 );
 
 /**
  * Crea unha nova conta de usuario en estado pendente, á espera
- * de que un administrador aprobe a solicitude.
+ * de que se complete a activación da conta.
  *
- * Asigna inicialmente o rol básico de monitor e xera un identificador
- * e un UUID únicos para a nova conta.
+ * Xera un identificador e un UUID únicos para a nova conta.
  *
  * Se falla a inserción por un problema de MySQL, realiza ata cinco
  * intentos para completar a operación. Se non consegue crear a conta,
@@ -16,9 +15,6 @@ declare( strict_types = 1 );
  * @param string $correo Enderezo de correo electrónico da nova conta.
  */
 function crear_usuario_pendente( string $correo ): void {
-
-    $args = [ 'columnas' => 'id', 'onde' => [ 'clave' => 'monitor' ], 'limit' => 1 ];
-    $id_monitor = db()->select( 'roles', $args, 'unico' );
 
     $inserido = false;
     $reintentos = 5;
@@ -37,8 +33,7 @@ function crear_usuario_pendente( string $correo ): void {
                 'id' => $id_usuario,
                 'uuid' => $uuid,
                 'correo' => $correo,
-                'estado' => ESTADO_USUARIO_PENDENTE,
-                'id_rol' => $id_monitor
+                'estado' => ESTADO_USUARIO_PENDENTE
             ] );
 
             $inserido = true;

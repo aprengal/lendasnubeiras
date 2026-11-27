@@ -1,7 +1,10 @@
 package org.aprengal.lendasnubeiras.data.api.resposta
 
+import android.util.Patterns.EMAIL_ADDRESS
 import org.json.JSONObject
 import org.aprengal.lendasnubeiras.data.api.RutasApi
+import org.aprengal.lendasnubeiras.data.usuarios.Rol
+import org.aprengal.lendasnubeiras.data.usuarios.Rol.Companion.buscarRol
 
 /**
  * Representa a resposta da API ao validar unha sesión de usuario ([RutasApi.VALIDACION]).
@@ -14,7 +17,6 @@ import org.aprengal.lendasnubeiras.data.api.RutasApi
  * @property idUsuario Identificador único do usuario.
  * @property correo Enderezo de correo electrónico asociado ao usuario.
  * @property rol Rol asignado ao usuario dentro do sistema.
- * @property info Cadea cos datos do usuario no formato "idUsuario|rol".
  */
 class RespostaValidacionSesion( datos: JSONObject ) : RespostaApi( datos.optInt( "codigo" ) ) {
 
@@ -22,8 +24,6 @@ class RespostaValidacionSesion( datos: JSONObject ) : RespostaApi( datos.optInt(
 
     val correo: String = datos.optString( "correo" )
 
-    val rol: String = datos.optString( "rol" )
-
-    val info: String = "$idUsuario|${ rol }"
+    val rol: Rol = if ( correo.isNotBlank() && EMAIL_ADDRESS.matcher( correo ).matches() ) Rol.MONITOR else Rol.LECTOR
 
 }

@@ -40,16 +40,17 @@ import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.Elemento
 import org.aprengal.lendasnubeiras.ui.reutilizables.elementos.compostos.ListaTexto
 
 /**
- * Mostra a pantalla co detalle dunha actividade, permitindo consultar a súa ficha de datos xerais.
+ * Mostra o detalle dunha actividade e permite consultar a súa ficha de datos xerais.
  *
- * Se a actividade contén textos adicionais, permite despregar ou ocultar a ficha mediante un botón.
- * Se non contén textos adicionais, a ficha móstrase directamente.
+ * Se a actividade é dixital e o usuario actual ten o rol de monitor, permite alternar entre a ficha
+ * e a configuración necesaria para preparar a súa execución. Inicialmente, ambas permanecen pechadas.
+ *
+ * Se non é dixital, a ficha móstrase directamente.
  *
  * A existencia da actividade compróbase antes de acceder a esta pantalla, polo que se dá por feito
  * que [collerActividade] devolve unha actividade válida.
  *
- * @param clave Clave identificadora da actividade que se vai mostrar, correspondente á propiedade
- * clave de [Ruta.ActividadeDetalle].
+ * @param clave Clave identificadora da actividade, correspondente á propiedade clave de [Ruta.ActividadeDetalle].
  */
 @Composable
 fun PantallaActividadeDetalle( clave: String ) {

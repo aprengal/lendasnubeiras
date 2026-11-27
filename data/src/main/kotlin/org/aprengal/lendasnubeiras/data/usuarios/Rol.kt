@@ -8,6 +8,9 @@ enum class Rol( val clave: String ) {
     /** Sen rol ou usuario non autenticado. */
     NADA( "nada" ),
 
+    /** Rol de lector. */
+    LECTOR( "lector" ),
+
     /** Rol de monitor. */
     MONITOR( "monitor" );
 

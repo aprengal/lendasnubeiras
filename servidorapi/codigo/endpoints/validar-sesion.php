@@ -12,8 +12,8 @@ declare( strict_types = 1 );
  * e durante o proceso de inicio de sesión, mentres se agarda a que o usuario
  * verifique a ligazón recibida por correo electrónico.
  *
- * Se a sesión é válida, devolve o identificador, o correo electrónico
- * e o rol do usuario.
+ * Se a sesión é válida, devolve o identificador e o correo electrónico
+ * do usuario.
  *
  * Respostas: 200 (sesión válida), 401 (sesión ausente ou non válida),
  * 404 (usuario inexistente).
@@ -41,8 +41,7 @@ function endpoint_validar_sesion(): void {
 
     $datos_resposta = [
         'id'     => $usuario->id,
-        'correo' => $usuario->correo,
-        'rol'    => $usuario->rol->value
+        'correo' => $usuario->correo
     ];
 
     responder( 200, $datos_resposta );

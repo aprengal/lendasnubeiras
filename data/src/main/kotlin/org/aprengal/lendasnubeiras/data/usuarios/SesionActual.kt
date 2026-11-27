@@ -14,11 +14,11 @@ import org.aprengal.lendasnubeiras.data.api.RutasApi
 import org.aprengal.lendasnubeiras.data.api.resposta.RespostaValidacionSesion
 import org.aprengal.lendasnubeiras.data.utilidades.Corrutinas.corrutina
 import org.aprengal.lendasnubeiras.data.utilidades.Corrutinas.corrutinaResposta
-import org.aprengal.lendasnubeiras.data.usuarios.Rol.Companion.buscarRol
 import org.aprengal.lendasnubeiras.data.usuarios.Permiso.PodePecharSesion
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.security.MessageDigest
 import java.util.UUID
 
 /**
@@ -29,7 +29,7 @@ import java.util.UUID
  *
  * Ao iniciar, comproba se existe unha sesión anónima ou unha credencial de usuario
  * almacenada. Neste último caso, intenta validala co servidor e, se non é posible
- * establecer a conexión, pode recuperar parte da información almacenada localmente.
+ * establecer a conexión, pode recuperar a identificación do usuario gardada localmente.
  */
 object SesionActual {
 
@@ -62,7 +62,7 @@ object SesionActual {
      * de inicialización. Se non existe unha sesión activa, delega a súa
      * comprobación e recuperación en [validarSesion].
      *
-     * Se o un usuario actual é válido e existe, solicita a execución das tarefas
+     * Se o usuario actual é válido e existe, solicita a execución das tarefas
      * programadas de mantemento do servidor nun novo fío mediante [RutasApi.LIMPAR].
      */
     suspend fun arrancar() {
@@ -114,11 +114,11 @@ object SesionActual {
     }
 
     /**
-     * Crea unha sesión anónima con permisos de monitor.
+     * Crea unha sesión anónima con permisos de lector.
      *
      * Require que non exista unha credencial de usuario almacenada. Antes de
      * establecer a sesión, elimina as sesións locais anteriores, activa a opción
-     * de sesión anónima e asigna un usuario ficticio co rol [Rol.MONITOR].
+     * de sesión anónima e asigna un usuario ficticio co rol [Rol.LECTOR].
      *
      * A operación realízase mediante unha corrutina.
      */
@@ -129,7 +129,7 @@ object SesionActual {
         corrutina {
             borrarSesionsLocais()
             gardarOpcion( Opcion.SesionAnonima, true )
-            cambiarSesion( 1L, "", Rol.MONITOR )
+            cambiarSesion( 1L, "", Rol.LECTOR )
         }
 
     }
@@ -140,25 +140,27 @@ object SesionActual {
      * O proceso contempla tres situacións:
      *
      * - Se existe unha sesión anónima, establécese directamente un usuario
-     *   co rol de monitor, sen realizar peticións ao servidor.
+     *   co rol [Rol.LECTOR], sen realizar peticións ao servidor.
      * - Se existe unha credencial de usuario, envíase unha petición de validación
      *   ao servidor mediante o identificador do dispositivo.
      * - Se non hai credencial almacenada, non se establece ningunha sesión.
      *
-     * Cando o servidor valida correctamente a sesión, actualízanse as credenciais
-     * e os datos locais do usuario. Se responde cun código 401 ou 403, elimínase
-     * a credencial almacenada e restablécese o usuario sen sesión autenticada.
+     * Cando o servidor valida correctamente a sesión, gárdase o identificador do
+     * usuario xunto coa súa pegada no almacenamento local e establécese o usuario
+     * cos datos devoltos. Se responde cun código 401 ou 403, elimínase a credencial
+     * almacenada e restablécese o usuario sen sesión autenticada ([Rol.NADA]).
      *
      * Se a petición non pode completarse por outros motivos, inténtase recuperar
-     * a identificación e o rol a partir dos datos da sesión gardados localmente.
-     * Durante esta recuperación, o rol queda limitado como máximo ao de autor.
+     * o identificador gardado localmente comprobando a pegada asociada ao
+     * dispositivo. Se os datos locais non son válidos ou non coinciden, elimínanse
+     * xunto coa credencial almacenada.
      *
      * Finalmente, establécese a sesión cos datos obtidos.
      */
     private suspend fun validarSesion() {
 
         if ( sesionAnonima ) {
-            cambiarSesion( 1L, "", Rol.MONITOR )
+            cambiarSesion( 1L, "", Rol.LECTOR )
             return
         }
 
@@ -167,24 +169,26 @@ object SesionActual {
 
         val ( id, correo, rol ) = corrutinaResposta {
 
-            var id = 1L
+            var id = 0L
             var correo = ""
-            var rol = Rol.MONITOR
+            var rol = Rol.NADA
 
             val idDispositivo = collerOpcion( Opcion.IdDispositivo )
             val datos: RespostaValidacionSesion = procesarPeticion( MetodoApi.POST, RutasApi.VALIDACION, mapOf( "uuid" to idDispositivo ) )
 
             if ( datos.exito ) {
 
-                gardarSesionLocal( sesionActual, datos.info )
+                val info = "${ datos.idUsuario }|${ xerarPegadaUsuario( datos.idUsuario, idDispositivo ) }"
+                gardarSesionLocal( sesionActual, info )
 
                 id = datos.idUsuario
                 correo = datos.correo
-                rol = buscarRol( datos.rol )
+                rol = datos.rol
 
             } else if ( datos.codigo in setOf( 401, 403 ) ) {
 
                 borrarOpcion( Opcion.SesionUsuario )
+                borrarSesionsLocais()
                 id = 0L
                 correo = ""
                 rol = Rol.NADA
@@ -192,23 +196,21 @@ object SesionActual {
             } else {
 
                 val datosAlmacenados = collerSesionLocal( sesionActual )
+                val infoSesion = datosAlmacenados.split( "|" )
+                val idGardado = infoSesion.getOrNull( 0 )?.toLongOrNull()
+                val pegadaGardada = infoSesion.getOrNull( 1 )
 
-                if ( datosAlmacenados.isNotBlank() ) {
-
-                    val infoSesion = datosAlmacenados.split( "|" )
-
-                    if ( infoSesion.size == 2 ) {
-
-                        try {
-                            id = infoSesion[ 0 ].toLong()
-                            val rolGardado = buscarRol( infoSesion[ 1 ] )
-                            rol = if ( rolGardado > Rol.MONITOR ) Rol.MONITOR else rolGardado
-                        } catch ( _: NumberFormatException ) {
-                            borrarSesionsLocais()
-                        }
-
-                    }
-
+                if (
+                    datosAlmacenados.isNotBlank() &&
+                    infoSesion.size == 2 &&
+                    idGardado != null &&
+                    idGardado > 0L &&
+                    pegadaGardada == xerarPegadaUsuario( idGardado, idDispositivo )
+                ) {
+                    id = idGardado
+                } else {
+                    borrarSesionsLocais()
+                    borrarOpcion( Opcion.SesionUsuario )
                 }
 
             }
@@ -276,6 +278,19 @@ object SesionActual {
 
         return resposta
 
+    }
+
+    /**
+     * Xera unha pegada curta a partir do identificador de usuario e do identificador do dispositivo.
+     *
+     * @param id Identificador do usuario.
+     * @param idDispositivo Identificador do dispositivo.
+     * @return Cadea hexadecimal truncada que permite verificar a integridade dos datos locais.
+     */
+    internal fun xerarPegadaUsuario( id: Long, idDispositivo: String ): String {
+        val entrada = "$id:$idDispositivo"
+        val bytes = MessageDigest.getInstance( "SHA-256" ).digest( entrada.toByteArray( Charsets.UTF_8 ) )
+        return bytes.take( 6 ).joinToString( "" ) { "%02x".format( it ) }
     }
 
 }
